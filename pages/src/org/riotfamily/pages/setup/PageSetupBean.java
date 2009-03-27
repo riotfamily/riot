@@ -84,7 +84,7 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 		});
 	}
 
-	//FIXME
+	//FIXME Create nodes
 	protected void createNodes() {
 		/*
 		if (Site.findAll().isEmpty()) {
@@ -95,7 +95,6 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 					definition.createNode(rootNode, sites);
 				}
 			}
-			rootNode.update(); //REVISIT
 		}
 		*/
 	}

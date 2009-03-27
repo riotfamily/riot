@@ -336,7 +336,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	public void addPage(Page page) {
 		page.setSite(this);
 		page.setParentPage(null);
-		page.save(); //REVISIT
+		page.save(); //REVISIT Should we really call save() here?
 	}
 	
 	public List<String> listWildcardPaths() {

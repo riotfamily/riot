@@ -119,7 +119,7 @@ public class CommandContextHandler extends ListServiceHandler
 		}
 		catch (Exception e) {
 			rollback(status);
-			throw new RuntimeException(e); //REVISIT
+			throw new RuntimeException(e); //REVISIT Throw a more specialized exception?
 		}
 		commit(status);
 		return result;

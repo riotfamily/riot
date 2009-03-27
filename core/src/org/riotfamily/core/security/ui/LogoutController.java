@@ -36,7 +36,7 @@ public class LogoutController implements Controller {
 			HttpServletResponse response) throws Exception {
 
 		LoginManager.logout(request, response);
-		return null; //FIXME
+		return null; //FIXME Send redirect to start screen
 	}
 
 }

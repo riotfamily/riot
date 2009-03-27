@@ -160,7 +160,7 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		parentItem.addPage(page);
 		
 		updatePaths(page);
-		//FIXME
+		//FIXME Invalidate cache items
 		//PageCacheUtils.invalidateNode(cacheService, node);
 		//PageCacheUtils.invalidateNode(cacheService, parentNode);
 		//PageCacheUtils.invalidateNode(cacheService, newParent);

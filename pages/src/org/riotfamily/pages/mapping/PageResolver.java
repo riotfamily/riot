@@ -205,7 +205,7 @@ public class PageResolver {
 			pathWithinSite = FormatUtils.stripTrailingSlash(site.stripPrefix(path));
 		}
 		exposePathWithinSite(pathWithinSite, request);
-		// REVISIT: Maybe check if site is visible, like in #resolvePage
+		//REVISIT Maybe check if site is visible, like in resolvePage()
 		return site;
 	}
 
