@@ -36,10 +36,11 @@ import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.StringRenderer;
-import org.riotfamily.core.command.CommandResult;
 import org.riotfamily.core.screen.ScreenRepository;
 import org.riotfamily.core.screen.list.ColumnConfig;
-import org.riotfamily.core.screen.list.ListScreen;
+import org.riotfamily.core.screen.list.ListState;
+import org.riotfamily.core.screen.list.TreeListScreen;
+import org.riotfamily.core.screen.list.command.result.CommandResult;
 import org.riotfamily.core.screen.list.dto.CommandButton;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.core.screen.list.dto.ListModel;
@@ -89,9 +90,9 @@ public class ListService {
 		return screenRepository;
 	}
 	
-	public ListScreen getScreen(ListState state) {
+	public TreeListScreen getScreen(ListState state) {
 		return screenRepository.getScreen(state.getScreenId(), 
-				ListScreen.class);
+				TreeListScreen.class);
 	}
 	
 	public MessageResolver getMessageResolver(HttpServletRequest request) {

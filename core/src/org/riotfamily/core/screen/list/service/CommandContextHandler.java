@@ -30,14 +30,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.core.command.Command;
-import org.riotfamily.core.command.CommandContext;
-import org.riotfamily.core.command.CommandInfo;
-import org.riotfamily.core.command.CommandResult;
-import org.riotfamily.core.command.Selection;
-import org.riotfamily.core.command.dialog.DialogCommand;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.list.command.Command;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandInfo;
+import org.riotfamily.core.screen.list.command.DialogCommand;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.result.CommandResult;
 import org.riotfamily.core.screen.list.dto.CommandButton;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.forms.Form;
@@ -150,6 +150,10 @@ public class CommandContextHandler extends ListServiceHandler
 		return screenContext.createNewItemContext(parentTreeItem);
 	}
 	
+	public String getParentId() {
+		return screenContext.getParentId();
+	}
+	
 	public Object getParent() {
 		return screenContext.getParent();
 	}
@@ -159,8 +163,8 @@ public class CommandContextHandler extends ListServiceHandler
 				messageResolver, request.getContextPath(), formUrl);
 	}
 		
-	public ListState getListState() {
-		return state;
+	public String getListKey() {
+		return state.getKey();
 	}
 
 	public HttpServletRequest getRequest() {

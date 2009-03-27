@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.service;
+package org.riotfamily.core.screen.list;
 
 import java.util.Locale;
 import java.util.Map;
@@ -29,7 +29,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.core.screen.list.ListParamsImpl;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormContext;

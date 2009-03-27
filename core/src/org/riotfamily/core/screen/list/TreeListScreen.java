@@ -38,12 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.core.command.Command;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.screen.AbstractRiotScreen;
+import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.core.screen.list.service.ListState;
+import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.factory.FormRepository;
@@ -53,10 +53,10 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 
-public class ListScreen extends AbstractRiotScreen implements Controller {
+public class TreeListScreen extends AbstractRiotScreen implements Controller, ListScreen {
 
 	private String viewName = ResourceUtils.getPath(
-			ListScreen.class, "list.ftl");
+			TreeListScreen.class, "list.ftl");
 	
 	private RiotDao dao;
 	
@@ -74,6 +74,9 @@ public class ListScreen extends AbstractRiotScreen implements Controller {
 		
 	private RiotScreen itemScreen;
 
+	/* (non-Javadoc)
+	 * @see org.riotfamily.core.screen.list.ListScreen#getDao()
+	 */
 	public RiotDao getDao() {
 		return dao;
 	}
@@ -111,6 +114,9 @@ public class ListScreen extends AbstractRiotScreen implements Controller {
 		return commands;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.riotfamily.core.screen.list.ListScreen#getItemScreen()
+	 */
 	public RiotScreen getItemScreen() {
 		return itemScreen;
 	}
@@ -132,6 +138,9 @@ public class ListScreen extends AbstractRiotScreen implements Controller {
 		return getId();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.riotfamily.core.screen.list.ListScreen#getItemLabel(java.lang.Object)
+	 */
 	public String getItemLabel(Object object) {
 		StringBuilder label = new StringBuilder();
 		Pattern p = Pattern.compile("([\\w.]+)(\\W*)");

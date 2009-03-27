@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.core.screen.list.ListScreen;
+import org.riotfamily.core.screen.list.ListState;
+import org.riotfamily.core.screen.list.TreeListScreen;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -44,7 +45,7 @@ public class ListServiceHandler {
 	
 	protected ListState state;
 	
-	protected ListScreen screen;
+	protected TreeListScreen screen;
 	
 	protected RiotDao dao;
 	

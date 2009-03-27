@@ -25,7 +25,7 @@ package org.riotfamily.core.screen.list.dto;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteProperty;
-import org.riotfamily.core.command.CommandInfo;
+import org.riotfamily.core.screen.list.command.CommandInfo;
 
 @DataTransferObject
 public class CommandButton {
