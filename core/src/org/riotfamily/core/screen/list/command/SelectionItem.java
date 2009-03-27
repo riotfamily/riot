@@ -23,36 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
-import javax.servlet.http.HttpServletRequest;
+public interface SelectionItem {
 
-import org.riotfamily.core.dao.ListParams;
-import org.riotfamily.core.dao.RiotDao;
-import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.forms.FormContext;
+	public abstract String getObjectId();
 
+	public abstract int getRowIndex();
 
-public interface CommandContext {
-
-	public HttpServletRequest getRequest();
-	
-	public String getListKey();
-	
-	public ListParams getParams();
-	
-	public int getItemsTotal();
-	
-	public String getCommandId();
-	
-	public String getParentId();
-	
-	public Object getParent();
-	
-	public RiotDao getDao();
-	
-	public FormContext createFormContext(String formUrl);
-	
-	public ScreenContext createNewItemContext(Object parentTreeItem);
-	
-	public ScreenContext createItemContext(Object item);
-	
 }

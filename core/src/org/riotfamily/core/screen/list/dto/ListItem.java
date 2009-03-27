@@ -27,24 +27,19 @@ import java.util.List;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteProperty;
+import org.riotfamily.core.screen.list.command.SelectionItem;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  */
 @DataTransferObject
-public class ListItem {
+public class ListItem implements SelectionItem {
 
 	@RemoteProperty
 	private int rowIndex;
 	
 	@RemoteProperty
 	private String objectId;
-	
-	@RemoteProperty
-	private String parentId;
-	
-	@RemoteProperty
-	private String parentEditorId;
 	
 	@RemoteProperty
 	private List<String> columns;
@@ -58,12 +53,6 @@ public class ListItem {
 	public ListItem() {
 	}
 	
-	public ListItem(String objectId, String parentId, String parentEditorId) {
-		this.objectId = objectId;
-		this.parentId = parentId;
-		this.parentEditorId = parentEditorId;
-	}
-
 	public List<String> getColumns() {
 		return this.columns;
 	}
@@ -72,8 +61,9 @@ public class ListItem {
 		this.columns = columns;
 	}
 
-
-
+	/* (non-Javadoc)
+	 * @see org.riotfamily.core.screen.list.dto.SelectionItem#getObjectId()
+	 */
 	public String getObjectId() {
 		return this.objectId;
 	}
@@ -82,22 +72,9 @@ public class ListItem {
 		this.objectId = objectId;
 	}
 
-	public String getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
-	
-	public String getParentEditorId() {
-		return parentEditorId;
-	}
-
-	public void setParentEditorId(String parentEditorId) {
-		this.parentEditorId = parentEditorId;
-	}
-
+	/* (non-Javadoc)
+	 * @see org.riotfamily.core.screen.list.dto.SelectionItem#getRowIndex()
+	 */
 	public int getRowIndex() {
 		return this.rowIndex;
 	}

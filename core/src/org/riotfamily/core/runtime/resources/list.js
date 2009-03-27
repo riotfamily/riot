@@ -361,6 +361,7 @@ var ListRow = {
 		}
 		if (row.expandable) {
 			tr.addClassName('expandable');
+			this.expandable = true;
 		}
 		else {
 			tr.addClassName('leaf');
@@ -377,7 +378,7 @@ var ListRow = {
 				});
 			}
 		}
-
+		
 		var i = list.getSelectionIndex(row); 
 		if (i != -1) {
 			tr.addClassName('selected');
@@ -414,8 +415,12 @@ var ListRow = {
 			tr.expanded = true;
 			tr.addClassName('expanded');
 			tr.addChildren(row.children);
-			row.children = null;
 		}
+		
+		// Convert to lightweight object
+		delete row.columns;
+		delete row.children;
+		delete row.expandable;
 	},
 		
 	Methods: {
@@ -460,7 +465,7 @@ var ListRow = {
 		
 		toggleChildren: function(event) {
 			event.stop();
-			if (this.item.expandable) {
+			if (this.expandable) {
 				if (this.expanded) {
 					this.collapse();
 				}

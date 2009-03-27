@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.Command;
@@ -77,7 +78,7 @@ public class CommandContextHandler extends ListServiceHandler
 	public List<String> getEnabledCommands(List<ListItem> items) {
 		List<String> result = Generics.newArrayList();
 		if (screen.getCommandMap() != null) {
-			Selection selection = createSelection(items);
+			Selection selection = new Selection(dao, items);
 			for (Map.Entry<String, Command> entry : screen.getCommandMap().entrySet()) {
 				commandId = entry.getKey();
 				if (entry.getValue().isEnabled(this, selection)) {
@@ -94,8 +95,7 @@ public class CommandContextHandler extends ListServiceHandler
 		Command command = screen.getCommandMap().get(commandId);
 		TransactionStatus status = beginTransaction();
 		try {
-			Selection selection = createSelection(items);
-			result = command.execute(this, selection);
+			result = command.execute(this, new Selection(dao, items));
 		}
 		catch (RuntimeException e) {
 			rollback(status);
@@ -105,23 +105,13 @@ public class CommandContextHandler extends ListServiceHandler
 		return result; 
 	}
 	
-	private Selection createSelection(List<ListItem> items) {
-		List<String> objectIds = Generics.newArrayList();
-		if (items != null) {
-			for (ListItem item : items) {
-				objectIds.add(item.getObjectId());
-			}
-		}
-		return new Selection(dao, objectIds);
-	}
-
 	public CommandResult handleDialogInput(Form form) {
 		CommandResult result = null;
 		TransactionStatus status = beginTransaction();
 		try {
 			Object input = form.populateBackingObject();
-			List<String> objectIds = form.getAttribute("objectIds");
-			Selection selection = new Selection(dao, objectIds);
+			List<ListItem> items = form.getAttribute("selectionItems");
+			Selection selection = new Selection(dao, items);
 			commandId = form.getAttribute("commandId");
 			DialogCommand command = (DialogCommand) screen.getCommandMap().get(commandId);
 			result = command.handleInput(this, selection, input, 
@@ -167,6 +157,14 @@ public class CommandContextHandler extends ListServiceHandler
 		return state.getKey();
 	}
 
+	public ListParams getParams() {
+		return state.getParams();
+	}
+	
+	public int getItemsTotal() {
+		return dao.getListSize(getParent(), getParams());
+	}
+	
 	public HttpServletRequest getRequest() {
 		return request;
 	}

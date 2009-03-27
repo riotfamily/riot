@@ -50,7 +50,7 @@ public class ListState {
 	private TextField searchField;
 	
 	private ListParamsImpl params = new ListParamsImpl();
-
+	
 	public static ListState get(HttpServletRequest request, String key) {
 		return (ListState) request.getSession().getAttribute(key);
 	}
@@ -127,5 +127,5 @@ public class ListState {
 		}
 		params.setPage(1);
 	}
-
+	
 }

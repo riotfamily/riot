@@ -75,6 +75,7 @@ public class ListItemLoader extends CommandContextHandler
 			if (object.equals(next)) {
 				item.setChildren(createItems(expanded, i + 1));
 			}
+			item.setRowIndex(items.size());
 			items.add(item);
 		}
 		return items;

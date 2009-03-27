@@ -33,50 +33,76 @@ public class Selection {
 
 	private RiotDao dao;
 	
+	private List<? extends SelectionItem> items;
+	
 	private List<String> objectIds;
 	
 	private List<Object> objects;
 	
-	public Selection(RiotDao dao, List<String> objectIds) {
+	public Selection(RiotDao dao, List<? extends SelectionItem> items) {
 		this.dao = dao;
-		this.objectIds = objectIds;
+		this.items = items;
 	}
 
 	public int size() {
-		return objectIds.size();
+		return items.size();
+	}
+	
+	protected List<? extends SelectionItem> getItems() {
+		return items;
 	}
 	
 	public List<String> getObjectIds() {
+		if (objectIds == null) {
+			objectIds = Generics.newArrayList(items.size());
+			for (SelectionItem item : items) {
+				objectIds.add(item.getObjectId());
+			}
+		}
 		return objectIds;
 	}
 	
 	public List<Object> getObjects() {
 		if (objects == null) {
 			objects = Generics.newArrayList();
-			for (String objectId : objectIds) {
-				objects.add(dao.load(objectId));
+			for (SelectionItem item : items) {
+				objects.add(dao.load(item.getObjectId()));
 			}
 		}
 		return objects;
 	}
 	
 	public String getSingleObjectId() {
-		if (objectIds.isEmpty()) {
+		if (items.isEmpty()) {
 			return null;
 		}
-		Assert.isTrue(objectIds.size() == 1,
+		Assert.isTrue(items.size() == 1,
 				"Selection must not contain more than one item");
 		
-		return objectIds.get(0);
+		return items.get(0).getObjectId();
 	}
 	
 	public Object getSingleObject() {
-		if (objectIds.isEmpty()) {
+		if (items.isEmpty()) {
 			return null;
 		}
-		Assert.isTrue(objectIds.size() == 1,
+		Assert.isTrue(items.size() == 1,
 				"Selection must not contain more than one item");
 		
 		return getObjects().get(0);
+	}
+	
+	public int getFirstRowIndex() {
+		if (items.isEmpty()) {
+			return -1;
+		}
+		return items.get(0).getRowIndex();
+	}
+	
+	public int getLastRowIndex() {
+		if (items.isEmpty()) {
+			return -1;
+		}
+		return items.get(items.size() - 1).getRowIndex();
 	}
 }
