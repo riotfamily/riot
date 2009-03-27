@@ -23,30 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
-import org.riotfamily.core.dao.SwappableItemDao;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
-
-public abstract class SwapCommand extends AbstractCommand {
-
-	protected abstract int getSwapWith();
+public class MoveUpCommand extends SwapCommand {
 
 	@Override
-	public boolean isEnabled(CommandContext context, Selection selection) {
-		if (selection.size() == 1 && context.getDao() instanceof SwappableItemDao) {
-			int index = selection.getLastRowIndex();
-			return index + getSwapWith() >= 0 &&
-					index + getSwapWith() < context.getItemsTotal();
-		}
-		return false;
+	protected int getSwapWith() {
+		return -1;
 	}
-
-	public CommandResult execute(CommandContext context, Selection selection) {
-		SwappableItemDao dao = (SwappableItemDao) context.getDao();
-		dao.swapEntity(selection.getSingleObject(), context.getParent(), 
-				context.getParams(), getSwapWith());
-		
-		return new RefreshSiblingsResult(selection.getSingleObjectId());
+	
+	@Override
+	protected String getAction(CommandContext context) {
+		return "moveUp";
 	}
 
 }
