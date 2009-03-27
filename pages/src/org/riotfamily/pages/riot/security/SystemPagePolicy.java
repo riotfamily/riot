@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.security;
 
-import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.policy.ReflectionPolicy;
 import org.riotfamily.pages.model.Page;

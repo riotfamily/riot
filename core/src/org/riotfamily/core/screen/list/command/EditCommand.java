@@ -21,48 +21,28 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.command;
+package org.riotfamily.core.screen.list.command;
 
-public class CommandInfo {
+import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 
-	private String label;
-	
-	private String styleClass;
+public class EditCommand implements Command {
 
-	private boolean batchSupport;
-	
-	private boolean showOnForm;
-	
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public String getStyleClass() {
-		return styleClass;
-	}
-
-	public void setStyleClass(String styleClass) {
-		this.styleClass = styleClass;
-	}
-
-	public boolean isBatchSupport() {
-		return batchSupport;
-	}
-
-	public void setBatchSupport(boolean batchSupport) {
-		this.batchSupport = batchSupport;
-	}
-
-	public boolean isShowOnForm() {
-		return showOnForm;
-	}
-
-	public void setShowOnForm(boolean showOnForm) {
-		this.showOnForm = showOnForm;
+	public CommandInfo getInfo(CommandContext context) {
+		CommandInfo info = new CommandInfo();
+		info.setLabel("Edit");
+		info.setStyleClass("edit");
+		return info;
 	}
 	
+	public boolean isEnabled(CommandContext context, Selection selection) {
+		return selection.size() == 1;
+	}
+	
+	public CommandResult execute(CommandContext context, Selection selection) {
+		ScreenContext childContext = context.createItemContext(selection.getSingleObject());
+		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
+	}
+
 }

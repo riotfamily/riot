@@ -21,23 +21,15 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.dbmsgsrc.riot;
+package org.riotfamily.core.screen.list.command.result;
 
-import org.riotfamily.core.screen.list.command.AbstractCommand;
-import org.riotfamily.core.screen.list.command.CommandContext;
-import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
 
-public class RemoveEmptyEntriesCommand extends AbstractCommand {
 
-	protected String getStyleClass(CommandContext context) {
-		return "delete";
-	}
-	
-	public CommandResult execute(CommandContext context, Selection selection) {
-		//String bundle = ((MessageBundleEntryDao) context.getDao()).getBundle();
-		//dao.removeEmptyEntries(bundle);
-		return new RefreshSiblingsResult();
+public class RefreshListCommandsResult implements CommandResult {
+
+	private static final String ACTION = "refreshListCommands";
+
+	public String getAction() {
+		return ACTION;
 	}
 }

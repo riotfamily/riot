@@ -1,8 +1,8 @@
 package org.riotfamily.statistics.commands;
 
 import org.hibernate.SessionFactory;
-import org.riotfamily.core.command.CommandContext;
-import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.Selection;
 
 public class ClearApplicationHibernateCacheCommand 
 		extends AbstractHibernateCacheCommand {

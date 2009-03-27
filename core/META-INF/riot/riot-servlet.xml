@@ -254,8 +254,7 @@
 		<constructor-arg ref="handlerUrlResolver" />
 	</bean>
 	
-	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.core.screen.list.dto" />
-	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.core.command.result" />
+	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.core.screen.list" />
 	
 	<!-- Form screens -->
 	
@@ -289,16 +288,18 @@
 	</util:map>
 	
 	<util:map id="customFormElements">
+		<!-- 
 		<entry key="{http://www.riotfamily.org/schema/riot/form-elements}chooser"
 				value="org.riotfamily.riot.form.element.ObjectChooser" />
 		<entry key="{http://www.riotfamily.org/schema/riot/form-elements}restricted"
-						value="org.riotfamily.riot.form.element.RestrictedElement" />				
+						value="org.riotfamily.riot.form.element.RestrictedElement" />
+		-->				
 	</util:map>
 	
 	<!-- Dialog commands -->
 	
 	<bean id="commandDialogController" name="/dialog/@{formKey}" 
-			class="org.riotfamily.core.command.dialog.DialogFormController">
+			class="org.riotfamily.core.screen.list.command.DialogFormController">
 		<constructor-arg ref="formContextFactory" />
 	</bean>
 		

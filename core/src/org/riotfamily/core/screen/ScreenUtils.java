@@ -24,8 +24,6 @@
 package org.riotfamily.core.screen;
 
 import org.riotfamily.core.dao.RiotDao;
-import org.riotfamily.core.screen.list.ListScreen;
-
 
 public final class ScreenUtils {
 

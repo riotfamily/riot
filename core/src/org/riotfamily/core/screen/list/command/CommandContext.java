@@ -21,23 +21,33 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.dbmsgsrc.riot;
+package org.riotfamily.core.screen.list.command;
 
-import org.riotfamily.core.screen.list.command.AbstractCommand;
-import org.riotfamily.core.screen.list.command.CommandContext;
-import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
+import javax.servlet.http.HttpServletRequest;
 
-public class RemoveEmptyEntriesCommand extends AbstractCommand {
+import org.riotfamily.core.dao.RiotDao;
+import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.forms.FormContext;
 
-	protected String getStyleClass(CommandContext context) {
-		return "delete";
-	}
+
+public interface CommandContext {
+
+	public HttpServletRequest getRequest();
 	
-	public CommandResult execute(CommandContext context, Selection selection) {
-		//String bundle = ((MessageBundleEntryDao) context.getDao()).getBundle();
-		//dao.removeEmptyEntries(bundle);
-		return new RefreshSiblingsResult();
-	}
+	public String getListKey();
+	
+	public String getCommandId();
+	
+	public String getParentId();
+	
+	public Object getParent();
+	
+	public RiotDao getDao();
+	
+	public FormContext createFormContext(String formUrl);
+	
+	public ScreenContext createNewItemContext(Object parentTreeItem);
+	
+	public ScreenContext createItemContext(Object item);
+	
 }

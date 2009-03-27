@@ -26,10 +26,10 @@ package org.riotfamily.riot.job.command;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.core.command.CommandContext;
-import org.riotfamily.core.command.CommandResult;
-import org.riotfamily.core.command.Selection;
-import org.riotfamily.core.command.impl.AbstractCommand;
+import org.riotfamily.core.screen.list.command.AbstractCommand;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.result.CommandResult;
 
 public class JobCommand extends AbstractCommand {
 
@@ -47,7 +47,7 @@ public class JobCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context, Selection selection) {
 		String objectId = selection.getSingleObjectId() != null
 				? selection.getSingleObjectId() 
-				: context.getListState().getParentId();
+				: context.getParentId();
 
 		Map<String, String> attributes = Generics.newHashMap();
 		attributes.put("type", jobType);

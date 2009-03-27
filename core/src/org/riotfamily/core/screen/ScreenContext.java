@@ -32,7 +32,6 @@ import org.riotfamily.common.web.mapping.HandlerUrlUtils;
 import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.TreeDao;
-import org.riotfamily.core.screen.list.ListScreen;
 
 public class ScreenContext {
 

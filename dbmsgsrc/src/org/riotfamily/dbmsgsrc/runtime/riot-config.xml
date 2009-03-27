@@ -16,6 +16,7 @@
 		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd
 		">
 
+	<!--
 	<list:list id="messageBundleEntries" search="code">
 		<list:dao class="org.riotfamily.dbmsgsrc.riot.MessageBundleEntryDao" />
 		<list:columns>
@@ -30,7 +31,8 @@
 		<list:command id="exportMessages" />		
 		<list:command id="add" />
 	</list:list>
-	
+	-->
+	 
 	<form:form id="messageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
 		<form:textfield bind="code" required="true" />
 		<form:textarea bind="comment" />
@@ -45,6 +47,7 @@
 		</form:map>
 	</form:form>
 	
+	<!-- 
 	<ed:group name="systemPreferences" icon="tools">
 		<ed:list id="dbMessages" list-ref="messageBundleEntries" icon="bubble">
 			<ed:form form-ref="messageBundleEntry" />
@@ -63,7 +66,8 @@
 		<list:command id="importLocalMessages" />
 		<list:command id="exportLocalMessages" />
 	</list:list>
-	
+	-->
+	 
 	<form:form id="dbMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
 		<form:textarea bind="entry.comment" read-only="true" />
 		<form:textarea bind="text" required="true" />
@@ -74,6 +78,7 @@
 		<form:checkbox bind="equalToDefaultText" />		
 	</form:form>
 	
+	<!-- 
 	<ed:list id="localDbMessages" list-ref="localDbMessages" icon="bubble" hidden="true">
 		<ed:form form-ref="dbMessage" />
 	</ed:list>
@@ -91,7 +96,8 @@
 		</list:columns>
 		<list:command id="add" />
 	</list:list>
-	
+	 -->
+	 
 	<form:form id="riotMessageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
 		<form:textfield bind="code" read-only="true" />
 		<form:map bind="messages" label-renderer="localeRenderer">
@@ -102,8 +108,10 @@
 		</form:map>
 	</form:form>
 	
+	<!-- 
 	<ed:list list-ref="riotMessageBundleEntries" hidden="true">
 		<ed:form form-ref="riotMessageBundleEntry" />
 	</ed:list>
-	
+	 -->
+	 
 </riot-config>

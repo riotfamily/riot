@@ -21,14 +21,48 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.command;
+package org.riotfamily.core.screen.list.command;
 
-public interface Command {
+public class CommandInfo {
 
-	public CommandInfo getInfo(CommandContext context);
+	private String label;
 	
-	public boolean isEnabled(CommandContext context, Selection selection);
-	
-	public CommandResult execute(CommandContext context, Selection selection);
+	private String styleClass;
 
+	private boolean batchSupport;
+	
+	private boolean showOnForm;
+	
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getStyleClass() {
+		return styleClass;
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+
+	public boolean isBatchSupport() {
+		return batchSupport;
+	}
+
+	public void setBatchSupport(boolean batchSupport) {
+		this.batchSupport = batchSupport;
+	}
+
+	public boolean isShowOnForm() {
+		return showOnForm;
+	}
+
+	public void setShowOnForm(boolean showOnForm) {
+		this.showOnForm = showOnForm;
+	}
+	
 }

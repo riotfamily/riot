@@ -94,7 +94,7 @@
 		<property name="pathConverter" ref="pathConverter" />
 	</bean>
 	
-	<bean id="sitemap" class="org.riotfamily.core.screen.list.ListScreen">
+	<bean id="sitemap" class="org.riotfamily.core.screen.list.TreeListScreen">
 		<property name="dao" ref="pageRiotDao" />
 		<property name="columns">
 			<list>
@@ -115,8 +115,8 @@
 		</property>
 		<property name="commands">
 			<list>
-				<bean class="org.riotfamily.core.command.impl.EditCommand" />
-				<bean class="org.riotfamily.core.command.impl.AddCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.EditCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.AddCommand" />
 			</list>
 		</property>
 		<property name="itemScreen">
@@ -124,7 +124,7 @@
 		</property>
 	</bean>
 	
-	<bean id="localContent" class="org.riotfamily.core.screen.list.ListScreen">
+	<bean id="localContent" class="org.riotfamily.core.screen.list.TreeListScreen">
 		<property name="dao">
 			<bean class="org.riotfamily.riot.hibernate.dao.HqlDao" autowire="constructor">
 				<property name="entityClass" value="org.riotfamily.example.petstore.Pet" />
@@ -142,7 +142,7 @@
 		</property>
 		<property name="commands">
 			<list>
-				<bean class="org.riotfamily.core.command.impl.EditCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.EditCommand" />
 			</list>
 		</property>
 		<property name="itemScreen">

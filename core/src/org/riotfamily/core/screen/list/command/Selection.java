@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.command;
+package org.riotfamily.core.screen.list.command;
 
 import java.util.List;
 

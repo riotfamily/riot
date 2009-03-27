@@ -21,23 +21,28 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.dbmsgsrc.riot;
+package org.riotfamily.core.screen.list.command;
 
-import org.riotfamily.core.screen.list.command.AbstractCommand;
-import org.riotfamily.core.screen.list.command.CommandContext;
-import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 
-public class RemoveEmptyEntriesCommand extends AbstractCommand {
+public class AddCommand implements Command {
 
-	protected String getStyleClass(CommandContext context) {
-		return "delete";
+	public CommandInfo getInfo(CommandContext context) {
+		CommandInfo info = new CommandInfo();
+		info.setLabel("Add");
+		info.setStyleClass("add");
+		return info;
+	}
+	
+	public boolean isEnabled(CommandContext context, Selection selection) {
+		return selection.size() <= 1;
 	}
 	
 	public CommandResult execute(CommandContext context, Selection selection) {
-		//String bundle = ((MessageBundleEntryDao) context.getDao()).getBundle();
-		//dao.removeEmptyEntries(bundle);
-		return new RefreshSiblingsResult();
+		ScreenContext childContext = context.createNewItemContext(selection.getSingleObject());
+		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
 	}
+
 }

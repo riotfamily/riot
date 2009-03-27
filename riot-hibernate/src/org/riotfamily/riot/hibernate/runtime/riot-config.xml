@@ -15,6 +15,7 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd">
 
+	<!-- 
 	<ed:group name="systemPreferences" icon="tools">
 		<ed:list id="riotUsers" list-ref="riotUsers" icon="users">
 			<ed:form form-ref="riotUser" />
@@ -31,7 +32,8 @@
 		</list:columns>
 		<list:command id="add" />
 	</list:list>
-
+ 	-->
+ 
 	<form:form id="riotUser" bean-class="org.riotfamily.riot.hibernate.security.User">
 		<form:group>
 			<form:editable-if-new>

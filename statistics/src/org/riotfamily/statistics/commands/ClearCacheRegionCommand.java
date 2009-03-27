@@ -10,8 +10,8 @@ import org.hibernate.cache.entry.CacheEntry;
 import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.core.command.CommandContext;
-import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.statistics.domain.CacheRegionStatsItem;
 
 public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
