@@ -20,7 +20,6 @@
 	</bean>
 	
 	<bean id="editModeRenderStrategy" class="org.riotfamily.components.render.list.EditModeRenderStrategy">
-		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="componentRenderer" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="componentListRenderer" />
@@ -30,7 +29,6 @@
 	  - Service bean to edit components. Exposed via DWR.
 	  -->
 	<bean id="componentEditor" class="org.riotfamily.components.editor.ComponentEditorImpl">
-		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="cacheService" />
 		<constructor-arg ref="componentRenderer" />
 		<constructor-arg ref="contentFormRepository" />
@@ -67,7 +65,6 @@
 		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="transactionManager" />
-		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="cacheService" /> 
 	</bean>
 	

@@ -233,6 +233,9 @@
 		<description>
 			Controller that performs a logout.		
 		</description>
+		<property name="servletPrefix">
+			<ref bean="riotServletPrefix" />
+		</property>
 	</bean>
 	
 	<!-- Root group screen -->

@@ -27,9 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -40,28 +37,18 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.IndexColumn;
+import org.riotfamily.common.hibernate.ActiveRecordSupport;
 
 @Entity
 @Table(name="riot_component_lists")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-public class ComponentList {
-
-	private Long id;
+public class ComponentList extends ActiveRecordSupport {
 
 	private List<Component> components;
 
 	public ComponentList() {
 	}
 	
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	@OneToMany
 	@JoinColumn(name="list")
 	@IndexColumn(name="list_pos")
@@ -118,4 +105,7 @@ public class ComponentList {
 		return dest;
 	}	
 
+	public static ComponentList load(Long id) {
+		return load(ComponentList.class, id);
+	}
 }

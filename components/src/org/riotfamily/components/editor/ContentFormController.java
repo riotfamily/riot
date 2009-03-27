@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.forms.Form;
@@ -45,18 +44,14 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 public class ContentFormController extends AbstractFrontOfficeFormController {
 
-	private ComponentDao componentDao;
-	
 	private CacheService cacheService;
-	
 	
 	public ContentFormController(FormContextFactory formContextFactory,
 			FormRepository formRepository,
 			PlatformTransactionManager transactionManager,
-			ComponentDao componentDao, CacheService cacheService) {
+			CacheService cacheService) {
 		
 		super(formContextFactory, formRepository, transactionManager);
-		this.componentDao = componentDao;
 		this.cacheService = cacheService;
 	}
 
@@ -72,18 +67,17 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 	
 	protected Object getFormBackingObject(HttpServletRequest request) {
 		Long id = new Long((String) request.getAttribute("contentId"));
-		return componentDao.loadContent(id);
+		return Content.load(id);
 	}
 
 	protected ContentContainer getContainer(HttpServletRequest request) {
 		Long id = new Long((String) request.getAttribute("containerId"));
-		return componentDao.loadContentContainer(id);
+		return ContentContainer.load(id);
 		
 	}
 	protected void reattach(Object object, HttpServletRequest request) {
 		Content content = (Content) object;
-		componentDao.updateContent(content);
-		
+		content.update();
 		ComponentCacheUtils.invalidatePreviewVersion(cacheService, getContainer(request));
 	}
 	

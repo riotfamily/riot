@@ -46,6 +46,7 @@ public class ContentListItem extends ListItem {
 		return wrapper;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setBackingObject(Object obj) {
 		if (obj != null) {
@@ -55,6 +56,7 @@ public class ContentListItem extends ListItem {
 		super.setBackingObject(obj);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value, boolean newItem) {
 		if (value != null) {
@@ -80,7 +82,7 @@ public class ContentListItem extends ListItem {
 				return wrapper;
 			}
 			catch (ClassCastException e) {
-				//FIXME Implementors should throw a ContentException by contract!
+				//REVISIT Implementors should throw a ContentException by contract!
 			}
 		}
 		return ValueWrapperService.wrap(value);

@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
@@ -41,12 +40,9 @@ public class DefaultRenderStrategy implements RenderStrategy {
 	
 	protected RiotLog log = RiotLog.get(getClass());
 	
-	protected ComponentDao dao; 
-	
 	private ComponentRenderer renderer;
 	
-	public DefaultRenderStrategy(ComponentDao dao, ComponentRenderer renderer) {
-		this.dao = dao;
+	public DefaultRenderStrategy(ComponentRenderer renderer) {
 		this.renderer = renderer;
 	}
 		

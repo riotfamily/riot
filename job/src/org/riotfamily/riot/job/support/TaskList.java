@@ -73,7 +73,7 @@ public class TaskList {
 	}
 	
 	public void interruptAll() {
-		//TODO Synchronization ...
+		//REVISIT Synchronization ...
 		for (JobTask task : activeTasks) {
 			log.info("Interrupting task " + task.getDetail().getId());
 			task.interrupt();

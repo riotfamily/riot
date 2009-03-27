@@ -47,7 +47,6 @@ import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ContentFormRepository;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
@@ -72,8 +71,6 @@ public class ComponentEditorImpl implements ComponentEditor,
 
 	private RiotLog log = RiotLog.get(ComponentEditorImpl.class);
 
-	private ComponentDao componentDao;
-	
 	private CacheService cacheService;
 	
 	private ComponentRenderer renderer;
@@ -84,11 +81,10 @@ public class ComponentEditorImpl implements ComponentEditor,
 	
 	private ServletContext servletContext;
 	
-	public ComponentEditorImpl(ComponentDao componentDao, 
-			CacheService cacheService, ComponentRenderer renderer, 
+	public ComponentEditorImpl(CacheService cacheService, 
+			ComponentRenderer renderer, 
 			ContentFormRepository formRepository) {
 		
-		this.componentDao = componentDao;
 		this.cacheService = cacheService;
 		this.renderer = new EditModeComponentDecorator(renderer, formRepository);
 	}
@@ -113,7 +109,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * Returns the value of the given property.
 	 */
 	public String getText(Long contentId, String property) {
-		Content content = componentDao.loadContent(contentId);
+		Content content = Content.load(contentId);
 		Object value = content.getValue(property);
 		return value != null ? value.toString() : null;
 	}
@@ -122,7 +118,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * Sets the given property to a new value.
 	 */
 	public void updateText(Long contentId, String property, String text) {
-		Content content = componentDao.loadContent(contentId);
+		Content content = Content.load(contentId);
 		content.setValue(property, text);
 	}
 
@@ -133,7 +129,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 			String[] chunks) {
 
 		String[] html = new String[chunks.length];
-		Component component = componentDao.loadComponent(componentId);
+		Component component = Component.load(componentId);
 		component.setValue(property, chunks[0]);
 		html[0] = renderComponent(component);
 		
@@ -171,7 +167,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	private String insertComponent(Long listId, int position, String type,
 			Map<String, ?> properties) {
 
-		ComponentList componentList = componentDao.loadComponentList(listId);
+		ComponentList componentList = ComponentList.load(listId);
 		Component component = createComponent(type, properties);
 		componentList.insertComponent(component, position);
 		return renderComponent(component);
@@ -187,13 +183,13 @@ public class ComponentEditorImpl implements ComponentEditor,
 	private Component createComponent(String type, Map<String, ?> properties) {
 		Component component = new Component(type);
 		component.wrap(properties);
-		componentDao.saveContent(component);
+		component.save();
 		return component;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public String setType(Long componentId, String type, String properties) {
-		Component component = componentDao.loadComponent(componentId);
+		Component component = Component.load(componentId);
 		component.setType(type);
 		if (properties != null) {
 			component.wrap(JSONObject.fromObject(properties));
@@ -202,7 +198,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 	
 	public String renderComponent(Long componentId) {
-		Component component = componentDao.loadComponent(componentId);
+		Component component = Component.load(componentId);
 		return renderComponent(component);
 	}
 
@@ -223,7 +219,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 
 	public void moveComponent(Long componentId, Long nextComponentId) {
-		Component component = componentDao.loadComponent(componentId);
+		Component component = Component.load(componentId);
 		ComponentList componentList = component.getList();
 		List<Component> components = componentList.getComponents();
 		components.remove(component);
@@ -241,14 +237,14 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 
 	public void deleteComponent(Long componentId) {
-		Component component = componentDao.loadComponent(componentId);
+		Component component = Component.load(componentId);
 		ComponentList componentList = component.getList();
 		List<Component> components = componentList.getComponents();
 		components.remove(component);
 	}
 
 	public void markAsDirty(Long containerId) {
-		ContentContainer container = componentDao.loadContentContainer(containerId);
+		ContentContainer container = ContentContainer.load(containerId);
 		container.setDirty(true);
 		ComponentCacheUtils.invalidatePreviewVersion(cacheService, container);
 		nofifyUsers();
@@ -258,8 +254,8 @@ public class ComponentEditorImpl implements ComponentEditor,
 		if (containerIds != null) {
 			for (Long id : containerIds) {
 				if (id != null) {
-					ContentContainer container = componentDao.loadContentContainer(id);
-					componentDao.publishContainer(container);
+					ContentContainer container = ContentContainer.load(id);
+					container.publish();
 				}
 			}
 		}
@@ -270,8 +266,8 @@ public class ComponentEditorImpl implements ComponentEditor,
 		if (containerIds != null) {
 			for (Long id : containerIds) {
 				if (id != null) {
-					ContentContainer container = componentDao.loadContentContainer(id);
-					componentDao.discardContainer(container);
+					ContentContainer container = ContentContainer.load(id);
+					container.discard();
 				}
 			}
 		}
@@ -294,7 +290,6 @@ public class ComponentEditorImpl implements ComponentEditor,
 		return new CapturingResponseWrapper(ctx.getHttpServletResponse(), sw);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void nofifyUsers() {
 		Locale locale = RequestContextUtils.getLocale(WebContextFactory.get().getHttpServletRequest());
 

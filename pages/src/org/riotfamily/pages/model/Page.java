@@ -179,7 +179,12 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	public void setParentPage(Page parentPage) {
 		this.parentPage = parentPage;
 	}
-			
+
+	@Transient
+	public SiteMapItem getParent() {
+		return parentPage != null ? parentPage : site;
+	}
+	
 	@ManyToOne
 	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public Page getMasterPage() {
@@ -419,8 +424,8 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	}
 	
 	@Transient
-	public Set<Page> getSiblings() {
-		return getParentPage().getChildPages();
+	public Collection<Page> getSiblings() {
+		return getParent().getChildPages();
 	}
 	
 	
@@ -478,21 +483,17 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	
 	public void publish() {
 		setPublished(true);
-		//PageCacheUtils.invalidateNode(cacheService, this);
-		//PageCacheUtils.invalidateNode(cacheService, getParent());
-		//FIXME componentDao.publishContainer(getPageProperties());	
+		//FIXME PageCacheUtils.invalidateNode(cacheService, this);
+		//FIXME PageCacheUtils.invalidateNode(cacheService, getParent());
+		getPageProperties().publish();
 	}
 	
 	public void unpublish() {
 		setPublished(false);
-		//PageCacheUtils.invalidateNode(cacheService, this);
-		//PageCacheUtils.invalidateNode(cacheService, getParent());
+		//FIXME PageCacheUtils.invalidateNode(cacheService, this);
+		//FIXME PageCacheUtils.invalidateNode(cacheService, getParent());
 	}
-	
-	public void discardPageProperties() {
-		//FIXME componentDao.discardContainer(getPageProperties());
-	}
-	
+		
 	public void refreshIfDetached() {
 		Session session = getSession();
 		if (!session.contains(this)) {

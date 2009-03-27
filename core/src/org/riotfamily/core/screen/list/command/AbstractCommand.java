@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.springframework.util.StringUtils;
 
 public abstract class AbstractCommand implements Command {
@@ -37,7 +38,7 @@ public abstract class AbstractCommand implements Command {
 	
 	public CommandInfo getInfo(CommandContext context) {
 		CommandInfo info = new CommandInfo();
-		info.setLabel(getAction(context));
+		info.setLabel(FormatUtils.xmlToTitleCase(getAction(context)));
 		info.setStyleClass(getStyleClass(context));
 		return info;
 	}

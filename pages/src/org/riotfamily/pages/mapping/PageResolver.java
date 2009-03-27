@@ -74,7 +74,10 @@ public class PageResolver {
 			site = resolveSite(request);
 			expose(site, request, SITE_ATTRIBUTE);
 		}
-		Site result = site != NOT_FOUND ? (Site) site : null;
+		if (site == null || site == NOT_FOUND) {
+			return null;
+		}
+		Site result = (Site) site;
 		result.refreshIfDetached();
 		return result; 
 	}
@@ -103,7 +106,10 @@ public class PageResolver {
 			page = resolvePage(request);
 			expose(page, request, PAGE_ATTRIBUTE);
 		}
-		Page result = page != NOT_FOUND ? (Page) page : null;
+		if (page == null || page == NOT_FOUND) {
+			return null;
+		}
+		Page result = (Page) page;
 		result.refreshIfDetached();
 		return result;
 	}
@@ -196,9 +202,6 @@ public class PageResolver {
 	private Site resolveSite(HttpServletRequest request) {
 		String hostName = request.getServerName();
 		String path = ServletUtils.getPathWithinApplication(request);
-		if (pathConverter != null) {
-			path = pathConverter.removeSuffix(path);
-		}
 		Site site = Site.loadByHostNameAndPath(hostName, path);
 		String pathWithinSite = null;
 		if (site != null) {
@@ -219,9 +222,13 @@ public class PageResolver {
 			return null;
 		}
 		String path = getPathWithinSite(request);
-		Page page = Page.loadBySiteAndPath(site, path);
+		String lookupPath = pathConverter != null 
+				? pathConverter.removeSuffix(path) 
+				: path;
+		
+		Page page = Page.loadBySiteAndPath(site, lookupPath);
 		if (page == null) {
-			page = findWildcardPage(site, path);
+			page = findWildcardPage(site, lookupPath);
 		}
 		if (page == null || !page.isRequestable() || !suffixMatches(path)) {
 			return null;

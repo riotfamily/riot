@@ -28,9 +28,9 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 	}
 	
 	public void doExecute(CommandContext context, Selection selection) {
-		//TODO BatchSupport
-		CacheRegionStatsItem crs = (CacheRegionStatsItem) selection.getSingleObject();
-		clearHibernateCacheRegion(crs.getName());
+		for (CacheRegionStatsItem crs : selection.getObjects(CacheRegionStatsItem.class)) {
+			clearHibernateCacheRegion(crs.getName());	
+		}
 	}
 	
 	private void clearHibernateCacheRegion(String region) {

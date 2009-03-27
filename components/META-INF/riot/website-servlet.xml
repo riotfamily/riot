@@ -17,11 +17,9 @@
 	</bean>
 	
 	<bean id="componentListRenderer" class="org.riotfamily.components.render.list.ComponentListRenderer">
-		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="transactionManager" />
 		<property name="liveModeRenderStrategy">
 			<bean class="org.riotfamily.components.render.list.DefaultRenderStrategy">
-				<constructor-arg ref="componentDao" />
 				<constructor-arg ref="componentRenderer" />
 			</bean>
 		</property>

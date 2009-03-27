@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
@@ -52,8 +51,6 @@ public class ComponentListRenderer implements ServletContextAware {
 	public static final String PARENT_ATTRIBUTE = 
 			ComponentListRenderer.class.getName() + ".parent";
 	
-	private ComponentDao componentDao;
-
 	private PlatformTransactionManager transactionManager;
 	
 	private RenderStrategy liveModeRenderStrategy;
@@ -63,10 +60,7 @@ public class ComponentListRenderer implements ServletContextAware {
 	private String riotServletName = "riot";
 
 	
-	public ComponentListRenderer(ComponentDao componentDao, 
-			PlatformTransactionManager transactionManager) {
-		
-		this.componentDao = componentDao;
+	public ComponentListRenderer(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
 
@@ -113,7 +107,7 @@ public class ComponentListRenderer implements ServletContextAware {
 		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				componentDao.saveComponentList(list);
+				list.save();
 			}
 		});
 		return list;
@@ -169,7 +163,7 @@ public class ComponentListRenderer implements ServletContextAware {
 			if (list == null) {
 				list = createList(component, key, config);
 			}
-			//FIXME Pass the root container instead ...
+			//TODO Pass the root container instead ...
 			if (AccessController.isGranted("edit", list)) {
 				strategy = editModeRenderStrategy;
 			}

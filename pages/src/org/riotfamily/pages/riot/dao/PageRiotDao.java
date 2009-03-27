@@ -51,8 +51,7 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 
 	public Object getParent(Object entity) {
 		Page page = (Page) entity;
-		Page parent = page.getParentPage();
-		return parent != null ? parent : page.getSite();
+		return page.getParent();
 	}
 
 	public void delete(Object entity, Object parent) throws DataAccessException {
@@ -147,7 +146,7 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		int otherPos = siblings.indexOf(otherPage);
 		
 		Collections.swap(siblings, pos, otherPos);
-		//REVISIT PageCacheUtils.invalidateNode(cacheService, parent);
+		//TODO PageCacheUtils.invalidateNode(cacheService, parent);
 	}
 
 	public void addChild(Object entity, Object parent) {

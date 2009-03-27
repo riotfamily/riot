@@ -29,8 +29,6 @@ public class CommandInfo {
 	
 	private String styleClass;
 
-	private boolean batchSupport;
-	
 	private boolean showOnForm;
 	
 	public String getLabel() {
@@ -47,14 +45,6 @@ public class CommandInfo {
 
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
-	}
-
-	public boolean isBatchSupport() {
-		return batchSupport;
-	}
-
-	public void setBatchSupport(boolean batchSupport) {
-		this.batchSupport = batchSupport;
 	}
 
 	public boolean isShowOnForm() {

@@ -70,5 +70,9 @@ public class Component extends Content {
 		copyValues(copy);
 		return copy;
 	}
+
+	public static Component load(Long id) {
+		return load(Component.class, id);
+	}
 	
 }

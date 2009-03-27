@@ -34,9 +34,6 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -49,6 +46,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.MapKey;
+import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.components.model.wrapper.ValueCallback;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapperService;
@@ -62,10 +60,8 @@ import org.riotfamily.components.model.wrapper.ValueWrapperService;
 )
 @DiscriminatorValue("Content")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-public class Content {
+public class Content extends ActiveRecordSupport {
 
-	private Long id;
-	
 	private int version;
 
 	private Map<String, ValueWrapper<?>> wrappers;
@@ -86,15 +82,6 @@ public class Content {
 		}
 	}
 
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
 	@Version
 	public int getVersion() {
 		return version;
@@ -188,6 +175,10 @@ public class Content {
 		for (ValueWrapper<?> wrapper : getWrappers().values()) {
 			wrapper.each(callback);
 		}
+	}
+	
+	public static Content load(Long id) {
+		return load(Content.class, id);
 	}
 	
 }

@@ -43,6 +43,7 @@ import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.model.SiteMapItem;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -173,8 +174,8 @@ public class PageFacade {
 	}
 
 	public List<Page> getSiblings() {
-		Page parent = page.getParentPage();
-		PageCacheUtils.addNodeTag(parent);
+		SiteMapItem parent = page.getParent();
+		//FIXME PageCacheUtils.addNodeTag(parent);
 		return getVisiblePages(parent.getChildPages());
 	}
 	

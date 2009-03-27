@@ -28,9 +28,6 @@ import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -38,18 +35,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.FetchMode;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.criterion.Restrictions;
+import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.components.model.wrapper.ComponentListWrapper;
+import org.riotfamily.components.model.wrapper.ValueWrapper;
+import org.riotfamily.core.security.AccessController;
 
 @Entity
 @Table(name="riot_content_containers")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-public class ContentContainer {
-
-	private Long id;
+public class ContentContainer extends ActiveRecordSupport {
 
 	private Content liveVersion;
 
@@ -58,15 +59,6 @@ public class ContentContainer {
 	private boolean dirty;
 	
 	public ContentContainer() {
-	}
-
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -122,5 +114,81 @@ public class ContentContainer {
 	public boolean isPublished() {
 		return liveVersion != null;
 	}
+
+	// -----------------------------------------------------------------------
 	
+	public boolean publish() {
+		if (isDirty()) {
+			Content preview = getPreviewVersion();
+			if (preview != null) {
+				AccessController.assertIsGranted("publish", this);
+				Content liveVersion = getLiveVersion();
+				setLiveVersion(preview.createCopy());
+				if (liveVersion != null) {
+					liveVersion.delete();
+				}
+				setDirty(false);
+				//FIXME ComponentCacheUtils.invalidateContainer(cacheService, this);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean discard() {		
+		Content live = getLiveVersion();
+		if (live != null) {
+			Content preview = getPreviewVersion();
+			setPreviewVersion(live.createCopy());
+			if (preview != null) {
+				preview.delete();
+			}
+			setDirty(false);
+			//FIXME ComponentCacheUtils.invalidateContainer(cacheService, this);
+			return true;
+		}
+		return false;
+	}
+	
+	public static ContentContainer load(Long id) {
+		return load(ContentContainer.class, id);
+	}
+	
+	public static ContentContainer findByComponent(Component component) {
+		ComponentListWrapper wrapper = (ComponentListWrapper)
+				getSession().createCriteria(ComponentListWrapper.class)
+				.add(Restrictions.eq("value", component.getList()))
+				.setFetchMode("value", FetchMode.SELECT)
+				.uniqueResult();
+
+		return findByWrapper(wrapper);
+	}
+	
+	public static ContentContainer findByWrapper(ValueWrapper<?> wrapper) {
+		if (wrapper == null) {
+			return null;
+		}
+		Content content = load("select c from Content c join c.wrappers w " 
+				+ "where w = ?", wrapper);
+		
+		if (content != null) {
+			return load("from ContentContainer contentContainer" 
+					+ " where contentContainer.liveVersion = ?"
+					+ " or contentContainer.previewVersion = ?",
+					content, content);
+		}
+		else {
+			ValueWrapper<?> parent = load("select l from ListWrapper l " 
+					+ "join l.wrapperList w where w = ?", wrapper);
+			
+			if (parent == null) {			
+				parent = load("select m from MapWrapper m " 
+						+ "join m.wrapperMap w where w = ?", wrapper);
+			}
+			if (parent != null) {
+				return findByWrapper(parent);
+			}
+		}
+		return null;
+	}
 }

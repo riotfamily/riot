@@ -97,7 +97,7 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 
 	public void removeChild(Object entity, Object parent) {
 		Page page = (Page) entity;
-		page.getParentPage().removePage(page);
+		page.getParentPage().removePage(page); //REVISIT USe getParent() instead?
 	}
 	
 	public void addChild(Object entity, Object parent) {

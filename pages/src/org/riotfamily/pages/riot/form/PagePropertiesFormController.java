@@ -3,7 +3,6 @@ package org.riotfamily.pages.riot.form;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.editor.ContentFormController;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
@@ -31,10 +30,9 @@ public class PagePropertiesFormController extends ContentFormController {
 	public PagePropertiesFormController(FormContextFactory formContextFactory,
 			FormRepository formRepository,
 			PlatformTransactionManager transactionManager,
-			ComponentDao componentDao, CacheService cacheService) {
+			CacheService cacheService) {
 		
-		super(formContextFactory, formRepository, transactionManager, 
-				componentDao, cacheService);
+		super(formContextFactory, formRepository, transactionManager, cacheService);
 	}
 
 	protected Form createForm(HttpServletRequest request) {

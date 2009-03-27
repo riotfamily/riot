@@ -72,6 +72,11 @@ public class Selection {
 		return objects;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public<T> List<T> getObjects(Class<T> requiredType) {
+		return (List<T>) getObjects();
+	}
+	
 	public String getSingleObjectId() {
 		if (items.isEmpty()) {
 			return null;
@@ -92,6 +97,13 @@ public class Selection {
 		return getObjects().get(0);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public<T> T getSingleObject(Class<T> requiredType) {
+		Object obj = getSingleObject();
+		Assert.isInstanceOf(requiredType, obj);
+		return (T) obj;
+	}
+		
 	public int getFirstRowIndex() {
 		if (items.isEmpty()) {
 			return -1;

@@ -27,7 +27,6 @@
 		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="transactionManager" />
-		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="cacheService" />
 	</override:bean>
 	

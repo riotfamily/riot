@@ -34,9 +34,10 @@ import org.riotfamily.common.web.ui.RenderContext;
  */
 public class PublishStatusRenderer implements ObjectRenderer {
 
+	//FIXME Make PublishStatusRenderer work again
 	public void render(Object obj, RenderContext context, PrintWriter writer) {
 		writer.print("<div class=\"publish-status publish-status-");
-		//FIXME writer.print(getStyleClass((Page) obj, (ListSession) context));
+		//writer.print(getStyleClass((Page) obj, (ListSession) context));
 		writer.print("\"></div>");
 	}
 	

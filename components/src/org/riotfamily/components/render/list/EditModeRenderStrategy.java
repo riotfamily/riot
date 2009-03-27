@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
@@ -41,10 +40,10 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 
 	private EditModeComponentDecorator editModeRenderer;
 	
-	public EditModeRenderStrategy(ComponentDao dao, ComponentRenderer renderer,
+	public EditModeRenderStrategy(ComponentRenderer renderer,
 			FormRepository formRepository, ComponentListRenderer listRenderer) {
 		
-		super(dao, renderer);
+		super(renderer);
 		editModeRenderer = new EditModeComponentDecorator(renderer, formRepository);
 		listRenderer.setEditModeRenderStrategy(this);
 	}
