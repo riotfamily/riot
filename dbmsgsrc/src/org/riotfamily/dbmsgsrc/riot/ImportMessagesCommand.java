@@ -119,7 +119,7 @@ public class ImportMessagesCommand extends DialogCommand {
 					}
 				}
 				else {
-					log.info("Skipping invalid row %s" + i);
+					log.info("Skipping invalid row %s" , i);
 				}
 			}
 		}
