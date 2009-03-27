@@ -35,6 +35,7 @@ import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
+import org.riotfamily.forms.element.Checkbox;
 import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
@@ -46,7 +47,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class ImportMessageEntriesCommand extends DialogCommand {
 
-public static final String ACTION_IMPORT = "import";
+	public static final String ACTION_IMPORT = "import";
 
 	private static final RiotLog log = RiotLog.get(ImportMessageEntriesCommand.class);
 
@@ -74,6 +75,7 @@ public static final String ACTION_IMPORT = "import";
 		FileUpload fileUpload = new FileUpload();
 		fileUpload.setRequired(true);
 		form.addElement(fileUpload, "data");
+		form.addElement(new Checkbox(), "addNewMessages");
 		return form;
 	}
 	
@@ -83,7 +85,7 @@ public static final String ACTION_IMPORT = "import";
 		try {
 			RiotUser user = AccessController.getCurrentUser();
 			log.info("Global messages uploaded by %s", user.getUserId());
-			updateMessages(upload.getData());
+			updateMessages(upload.getData(), upload.isAddNewMessages());
 		}
 		catch (OfficeXmlFileException e) {
 			throw new InvalidPropertyValueException("data","error.dbmsgsrc.unsupportedExcelVersion", "The Excel version is not support. Please save Excel file as version 97 - 2003");
@@ -93,31 +95,39 @@ public static final String ACTION_IMPORT = "import";
 		return null;
 	}
 	
-	private void updateMessages(byte[] data) throws IOException {
+	private void updateMessages(byte[] data, boolean addNewMessages) throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(data));
 		HSSFSheet sheet = wb.getSheet("Translations");
 		
 		if (isValid(sheet)) {
 			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 				HSSFRow row = sheet.getRow(i);
-				if (row.getCell(1) != null && row.getCell(3) != null) {
+				if (row.getCell(1) != null && row.getCell(2) != null) {
 					String code = row.getCell(1).getRichStringCellValue().getString();
-					String defaultMessage = row.getCell(2).getRichStringCellValue().getString();
-					String comment = row.getCell(3).getRichStringCellValue().getString();
+					String defaultMessage = row.getCell(2).getRichStringCellValue().getString();					 
+					String comment = null;
+					if (row.getCell(3) != null) {
+						comment = row.getCell(3).getRichStringCellValue().getString();
+					}
 					if (StringUtils.hasText(defaultMessage) || StringUtils.hasText(comment)) {
 						MessageBundleEntry entry = dao.findEntry(bundle, code);
-						if (entry != null) {
+						if (entry != null) {							
 							entry.getDefaultMessage().setText(defaultMessage);
 							entry.setComment(comment);
 							dao.saveEntry(entry);					
 						}
+						else if (addNewMessages) {
+							entry = new MessageBundleEntry(bundle, code, defaultMessage);
+							entry.setComment(comment);
+							dao.saveEntry(entry);
+						}
 						else {
-							log.info("Message Code does not exist - " + code);
+							log.info("Message Code does not exist and creation not allowed - " + code);
 						}
 					}
 				}
 				else {
-					log.info("Skipping invalid row %s" + i);
+					log.info("Skipping invalid row %s" , i);
 				}
 			}
 		}
@@ -139,6 +149,8 @@ public static final String ACTION_IMPORT = "import";
 	public static class Upload {
 		
 		private byte[] data;
+		
+		private boolean addNewMessages;
 
 		public byte[] getData() {
 			return data;
@@ -147,6 +159,16 @@ public static final String ACTION_IMPORT = "import";
 		public void setData(byte[] data) {
 			this.data = data;
 		}
+
+		public boolean isAddNewMessages() {
+			return addNewMessages;
+		}
+
+		public void setAddNewMessages(boolean addNewMessages) {
+			this.addNewMessages = addNewMessages;
+		}
+
+		
 		
 	}
 }
