@@ -198,8 +198,7 @@ public final class PropertyUtils {
 		}
 		else {
 	        PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(clazz, propertyPath);
-	        Assert.notNull(pd, "Property '" + propertyPath + "' not found in class " + clazz);
-	        return pd.getPropertyType();
+	        return pd != null ? pd.getPropertyType() : null;
 		}
     }
     
