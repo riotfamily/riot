@@ -125,10 +125,18 @@ RiotImageReplacement.prototype = {
 	},
 
 	encode: function(s) {
+		// correctly encode non-ASCII characters - doesn't encode ~!*()'
+		s = encodeURIComponent(s);
+		
+		// We uses escape() to escape the remaining chars. In order to prevent
+		// double-escaping of %-chars, we temporarily convert them to slashes,
+		// which are ignored by escape()
+		s = escape(s.replace(/%/g, '/'));
+		
 		// We have to convert % characters because the AlphaImageLoader decodes
 		// correctly encoded URIs and converts %23 back to # (and %26 back to &)
-		// thereby corrupting the URL.
-		return escape(encodeURIComponent(s).replace(/%/g, '@')).replace(/%/g, '@');
+		// thereby corrupting the URL. 
+		return s.replace(/[%\/]/g, '@');
 	},
 
 	setImageSrc: function(el, src) {
