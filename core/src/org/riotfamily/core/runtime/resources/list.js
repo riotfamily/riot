@@ -284,10 +284,10 @@ var RiotList = Class.create({
 			else if (result.action == 'popup') {
 				var win;
 				if (result.arguments) {
-					 win = window.open(result.url, result.windowName || 'commandPopup', result.arguments);
+					 win = window.open(result.url, result.windowName || '_blank', result.arguments);
 				}
 				else {
-					win = window.open(result.url, result.windowName || 'commandPopup');
+					win = window.open(result.url, result.windowName || '_blank');
 				}
 				if (!win) {
 					alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
