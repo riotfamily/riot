@@ -40,6 +40,7 @@ public abstract class AbstractCommand implements Command {
 		CommandInfo info = new CommandInfo();
 		info.setLabel(FormatUtils.xmlToTitleCase(getAction(context)));
 		info.setStyleClass(getStyleClass(context));
+		info.setShowOnForm(isShowOnForm(context));
 		return info;
 	}
 	
@@ -60,6 +61,10 @@ public abstract class AbstractCommand implements Command {
 	
 	protected String getStyleClass(CommandContext context) {
 		return getAction(context);
+	}
+	
+	protected boolean isShowOnForm(CommandContext context) {
+		return false;
 	}
 
 }

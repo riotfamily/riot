@@ -51,7 +51,7 @@
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
  	-->
- 	
+ 	 	
 	<override:add ref="resourceMappings" append="true">			
 		<bean class="org.riotfamily.core.resource.ResourceMapping">
 			<property name="path" value="/" />
@@ -109,37 +109,12 @@
 		<property name="commands">
 			<list>
 				<bean class="org.riotfamily.core.screen.list.command.EditCommand" />
+				<bean class="org.riotfamily.pages.riot.command.GotoPageCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.AddCommand" />
 			</list>
 		</property>
 		<property name="itemScreen">
 			<bean id="page" class="org.riotfamily.core.screen.form.FormScreen" autowire="constructor" />
-		</property>
-	</bean>
-	
-	<bean id="localContent" class="org.riotfamily.core.screen.list.TreeListScreen">
-		<property name="dao">
-			<bean class="org.riotfamily.riot.hibernate.dao.HqlDao" autowire="constructor">
-				<property name="entityClass" value="org.riotfamily.example.petstore.Pet" />
-			</bean>
-		</property>
-		<property name="columns">
-			<list>
-				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-					<property name="property" value="locale" />
-				</bean>
-				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-					<property name="property" value="name" />
-				</bean>
-			</list>
-		</property>
-		<property name="commands">
-			<list>
-				<bean class="org.riotfamily.core.screen.list.command.EditCommand" />
-			</list>
-		</property>
-		<property name="itemScreen">
-			<bean id="localSitemap" parent="sitemap" />
 		</property>
 	</bean>
 	

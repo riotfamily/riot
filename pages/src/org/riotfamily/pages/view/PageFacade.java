@@ -81,7 +81,7 @@ public class PageFacade {
 	
 	private static PathConverter getPathConverter(HttpServletRequest request) {
 		WebApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-		return SpringUtils.beanOfType(ctx, PathConverter.class);
+		return SpringUtils.beanOfTypeIncludingAncestors(ctx, PathConverter.class);
 	}
 	
 	public Long getId() {

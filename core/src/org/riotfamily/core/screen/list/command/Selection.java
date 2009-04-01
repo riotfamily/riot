@@ -72,8 +72,22 @@ public class Selection {
 		return objects;
 	}
 	
+	public boolean isCompatible(Class<?> requiredType) {
+		if (requiredType != null) {
+			for (Object obj : getObjects()) {
+				if (!requiredType.isInstance(obj)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public<T> List<T> getObjects(Class<T> requiredType) {
+		Assert.isTrue(isCompatible(requiredType), 
+				"All selected objects must be instances of " + requiredType);
+		
 		return (List<T>) getObjects();
 	}
 	
@@ -100,7 +114,9 @@ public class Selection {
 	@SuppressWarnings("unchecked")
 	public<T> T getSingleObject(Class<T> requiredType) {
 		Object obj = getSingleObject();
-		Assert.isInstanceOf(requiredType, obj);
+		Assert.isTrue(isCompatible(requiredType), 
+				"Selected object must be an instance of " + requiredType);
+		
 		return (T) obj;
 	}
 		

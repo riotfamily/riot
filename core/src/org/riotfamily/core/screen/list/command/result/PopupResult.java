@@ -23,12 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.result;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.annotations.RemoteProperty;
 
 
+@DataTransferObject
 public class PopupResult implements CommandResult {
 
-	public static final String ACTION = "popup";
-	
 	private String url;
 	
 	private String windowName;
@@ -42,41 +43,44 @@ public class PopupResult implements CommandResult {
 		this.url = url;
 	}
 	
+	@RemoteProperty
 	public String getAction() {
-		return ACTION;
+		return "popup";
 	}
 	
-	public PopupResult(String url, String windowName, 
-			String popupBlockerMessage, String arguments) {
-		
-		this.url = url;
-		this.windowName = windowName;
-		this.popupBlockerMessage = popupBlockerMessage;
-		this.arguments = arguments;
-	}
-
+	@RemoteProperty
 	public String getPopupBlockerMessage() {
 		return this.popupBlockerMessage;
 	}
 
-	public void setPopupBlockerMessage(String popupBlockerMessage) {
+	public PopupResult setPopupBlockerMessage(String popupBlockerMessage) {
 		this.popupBlockerMessage = popupBlockerMessage;
+		return this;
 	}
 
+	@RemoteProperty
 	public String getUrl() {
 		return this.url;
 	}
 
+	@RemoteProperty
 	public String getWindowName() {
 		return this.windowName;
 	}
 
-	public void setWindowName(String windowName) {
+	public PopupResult setWindowName(String windowName) {
 		this.windowName = windowName;
+		return this;
 	}
 	
+	@RemoteProperty
 	public String getArguments() {
 		return arguments;
+	}
+	
+	public PopupResult setArguments(String arguments) {
+		this.arguments = arguments;
+		return this;
 	}
 		
 }
