@@ -11,7 +11,7 @@
 					<div class="box-title"><span class="label">${context.title!}</span></div>
 					<#list context.screen.childScreens as child>
 						<a class="editor" href="${c.urlForHandler(child.id, context)}">
-							<span class="icon"<#if child.icon??> style="background-image:url(${riot.resource("style/icons/editors/" + child.icon + ".gif")})"</#if>></span>
+							<span class="icon"<#if child.icon??> style="background-image:url(${riot.resource("style/icons/screens/" + child.icon + ".gif")})"</#if>></span>
 							<span class="text">
 								<div>
 									<div class="label">${child.id}</div>

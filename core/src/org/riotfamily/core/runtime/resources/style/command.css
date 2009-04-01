@@ -55,8 +55,8 @@
 .action-view {
 	background-image: url(icons/commands/view.gif);
 }
-.action-link {
-	background-image: url(icons/commands/link.gif);
+.action-browse {
+	background-image: url(icons/commands/browse.gif);
 }
 .action-delete {
 	background-image: url(icons/commands/delete.gif);
