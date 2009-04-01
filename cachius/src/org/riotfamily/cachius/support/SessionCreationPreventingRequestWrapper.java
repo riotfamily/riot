@@ -53,10 +53,12 @@ public class SessionCreationPreventingRequestWrapper
 		sessionExists = request.getSession(false) != null;
 	}
 	
+	@Override
 	public HttpSession getSession() {
 		return getSession(true);
 	}
 	
+	@Override
 	public HttpSession getSession(boolean create) {
 		if (create && !sessionExists) {
 			throw new IllegalStateException("CacheableControllers must not " +
