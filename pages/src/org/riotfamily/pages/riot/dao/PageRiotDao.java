@@ -85,10 +85,6 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		
 	}
 
-	public boolean isNode(Object object) {
-		return object instanceof Page;
-	}
-	
 	public boolean hasChildren(Object parent, Object root, ListParams params) {
 		Page page = (Page) parent;
 		if (root != null) {

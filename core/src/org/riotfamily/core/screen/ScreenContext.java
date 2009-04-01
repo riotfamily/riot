@@ -31,7 +31,6 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mapping.HandlerUrlUtils;
 import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.core.dao.RiotDao;
-import org.riotfamily.core.dao.TreeDao;
 
 public class ScreenContext {
 
@@ -134,14 +133,6 @@ public class ScreenContext {
 		Object parentObject = object;
 		if (parentScreen instanceof ListScreen) {
 			parentObject = getParent();
-			if (dao instanceof TreeDao) {
-				if (!((TreeDao) dao).isNode(parentObject)) {
-					parentScreen = parentScreen.getParentScreen();
-					if (parentScreen == null) {
-						return null;
-					}
-				}
-			}
 		}
 		return new ScreenContext(parentScreen, null, parentObject, false, this);
 	}
