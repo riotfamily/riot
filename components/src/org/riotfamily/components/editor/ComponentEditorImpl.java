@@ -41,6 +41,8 @@ import org.directwebremoting.ScriptSession;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.annotations.RemoteProxy;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.RiotLog;
@@ -66,6 +68,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * Service bean to edit ComponentLists and ComponentVersions.
  */
 @Transactional
+@RemoteProxy(name="ComponentEditor")
 public class ComponentEditorImpl implements ComponentEditor,
 		MessageSourceAware, ServletContextAware {
 
@@ -97,6 +100,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		this.servletContext = servletContext;
 	}
 	
+	@RemoteMethod
 	public Map<String, Map<String, Object>> getTinyMCEProfiles() {
 		return this.tinyMCEProfiles;
 	}
@@ -108,6 +112,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	/**
 	 * Returns the value of the given property.
 	 */
+	@RemoteMethod
 	public String getText(Long contentId, String property) {
 		Content content = Content.load(contentId);
 		Object value = content.getValue(property);
@@ -117,6 +122,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	/**
 	 * Sets the given property to a new value.
 	 */
+	@RemoteMethod
 	public void updateText(Long contentId, String property, String text) {
 		Content content = Content.load(contentId);
 		content.setValue(property, text);
@@ -125,6 +131,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	/**
 	 *
 	 */
+	@RemoteMethod
 	public String[] updateTextChunks(Long componentId, String property,
 			String[] chunks) {
 
@@ -143,6 +150,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		return html;
 	}
 
+	@RemoteMethod
 	public String[] getComponentLabels(String[] types, HttpServletRequest request) {
 		Locale locale = RequestContextUtils.getLocale(request);
 		String[] labels = new String[types.length];
@@ -157,6 +165,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * Creates a new Component and inserts it in the list identified
 	 * by the given id.
 	 */
+	@RemoteMethod
 	@SuppressWarnings("unchecked")
 	public String insertComponent(Long listId, int position, String type, String properties) {
 		// NOTE: The initial properties are passed as JSON String because DWR
@@ -187,6 +196,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		return component;
 	}
 	
+	@RemoteMethod
 	@SuppressWarnings("unchecked")
 	public String setType(Long componentId, String type, String properties) {
 		Component component = Component.load(componentId);
@@ -197,6 +207,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		return renderComponent(component);
 	}
 	
+	@RemoteMethod
 	public String renderComponent(Long componentId) {
 		Component component = Component.load(componentId);
 		return renderComponent(component);
@@ -218,6 +229,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		}
 	}
 
+	@RemoteMethod
 	public void moveComponent(Long componentId, Long nextComponentId) {
 		Component component = Component.load(componentId);
 		ComponentList componentList = component.getList();
@@ -236,13 +248,15 @@ public class ComponentEditorImpl implements ComponentEditor,
 		}
 	}
 
+	@RemoteMethod
 	public void deleteComponent(Long componentId) {
 		Component component = Component.load(componentId);
 		ComponentList componentList = component.getList();
 		List<Component> components = componentList.getComponents();
 		components.remove(component);
 	}
-
+	
+	@RemoteMethod
 	public void markAsDirty(Long containerId) {
 		ContentContainer container = ContentContainer.load(containerId);
 		container.setDirty(true);
@@ -250,6 +264,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		nofifyUsers();
 	}
 	
+	@RemoteMethod
 	public void publish(Long[] containerIds) {
 		if (containerIds != null) {
 			for (Long id : containerIds) {
@@ -262,6 +277,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		nofifyUsers();
 	}
 
+	@RemoteMethod
 	public void discard(Long[] containerIds) {
 		if (containerIds != null) {
 			for (Long id : containerIds) {
@@ -277,6 +293,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	/**
 	 * Performs a logout.
 	 */
+	@RemoteMethod
 	public void logout() {
 		WebContext ctx = WebContextFactory.get();
 		LoginManager.logout(ctx.getHttpServletRequest(), 
