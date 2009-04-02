@@ -99,7 +99,7 @@ public class HyphenatedLineBreakMeasurerer {
     	end = measurer.getLineBreakIndex(start, wrappingWidth);
     	int nextBreak = getNextBreak();
     	if (nextBreak != -1) {
-    		end = nextBreak - 1;
+    		end = nextBreak;
     	}
     	else {
 			if (!isBreakAtWhitespace()) {
