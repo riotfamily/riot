@@ -32,12 +32,22 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class SetupBean extends HibernateDaoSupport implements InitializingBean {
 
+	private PlatformTransactionManager tx;
+	
 	private List<?> objects;
 
 	private String condition;
+	
+	public void setTransactionManager(PlatformTransactionManager tx) {
+		this.tx = tx;
+	}
 		
 	public void setObjects(List<?> objects) {
 		this.objects = objects;
@@ -49,10 +59,26 @@ public class SetupBean extends HibernateDaoSupport implements InitializingBean {
 
 	protected void initDao() throws Exception {
 		if (setupRequired()) {
-			for (Object object : objects) {
-				getHibernateTemplate().save(object);
+			if (tx != null) {
+				new TransactionTemplate(tx).execute(new TransactionCallbackWithoutResult() {
+				
+					@Override
+					protected void doInTransactionWithoutResult(TransactionStatus status) {
+						saveObjects();		
+					}
+				});
 			}
+			else {
+				saveObjects();
+			}
+			
 		}
+	}
+	
+	protected void saveObjects() {
+		for (Object object : objects) {
+			getHibernateTemplate().save(object);
+		}	
 	}
 	
 	protected boolean setupRequired() {
