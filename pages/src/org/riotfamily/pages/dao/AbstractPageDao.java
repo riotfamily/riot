@@ -219,6 +219,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		
 		PageCacheUtils.invalidateNode(cacheService, node);
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
+		ComponentCacheUtils.invalidateContainer(cacheService, page.getPageProperties());
 
 		String oldPath = page.getPath();
 		String newPath = page.buildPath();
