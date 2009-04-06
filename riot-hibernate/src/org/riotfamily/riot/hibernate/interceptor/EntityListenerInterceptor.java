@@ -60,7 +60,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	
 	private SessionFactory sessionFactory;
 	
-	private Map<Class<?>, List<EntityListener<Object>>> listeners = Generics.newHashMap();
+	private Map<Class<?>, List<EntityListener<Object>>> listeners;
 	
 	private ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
 	
@@ -71,11 +71,6 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 
 	public void setApplicationContext(ApplicationContext context) {
 		this.context = context;
-		for (EntityListener<Object> listener : SpringUtils.listBeansOfType(
-				context, EntityListener.class)) {
-
-			registerListener(getEntityClass(listener), listener);
-		}
 	}
 	
 	/**
@@ -99,6 +94,9 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	}
 	
 	private List<EntityListener<Object>> getListeners(Object entity) {
+		if (listeners == null) {
+			registerListeners();
+		}
 		Class<? >entityClass = entity.getClass();
 		List<EntityListener<Object>> result = listeners.get(entityClass);
 		if (result == null) {
@@ -114,6 +112,15 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			}
 		}
 		return result;
+	}
+	
+	private void registerListeners() {
+		listeners = Generics.newHashMap();
+		for (EntityListener<Object> listener : SpringUtils.listBeansOfType(
+				context, EntityListener.class)) {
+
+			registerListener(getEntityClass(listener), listener);
+		}
 	}
 	
 	
@@ -181,14 +188,14 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		if (i != null) {
 			try {
 				Session session = createTemporarySession();
-				for (Object entity : i.getSavedEntites()) {
+				for (Object entity : i.getSavedEntities()) {
 					Object mergedEntity = session.merge(entity);
 					List<EntityListener<Object>> listeners = getListeners(mergedEntity);
 					for (EntityListener<Object> listener : listeners) {
 						listener.onSave(mergedEntity);
 					}	
 				}
-				for (Object entity : i.getUpdatedEntites()) {
+				for (Object entity : i.getUpdatedEntities()) {
 					Object mergedEntity = session.merge(entity);
 					List<EntityListener<Object>> listeners = getListeners(mergedEntity);
 					for (EntityListener<Object> listener : listeners) {
@@ -268,14 +275,14 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			updatedEntites.add(entity);
 		}
 		
-		public Set<Object> getSavedEntites() {
+		public Set<Object> getSavedEntities() {
 			if (savedEntites == null) {
 				return Collections.emptySet();
 			}
 			return savedEntites;
 		}
 		
-		public Set<Object> getUpdatedEntites() {
+		public Set<Object> getUpdatedEntities() {
 			if (updatedEntites == null) {
 				return Collections.emptySet();
 			}
