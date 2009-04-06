@@ -31,9 +31,19 @@ import org.riotfamily.riot.security.AccessController;
  */
 public class RestrictedElement extends AbstractConditionalElement {
 
+	private boolean readOnly = true;
+	
+    public void setReadOnly(boolean readOnly) {
+    	this.readOnly = readOnly;
+	}
+    
 	protected boolean isEditable() {
+		if (readOnly) {
+			return false;
+		}
 		return AccessController.isGranted(
 				"edit-" + getEditor().getEditorBinding().getPropertyPath(), 
 				getForm().getBackingObject());
 	}
+	
 }
