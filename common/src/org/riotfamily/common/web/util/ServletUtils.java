@@ -635,6 +635,19 @@ public final class ServletUtils {
 	}
 	
 	/**
+	 * Appends the given parameter to the given URL's query string.
+	 * @since 8.1
+	 */
+	public static void appendParameter(StringBuilder url, String name, String value) {
+		boolean first = url.indexOf("?") == -1;
+		url.append(first ? '?' : '&');
+		url.append(name);
+		if (value != null) {
+			url.append('=').append(FormatUtils.uriEscape(value));
+		}
+	}
+	
+	/**
 	 * Returns an URL with all of the given request's parameters added to the
 	 * given URL's query string.
 	 */
@@ -656,6 +669,22 @@ public final class ServletUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void appendRequestParameters(StringBuffer url, HttpServletRequest request) {
+		Enumeration<String> e = request.getParameterNames();
+		while (e.hasMoreElements()) {
+			String name = e.nextElement();
+			String[] values = request.getParameterValues(name);
+			for (int i=0; i < values.length; i++) {
+				appendParameter(url, name, values[i]);
+			}
+		}
+	}
+	
+	/**
+	 * Appends all of the given request's parameters to the given URL's query string.
+	 * @since 8.1
+	 */
+	@SuppressWarnings("unchecked")
+	public static void appendRequestParameters(StringBuilder url, HttpServletRequest request) {
 		Enumeration<String> e = request.getParameterNames();
 		while (e.hasMoreElements()) {
 			String name = e.nextElement();
