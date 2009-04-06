@@ -1,0 +1,88 @@
+.notification {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	z-index: 99;
+}
+
+.notification .c {
+	width: 200px;
+}
+
+.notification .l, 
+.notification .r {
+	width: 35px;
+}
+.notification .t td {
+	height: 33px;
+}
+.notification .b td {
+  height: 41px;
+}
+
+.notification .t .l {
+  background-image: url(images/tl.png);
+}
+.notification .hi .t .l {
+  background-image: url(images/tl_hi.png);
+}
+.notification .t .c {
+  background-image: url(images/tc.png);
+}
+.notification .hi .t .c {
+  background-image: url(images/tc_hi.png);
+}
+.notification .t .r {
+  background-image: url(images/tr.png);
+}
+.notification .hi .t .r {
+  background-image: url(images/tr_hi.png);
+}
+
+.notification .m .l {
+  background-image: url(images/ml.png);
+}
+.notification .hi .m .l {
+  background-image: url(images/ml_hi.png);
+}
+.notification .m .c {
+  background-image: url(images/mc.png);
+}
+.notification .m .r {
+  background-image: url(images/mr.png);
+}
+.notification .hi .m .r {
+  background-image: url(images/mr_hi.png);
+}
+
+.notification .b .l {
+  background-image: url(images/bl.png);
+}
+.notification .hi .b .l {
+  background-image: url(images/bl_hi.png);
+}
+.notification .b .c {
+  background-image: url(images/bc.png);
+}
+.notification .hi .b .c {
+  background-image: url(images/bc_hi.png);
+}
+.notification .b .r {
+  background-image: url(images/br.png);
+}
+.notification .hi .b .r {
+  background-image: url(images/br_hi.png);
+}
+
+.notification .icon {
+  background-position: center center;
+}
+.notification .text {
+  color: #fff;
+  font-size: 10pt;
+  font-family: arial;
+}
+.notification .title {
+  font-size: 11pt;
+  font-weight: bold;
+}
