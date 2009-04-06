@@ -23,114 +23,75 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.RiotDao;
 import org.springframework.util.Assert;
 
-public class Selection {
+public class Selection implements Iterable<SelectionItem> {
 
 	private RiotDao dao;
 	
-	private List<? extends SelectionItem> items;
-	
-	private List<String> objectIds;
-	
-	private List<Object> objects;
-	
-	public Selection(RiotDao dao, List<? extends SelectionItem> items) {
+	private List<SelectionItem> items;
+		
+	public Selection(RiotDao dao, List<? extends ObjectReference> refs) {
 		this.dao = dao;
-		this.items = items;
+		this.items = Generics.newArrayList();
+		if (refs != null) {
+			for (ObjectReference ref : refs) {
+				this.items.add(new Foo(ref));
+			}
+		}
 	}
 
+	public Iterator<SelectionItem> iterator() {
+		return items.iterator();
+	}
+	
 	public int size() {
 		return items.size();
 	}
 	
-	protected List<? extends SelectionItem> getItems() {
-		return items;
-	}
-	
-	public List<String> getObjectIds() {
-		if (objectIds == null) {
-			objectIds = Generics.newArrayList(items.size());
-			for (SelectionItem item : items) {
-				objectIds.add(item.getObjectId());
-			}
-		}
-		return objectIds;
-	}
-	
-	public List<Object> getObjects() {
-		if (objects == null) {
-			objects = Generics.newArrayList();
-			for (SelectionItem item : items) {
-				objects.add(dao.load(item.getObjectId()));
-			}
-		}
-		return objects;
-	}
-	
-	public boolean isCompatible(Class<?> requiredType) {
-		if (requiredType != null) {
-			for (Object obj : getObjects()) {
-				if (!requiredType.isInstance(obj)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public<T> List<T> getObjects(Class<T> requiredType) {
-		Assert.isTrue(isCompatible(requiredType), 
-				"All selected objects must be instances of " + requiredType);
-		
-		return (List<T>) getObjects();
-	}
-	
-	public String getSingleObjectId() {
+	public SelectionItem getSingleItem() {
 		if (items.isEmpty()) {
 			return null;
 		}
 		Assert.isTrue(items.size() == 1,
 				"Selection must not contain more than one item");
 		
-		return items.get(0).getObjectId();
+		return items.get(0);
 	}
-	
-	public Object getSingleObject() {
-		if (items.isEmpty()) {
-			return null;
-		}
-		Assert.isTrue(items.size() == 1,
-				"Selection must not contain more than one item");
+			
+	private class Foo implements SelectionItem {
 		
-		return getObjects().get(0);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public<T> T getSingleObject(Class<T> requiredType) {
-		Object obj = getSingleObject();
-		Assert.isTrue(isCompatible(requiredType), 
-				"Selected object must be an instance of " + requiredType);
+		private String objectId;
 		
-		return (T) obj;
-	}
+		private Object object;
 		
-	public int getFirstRowIndex() {
-		if (items.isEmpty()) {
-			return -1;
+		private int rowIndex;
+
+		public Foo(ObjectReference ref) {
+			this.objectId = ref.getObjectId();
+			this.rowIndex = ref.getRowIndex();
 		}
-		return items.get(0).getRowIndex();
-	}
-	
-	public int getLastRowIndex() {
-		if (items.isEmpty()) {
-			return -1;
+		
+		public String getObjectId() {
+			return objectId;
 		}
-		return items.get(items.size() - 1).getRowIndex();
+		
+		public int getRowIndex() {
+			return rowIndex;
+		}
+		
+		public Object getObject() {
+			if (object == null && objectId != null) {
+				object = dao.load(objectId);
+			}
+			return object;
+		}
+
 	}
+
 }

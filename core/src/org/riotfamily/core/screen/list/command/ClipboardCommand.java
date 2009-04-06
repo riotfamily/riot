@@ -23,30 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
-import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
+import org.riotfamily.core.screen.ListScreen;
 
-public class AddCommand implements Command { //REVISIT Extend AbstractChildCommand
+public interface ClipboardCommand {
 
-	public CommandInfo getInfo(CommandContext context) {
-		CommandInfo info = new CommandInfo();
-		info.setLabel("Add");
-		info.setStyleClass("add");
-		return info;
-	}
+	public boolean canPaste(ListScreen origin, Selection selection, 
+			ListScreen target, Object newParent);
 	
-	public boolean isEnabled(CommandContext context, Selection selection) {
-		return selection.size() <= 1;
-	}
-	
-	public CommandResult execute(CommandContext context, Selection selection) {
-		Object parent = null;
-		if (selection.size() == 1) {
-			parent = selection.getSingleItem().getObject();
-		}
-		ScreenContext childContext = context.createNewItemContext(parent);
-		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
-	}
+	public void paste(ListScreen source, Selection selection, 
+			ListScreen target, Object newParent);
 
 }

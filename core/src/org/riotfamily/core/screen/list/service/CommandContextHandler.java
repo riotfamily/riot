@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.ListParams;
-import org.riotfamily.core.dao.RiotDao;
+import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.core.screen.list.command.CommandContext;
@@ -114,8 +114,7 @@ class CommandContextHandler extends ListServiceHandler
 		TransactionStatus status = beginTransaction();
 		try {
 			Object input = form.populateBackingObject();
-			List<ListItem> items = form.getAttribute("selectionItems");
-			Selection selection = new Selection(dao, items);
+			Selection selection = form.getAttribute("selection");
 			commandId = form.getAttribute("commandId");
 			DialogCommand command = (DialogCommand) getCommands().get(commandId);
 			result = command.handleInput(this, selection, input, 
@@ -175,8 +174,8 @@ class CommandContextHandler extends ListServiceHandler
 		return request;
 	}
 
-	public RiotDao getDao() {
-		return dao;
+	public ListScreen getScreen() {
+		return screen;
 	}
 	
 }

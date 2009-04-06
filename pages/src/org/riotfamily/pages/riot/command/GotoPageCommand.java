@@ -23,20 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import org.riotfamily.core.screen.list.command.AbstractBatchCommand;
 import org.riotfamily.core.screen.list.command.CommandContext;
-import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.SimpleBatchCommand;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
 import org.riotfamily.core.screen.list.command.result.PopupResult;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.view.PageFacade;
 
-public class GotoPageCommand extends SimpleBatchCommand<Page> {
-
-	@Override
-	protected boolean isEnabledForAll(CommandContext context, Selection selection) {
-		return true;
-	}
+public class GotoPageCommand extends AbstractBatchCommand<Page> {
 	
 	@Override
 	protected boolean isShowOnForm(CommandContext context) {

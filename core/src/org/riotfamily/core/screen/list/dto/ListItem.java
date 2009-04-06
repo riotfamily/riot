@@ -27,13 +27,13 @@ import java.util.List;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteProperty;
-import org.riotfamily.core.screen.list.command.SelectionItem;
+import org.riotfamily.core.screen.list.command.ObjectReference;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  */
 @DataTransferObject
-public class ListItem implements SelectionItem {
+public class ListItem implements ObjectReference {
 
 	@RemoteProperty
 	private int rowIndex;
@@ -61,23 +61,10 @@ public class ListItem implements SelectionItem {
 		this.columns = columns;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.core.screen.list.dto.SelectionItem#getObjectId()
-	 */
-	public String getObjectId() {
-		return this.objectId;
-	}
-
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.core.screen.list.dto.SelectionItem#getRowIndex()
-	 */
-	public int getRowIndex() {
-		return this.rowIndex;
-	}
 
 	public void setRowIndex(int rowIndex) {
 		this.rowIndex = rowIndex;
@@ -112,6 +99,18 @@ public class ListItem implements SelectionItem {
 	
 	public int hashCode() {
 		return objectId != null ? objectId.hashCode() : 0;
+	}
+	
+	// ----------------------------------------------------------------------
+	// Implementation of the ObjectReference interface
+	// ----------------------------------------------------------------------
+	
+	public String getObjectId() {
+		return this.objectId;
+	}
+	
+	public int getRowIndex() {
+		return this.rowIndex;
 	}
 		
 }

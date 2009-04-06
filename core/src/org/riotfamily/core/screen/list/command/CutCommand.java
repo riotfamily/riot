@@ -23,16 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
-import org.riotfamily.core.dao.CopyAndPasteEnabledDao;
+import org.riotfamily.core.dao.CutAndPasteEnabledDao;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
 import org.riotfamily.core.screen.list.command.result.NotificationResult;
 
-public class CopyCommand extends AbstractCommand implements ClipboardCommand {
+public class CutCommand extends AbstractCommand implements ClipboardCommand {
 
 	public CommandResult execute(CommandContext context, Selection selection) {
 		Clipboard.get(context).set(context.getScreen(), selection, this);
-		return new NotificationResult("Item(s) copied to clipboard");
+		return new NotificationResult("Item(s) stored in clipboard");
 	}
 
 	public boolean canPaste(ListScreen origin, Selection selection, 
@@ -41,12 +41,22 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 		return true;
 	}
 			
-	public void paste(ListScreen origin, Selection selection, 
+	public void paste(ListScreen source, Selection selection, 
 			ListScreen target, Object newParent) {
 		
-		CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) target.getDao();
+		CutAndPasteEnabledDao sourceDao = (CutAndPasteEnabledDao) source.getDao();
+		CutAndPasteEnabledDao targetDao = (CutAndPasteEnabledDao) target.getDao();
+		
 		for (SelectionItem item : selection) {
-			dao.addCopy(item.getObject(), newParent);
+			Object obj = item.getObject();
+			if (sourceDao != null) {
+				Object oldParent = sourceDao.getParent(obj);
+				targetDao.addChild(obj, newParent);
+				sourceDao.removeChild(obj, oldParent);
+			}
+			else {
+				targetDao.addChild(obj, newParent);
+			}
 		}
 	}
 

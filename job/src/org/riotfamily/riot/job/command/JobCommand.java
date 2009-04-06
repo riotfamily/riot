@@ -45,6 +45,7 @@ public class JobCommand extends AbstractCommand {
 	}
 	
 	public CommandResult execute(CommandContext context, Selection selection) {
+		/*
 		String objectId = selection.getSingleObjectId() != null
 				? selection.getSingleObjectId() 
 				: context.getParentId();
@@ -53,7 +54,6 @@ public class JobCommand extends AbstractCommand {
 		attributes.put("type", jobType);
 		attributes.put("objectId", objectId);
 		//String url = getRuntime().getUrlForHandler("jobUIController", attributes);
-		/*
 		return new GotoUrlResult(context, ServletUtils.addParameter(url, 
 				"title", getLabel(context.getMessageResolver())));
 		*/

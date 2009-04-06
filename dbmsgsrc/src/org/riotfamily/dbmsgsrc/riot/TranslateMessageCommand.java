@@ -36,12 +36,12 @@ public class TranslateMessageCommand extends AbstractCommand {
 	
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		Message message = (Message) selection.getSingleObject();
+		Message message = (Message) selection.getSingleItem().getObject();
 		return MessageBundleEntry.C_LOCALE.equals(message.getLocale());
 	}
 	
 	public CommandResult execute(CommandContext context, Selection selection) {
-		Message message = (Message) selection.getSingleObject();
+		Message message = (Message) selection.getSingleItem().getObject();
 		Site site = (Site) context.getParent();
 		message.getEntry().addTranslation(site.getLocale());
 		return new RefreshSiblingsResult();

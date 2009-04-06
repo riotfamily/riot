@@ -5,20 +5,20 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.springframework.util.ObjectUtils;
 
 @DataTransferObject
-public class RefreshSiblingsResult implements CommandResult {
+public class RefreshChildrenResult implements CommandResult {
 
 	private String objectId;
 	
-	public RefreshSiblingsResult() {
+	public RefreshChildrenResult() {
 	}
 		
-	public RefreshSiblingsResult(String objectId) {
+	public RefreshChildrenResult(String objectId) {
 		this.objectId = objectId;
 	}
 
 	@RemoteMethod
 	public String getAction() {
-		return "refreshSiblings";
+		return "refreshChildren";
 	}
 	
 	@RemoteMethod
@@ -34,8 +34,8 @@ public class RefreshSiblingsResult implements CommandResult {
 		if (obj == this) {
 			return true;
 		}
-		if (obj instanceof RefreshSiblingsResult) {
-			RefreshSiblingsResult other = (RefreshSiblingsResult) obj;
+		if (obj instanceof RefreshChildrenResult) {
+			RefreshChildrenResult other = (RefreshChildrenResult) obj;
 			return ObjectUtils.nullSafeEquals(objectId, other.objectId);
 		}
 		return false;

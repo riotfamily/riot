@@ -33,8 +33,8 @@ public abstract class SwapCommand extends AbstractCommand {
 
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		if (selection.size() == 1 && context.getDao() instanceof SwappableItemDao) {
-			int index = selection.getLastRowIndex();
+		if (selection.size() == 1 && context.getScreen().getDao() instanceof SwappableItemDao) {
+			int index = selection.getSingleItem().getRowIndex();
 			return index + getSwapWith() >= 0 &&
 					index + getSwapWith() < context.getItemsTotal();
 		}
@@ -42,11 +42,11 @@ public abstract class SwapCommand extends AbstractCommand {
 	}
 
 	public CommandResult execute(CommandContext context, Selection selection) {
-		SwappableItemDao dao = (SwappableItemDao) context.getDao();
-		dao.swapEntity(selection.getSingleObject(), context.getParent(), 
+		SwappableItemDao dao = (SwappableItemDao) context.getScreen().getDao();
+		dao.swapEntity(selection.getSingleItem().getObject(), context.getParent(), 
 				context.getParams(), getSwapWith());
 		
-		return new RefreshSiblingsResult(selection.getSingleObjectId());
+		return new RefreshSiblingsResult(selection.getSingleItem().getObjectId());
 	}
 
 }

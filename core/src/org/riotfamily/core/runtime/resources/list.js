@@ -185,6 +185,17 @@ var RiotList = Class.create({
 		}
 		ListService.getModel(this.key, null, this.updateRowsAndPager.bind(this));
 	},
+	
+	refreshChildren: function(objectId) {
+		if (objectId) {
+			var tr = $('item-' + objectId);
+			if (tr) {
+				tr.refreshChildren();
+				return;
+			}
+		}
+		ListService.getModel(this.key, null, this.updateRowsAndPager.bind(this));
+	},
 		
 	getSelectionIndex: function(item) {
 		for (var i = 0; i < this.selection.length; i++) {
@@ -258,6 +269,9 @@ var RiotList = Class.create({
 			}
 			else if (result.action == 'refreshSiblings') {
 				this.refreshSiblings(result.objectId);
+			}
+			else if (result.action == 'refreshChildren') {
+				this.refreshChildren(result.objectId);
 			}
 			else if (result.action == 'refreshListCommands') {
 				this.refreshListCommands();

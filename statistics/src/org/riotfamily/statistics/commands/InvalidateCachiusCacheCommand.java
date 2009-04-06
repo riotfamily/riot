@@ -38,7 +38,7 @@ public class InvalidateCachiusCacheCommand extends AbstractCommand {
 	}
 	
 	public CommandResult execute(CommandContext context, Selection selection) {
-		CachiusStatisticsDao dao = (CachiusStatisticsDao) context.getDao();
+		CachiusStatisticsDao dao = (CachiusStatisticsDao) context.getScreen().getDao();
 		dao.getCachiusStatistics().invalidateAllItems();
 		return new RefreshSiblingsResult();
 	}

@@ -26,7 +26,7 @@ package org.riotfamily.core.screen.list.command;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.core.dao.ListParams;
-import org.riotfamily.core.dao.RiotDao;
+import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.forms.FormContext;
 
@@ -47,7 +47,7 @@ public interface CommandContext {
 	
 	public Object getParent();
 	
-	public RiotDao getDao();
+	public ListScreen getScreen();
 	
 	public FormContext createFormContext(String formUrl);
 	

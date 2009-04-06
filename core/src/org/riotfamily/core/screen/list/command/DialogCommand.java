@@ -40,7 +40,7 @@ public abstract class DialogCommand extends AbstractCommand {
 		Form form = createForm(selection);
 		
 		form.setAttribute("commandId", context.getCommandId());
-		form.setAttribute("selectionItems", selection.getItems());
+		form.setAttribute("selection", selection);
 		form.setAttribute("listStateKey", context.getListKey());
 		
 		String formSessionAttribute = "foo"; //FIXME Generate a distinct key

@@ -23,13 +23,62 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.screen.ListScreen;
+
 public class Clipboard {
 
-	public static Clipboard get(CommandContext context) {
-		return null;
-	}
+	private static final String SESSION_ATTR = Clipboard.class.getName();
 
-	public void copy(Selection selection) {
+	private ClipboardCommand command;
+	
+	private ListScreen origin;
+	
+	private Selection selection;
+
+	public void set(ListScreen origin, Selection selection, ClipboardCommand command) {
+		this.origin = origin;
+		this.selection = selection;
+		this.command = command;
+	}
+	
+	public boolean canPaste(ListScreen target, Object parent) {
+		if (command != null) {
+			return command.canPaste(origin, selection, target, parent);
+		}
+		return false;
+	}
+	
+	public List<SelectionItem> paste(ListScreen target, Object parent) {
+		List<SelectionItem> result = Generics.newArrayList();
+		if (command != null) {
+			command.paste(origin, selection, target, parent);
+			for (SelectionItem item : selection) {
+				result.add(item);
+			}
+			clear();
+		}
+		return result;
+	}
+	
+	public void clear() {
+		origin = null;
+		selection = null;
+		command = null;
+	}
+	
+	public static Clipboard get(CommandContext context) {
+		HttpSession session = context.getRequest().getSession();
+		Clipboard clipboard = (Clipboard) session.getAttribute(SESSION_ATTR);
+		if (clipboard == null) {
+			clipboard = new Clipboard();
+			session.setAttribute(SESSION_ATTR, clipboard);
+		}
+		return clipboard;
 	}
 
 }

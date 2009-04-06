@@ -23,38 +23,30 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
-import org.riotfamily.common.util.Generics;
+import java.util.List;
+
+import org.riotfamily.core.screen.list.command.result.BatchResult;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.result.RefreshChildrenResult;
+import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
 
-public abstract class SingleItemCommand<T> extends AbstractCommand {
+public class PasteCommand extends AbstractChildCommand {
 
-	private Class<T> requiredType;
-	
-	@SuppressWarnings("unchecked")
-	private Class<T> getRequiredType() {
-		if (requiredType == null) { 
-			requiredType = (Class<T>) Generics.getTypeArguments(
-					SingleItemCommand.class, getClass()).get(0);
-		}
-		return requiredType; 
-	}
-	
 	@Override
-	public boolean isEnabled(CommandContext context, Selection selection) {
-		if (selection.size() == 1 && selection.isCompatible(getRequiredType())) {
-			T item = selection.getSingleObject(getRequiredType());
-			return isEnabled(context, item);
+	public boolean isEnabled(CommandContext context, SelectionItem parent) {
+		return Clipboard.get(context).canPaste(context.getScreen(), parent.getObject());
+	}
+	
+	public CommandResult execute(CommandContext context, SelectionItem parent) {
+		List<SelectionItem> pasted = Clipboard.get(context).paste(
+				context.getScreen(), parent.getObject());
+		
+		BatchResult result = new BatchResult();
+		for (SelectionItem item : pasted) {
+			result.add(new RefreshSiblingsResult(item.getObjectId()));
 		}
-		return false;
+		result.add(new RefreshChildrenResult(parent.getObjectId()));
+		return result;
 	}
 	
-	protected boolean isEnabled(CommandContext context, T item) {
-		return true;
-	}
-	
-	public CommandResult execute(CommandContext context, Selection selection) {
-		return execute(context, selection.getSingleObject(getRequiredType()));
-	}
-	
-	protected abstract CommandResult execute(CommandContext context, T item);
 }

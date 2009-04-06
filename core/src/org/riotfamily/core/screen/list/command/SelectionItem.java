@@ -23,10 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
-public interface SelectionItem {
+public interface SelectionItem extends ObjectReference {
 
-	public abstract String getObjectId();
-
-	public abstract int getRowIndex();
-
+	public Object getObject();
+	
 }

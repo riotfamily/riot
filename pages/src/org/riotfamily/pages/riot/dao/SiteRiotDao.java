@@ -27,12 +27,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.riotfamily.core.dao.CutAndPasteEnabledDao;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.RiotDaoAdapter;
 import org.riotfamily.core.dao.SwappableItemDao;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.springframework.dao.DataAccessException;
 
@@ -40,8 +38,7 @@ import org.springframework.dao.DataAccessException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
-		CutAndPasteEnabledDao {
+public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao {
 
 	public Class<?> getEntityClass() {
 		return Site.class;
@@ -93,17 +90,6 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 		long pos = site.getPosition();
 		site.setPosition(other.getPosition());
 		other.setPosition(pos);
-	}
-
-	public void removeChild(Object entity, Object parent) {
-		Page page = (Page) entity;
-		page.getParentPage().removePage(page); //REVISIT USe getParent() instead?
-	}
-	
-	public void addChild(Object entity, Object parent) {
-		Page page = (Page) entity;
-		Site site = (Site) parent;
-		site.addPage(page);
 	}
 	
 }

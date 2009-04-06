@@ -92,7 +92,7 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		
 		public CommandResult execute(CommandContext context, Selection selection) {
 			ScreenContext nextContext = new ScreenContext(nextList, 
-					selection.getSingleObject(), null, false, screenContext);
+					selection.getSingleItem().getObject(), null, false, screenContext);
 			
 			return new GotoUrlResult(context.getRequest(), nextContext.getUrl());
 		}
@@ -107,7 +107,7 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		
 		public CommandResult execute(CommandContext context, Selection selection) {
 			return new ScriptResult("parent.riot.chooser.chosen('" + 
-					selection.getSingleObjectId() + "')");
+					selection.getSingleItem().getObjectId() + "')");
 		}
 	}
 

@@ -27,7 +27,7 @@ import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
 import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 
-public class EditCommand extends SingleItemCommand<Object> {
+public class EditCommand extends AbstractSingleItemCommand<Object> {
 
 	@Override
 	protected CommandResult execute(CommandContext context, Object item) {

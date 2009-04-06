@@ -12,6 +12,7 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.SelectionItem;
 import org.riotfamily.statistics.domain.CacheRegionStatsItem;
 
 public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
@@ -28,7 +29,8 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 	}
 	
 	public void doExecute(CommandContext context, Selection selection) {
-		for (CacheRegionStatsItem crs : selection.getObjects(CacheRegionStatsItem.class)) {
+		for (SelectionItem item : selection) {
+			CacheRegionStatsItem crs = (CacheRegionStatsItem) item.getObject();
 			clearHibernateCacheRegion(crs.getName());	
 		}
 	}

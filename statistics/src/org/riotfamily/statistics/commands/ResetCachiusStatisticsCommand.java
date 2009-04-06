@@ -33,7 +33,7 @@ import org.riotfamily.statistics.dao.CachiusStatisticsDao;
 public class ResetCachiusStatisticsCommand extends AbstractCommand {
 	
 	public CommandResult execute(CommandContext context, Selection selection) {
-		CachiusStatisticsDao dao = (CachiusStatisticsDao) context.getDao();
+		CachiusStatisticsDao dao = (CachiusStatisticsDao) context.getScreen().getDao();
 		dao.getCachiusStatistics().reset();
 		return new RefreshSiblingsResult();
 	}

@@ -108,7 +108,10 @@
 			<list>
 				<bean class="org.riotfamily.core.screen.list.command.EditCommand" />
 				<bean class="org.riotfamily.pages.riot.command.GotoPageCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.CutCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.CopyCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.AddCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.PasteCommand" />
 			</list>
 		</property>
 		<property name="itemScreen">
