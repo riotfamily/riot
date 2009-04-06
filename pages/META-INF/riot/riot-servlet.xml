@@ -97,13 +97,11 @@
 				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
 					<property name="property" value="pathComponent" />
 				</bean>
-				<!-- 
 				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
 					<property name="renderer">
 						<bean class="org.riotfamily.pages.riot.ui.PublishStatusRenderer" />
 					</property>
 				</bean>
-				 -->
 			</list>
 		</property>
 		<property name="commands">

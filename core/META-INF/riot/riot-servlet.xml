@@ -120,6 +120,7 @@
 		<property name="freemarkerVariables">
 			<map>
 				<entry key="runtime" value-ref="riotRuntime" />
+				<entry key="customStyleSheets" value-ref="customStyleSheets" />
 			</map>
 		</property>
 		<property name="macroLibraries">
@@ -280,9 +281,9 @@
 	</util:map>
 	
 	<util:map id="customFormElements">
+		<entry key="{http://www.riotfamily.org/schema/core/form-elements}chooser"
+				value="org.riotfamily.core.form.element.ObjectChooser" />
 		<!-- 
-		<entry key="{http://www.riotfamily.org/schema/riot/form-elements}chooser"
-				value="org.riotfamily.riot.form.element.ObjectChooser" />
 		<entry key="{http://www.riotfamily.org/schema/riot/form-elements}restricted"
 						value="org.riotfamily.riot.form.element.RestrictedElement" />
 		-->				

@@ -51,7 +51,7 @@ public class ScreenContext {
 	private Object object;
 	
 	private Object parent;
-
+	
 	public ScreenContext(RiotScreen screen, HttpServletRequest request,
 			String objectId, String parentId, boolean nestedTreeItem) {
 		
@@ -188,11 +188,15 @@ public class ScreenContext {
 		return HandlerUrlUtils.getUrl(request, screen.getId(), this);
 	}
 	
-	public List<ScreenContext> getPath() {
-		List<ScreenContext> path = Generics.newArrayList();
+	public ScreenLink getLink() {
+		return new ScreenLink(getTitle(), getUrl());
+	}
+	
+	public List<ScreenLink> getPath() {
+		List<ScreenLink> path = Generics.newArrayList();
 		ScreenContext ctx = this;
 		while (ctx != null) {
-			path.add(0, ctx);
+			path.add(0, ctx.getLink());
 			ctx = ctx.createParentContext();
 		}
 		return path;

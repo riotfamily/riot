@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 
@@ -35,7 +36,11 @@ import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.request.SimpleFormRequest;
 
-public class ListState {
+/**
+ * State of a list screen. Instances are stored in the HTTP session.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
+public class ListState implements Serializable {
 
 	private String key;
 	
@@ -51,6 +56,8 @@ public class ListState {
 	
 	private ListParamsImpl params = new ListParamsImpl();
 	
+	private ChooserSettings chooserSettings;
+	
 	public static ListState get(HttpServletRequest request, String key) {
 		return (ListState) request.getSession().getAttribute(key);
 	}
@@ -61,14 +68,16 @@ public class ListState {
 		request.getSession().setAttribute(key, state);
 	}
 	
-	public ListState(String key, String screenId, Locale locale, 
-			Form filterForm, TextField searchField) {
+	ListState(String key, String screenId, Locale locale, 
+			Form filterForm, TextField searchField, 
+			ChooserSettings chooserSettings) {
 		
 		this.key = key;
 		this.screenId = screenId;
 		this.locale = locale;
 		this.filterForm = filterForm;
 		this.searchField = searchField;
+		this.chooserSettings = chooserSettings;
 	}
 
 	public boolean isInitialized() {
@@ -117,6 +126,10 @@ public class ListState {
 		return params;
 	}
 	
+	public ChooserSettings getChooserSettings() {
+		return chooserSettings;
+	}
+	
 	public void setFilter(Map<String, String> filter) {
 		if (filterForm != null) {
 			filterForm.processRequest(new SimpleFormRequest(filter));
@@ -127,5 +140,5 @@ public class ListState {
 		}
 		params.setPage(1);
 	}
-	
+
 }

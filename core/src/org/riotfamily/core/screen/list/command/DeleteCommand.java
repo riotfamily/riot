@@ -26,7 +26,7 @@ package org.riotfamily.core.screen.list.command;
 import java.util.HashMap;
 
 import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.MessageResult;
+import org.riotfamily.core.screen.list.command.result.NotificationResult;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.event.Button;
@@ -68,7 +68,7 @@ public class DeleteCommand extends DialogCommand {
 	public CommandResult handleInput(CommandContext context,
 			Selection selection, Object input, String button) {
 	
-		return new MessageResult("Input: " + input + " Button: " + button);
+		return new NotificationResult("Input: " + input + " Button: " + button);
 	}
 
 }

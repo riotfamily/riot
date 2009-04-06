@@ -14,35 +14,55 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   Carsten Woelk [cwoelk at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.result;
 
 import org.directwebremoting.annotations.DataTransferObject;
-import org.directwebremoting.annotations.RemoteProperty;
+import org.directwebremoting.annotations.RemoteMethod;
 
 @DataTransferObject
-public class ScriptResult implements CommandResult {
-
-	private String script;
-
-    public ScriptResult(String script) {
-            this.script = script;
-    }
-    
-    @RemoteProperty
-    public String getAction() {
-		return "eval";
+public class NotificationResult implements CommandResult {
+	
+	private String title;
+	
+	private String message;
+	
+	public NotificationResult() {
+	}
+			
+	public NotificationResult(String message) {
+		this.message = message;
 	}
 
-    @RemoteProperty
-	public String getScript() {
-		return this.script;
+	@RemoteMethod
+	public String getAction() {
+		return "notification";
 	}
-
+	
+	@RemoteMethod
+	public String getTitle() {
+		return title;
+	}
+	
+	public NotificationResult setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+	
+	@RemoteMethod
+	public String getMessage() {
+		return message;
+	}
+	
+	public NotificationResult setMessage(String message) {
+		this.message = message;
+		return this;
+	}
+	
 }

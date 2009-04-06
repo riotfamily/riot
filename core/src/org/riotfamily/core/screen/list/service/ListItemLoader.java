@@ -34,20 +34,22 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.core.dao.TreeDao;
 import org.riotfamily.core.screen.list.ColumnConfig;
+import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.springframework.beans.NullValueInNestedPathException;
 
-public class ListItemLoader extends CommandContextHandler 
-		implements RenderContext {
-
+/**
+ * List service handler that handles the loading of list items. 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
+class ListItemLoader extends ChooserCommandHandler implements ListRenderContext {
 	
 	protected Object root;
 	
-	public ListItemLoader(ListService service, String key,
+	ListItemLoader(ListService service, String key, 
 			HttpServletRequest request) {
 		
 		super(service, key, request);

@@ -6,11 +6,14 @@
 	<@riot.scripts srcs=[
 		"prototype/prototype.js",
 		"riot-js/resources.js", 
-		"riot-js/dialog.js"] 
+		"riot-js/window/dialog.js",
+		"riot-js/notification/notification.js"] 
 	/>
 	<@riot.stylesheets hrefs=[
+		"riot-js/window/dialog.css",
+		"riot-js/notification/notification.css",
 		"style/common.css", "style/logo.css"
-		] + template.vars.stylesheets![]
+		] + (customStyleSheets![]) + (template.vars.stylesheets![])
 	/>
 	
 	<script language="JavaScript" type="text/javascript">
@@ -20,18 +23,24 @@
 </head>
 <body>
 	<@template.block name="header">
-		<div id="path">
-			<#list context.path as screen>
-				<#if screen_has_next>
-					<b><a class="screen" href="${c.url(screen.url)}">${screen.title}</a></b>
-				<#else>
-					<b class="active"><span class="screen">${screen.title}</span></b>
-				</#if>
-			</#list>
-		</div>
+		<@renderPath path!context.path />	
 	</@template.block>
-	<@template.block name="content">
-	</@template.block>
+	<div id="content">
+		<@template.block name="content">
+		</@template.block>
+	</div>
 </body>
 </html>
 </@template.root>
+
+<#macro renderPath path>
+	<div id="path">
+		<#list path as link>
+			<#if link_has_next>
+				<b><a class="screen" href="${c.url(link.url)}">${link.title}</a></b>
+			<#else>
+				<b class="active"><span class="screen">${link.title}</span></b>
+			</#if>
+		</#list>
+	</div>
+</#macro>

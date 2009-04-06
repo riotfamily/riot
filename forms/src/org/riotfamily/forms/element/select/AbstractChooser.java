@@ -23,26 +23,19 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.AbstractEditorBase;
-import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
-import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
+import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.springframework.util.StringUtils;
 
@@ -54,12 +47,13 @@ import org.springframework.util.StringUtils;
  */
 public abstract class AbstractChooser extends AbstractEditorBase
 		implements Editor, DHTMLElement, JavaScriptEventAdapter, 
-		ResourceElement, ContentElement {
+		ResourceElement {
 	
 	private Object object;
 
 	private static FormResource RESOURCE = 
-			new ScriptResource("form/chooser.js", "Chooser");
+			new ScriptResource("form/chooser.js", "riot.chooser", 
+			Resources.RIOT_DIALOG);
 	
 	public String getEventTriggerId() {		
 		return getId();
@@ -113,7 +107,8 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 	
 	public String getInitScript() {
-		return "new Chooser('" + getId() + "');";
+		return String.format("riot.chooser.register('%s', '%s')", 
+				getId(), getChooserUrl());
 	}
 		
 	protected abstract Object loadBean(String objectId);
@@ -145,26 +140,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		}
 		return mergeBean(object);
 	}
-	
-	public void handleContentRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws IOException {
-
-		response.setContentType("text/html");
-		Map<String, Object> model = Generics.newHashMap();
-		String pathUrl = getPathUrl();
-		if (pathUrl != null) {
-			model.put("pathUrl", request.getContextPath() + pathUrl);
-		}
-		model.put("chooserUrl", request.getContextPath() + getChooserUrl());
-		String template = TemplateUtils.getTemplatePath(AbstractChooser.class, 
-				"_content");
 		
-		getFormContext().getTemplateRenderer().render(template, 
-				model, response.getWriter());
-	}
-	
 	protected abstract String getChooserUrl();
-	
-	protected abstract String getPathUrl();
 	
 }

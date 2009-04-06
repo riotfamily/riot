@@ -17,7 +17,7 @@ function getFirstChildElement(e) {
 	return c;
 }
 
-function submitEvent(e) {
+function submitEvent(e, onComplete) {
 	if (!e) var e = window.event;
 	var source = getEventSource(e);
 	if (e.type == 'keyup') {
@@ -50,7 +50,8 @@ function submitEvent(e) {
 	
 	new Ajax.Request(url, {
 		onSuccess: processAjaxResponse,
-		postBody: body	
+		onComplete: onComplete,
+		postBody: body
 	});
 	return false;
 }

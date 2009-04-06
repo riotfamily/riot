@@ -45,24 +45,24 @@ import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormContext;
 import org.springframework.transaction.TransactionStatus;
 
-public class CommandContextHandler extends ListServiceHandler
+/**
+ * List service handler that handles command related tasks.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
+class CommandContextHandler extends ListServiceHandler
 		implements CommandContext {
 
 	private String commandId;
 	
-	public CommandContextHandler(ListService service, String key,
+	CommandContextHandler(ListService service, String key,
 			HttpServletRequest request) {
 		
 		super(service, key, request);
 	}
 	
-	public CommandContextHandler(ListServiceHandler handler) {
-		super(handler);
-	}
-
 	public List<CommandButton> createButtons(boolean formCommandsOnly) {
 		ArrayList<CommandButton> result = Generics.newArrayList();
-		Map<String, Command> commands = screen.getCommandMap();
+		Map<String, Command> commands = getCommands();
 		if (commands != null) {
 			for (Map.Entry<String, ? extends Command> entry : commands.entrySet()) {
 				commandId = entry.getKey();
@@ -75,11 +75,15 @@ public class CommandContextHandler extends ListServiceHandler
 		return result;
 	}
 	
+	protected Map<String, Command> getCommands() {
+		return screen.getCommandMap();
+	}
+	
 	public List<String> getEnabledCommands(List<ListItem> items) {
 		List<String> result = Generics.newArrayList();
-		if (screen.getCommandMap() != null) {
+		if (getCommands() != null) {
 			Selection selection = new Selection(dao, items);
-			for (Map.Entry<String, Command> entry : screen.getCommandMap().entrySet()) {
+			for (Map.Entry<String, Command> entry : getCommands().entrySet()) {
 				commandId = entry.getKey();
 				if (entry.getValue().isEnabled(this, selection)) {
 					result.add(commandId);
@@ -92,7 +96,7 @@ public class CommandContextHandler extends ListServiceHandler
 	public CommandResult execCommand(String commandId, List<ListItem> items) {
 		this.commandId = commandId;
 		CommandResult result = null;
-		Command command = screen.getCommandMap().get(commandId);
+		Command command = getCommands().get(commandId);
 		TransactionStatus status = beginTransaction();
 		try {
 			result = command.execute(this, new Selection(dao, items));
@@ -113,7 +117,7 @@ public class CommandContextHandler extends ListServiceHandler
 			List<ListItem> items = form.getAttribute("selectionItems");
 			Selection selection = new Selection(dao, items);
 			commandId = form.getAttribute("commandId");
-			DialogCommand command = (DialogCommand) screen.getCommandMap().get(commandId);
+			DialogCommand command = (DialogCommand) getCommands().get(commandId);
 			result = command.handleInput(this, selection, input, 
 					form.getClickedButton());
 		}
@@ -127,7 +131,9 @@ public class CommandContextHandler extends ListServiceHandler
 	
 	
 	// -----------------------------------------------------------------------
-
+	// Implementation of the CommandContext interface
+	// -----------------------------------------------------------------------
+	
 	public String getCommandId() {
 		return commandId;
 	}

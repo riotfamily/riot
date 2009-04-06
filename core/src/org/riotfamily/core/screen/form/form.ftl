@@ -13,15 +13,11 @@
 		<@riot.script src="riot-js/pager.js" />
 		<@riot.script src="list.js" />
 	
-		<div id="body-wrapper">
-			<div id="wrapper">
-				<div class="main">
-					<div id="form">${form}</div>
-				</div>
-			</div>
-			<div id="extras" class="extra">
-			</div>
-		</div>		
+		<div class="main">
+			<div id="form">${form}</div>
+		</div>
+		<div id="extra" class="extra">
+		</div>
 				
 	</@template.block>
 </@template.extend>

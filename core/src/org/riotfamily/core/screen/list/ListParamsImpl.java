@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +34,7 @@ import org.riotfamily.core.dao.Order;
 /**
  * A bean style implementation of the ListModelParams interface.
  */
-public class ListParamsImpl implements ListParams {
+public class ListParamsImpl implements ListParams, Serializable {
 
 	private Object filter;
 	

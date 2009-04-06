@@ -38,8 +38,6 @@ import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.core.screen.ScreenRepository;
 import org.riotfamily.core.screen.list.ColumnConfig;
-import org.riotfamily.core.screen.list.ListState;
-import org.riotfamily.core.screen.list.TreeListScreen;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
 import org.riotfamily.core.screen.list.dto.CommandButton;
 import org.riotfamily.core.screen.list.dto.ListItem;
@@ -49,6 +47,13 @@ import org.riotfamily.forms.controller.FormContextFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+/**
+ * Service to interact with lists and trees via JavaScript. In order to reduce
+ * the complexity of this class, calls are delegated to stateful handler 
+ * classes which implement the different service aspects.
+ *    
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 @RemoteProxy
 public class ListService {
 
@@ -89,12 +94,7 @@ public class ListService {
 	public ScreenRepository getScreenRepository() {
 		return screenRepository;
 	}
-	
-	public TreeListScreen getScreen(ListState state) {
-		return screenRepository.getScreen(state.getScreenId(), 
-				TreeListScreen.class);
-	}
-	
+		
 	public MessageResolver getMessageResolver(HttpServletRequest request) {
 		Locale locale = RequestContextUtils.getLocale(request);
 		return formContextFactory.getMessageResolver(locale);
@@ -103,7 +103,7 @@ public class ListService {
 	public ObjectRenderer getRenderer(ColumnConfig column) {
 		ObjectRenderer renderer = column.getRenderer();
 		if (renderer == null) {
-			renderer = defaultObjectRenderer ;
+			renderer = defaultObjectRenderer;
 		}
 		return renderer;
 	}
@@ -157,7 +157,7 @@ public class ListService {
 	public List<String> getEnabledCommands(String key, List<ListItem> items, 
 			HttpServletRequest request,	HttpServletResponse response) {
 
-		return new CommandContextHandler(this, key, request)
+		return new ChooserCommandHandler(this, key, request)
 				.getEnabledCommands(items);
 	}
 	
@@ -166,7 +166,7 @@ public class ListService {
 			String commandId, List<ListItem> items, 
 			HttpServletRequest request,	HttpServletResponse response) {
 
-		return new CommandContextHandler(this, key, request)
+		return new ChooserCommandHandler(this, key, request)
 				.execCommand(commandId, items);
 	}
 	

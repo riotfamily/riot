@@ -1,30 +1,52 @@
-function Chooser(id) {
-	this.id = id;
-	this.element = document.getElementById(id);
-	var button = this.element.getElementsByTagName('button');
-	for (var i = 0; i < button.length; i++) {
-		button[i].chooser = this;
-		if (button[i].className == 'choose') {
-			button[i].onclick = function() {
-				var c = this.chooser;
-				c.popup = window.open('?_content=' + c.id, 'chooser', 'width=800,height=400,dependent=yes,toolbar=no,location=no,menubar=no,status=no');
-				c.popup.chooser = c;
-				return false;
+if (!window.riot) var riot = {}; // riot namespace
+
+riot.chooser = (function() {
+
+	var activeChooser;
+	
+	var Chooser = Class.create({
+		initialize: function(id, url) {
+			this.id = id;
+			this.url = url;
+			this.element = $(id);
+			this.element.down('button.choose').observe('click', this.choose.bindAsEventListener(this));
+			var unset = this.element.down('button.unset');
+			if (unset) {
+				unset.observe('click', this.unset.bindAsEventListener(this));
 			}
+		},
+		
+		choose: function(ev) {
+			ev.stop();
+			this.dialog = new riot.window.Dialog({url: this.url, modal: true, closeButton: true});
+			activeChooser = this;
+		},
+		
+		unset: function(ev) {
+			ev.stop();
+			this.chosen(null);
+		},
+		
+		chosen: function(objectId) {
+			this.value = objectId || '';
+			activeChooser = null;
+			submitEvent(new ChangeEvent(this), this.onUpdate.bind(this));
+		},
+		
+		onUpdate: function() {
+			if (this.dialog) this.dialog.close();			
 		}
-		else if (button[i].className == 'unset') {
-			button[i].onclick = function() {
-				this.chooser.chosen(null);
-				return false;
-			}
+	});
+
+	return {
+		register: function(id, url) {
+			new Chooser(id, url);
+		},
+		
+		chosen: function(objectId) {
+			activeChooser.chosen(objectId);
 		}
 	}
-}
+	
+})();
 
-Chooser.prototype.chosen = function(objectId) {
-	this.value = objectId || '';
-	var changeEvent = new ChangeEvent(this);
-	// Defer execution - simultanious XmlHttpRequests seem to fail
-	setTimeout(function() { submitEvent(changeEvent) }, 1);
-	if (this.popup) this.popup.close();
-}

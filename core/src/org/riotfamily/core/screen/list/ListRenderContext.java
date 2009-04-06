@@ -21,18 +21,12 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.core.screen.list;
 
-import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
+import org.riotfamily.common.web.ui.RenderContext;
 
-public class EditCommand extends SingleItemCommand<Object> {
+public interface ListRenderContext extends RenderContext {
 
-	@Override
-	protected CommandResult execute(CommandContext context, Object item) {
-		ScreenContext childContext = context.createItemContext(item);
-		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
-	}
+	public Object getParent();
 
 }

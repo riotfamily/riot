@@ -54,6 +54,9 @@ public abstract class AbstractCommand implements Command {
 			if (action.endsWith(COMMAND_NAME_SUFFIX)) {
 				action = action.substring(0, action.length() - COMMAND_NAME_SUFFIX.length());
 			}
+			if (action.contains("$")) {
+				action = action.substring(action.indexOf('$') + 1);
+			}
 			action = StringUtils.uncapitalize(action);
 		}
 		return action;

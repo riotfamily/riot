@@ -43,6 +43,7 @@ import org.riotfamily.core.screen.AbstractRiotScreen;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.TextField;
@@ -177,7 +178,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 		return null;
 	}
 	
-	private String getStateKey(ScreenContext context) {
+	private String getStateKey(ScreenContext context, ChooserSettings chooserSettings) {
 		StringBuilder key = new StringBuilder();
 		key.append(getId()).append('/');
 		if (context.getObjectId() != null) {
@@ -192,11 +193,16 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 				key.append('/').append(getId());	
 			}
 		}
+		if (chooserSettings.getTargetScreenId() != null) {
+			key.append("?choose=").append(chooserSettings.getTargetScreenId());
+		}
 		return key.toString();
 	}
 	
-	public ListState getOrCreateListState(HttpServletRequest request) {
-		String key = getStateKey(ScreenContext.get(request));
+	public ListState getOrCreateListState(HttpServletRequest request, 
+			ScreenContext screenContext, ChooserSettings chooserSettings) {
+		
+		String key = getStateKey(screenContext, chooserSettings);
 		ListState state = ListState.get(request, key);
 		if (state == null) {
 			Locale locale = RequestContextUtils.getLocale(request);
@@ -215,8 +221,8 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 				searchField.setLabel("Search");
 				filterForm.addElement(searchField);
 			}
-			
-			state = new ListState(key, getId(), locale, filterForm, searchField);
+			state = new ListState(key, getId(), locale, filterForm, 
+					searchField, chooserSettings);
 			
 			ListState.put(request, key, state);
 		}
@@ -225,9 +231,27 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 	
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
+
 		
-		ListState state = getOrCreateListState(request);
+		ScreenContext screenContext = ScreenContext.get(request);
+		ChooserSettings chooserSettings = new ChooserSettings(request);
 		ModelAndView mv = new ModelAndView(viewName);
+		
+		if (chooserSettings.getTargetScreenId() != null) {
+			List<ScreenLink> path = Generics.newArrayList();
+			ScreenContext ctx = screenContext;
+			while (ctx != null) {
+				if (ctx.getScreen() instanceof ListScreen) {
+					path.add(0, chooserSettings.appendTo(ctx.getLink()));
+				}
+				if (ctx.getScreen().getId().equals(chooserSettings.getStartScreenId())) {
+					break;
+				}
+				ctx = ctx.createParentContext();
+			}
+			mv.addObject("path", path);
+		}
+		ListState state = getOrCreateListState(request, screenContext, chooserSettings);
 		mv.addObject("listState", state);
 		return mv;
 	}

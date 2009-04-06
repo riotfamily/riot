@@ -1,20 +1,20 @@
 @import url(common.css);
 
-#editors .box-title {
+.group .box-title {
 	background: ${title_bg_color} url(images/corner.gif) top left no-repeat;
 }
-#editors .box-title span {
+.group .box-title span {
 	margin: 0 0 0 1px;
 }
 
-#editors a {
+.group a {
 	display: block;
 	border-bottom: 1px solid #ebebeb;
 	height: 80px;
 	color: #3d3d3d;
 	text-decoration: none;
 }
-#editors .icon {
+.group .icon {
 	display: -moz-inline-stack;
 	display: inline-block;
 	width: 80px;
@@ -24,80 +24,25 @@
 	background: ${highlight_color} url(icons/editors/arrow.gif) no-repeat;
 }
 
-#editors a:hover,
-#editors a:focus {
+.group a:hover,
+.group a:focus {
 	background-color: #ebebeb;
 	outline: none;
 	-moz-outline: none;
 }
-#editors a:hover .icon,
-#editors a:focus .icon {
+.group a:hover .icon,
+.group a:focus .icon {
 	background-position: 0px -80px;
 }
-#editors .text {
+.group .text {
 	display: -moz-inline-stack;
 	display: inline-block;
 	vertical-align: middle;
 	padding-left: 16px;
 }
 
-#editors a.editor .label {
+.group a.screen .label {
 	font-size: 14px;
 	font-weight: bold;
 	color: ${label_color};
-}
-
-#notificationList {
-	overflow: hidden;
-}
-
-#notifications .message {
-	float: left;
-	margin: 0 4px 16px 0;
-}
-
-#notifications .delete {
-	float: left;
-	clear: both;
-	width: 9px;
-	height: 9px;
-	margin: 4px 0 0 -22px;
-	background: url(images/remove_small.gif) no-repeat;
-}
-
-#notifications .notification {
-	margin-top: 10px;
-	padding-left: 35px;
-}
-
-#status a {
-	text-decoration: none;
-	color: #3d3d3d;
-}
-
-#status .message {
-	clear: both;
-	margin-top: 5px;
-}
-
-#status .message .text {
-	padding-top: 5px;
-	padding-bottom: 3px;
-	float: left;
-	width: 213px;
-}
-
-#status .message .icon {
-	float: left;
-	width: 32px;
-	height: 32px;
-	margin-right: 5px;
-	background: url(icons/commands/stepInto.gif) 0 -32px no-repeat;
-}
-#status a:hover {
-	color: ${highlight_color};
-}
-
-#status a:hover .icon {
-	background-color: ${highlight_color};
 }

@@ -23,16 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
-import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 
-public class EditCommand extends SingleItemCommand<Object> {
+public class CopyCommand extends AbstractCommand {
 
-	@Override
-	protected CommandResult execute(CommandContext context, Object item) {
-		ScreenContext childContext = context.createItemContext(item);
-		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
+	public CommandResult execute(CommandContext context, Selection selection) {
+		Clipboard.get(context).copy(selection);
+		return null;
 	}
 
 }

@@ -27,6 +27,9 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.core.screen.list.ListRenderContext;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -34,16 +37,14 @@ import org.riotfamily.common.web.ui.RenderContext;
  */
 public class PublishStatusRenderer implements ObjectRenderer {
 
-	//FIXME Make PublishStatusRenderer work again
 	public void render(Object obj, RenderContext context, PrintWriter writer) {
 		writer.print("<div class=\"publish-status publish-status-");
-		//writer.print(getStyleClass((Page) obj, (ListSession) context));
+		writer.print(getStyleClass((Page) obj, (ListRenderContext) context));
 		writer.print("\"></div>");
 	}
 	
-	/*
-	private String getStyleClass(Page page, ListSession session) {
-		if (isTranslated(page, session)) {
+	private String getStyleClass(Page page, ListRenderContext context) {
+		if (isTranslated(page, context)) {
 			if (!page.isPublished()) {
 				return "new";
 			}
@@ -55,13 +56,13 @@ public class PublishStatusRenderer implements ObjectRenderer {
 		return "translatable";
 	}
 
-	private boolean isTranslated(Page page, ListSession session) {
-		Site parentSite = getParentSite(session);
+	private boolean isTranslated(Page page, ListRenderContext context) {
+		Site parentSite = getParentSite(context);
 		return parentSite == null || parentSite.equals(page.getSite());
 	}
 	
-	private Site getParentSite(ListSession session) {
-		Object parent = session.loadParent();
+	private Site getParentSite(ListRenderContext context) {
+		Object parent = context.getParent();
 		if (parent instanceof Page) {
 			return ((Page) parent).getSite();
 		}
@@ -70,6 +71,5 @@ public class PublishStatusRenderer implements ObjectRenderer {
 		}
 		return null;
 	}
-	*/
 
 }

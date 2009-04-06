@@ -5,7 +5,7 @@ var RiotList = Class.create({
 		this.selection = [];
 	},
 
-	render: function(target, commandTarget, itemCommandTarget, expandedId, filterForm) {
+	render: function(target, commandTarget, expandedId, filterForm) {
 		target = $(target);
 		this.table = new Element('table')
 			.insert(new Element('thead').insert(this.headRow = new Element('tr')))
@@ -23,11 +23,6 @@ var RiotList = Class.create({
 		if (commandTarget && $(commandTarget)) {
 			this.commandTarget = new Element('div');
 			$(commandTarget).appendChild(this.commandTarget);
-		}
-		
-		if (itemCommandTarget && $(itemCommandTarget)) {
-			this.itemCommandTarget = new Element('div');
-			$(itemCommandTarget).appendChild(this.itemCommandTarget);
 		}
 		ListService.getModel(this.key, expandedId, this.renderTable.bind(this));
 	},
@@ -267,11 +262,6 @@ var RiotList = Class.create({
 			else if (result.action == 'refreshListCommands') {
 				this.refreshListCommands();
 			}
-			else if (result.action == 'confirm') {
-				if (confirm(result.message)) {
-					this.execItemCommand(result.commandId, true);
-				}
-			}
 			else if (result.action == 'gotoUrl') {
 				var win = eval(result.target);
 				if (result.replace) {
@@ -306,17 +296,14 @@ var RiotList = Class.create({
 			else if (result.action == 'dialog') {
 				new riot.window.Dialog(result);
 			}
-			else if (result.action == 'message') {
-				alert(result.message);
+			else if (result.action == 'notification') {
+				riot.notification.show(result);
 			}
 			else if (result.action == 'reload') {
 				window.location.reload();
 			}
 			else if (result.action == 'eval') {
 				eval(result.script);
-			}
-			else if (result.action == 'setRowStyle') {
-				alert(result.objectId + ': ' + result.rowStyle);
 			}
 		}
 	},

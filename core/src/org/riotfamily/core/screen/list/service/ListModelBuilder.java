@@ -44,6 +44,11 @@ import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.core.screen.list.dto.ListModel;
 import org.riotfamily.forms.controller.FormContextFactory;
 
+/**
+ * List service handler that builds the complete list model, including column 
+ * headings.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class ListModelBuilder extends ListItemLoader {
 
 	private FormContextFactory formContextFactory;

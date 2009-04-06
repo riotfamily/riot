@@ -31,6 +31,11 @@
 	text-align: right;
 }
 
+.riot-dialog form {
+	margin: 0;
+	padding: 20px;
+}
+
 .buttons span {
 	display: -moz-inline-stack;
 	_display: inline-block;
