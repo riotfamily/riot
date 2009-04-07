@@ -27,7 +27,7 @@ import org.riotfamily.core.screen.list.command.AbstractCommand;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public class RemoveEmptyEntriesCommand extends AbstractCommand {
 
@@ -38,6 +38,6 @@ public class RemoveEmptyEntriesCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context, Selection selection) {
 		//String bundle = ((MessageBundleEntryDao) context.getDao()).getBundle();
 		//dao.removeEmptyEntries(bundle);
-		return new RefreshSiblingsResult();
+		return new RefreshListResult();
 	}
 }

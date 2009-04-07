@@ -23,13 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.result;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.annotations.RemoteProperty;
 
-
+@DataTransferObject
 public class RefreshListCommandsResult implements CommandResult {
 
-	private static final String ACTION = "refreshListCommands";
-
+	@RemoteProperty
 	public String getAction() {
-		return ACTION;
+		return "refreshListCommands";
 	}
+
 }

@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.core.dao.TreeDao;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListRenderContext;
@@ -61,21 +60,23 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		if (parentId != null) {
 			parent = dao.load(parentId);
 		}
-		return createItems(new Object[] {parent}, 0);
+		return createItems(new Object[] {parent}, 0, parentId);
 	}
 	
 	
-	protected List<ListItem> createItems(Object[] expanded, int i) {
+	protected List<ListItem> createItems(Object[] expanded, int i, String parentNodeId) {
 		Collection<?> objects = dao.list(expanded[i], state.getParams());
 		ArrayList<ListItem> items = Generics.newArrayList(objects.size());
 		Object next = i + 1 < expanded.length ? expanded[i + 1] : null;
 		for (Object object : objects) {
 			ListItem item = new ListItem();
-			item.setObjectId(dao.getObjectId(object));
+			String objectId = dao.getObjectId(object);
+			item.setObjectId(objectId);
+			item.setParentNodeId(parentNodeId);
 			item.setColumns(getColumns(object));
 			item.setExpandable(isExpandable(object, root));
 			if (object.equals(next)) {
-				item.setChildren(createItems(expanded, i + 1));
+				item.setChildren(createItems(expanded, i + 1, objectId));
 			}
 			item.setRowIndex(items.size());
 			items.add(item);
@@ -113,12 +114,12 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		List<Object> result = Generics.newArrayList();
 		if (expandedId != null) {
 			Object expanded = dao.load(expandedId);
-			while (expanded != null && !expanded.equals(root)) {
-				result.add(expanded);
-				expanded = ((ParentChildDao) dao).getParent(expanded);
+			while (expanded != null) {
+				result.add(0, expanded);
+				expanded = ((TreeDao) dao).getParentNode(expanded);
 			}
 		}
-		result.add(root);
+		result.add(0, root);
 		return result.toArray();
 	}
 	

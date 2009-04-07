@@ -41,7 +41,7 @@ public class Selection implements Iterable<SelectionItem> {
 		this.items = Generics.newArrayList();
 		if (refs != null) {
 			for (ObjectReference ref : refs) {
-				this.items.add(new Foo(ref));
+				this.items.add(new SelectionItemImpl(ref));
 			}
 		}
 	}
@@ -64,17 +64,20 @@ public class Selection implements Iterable<SelectionItem> {
 		return items.get(0);
 	}
 			
-	private class Foo implements SelectionItem {
+	private class SelectionItemImpl implements SelectionItem {
 		
 		private String objectId;
 		
 		private Object object;
 		
 		private int rowIndex;
+		
+		private String parentNodeId;
 
-		public Foo(ObjectReference ref) {
+		public SelectionItemImpl(ObjectReference ref) {
 			this.objectId = ref.getObjectId();
 			this.rowIndex = ref.getRowIndex();
+			this.parentNodeId = ref.getParentNodeId();
 		}
 		
 		public String getObjectId() {
@@ -83,6 +86,10 @@ public class Selection implements Iterable<SelectionItem> {
 		
 		public int getRowIndex() {
 			return rowIndex;
+		}
+		
+		public String getParentNodeId() {
+			return parentNodeId;
 		}
 		
 		public Object getObject() {

@@ -28,5 +28,7 @@ public interface ObjectReference {
 	public String getObjectId();
 
 	public int getRowIndex();
+	
+	public String getParentNodeId();
 
 }

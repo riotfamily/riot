@@ -175,26 +175,21 @@ var RiotList = Class.create({
 		ListService.getListCommands(this.key, this.renderListCommands.bind(this));
 	},
 	
-	refreshSiblings: function(objectId) {
-		if (objectId) {
-			var tr = $('item-' + objectId);
-			if (tr && tr.parentRow) {
-				tr.parentRow.refreshChildren();
-				return;
-			}
+	refreshList: function(objectId, refreshAll) {
+		if (refreshAll) {
+			ListService.getModel(this.key, objectId, this.updateRowsAndPager.bind(this));
 		}
-		ListService.getModel(this.key, null, this.updateRowsAndPager.bind(this));
-	},
-	
-	refreshChildren: function(objectId) {
-		if (objectId) {
+		else {
 			var tr = $('item-' + objectId);
 			if (tr) {
-				tr.refreshChildren();
+				ListService.getChildren(this.key, tr.item.objectId, function(items) {
+					tr.removeChildren();
+					tr.addChildren(items);
+					this.updateCommandStates();				
+				}.bind(this));
 				return;
 			}
 		}
-		ListService.getModel(this.key, null, this.updateRowsAndPager.bind(this));
 	},
 		
 	getSelectionIndex: function(item) {
@@ -265,13 +260,12 @@ var RiotList = Class.create({
 		this.setIdle();
 		if (result) {
 			if (result.action == 'batch') {
+				dwr.engine.beginBatch();
 				result.batch.each(this.processCommandResult.bind(this));
+				dwr.engine.endBatch();
 			}
-			else if (result.action == 'refreshSiblings') {
-				this.refreshSiblings(result.objectId);
-			}
-			else if (result.action == 'refreshChildren') {
-				this.refreshChildren(result.objectId);
+			else if (result.action == 'refreshList') {
+				this.refreshList(result.objectId, result.refreshAll);
 			}
 			else if (result.action == 'refreshListCommands') {
 				this.refreshListCommands();
@@ -348,31 +342,31 @@ var RiotList = Class.create({
 });
 
 var ListRow = {
-	create: function(list, parentRow, row) {
+	create: function(list, parentRow, item) {
+		
+	// Create TR element
 		var tr = Object.extend(new Element('tr'), {
 			list: list, 
-			item: row, 
-			id: 'item-' + row.objectId,
+			item: item, 
+			id: 'item-' + item.objectId,
 			parentRow: parentRow,
 			level: parentRow ? parentRow.level + 1 : 0
 		});
-		Object.extend(tr, ListRow.Methods);
-		if (row.cssClass) {
-			tr.addClassName(row.cssClass);
-		}
-		if (row.expandable) {
-			tr.addClassName('expandable');
-			tr.expandable = true;
-		}
-		else {
-			tr.addClassName('leaf');
+		if (item.cssClass) {
+			tr.addClassName(item.cssClass);
 		}
 		
-		for (var i = 0; i < row.columns.length; i++) {
-			var cell = new Element('td', {className: list.columns[i].className}).insert(row.columns[i]);
-			tr.appendChild(cell);
+		// Add methods
+		Object.extend(tr, ListRow.Methods);
+		
+		tr.setExpandable(item.expandable);
+		
+		// Create the TD elements
+		for (var i = 0; i < item.columns.length; i++) {
+			var td = new Element('td', {className: list.columns[i].className}).insert(item.columns[i]);
+			tr.appendChild(td);
 			if (list.model.tree && i == 0) {
-				cell.insert({top: 
+				td.insert({top: 
 					new Element('span', {className: 'expand'})
 					.setStyle({marginLeft: (tr.level * 22) + 'px'})
 					.observe('click', tr.toggleChildren.bindAsEventListener(tr))
@@ -380,14 +374,15 @@ var ListRow = {
 			}
 		}
 		
-		var i = list.getSelectionIndex(row); 
+		// Select row if part of current selection
+		var i = list.getSelectionIndex(item); 
 		if (i != -1) {
 			tr.addClassName('selected');
-			list.selection[i] = row;
+			list.selection[i] = item;
 		}
-		
+
+		//Prevent text selection in unselected items
 		if (Prototype.Browser.IE) {
-			//Prevent text selection in unselected items
 			tr.onmousedown = function() {
 				this.selectedOnMouseDown = this.hasClassName('selected') && !event.ctrlKey; 
 			};
@@ -396,6 +391,7 @@ var ListRow = {
 			};
 		}
 		
+		// Register event listeners
 		if (list.model.instantAction) {
 			tr.observe('click', tr.execDefaultCommand.bindAsEventListener(tr));
 		}
@@ -404,6 +400,7 @@ var ListRow = {
 			tr.observe('dblclick', tr.execDefaultCommand.bindAsEventListener(tr));
 		}
 		
+		// Add to DOM
 		if (parentRow) {
 			parentRow.insert({after: tr});
 			parentRow.childRows.push(tr);
@@ -412,20 +409,24 @@ var ListRow = {
 			list.tbody.appendChild(tr);
 		}
 		
-		if (row.children) {
+		// Add children (if present in model) 
+		if (item.children) {
 			tr.expanded = true;
 			tr.addClassName('expanded');
-			tr.addChildren(row.children);
+			tr.addChildren(item.children);
 		}
 		
-		// Convert to lightweight object
-		delete row.columns;
-		delete row.children;
-		delete row.expandable;
+		// Convert item to lightweight object
+		delete item.columns;
+		delete item.children;
+		delete item.expandable;
 	},
 		
 	Methods: {
 	
+		/**
+		 * Click listener that toggles the selection state.
+		 */
 		toggle: function(ev) {
 			if (!ev.ctrlKey && !ev.metaKey) {
 				this.list.clearSelection();
@@ -434,38 +435,11 @@ var ListRow = {
 			ev.stop();
 		},
 		
-		execDefaultCommand: function() {
-			if (this.list.commandButtons) {
-				if (this.list.selection.length == 0) {
-					this.list.selection = [this.item];
-				}
-				this.list.updateCommandStates();
-				this.list.commandButtons[0].onclick();
-			}
-		},
-		
-		remove: function() {
-			this.removeChildren();
-			this.parentNode.removeChild(this);
-		},
-		
-		removeChildren: function() {
-			if (this.childRows) {
-				this.childRows.invoke('remove');
-				this.childRows = null;
-			}
-		},
-				
-		addChildren: function(items) {
-			this.childRows = [];
-			for (var i = items.length - 1; i >= 0; i--) {
-				ListRow.create(this.list, this, items[i]);
-			}
-			this.removeClassName('expanding');
-		},
-		
-		toggleChildren: function(event) {
-			event.stop();
+		/**
+		 * Click listener to expand/collapse tree items.
+		 */
+		toggleChildren: function(ev) {
+			ev.stop();
 			if (this.expandable) {
 				if (this.expanded) {
 					this.collapse();
@@ -476,34 +450,22 @@ var ListRow = {
 			}
 		},
 		
-		expand: function() {
-			if (!this.expanded) {
-				this.expanded = true;
-				this.addClassName('expanded');
-				this.addClassName('expanding');
-				ListService.getChildren(this.list.key, this.item.objectId, this.addChildren.bind(this));
+		/**
+		 * DoubleClick listener (or click listener in instantAction mode).
+		 */
+		execDefaultCommand: function() {
+			if (this.list.commandButtons) {
+				if (this.list.selection.length == 0) {
+					this.list.selection = [this.item];
+				}
+				this.list.updateCommandStates();
+				this.list.commandButtons[0].onclick();
 			}
 		},
 		
-		collapse: function() {
-			if (this.expanded) {
-				this.expanded = false;
-				this.removeClassName('expanded');
-				this.childRows.each(this.list.unselectRow.bind(this.list));
-				this.removeChildren();
-			}
-		},
-				
-		replaceChildren: function(items) {
-			this.removeChildren();
-			this.addChildren(items);
-			this.list.updateCommandStates();
-		},
-		
-		refreshChildren: function() {
-			ListService.getChildren(this.list.key, this.item.objectId, this.replaceChildren.bind(this));
-		},
-		
+		/**
+		 * Adds support :hover style in IE6.
+		 */
 		onmouseover: function() {
 			this.addClassName('highlight');
 			if (this.hasClassName('selected')) {
@@ -511,10 +473,83 @@ var ListRow = {
 			}
 		},
 		
+		/**
+		 * Adds support :hover style in IE6.
+		 */
 		onmouseout: function() {
 			this.removeClassName('highlight').removeClassName('highlight-selected');
-		}
+		},
 		
+		/**
+		 * Overwrites Prototype's Element.remove() method to also remove 
+		 * the childRows. 
+		 */
+		remove: function() {
+			this.removeChildren();
+			this.parentNode.removeChild(this);
+		},
+		
+		/**
+		 * Invokes the the remove() method on all childRows. 
+		 */
+		removeChildren: function() {
+			if (this.childRows) {
+				this.childRows.invoke('remove');
+				this.childRows = null;
+			}
+		},
+			
+		/**
+		 * Callback method to create childRows.
+		 */
+		addChildren: function(items) {
+			this.removeClassName('expanding');
+			this.childRows = [];
+			this.setExpandable(items.length > 0);
+			this.setExpanded(items.length > 0);
+			for (var i = items.length - 1; i >= 0; i--) {
+				ListRow.create(this.list, this, items[i]);
+			}
+		},
+		
+		setExpandable: function(expandable) {
+			this.expandable = expandable;
+			if (expandable) {
+				this.removeClassName('leaf');
+				this.addClassName('expandable');
+				
+			}
+			else {
+				this.addClassName('leaf');
+				this.removeClassName('expandable');
+			}
+		},
+		
+		setExpanded: function(expanded) {
+			this.expanded = expanded;
+			if (expanded) {
+				this.addClassName('expanded');
+			}
+			else {
+				this.removeClassName('expanded');
+			}
+		},
+		
+		expand: function() {
+			if (!this.expanded) {
+				this.setExpanded(true);
+				this.addClassName('expanding');
+				ListService.getChildren(this.list.key, this.item.objectId, this.addChildren.bind(this));
+			}
+		},
+		
+		collapse: function() {
+			if (this.expanded) {
+				this.setExpanded(false);
+				this.childRows.each(this.list.unselectRow.bind(this.list));
+				this.removeChildren();
+			}
+		}
 	}
 }
 
@@ -559,14 +594,20 @@ dwr.engine.setTextHtmlHandler(function() {
 });
 
 dwr.engine.setErrorHandler(function(err, ex) {
-	if (ex.javaClassName == 'org.riotfamily.core.security.PermissionDeniedException'
-			&& ex.permissionRequestUrl) {
+	if (ex.javaClassName) {
+		if (ex.javaClassName == 'org.riotfamily.core.security.PermissionDeniedException'
+				&& ex.permissionRequestUrl) {
 		
-		location.href = top.contextPath + ex.permissionRequestUrl;
+			location.href = top.contextPath + ex.permissionRequestUrl;
+		}
+		else {
+			list.setIdle();
+			alert(ex.message);	
+		}
 	}
 	else {
 		list.setIdle();
-		alert(ex.message);
+		throw ex;
 	}
 });
 

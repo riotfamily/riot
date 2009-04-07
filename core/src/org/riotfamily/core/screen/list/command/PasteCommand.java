@@ -23,12 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
-import java.util.List;
-
-import org.riotfamily.core.screen.list.command.result.BatchResult;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshChildrenResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public class PasteCommand extends AbstractChildCommand {
 
@@ -38,15 +34,8 @@ public class PasteCommand extends AbstractChildCommand {
 	}
 	
 	public CommandResult execute(CommandContext context, SelectionItem parent) {
-		List<SelectionItem> pasted = Clipboard.get(context).paste(
-				context.getScreen(), parent.getObject());
-		
-		BatchResult result = new BatchResult();
-		for (SelectionItem item : pasted) {
-			result.add(new RefreshSiblingsResult(item.getObjectId()));
-		}
-		result.add(new RefreshChildrenResult(parent.getObjectId()));
-		return result;
+		Clipboard.get(context).paste(context.getScreen(), parent.getObject());
+		return new RefreshListResult(parent.getObjectId()).refreshAll();
 	}
 	
 }

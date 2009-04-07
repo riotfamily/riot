@@ -67,7 +67,7 @@ public class ListModelBuilder extends ListItemLoader {
 	public ListModel buildModel(String expandedId) {
 		Object[] expanded = loadExpanded(expandedId);
 		
-		List<ListItem> items = createItems(expanded, 0);
+		List<ListItem> items = createItems(expanded, 0, null);
 
 		ListParamsImpl params = state.getParams();
 		int itemsTotal = dao.getListSize(root, params);

@@ -6,8 +6,8 @@ import org.riotfamily.core.screen.list.command.CommandInfo;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.result.BatchResult;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 import org.riotfamily.core.screen.list.command.result.RefreshListCommandsResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
 
 public abstract class AbstractSwitchCommand extends AbstractCommand {
 	
@@ -32,7 +32,7 @@ public abstract class AbstractSwitchCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context, Selection selection) {
 		setEnabled(!isEnabled());
 		return new BatchResult(
-				new RefreshSiblingsResult(), 
+				new RefreshListResult(), 
 				new RefreshListCommandsResult());
 	}
 	

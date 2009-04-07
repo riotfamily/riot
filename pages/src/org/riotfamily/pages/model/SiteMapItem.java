@@ -34,6 +34,6 @@ public interface SiteMapItem {
 	
 	public void addPage(Page page);
 	
-	//public void removePage(Page page);
+	public void removePage(Page page);
 	
 }

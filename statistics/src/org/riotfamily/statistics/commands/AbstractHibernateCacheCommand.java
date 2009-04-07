@@ -6,7 +6,7 @@ import org.riotfamily.core.screen.list.command.AbstractCommand;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public abstract class AbstractHibernateCacheCommand extends AbstractCommand {
 
@@ -23,7 +23,7 @@ public abstract class AbstractHibernateCacheCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context, Selection selection) {
 		doExecute(context, selection);
 		
-		return new RefreshSiblingsResult();
+		return new RefreshListResult();
 	}
 	
 	protected abstract void doExecute(CommandContext context, Selection selection);

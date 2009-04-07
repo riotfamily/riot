@@ -5,7 +5,7 @@ import org.riotfamily.core.screen.list.command.AbstractCommand;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public class ClearHibernateStatisticsBaselineCommand extends AbstractCommand {
 
@@ -22,6 +22,6 @@ public class ClearHibernateStatisticsBaselineCommand extends AbstractCommand {
 
 	public CommandResult execute(CommandContext context, Selection selection) {
 		sessionFactory.getStatistics().clear();
-		return new RefreshSiblingsResult();
+		return new RefreshListResult();
 	}
 }

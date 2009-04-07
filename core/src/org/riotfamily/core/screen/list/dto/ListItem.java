@@ -42,6 +42,9 @@ public class ListItem implements ObjectReference {
 	private String objectId;
 	
 	@RemoteProperty
+	private String parentNodeId;
+	
+	@RemoteProperty
 	private List<String> columns;
 		
 	@RemoteProperty
@@ -65,9 +68,12 @@ public class ListItem implements ObjectReference {
 		this.objectId = objectId;
 	}
 
-
 	public void setRowIndex(int rowIndex) {
 		this.rowIndex = rowIndex;
+	}
+	
+	public void setParentNodeId(String parentNodeId) {
+		this.parentNodeId = parentNodeId;
 	}
 
 	public boolean isExpandable() {
@@ -111,6 +117,10 @@ public class ListItem implements ObjectReference {
 	
 	public int getRowIndex() {
 		return this.rowIndex;
+	}
+	
+	public String getParentNodeId() {
+		return this.parentNodeId;
 	}
 		
 }

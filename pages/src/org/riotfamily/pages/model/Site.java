@@ -339,6 +339,10 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 		page.save(); //REVISIT Should we really call save() here?
 	}
 	
+	public void removePage(Page page) {
+		page.setSite(null);
+	}
+	
 	public List<String> listWildcardPaths() {
 		return find("select path from Page where site = ?", this);
 	}

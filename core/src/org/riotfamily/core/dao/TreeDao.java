@@ -1,7 +1,9 @@
 package org.riotfamily.core.dao;
 
-public interface TreeDao extends ParentChildDao {
+public interface TreeDao {
 
-	public boolean hasChildren(Object parent, Object root, ListParams params);
+	public Object getParentNode(Object node);
 
+	public boolean hasChildren(Object node, Object root, ListParams params);
+	
 }

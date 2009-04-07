@@ -25,7 +25,7 @@ package org.riotfamily.core.screen.list.command;
 
 import org.riotfamily.core.dao.SwappableItemDao;
 import org.riotfamily.core.screen.list.command.result.CommandResult;
-import org.riotfamily.core.screen.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public abstract class SwapCommand extends AbstractCommand {
 
@@ -46,7 +46,7 @@ public abstract class SwapCommand extends AbstractCommand {
 		dao.swapEntity(selection.getSingleItem().getObject(), context.getParent(), 
 				context.getParams(), getSwapWith());
 		
-		return new RefreshSiblingsResult(selection.getSingleItem().getObjectId());
+		return new RefreshListResult(selection.getSingleItem().getParentNodeId());
 	}
 
 }

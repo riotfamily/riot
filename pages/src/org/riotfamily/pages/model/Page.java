@@ -55,7 +55,6 @@ import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.mapping.PathConverter;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 
@@ -139,9 +138,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	}
 
 	public void setSite(Site site) {
-		Assert.state(this.site == null || this.site.equals(site), 
-				"The page is already associated with a site");
-		
 		this.site = site;
 	}
 

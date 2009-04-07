@@ -82,7 +82,11 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 			parentItem = Site.loadDefaultSite();
 		}
 		return parentItem.getChildPages(); //FIXME getChildPagesWithFallback();
-		
+	}
+	
+	public Object getParentNode(Object node) {
+		Page page = (Page) node;
+		return page.getParentPage();
 	}
 
 	public boolean hasChildren(Object parent, Object root, ListParams params) {
@@ -151,7 +155,7 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		if (parentItem == null) {
 			parentItem = Site.loadDefaultSite();
 		}
-		page.getParentPage().removePage(page);
+		page.getParent().removePage(page);
 		parentItem.addPage(page);
 		
 		updatePaths(page);

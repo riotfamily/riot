@@ -47,37 +47,26 @@ public abstract class AbstractChildCommand extends AbstractCommand {
 			if (selection.size() == 1) {
 				return selection.getSingleItem();
 			}
-			else if (selection.size() > 1) {
-				return new ParentSelectionItem();
-			}
 		}
-		return new ParentSelectionItem(context);
+		return new RootSelectionItem();
 	}
 	
-	private class ParentSelectionItem implements SelectionItem {
-
-		private String objectId;
-		
-		private Object object;
-		
-		private ParentSelectionItem() {
-		}
-		
-		private ParentSelectionItem(CommandContext context) {
-			objectId = context.getParentId();
-			object = context.getParent();
-		}
+	private static class RootSelectionItem implements SelectionItem {
 
 		public String getObjectId() {
-			return objectId;
+			return null;
 		}
 
 		public Object getObject() {
-			return object;
+			return null;
 		}
 
 		public int getRowIndex() {
 			return -1;
+		}
+		
+		public String getParentNodeId() {
+			return null;
 		}
 	}
 	
