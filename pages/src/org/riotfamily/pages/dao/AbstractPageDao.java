@@ -30,8 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.cachius.CacheService;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.cache.PageCacheUtils;
@@ -40,6 +40,7 @@ import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.setup.PageTypeHierarchy;
+import org.riotfamily.riot.dao.RiotDaoException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -163,12 +164,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		if (node == null) {
 			node = new PageNode();
 		}
-		
-		if (!PageValidationUtils.isValidChild(parentNode, page)) {
-			log.warn("Page not saved because not valid: " + page);
-			throw new DuplicatePathComponentException("Page '{0}' did not validate", page.toString());
-		}
-		
+
+		validate(parentNode, page);
+
 		node.addPage(page); // It could be that the node does not yet contain
 							// the page itself, for example when edited nested...
 
@@ -180,7 +178,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		PageCacheUtils.invalidateNode(cacheService, parentNode);
 		log.debug("Page saved: " + page);
 	}
-
+	
 	public void refreshPageIfDetached(Page page) {
 		refreshIfDetached(page);
 	}
@@ -211,12 +209,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	public void updatePage(Page page) {
 		PageNode node = page.getNode();
-		
-		if (!PageValidationUtils.isValidChild(node.getParent(), page)) {
-			log.warn("Page not saved because not valid: " + page);
-			throw new DuplicatePathComponentException("Page '{0}' did not validate", page.toString());
-		}
-		
+		validate(node.getParent(), page);
 		PageCacheUtils.invalidateNode(cacheService, node);
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
 		ComponentCacheUtils.invalidateContainer(cacheService, page.getPageProperties());
@@ -386,4 +379,15 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		deleteObject(site);
 	}
 
+	public void validate(PageNode parentNode, Page page) throws RiotDaoException {
+		if (!PageValidationUtils.isValidChild(parentNode, page)) {
+			log.debug("Parent [%s] and child [%s] have duplicate pathComponents", parentNode, page);
+			throw new DuplicatePathComponentException(page);
+		}
+		if (!pageTypeHierarchy.isValidChild(parentNode, page)) {
+			log.debug("Hierarchy of parent [%s] and child [%s] did not validate", parentNode, page);
+			throw new InvalidPageTypeException(parentNode, page);
+		}
+	}
+	
 }

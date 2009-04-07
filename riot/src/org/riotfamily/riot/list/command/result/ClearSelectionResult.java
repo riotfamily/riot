@@ -18,35 +18,18 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Carsten Woelk [cwoelk at neteye dot de]
+ *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.dao;
+package org.riotfamily.riot.list.command.result;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.riot.dao.InvalidPropertyValueException;
+import org.riotfamily.riot.list.command.CommandResult;
 
-/**
- * @author Carsten Woelk [cwoelk at neteye dot de]
- * @since 6.5
- */
-public class DuplicatePathComponentException extends InvalidPropertyValueException {
-	
-	private static final String CODE_NAME = "duplicate";
+public class ClearSelectionResult implements CommandResult {
 
-	private static final String FIELD_NAME = "pathComponent";
+	private static final String ACTION = "clearSelection";
 
-	private Page page;
-
-	public DuplicatePathComponentException(Page page) {
-		super(FIELD_NAME, CODE_NAME, new String[] { page.getPathComponent() },
-				"There's already another page using the pathComponent.");
-		
-		this.page = page;
+	public String getAction() {
+		return ACTION;
 	}
-
-	public Page getPage() {
-		return this.page;
-	}
-
 }

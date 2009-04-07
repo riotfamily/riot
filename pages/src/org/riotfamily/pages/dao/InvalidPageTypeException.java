@@ -24,29 +24,22 @@
 package org.riotfamily.pages.dao;
 
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.riot.dao.InvalidPropertyValueException;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.riot.dao.RiotDaoException;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
- * @since 6.5
+ * @since 8.0
  */
-public class DuplicatePathComponentException extends InvalidPropertyValueException {
+public class InvalidPageTypeException extends RiotDaoException {
 	
-	private static final String CODE_NAME = "duplicate";
+	private static final String CODE_NAME = "invalidPageType";
+	
+	private static final String DEFAULT_MESSAGE = "The defined hierarchy " +
+			"does not allow this page here.";
 
-	private static final String FIELD_NAME = "pathComponent";
-
-	private Page page;
-
-	public DuplicatePathComponentException(Page page) {
-		super(FIELD_NAME, CODE_NAME, new String[] { page.getPathComponent() },
-				"There's already another page using the pathComponent.");
-		
-		this.page = page;
-	}
-
-	public Page getPage() {
-		return this.page;
+	public InvalidPageTypeException(PageNode parentNode, Page page) {
+		super(CODE_NAME, new String[] { parentNode.getPageType(), page.getPageType() }, DEFAULT_MESSAGE);
 	}
 
 }

@@ -564,7 +564,8 @@ public class ListSession implements RenderContext {
 	}
 
 	public List<CommandButton> getListCommandButtons(HttpServletRequest request) {
-		CommandContext context = new CommandContextImpl(this, request);
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		context.setParent(loadParent(), this.parentId, this.parentEditorId);
 		return getCommandButtons(listCommands, context, true);
 	}
 	

@@ -56,14 +56,31 @@ public class PageTypeHierarchy implements ApplicationContextAware {
 	}
 	
 	public String getChildType(Page page) {
-		String parent = page != null ? page.getPageType() : null;
-		return childTypes.get(parent);
+		String pageType = page != null ? page.getPageType() : null;
+		return childTypes.get(pageType);
 	}
 	
 	public String[] getChildTypeOptions(Page page) {
 		return StringUtils.commaDelimitedListToStringArray(getChildType(page));
 	}
+
+	public String[] getChildTypeOptions(String type) {
+		return StringUtils.commaDelimitedListToStringArray(getChildType(type));
+	}
+
+	public boolean isValidChild(PageNode node, Page page) {
+		return isValidTypeFor(node.getPageType(), page.getPageType());
+	}
 	
+	public boolean isValidTypeFor(String parentType, String type) {
+		for (String childType : getChildTypeOptions(parentType)) {
+			if (childType.equals(type)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public String initPageType(PageNode node) {
 		String pageType = null;
 		if (node.getPageType() == null && node.getParent() != null) {

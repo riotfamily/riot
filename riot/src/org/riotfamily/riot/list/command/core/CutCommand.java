@@ -27,6 +27,7 @@ import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.BatchResult;
+import org.riotfamily.riot.list.command.result.ClearSelectionResult;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 public class CutCommand extends AbstractCommand implements BatchCommand {
@@ -49,14 +50,11 @@ public class CutCommand extends AbstractCommand implements BatchCommand {
 	}
 
 	public CommandResult execute(CommandContext context) {
-		BatchResult result = new BatchResult();
 		Clipboard clipboard = Clipboard.get(context);
-		for (String objectId : clipboard.getObjectIds()) {
-			result.add(new RefreshSiblingsResult(objectId));
-		}
 		clipboard.cut(context);
-		result.add(new RefreshSiblingsResult(context));
-		return result;
+		return new BatchResult(
+			new RefreshSiblingsResult(),
+			new ClearSelectionResult());
 	}
 
 	public String getBatchConfirmationMessage(CommandContext context) {

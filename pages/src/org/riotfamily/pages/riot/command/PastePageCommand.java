@@ -24,13 +24,14 @@
 package org.riotfamily.pages.riot.command;
 
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.dao.PageValidationUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.riot.dao.RiotDaoException;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.core.Clipboard;
 import org.riotfamily.riot.list.command.core.PasteCommand;
+import org.springframework.util.ObjectUtils;
 
 public class PastePageCommand extends PasteCommand {
 
@@ -47,7 +48,10 @@ public class PastePageCommand extends PasteCommand {
 		for (Object object : cb.getObjects()) {
 			if (object instanceof Page) {
 				Page page = (Page) object;
-				enabled &= isValidChild(context.getParent(), page);
+				Object newParent = context.getBean() != null
+						? context.getBean() : context.getParent();
+						
+				enabled &= isValidChild(newParent, page);
 
 				//REVISIT  
 				// Only allow pasting into the same site
@@ -61,6 +65,11 @@ public class PastePageCommand extends PasteCommand {
 	}
 
 	private boolean isValidChild(Object parent, Page page) {
+		// It is not valid to be a child of yourself 
+		if (ObjectUtils.nullSafeEquals(parent, page)) {
+			return false;
+		}
+		
 		PageNode parentNode;
 		if (parent instanceof Page) {
 			parentNode = ((Page) parent).getNode();
@@ -68,7 +77,17 @@ public class PastePageCommand extends PasteCommand {
 		else {
 			parentNode = pageDao.getRootNode();
 		}
-		return PageValidationUtils.isValidChild(parentNode, page);
+		
+		try {
+			pageDao.validate(parentNode, page);
+			log.debug("Parent [%s] and child [%s] did validate", parent, page);
+			return true;
+		}
+		catch (RiotDaoException e) {
+			log.debug("Parent [%s] and child [%s] did not validate due: %s",
+					parent, page, e.getMessage());
+		}
+		return false;
 	}
 
 }

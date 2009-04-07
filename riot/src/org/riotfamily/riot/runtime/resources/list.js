@@ -191,7 +191,14 @@ var RiotList = Class.create({
 				return;
 			}
 		}
-		ListService.getModel(this.key, null, this.updateRowsAndPager.bind(this));
+		ListService.getModel(this.key, null, this.refreshInternal.bind(this));
+	},
+	
+	refreshInternal: function(model) {
+		this.updateRowsAndPager(model);
+		if (!model.instantAction && model.listCommands) {
+			this.renderListCommands(model.listCommands);
+		}
 	},
 		
 	getSelectionIndex: function(item) {
@@ -285,6 +292,9 @@ var RiotList = Class.create({
 		if (result) {
 			if (result.action == 'batch') {
 				result.batch.each(this.processCommandResult.bind(this));
+			}
+			else if (result.action == 'clearSelection') {
+				this.clearSelection();
 			}
 			else if (result.action == 'refreshSiblings') {
 				this.refreshSiblings(result.objectId);

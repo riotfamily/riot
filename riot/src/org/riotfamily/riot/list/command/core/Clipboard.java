@@ -187,8 +187,15 @@ public class Clipboard {
 	}
 
 	private boolean isSameParent(CommandContext context) {
+		String objectId = context.getObjectId();
+		String parentId = context.getParentId();
 		for (ClipboardItem item : items) {
-			if (ObjectUtils.nullSafeEquals(context.getParentId(), item.parentId)) {
+			if (objectId != null) {
+				if (objectId.equals(item.parentId)) {
+					return true;
+				}
+			}
+			else if (ObjectUtils.nullSafeEquals(parentId, item.parentId)) {
 				return true;
 			}
 		}

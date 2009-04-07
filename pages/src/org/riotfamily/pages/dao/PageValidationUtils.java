@@ -25,7 +25,6 @@ package org.riotfamily.pages.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
@@ -39,7 +38,6 @@ public final class PageValidationUtils {
 
 	private PageValidationUtils() { }
 
-
 	public static boolean isValidChild(PageNode node, Page page) {
 		Collection<Page> childs = getChildsWithoutPage(node, page);
 		return !containsPathComponent(childs, page.getPathComponent());
@@ -47,14 +45,11 @@ public final class PageValidationUtils {
 
 	public static boolean isTranslatable(Page page, Site targetSite) {
 		Collection<Page> siblings = getSiblings(page, targetSite);
-		return !PageValidationUtils.containsPathComponent(siblings,
-					page.getPathComponent());
+		return !containsPathComponent(siblings, page.getPathComponent());
 	}
 
 	public static boolean containsPathComponent(Collection<Page> pages, String pathComponent) {
-		Iterator<Page> it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = it.next();
+		for (Page page : pages) {
 			if (page.getPathComponent().equals(pathComponent)) {
 				return true;
 			}
@@ -79,6 +74,5 @@ public final class PageValidationUtils {
 		result.remove(item);
 		return result;
 	}
-
 
 }

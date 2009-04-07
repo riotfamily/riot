@@ -30,6 +30,7 @@ import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.riot.dao.RiotDaoException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 /**
@@ -156,5 +157,11 @@ public interface PageDao {
 	public void updateSite(Site site);
 
 	public void deleteSite(Site site);
+	
+	/**
+	 * Checks that the page is valid for the given parent and throws a
+	 * RiotDaoException otherwise.
+	 */
+	public void validate(PageNode parentNode, Page page) throws RiotDaoException;
 
 }

@@ -95,7 +95,6 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 
 		if (parent instanceof Page) {
 			Page parentPage = (Page) parent;
-			
 			return parentPage.getChildPagesWithFallback();
 		}
 		else {
@@ -192,6 +191,7 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 		else {
 			parentNode = pageDao.getRootNode();
 		}
+		pageDao.validate(parentNode, page);
 		pageDao.moveNode(node, parentNode);
 	}
 
