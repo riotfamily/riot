@@ -122,8 +122,8 @@ riot.ContentContainer = Class.create({
 		this.id = id;
 	},
 	
-	markAsDirty: function() {
-		ComponentEditor.markAsDirty(this.id);
+	markAsDirty: function(callback) {
+		ComponentEditor.markAsDirty(this.id, callback);
 		riot.toolbar.enablePublishButtons();
 	}
 });
@@ -450,8 +450,7 @@ riot.Content = Class.create({
 		// Timeout as we otherwise get an 0x8004005 [nsIXMLHttpRequest.open] error
 		// in Firefox 2.0. See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
 		setTimeout(function() {
-			this.markAsDirty();
-			this.update();
+			this.markAsDirty(this.update.bind(this));
 		}.bind(this), 1);
 	},
 	
@@ -459,8 +458,8 @@ riot.Content = Class.create({
 		window.location.reload();		
 	},
 	
-	markAsDirty: function() {
-		riot.findContainer(this.element).markAsDirty();
+	markAsDirty: function(callback) {
+		riot.findContainer(this.element).markAsDirty(callback);
 	}
 });
 
