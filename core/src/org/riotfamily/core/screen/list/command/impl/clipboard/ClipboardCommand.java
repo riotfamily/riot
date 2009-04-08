@@ -21,33 +21,21 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.core.screen.list.command.impl.clipboard;
 
-import org.riotfamily.core.dao.CopyAndPasteEnabledDao;
+
 import org.riotfamily.core.screen.ListScreen;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.SelectionItem;
 import org.riotfamily.core.screen.list.command.result.NotificationResult;
 
-public class CopyCommand extends AbstractCommand implements ClipboardCommand {
+public interface ClipboardCommand {
 
-	public CommandResult execute(CommandContext context, Selection selection) {
-		Clipboard.get(context).set(context.getScreen(), selection, this);
-		return new NotificationResult("Item(s) copied to clipboard");
-	}
-
-	public boolean canPaste(ListScreen origin, Selection selection, 
-			ListScreen target, Object newParent) {
-		
-		return true;
-	}
-			
-	public void paste(ListScreen origin, Selection selection, 
-			ListScreen target, Object newParent) {
-		
-		CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) target.getDao();
-		for (SelectionItem item : selection) {
-			dao.addCopy(item.getObject(), newParent);
-		}
-	}
-
+	public boolean canPaste(ListScreen source, Selection selection, 
+			ListScreen target, SelectionItem newParent);
+	
+	public void paste(ListScreen source, Selection selection, 
+			ListScreen target, SelectionItem newParent, 
+			NotificationResult notification);
+	
 }

@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteProperty;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.screen.list.command.CommandResult;
 
 @DataTransferObject
 public class BatchResult implements CommandResult {

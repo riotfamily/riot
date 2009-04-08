@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.screen.ListScreen;
@@ -36,9 +37,9 @@ import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandInfo;
-import org.riotfamily.core.screen.list.command.DialogCommand;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
 import org.riotfamily.core.screen.list.dto.CommandButton;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.forms.Form;
@@ -176,6 +177,10 @@ class CommandContextHandler extends ListServiceHandler
 
 	public ListScreen getScreen() {
 		return screen;
+	}
+	
+	public MessageResolver getMessageResolver() {
+		return messageResolver;
 	}
 	
 }

@@ -292,7 +292,7 @@
 	<!-- Dialog commands -->
 	
 	<bean id="commandDialogController" name="/dialog/@{formKey}" 
-			class="org.riotfamily.core.screen.list.command.DialogFormController">
+			class="org.riotfamily.core.screen.list.command.impl.dialog.DialogFormController">
 		<constructor-arg ref="formContextFactory" />
 	</bean>
 		

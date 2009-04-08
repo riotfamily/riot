@@ -21,14 +21,15 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
-
-import java.util.List;
+package org.riotfamily.core.screen.list.command.impl.clipboard;
 
 import javax.servlet.http.HttpSession;
 
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.screen.ListScreen;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.SelectionItem;
+import org.riotfamily.core.screen.list.command.result.NotificationResult;
 
 public class Clipboard {
 
@@ -36,37 +37,33 @@ public class Clipboard {
 
 	private ClipboardCommand command;
 	
-	private ListScreen origin;
+	private ListScreen source;
 	
 	private Selection selection;
 
-	public void set(ListScreen origin, Selection selection, ClipboardCommand command) {
-		this.origin = origin;
+	public void set(ListScreen source, Selection selection, ClipboardCommand command) {
+		this.source = source;
 		this.selection = selection;
 		this.command = command;
 	}
 	
-	public boolean canPaste(ListScreen target, Object parent) {
+	public boolean canPaste(ListScreen target, SelectionItem parent) {
 		if (command != null) {
-			return command.canPaste(origin, selection, target, parent);
+			return command.canPaste(source, selection, target, parent);
 		}
 		return false;
 	}
 	
-	public List<SelectionItem> paste(ListScreen target, Object parent) {
-		List<SelectionItem> result = Generics.newArrayList();
-		if (command != null) {
-			command.paste(origin, selection, target, parent);
-			for (SelectionItem item : selection) {
-				result.add(item);
-			}
-			clear();
-		}
-		return result;
+	public void paste(ListScreen target, SelectionItem parent, 
+			NotificationResult notification) {
+		
+		notification.setArgs(selection.size());
+		command.paste(source, selection, target, parent, notification);
+		clear();
 	}
 	
 	public void clear() {
-		origin = null;
+		source = null;
 		selection = null;
 		command = null;
 	}

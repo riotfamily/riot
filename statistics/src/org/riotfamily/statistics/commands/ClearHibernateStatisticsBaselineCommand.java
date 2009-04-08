@@ -1,10 +1,10 @@
 package org.riotfamily.statistics.commands;
 
 import org.hibernate.SessionFactory;
-import org.riotfamily.core.screen.list.command.AbstractCommand;
 import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public class ClearHibernateStatisticsBaselineCommand extends AbstractCommand {
@@ -12,7 +12,7 @@ public class ClearHibernateStatisticsBaselineCommand extends AbstractCommand {
 	private SessionFactory sessionFactory;
 	
 	@Override
-	protected String getStyleClass(CommandContext context) {
+	protected String getStyleClass(CommandContext context, String action) {
 		return "clear";
 	}
 	

@@ -21,13 +21,16 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.core.screen.list.command.impl.dialog;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.riotfamily.common.web.mapping.HandlerUrlUtils;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.DialogResult;
 import org.riotfamily.forms.Form;
 

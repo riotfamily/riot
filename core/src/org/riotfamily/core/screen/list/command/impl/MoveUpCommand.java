@@ -21,18 +21,20 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.core.screen.list.command.impl;
 
-public class MoveDownCommand extends SwapCommand {
+import org.riotfamily.core.screen.list.command.CommandContext;
+
+public class MoveUpCommand extends SwapCommand {
 
 	@Override
 	protected int getSwapWith() {
-		return 1;
+		return -1;
 	}
 	
 	@Override
 	protected String getAction(CommandContext context) {
-		return "moveDown";
+		return "moveUp";
 	}
 
 }

@@ -21,24 +21,32 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.dbmsgsrc.riot;
+package org.riotfamily.core.screen.list.command.impl.clipboard;
 
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
-import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
+import org.riotfamily.core.screen.list.command.SelectionItem;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractChildCommand;
+import org.riotfamily.core.screen.list.command.result.BatchResult;
+import org.riotfamily.core.screen.list.command.result.NotificationResult;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
-public class RemoveEmptyEntriesCommand extends AbstractCommand {
+
+public class PasteCommand extends AbstractChildCommand {
 
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
-		return "delete";
+	public boolean isEnabled(CommandContext context, SelectionItem parent) {
+		return Clipboard.get(context).canPaste(context.getScreen(), parent);
 	}
 	
-	public CommandResult execute(CommandContext context, Selection selection) {
-		//String bundle = ((MessageBundleEntryDao) context.getDao()).getBundle();
-		//dao.removeEmptyEntries(bundle);
-		return new RefreshListResult();
+	public CommandResult execute(CommandContext context, SelectionItem parent) {
+		NotificationResult notification = new NotificationResult(context, this)
+				.setDefaultMessage("{0,choice,1#One item has|1<{0} items have} been pasted.");
+		
+		Clipboard.get(context).paste(context.getScreen(), parent, notification);
+		return new BatchResult(
+				notification,
+				new RefreshListResult(parent.getObjectId()).refreshAll());
 	}
+	
 }

@@ -21,20 +21,16 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.core.screen.list.command.impl;
 
 import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 
-public class AddCommand implements Command { //REVISIT Extend AbstractChildCommand
-
-	public CommandInfo getInfo(CommandContext context) {
-		CommandInfo info = new CommandInfo();
-		info.setLabel("Add");
-		info.setStyleClass("add");
-		return info;
-	}
+public class AddCommand extends AbstractCommand { //REVISIT Extend AbstractChildCommand
 	
 	public boolean isEnabled(CommandContext context, Selection selection) {
 		return selection.size() <= 1;

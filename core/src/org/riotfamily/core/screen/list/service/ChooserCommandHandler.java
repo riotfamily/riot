@@ -31,11 +31,11 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenUtils;
-import org.riotfamily.core.screen.list.command.AbstractCommand;
 import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 import org.riotfamily.core.screen.list.command.result.ScriptResult;
 

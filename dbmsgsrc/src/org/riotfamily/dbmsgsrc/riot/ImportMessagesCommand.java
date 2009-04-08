@@ -33,9 +33,9 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.screen.list.command.CommandContext;
-import org.riotfamily.core.screen.list.command.DialogCommand;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
@@ -45,7 +45,6 @@ import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.pages.model.Site;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.ModelAndView;
 
 public class ImportMessagesCommand extends DialogCommand {
 
@@ -64,7 +63,7 @@ public class ImportMessagesCommand extends DialogCommand {
 	}
 	
 	@Override
-	protected String getStyleClass(CommandContext context) {
+	protected String getStyleClass(CommandContext context, String action) {
 		return "import";
 	}
 	

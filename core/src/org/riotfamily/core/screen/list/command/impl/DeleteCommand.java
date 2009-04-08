@@ -21,11 +21,14 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.core.screen.list.command.impl;
 
 import java.util.HashMap;
 
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
 import org.riotfamily.core.screen.list.command.result.NotificationResult;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.TextField;
@@ -68,7 +71,7 @@ public class DeleteCommand extends DialogCommand {
 	public CommandResult handleInput(CommandContext context,
 			Selection selection, Object input, String button) {
 	
-		return new NotificationResult("Input: " + input + " Button: " + button);
+		return new NotificationResult().setMessage("Input: " + input + " Button: " + button);
 	}
 
 }

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteMethod;
+import org.riotfamily.core.screen.list.command.CommandResult;
 
 @DataTransferObject
 public class GotoUrlResult implements CommandResult {

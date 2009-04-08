@@ -26,10 +26,10 @@ package org.riotfamily.riot.job.command;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.core.screen.list.command.AbstractCommand;
 import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 
 public class JobCommand extends AbstractCommand {
 

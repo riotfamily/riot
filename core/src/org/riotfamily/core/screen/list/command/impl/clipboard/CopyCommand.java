@@ -21,43 +21,41 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.core.screen.list.command.impl.clipboard;
 
-import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.CopyAndPasteEnabledDao;
 import org.riotfamily.core.screen.ListScreen;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.SelectionItem;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.NotificationResult;
 
-public class CutCommand extends AbstractCommand implements ClipboardCommand {
+public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 
 	public CommandResult execute(CommandContext context, Selection selection) {
 		Clipboard.get(context).set(context.getScreen(), selection, this);
-		return new NotificationResult("Item(s) stored in clipboard");
+		return new NotificationResult(context, this)
+			.setArgs(selection.size())
+			.setDefaultMessage("{0,choice,1#Item|1<{0} items} put into the clipboard");
 	}
 
-	public boolean canPaste(ListScreen origin, Selection selection, 
-			ListScreen target, Object newParent) {
+	public boolean canPaste(ListScreen source, Selection selection, 
+			ListScreen target, SelectionItem newParent) {
 		
 		return true;
 	}
 			
 	public void paste(ListScreen source, Selection selection, 
-			ListScreen target, Object newParent) {
+			ListScreen target, SelectionItem newParent, 
+			NotificationResult notification) {
 		
-		CutAndPasteEnabledDao sourceDao = (CutAndPasteEnabledDao) source.getDao();
-		CutAndPasteEnabledDao targetDao = (CutAndPasteEnabledDao) target.getDao();
-		
+		CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) target.getDao();
 		for (SelectionItem item : selection) {
-			Object obj = item.getObject();
-			if (sourceDao != null) {
-				Object oldParent = sourceDao.getParent(obj);
-				targetDao.addChild(obj, newParent);
-				sourceDao.removeChild(obj, oldParent);
-			}
-			else {
-				targetDao.addChild(obj, newParent);
-			}
+			dao.addCopy(item.getObject(), newParent.getObject());
 		}
+		notification.setDefaultMessage("{0,choice,1#Item has|1<{0} items have} been copied.");
 	}
 
 }

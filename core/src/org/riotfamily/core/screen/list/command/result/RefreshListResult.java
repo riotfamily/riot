@@ -2,6 +2,7 @@ package org.riotfamily.core.screen.list.command.result;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteMethod;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.springframework.util.ObjectUtils;
 
 @DataTransferObject

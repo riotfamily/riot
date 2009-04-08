@@ -23,10 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.dbmsgsrc.riot;
 
-import org.riotfamily.core.screen.list.command.AbstractCommand;
 import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;

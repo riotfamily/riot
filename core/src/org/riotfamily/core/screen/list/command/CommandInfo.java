@@ -23,36 +23,40 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command;
 
+
 public class CommandInfo {
 
+	private String action;
+	
 	private String label;
 	
 	private String styleClass;
 
 	private boolean showOnForm;
 	
-	public String getLabel() {
-		return label;
+	public CommandInfo(String action, String label, String styleClass,
+			boolean showOnForm) {
+		
+		this.action = action;
+		this.label = label;
+		this.styleClass = styleClass;
+		this.showOnForm = showOnForm;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public String getAction() {
+		return action;
+	}
+	
+	public String getLabel() {
+		return label;
 	}
 
 	public String getStyleClass() {
 		return styleClass;
 	}
 
-	public void setStyleClass(String styleClass) {
-		this.styleClass = styleClass;
-	}
-
 	public boolean isShowOnForm() {
 		return showOnForm;
-	}
-
-	public void setShowOnForm(boolean showOnForm) {
-		this.showOnForm = showOnForm;
 	}
 	
 }

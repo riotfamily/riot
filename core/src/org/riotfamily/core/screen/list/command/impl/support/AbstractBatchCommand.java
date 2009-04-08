@@ -21,11 +21,14 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.core.screen.list.command.impl.support;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.SelectionItem;
 import org.riotfamily.core.screen.list.command.result.BatchResult;
-import org.riotfamily.core.screen.list.command.result.CommandResult;
 
 public abstract class AbstractBatchCommand<T> extends AbstractCommand {
 

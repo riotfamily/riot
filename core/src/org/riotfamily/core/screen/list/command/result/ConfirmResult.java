@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.result;
 
+import org.riotfamily.core.screen.list.command.CommandResult;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
