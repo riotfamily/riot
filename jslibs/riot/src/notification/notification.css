@@ -1,10 +1,13 @@
-.notification {
+#riot-notifications {
 	position: fixed;
+	_position: absolute;
 	bottom: 10px;
 	right: 10px;
 	z-index: 99;
 }
-
+.notification {
+	width: 300px;
+}
 .notification .c {
 	width: 200px;
 }
@@ -21,7 +24,7 @@
 	height: 41px;
 }
 
-/* NOTE: The double background-image trick prelaods the hover state: */
+/* NOTE: The double background-image trick preloads the hover state: */
 .notification .t .l {
 	background-image: url(images/tl_hi.png);
 	background-image: url(images/tl.png);

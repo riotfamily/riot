@@ -6,8 +6,16 @@
 	<script type="text/javascript" src="../../../build/modules/scriptaculous-js/unpack/scriptaculous-js-1.8.1/src/effects.js"></script>
 	<script type="text/javascript" src="../src/notification/notification.js"></script>
 	<link rel="stylesheet" type="text/css" href="../src/notification/notification.css" />
+	
 </head>
 <body>
+<script type="text/javascript" language="javascript">
+	var i = 1;
+	function notify() {
+		riot.notification.show({title: 'Riot Notification', message: 'Message number ' + i++, autoHide: true});
+	}
+</script>
+<a href="javascript:notify();">Notify Me!</a>
 <p>
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce in est pharetra est laoreet suscipit. Morbi vestibulum pretium lorem. Aliquam suscipit tortor quis quam laoreet vestibulum. Aliquam erat volutpat. Suspendisse velit. Pellentesque viverra sem sed risus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam aliquam nunc id mi. Proin bibendum lacus ac neque. Aliquam vel tortor non nunc aliquet dictum. Etiam mattis libero id sem. Sed elementum, ipsum iaculis rutrum vulputate, lacus ipsum tempus justo, id rutrum nisl tortor tincidunt ipsum. Aenean tortor. Maecenas auctor augue eget nisi. Curabitur condimentum, nulla quis accumsan interdum, justo urna cursus magna, vitae pharetra enim libero nec velit. Donec adipiscing nisi quis dui. Curabitur non mi. Vivamus ullamcorper aliquam ipsum.
 </p>
@@ -39,8 +47,5 @@ Maecenas massa risus, volutpat quis, dapibus ut, accumsan ut, nulla. Integer mag
 Pellentesque malesuada euismod erat. Sed in ante. Quisque scelerisque. Etiam eu leo. Maecenas eu urna vel justo suscipit volutpat. Maecenas eleifend cursus leo. Nulla dapibus. Aliquam non eros vitae massa cursus auctor. Aliquam vel dolor. Nullam sit amet quam in orci eleifend pulvinar. Etiam id sapien. 
 </p>
 
-<script type="text/javascript" language="javascript">
-	riot.notification.show({title: 'Copy', message: '3 items put into the clipboard.', duration: 4});
-</script>
 </body>
 </html>

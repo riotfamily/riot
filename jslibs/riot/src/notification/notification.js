@@ -3,9 +3,11 @@ if (!window.riot) var riot = {}; // riot namespace
 riot.notification = (function() {
 
 	// ------------------------------------------------------------------------
-	// Private fields
+	// Private fields and functions
 	// ------------------------------------------------------------------------
 
+	var ie6 = document.all && typeof document.addEventListener != 'function';
+		
 	var template = new Template('<table cellspacing="0" cellpadding="0">\
 		  <tbody>\
 			<tr class="t">\
@@ -38,6 +40,31 @@ riot.notification = (function() {
 		  </tbody>\
 		</table>');
 
+	var visible = 0; 
+	var container;
+	
+	function initContainer() {
+		if (!container) {
+			container = new Element('div');
+			Element.insert(document.body, container.wrap(
+					new Element('div', {id: 'riot-notifications'})));
+		}
+	}
+	
+	function fixPNGs(el) {
+		if (ie6) {
+			el.select('td').each(function(td) {
+				td.style.backgroundImage = '';
+				var bg = td.getStyle('background-image');
+				if (bg && bg != 'none') {
+					bg = bg.replace(/url\(['"]?(.*?)['"]?\)/, '$1');
+					td.style.backgroundImage = 'none';
+					td.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + bg + "', sizingMethod='scale')";
+				}
+			});
+		}
+	}
+	
 	var Notification = Class.create({
 		initialize: function(o) {
 			o = Object.extend({
@@ -49,7 +76,7 @@ riot.notification = (function() {
 				title: o.title, 
 				message: o.message
 			};
-			this.el = new Element('div', {className: 'notification'}).setStyle({display: 'none'})
+			this.el = new Element('div', {className: 'notification'}).setStyle({visibility: 'hidden'})
 				.insert(template.evaluate(data))
 				.observe('mouseover', this.mouseover.bind(this))
 				.observe('mouseout', this.mouseout.bind(this));
@@ -59,14 +86,29 @@ riot.notification = (function() {
 			if (o.autoHide) {
 				setTimeout(this.scheduledClose.bind(this), o.duration * 1000);
 			}
-			Element.insert(document.body, this.el);
-			Effect.Appear(this.el, {duration: 0.8});
+			
+			container.insert({top: this.el});
+			if (container.getHeight() > document.viewport.getHeight()) {
+				container.childElements().without(this.el).invoke('remove');
+			}
+			fixPNGs(this.el);
+			this.el.hide().setStyle({visibility: 'visible'});
+			if (ie6) {
+				this.el.show();
+			}
+			else {
+				Effect.Appear(this.el, {duration: 0.8});
+			}
+			visible++
 		},
 		
 		close: function() {
 			if (!this.closed) {
-				this.el.remove();
+				this.el.setStyle({visibility: 'hidden'});
 				this.closed = true;
+				if (--visible == 0) {
+					container.update();
+				}
 			}
 		},
 		
@@ -82,6 +124,7 @@ riot.notification = (function() {
 		mouseover: function() {
 			this.hover = true;
 			this.el.down().addClassName('hi');
+			fixPNGs(this.el);
 		},
 		
 		mouseout: function() {
@@ -91,6 +134,7 @@ riot.notification = (function() {
 			}
 			else {
 				this.el.down().removeClassName('hi');
+				fixPNGs(this.el);
 			}
 		}
 	});
@@ -102,6 +146,7 @@ riot.notification = (function() {
 	return {
 		
 		show: function(settings) {
+			initContainer();
 			new Notification(settings);
 		}
 	};
