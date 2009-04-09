@@ -384,7 +384,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			log.debug("Parent [%s] and child [%s] have duplicate pathComponents", parentNode, page);
 			throw new DuplicatePathComponentException(page);
 		}
-		if (!pageTypeHierarchy.isValidChild(parentNode, page)) {
+		if (!page.getNode().isSystemNode() && !pageTypeHierarchy.isValidChild(parentNode, page)) {
 			log.debug("Hierarchy of parent [%s] and child [%s] did not validate", parentNode, page);
 			throw new InvalidPageTypeException(parentNode, page);
 		}
