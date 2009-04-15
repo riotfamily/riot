@@ -35,13 +35,14 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Locale;
 
 import org.riotfamily.common.util.ColorUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.Generics;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -55,8 +56,8 @@ import org.springframework.util.StringUtils;
  * @since 6.5
  */
 public class TextRenderer implements InitializingBean {
-
-	private List<Font> fonts = Generics.newArrayList();
+	
+	private FontBundle fontBundle = new FontBundle();
 	
 	private float fontSize = 22;
 	
@@ -105,7 +106,7 @@ public class TextRenderer implements InitializingBean {
 		catch (IOException e) {
 			addFont(res);
 		}
-		Assert.notEmpty(fonts, "Found no fonts at " + res.getFilename());
+		Assert.notEmpty(fontBundle.getAllFonts(), "Found no fonts at " + res.getFilename());
 	}
 	
 	private int getFontFormat(String fileName) {
@@ -120,16 +121,17 @@ public class TextRenderer implements InitializingBean {
 	}
 	
 	private void addFont(Resource res) throws FontFormatException, IOException {
-		int format = getFontFormat(res.getFilename());
-		if (format != -1) {
-			fonts.add(Font.createFont(format, res.getInputStream()));
-		}
+		addFont(res.getFilename(), res.getInputStream());
 	}
 	
 	private void addFont(File file) throws FontFormatException, IOException {
-		int format = getFontFormat(file.getName());
+		addFont(file.getName(), new FileInputStream(file));
+	}
+	
+	private void addFont(String name, InputStream input) throws FontFormatException, IOException {
+		int format = getFontFormat(name);
 		if (format != -1) {
-			fonts.add(Font.createFont(format, file));
+			fontBundle.addFont(name, Font.createFont(format, input));
 		}
 	}
 	
@@ -141,10 +143,14 @@ public class TextRenderer implements InitializingBean {
 		}
 	}
 	
-	protected Font getFont(String text) {
+	public Font getFont(String text, Locale locale) {
 		int maxChars = -1;
-		Font bestMatch = null;
-		for (Font font : fonts) {
+		Font bestMatch = fontBundle.getFontFor(locale);
+		if (bestMatch != null && (maxChars = bestMatch.canDisplayUpTo(text)) == -1) {
+			return bestMatch;
+		}
+		
+		for (Font font : fontBundle.getAllFonts()) {
 			int upTo = font.canDisplayUpTo(text);
 			if (upTo == -1) {
 				return font;
@@ -269,8 +275,12 @@ public class TextRenderer implements InitializingBean {
 			}
 		}
 	}
-	
-	public BufferedImage generate(String text, int maxWidth, String color) {
+
+	public final BufferedImage generate(String text, int maxWidth, String color) {
+		return generate(text, null, maxWidth, color);
+	}
+
+	public BufferedImage generate(String text, Locale locale, int maxWidth, String color) {
 		if (!StringUtils.hasText(text)) {
 			text = " ";
 		}
@@ -285,20 +295,20 @@ public class TextRenderer implements InitializingBean {
 		Dimension size;
 		
 		if (shrinkToFit && maxWidth < Integer.MAX_VALUE) {
-			size = getSize(text, fontSize, Integer.MAX_VALUE);
+			size = getSize(text, locale, fontSize, Integer.MAX_VALUE);
 			while (size.getWidth() > maxWidth) {
 				double delta = fontSize - fontSize * (maxWidth / size.getWidth());
 				fontSize -= Math.max(Math.round(delta), 1);
-				size = getSize(text, fontSize, Integer.MAX_VALUE);
+				size = getSize(text, locale, fontSize, Integer.MAX_VALUE);
 			}
 			maxWidth = Integer.MAX_VALUE;
 		}
 		else {
-			size = getSize(text, fontSize, maxWidth);
+			size = getSize(text, locale, fontSize, maxWidth);
 		}
 		
 		BufferedImage image = createImage(size);
-		drawText(text, maxWidth, color, fontSize, image);
+		drawText(text, locale, maxWidth, color, fontSize, image);
 		
 		if (resample) {
 			int w = checkSize((int) (size.getWidth() / scale));
@@ -312,25 +322,25 @@ public class TextRenderer implements InitializingBean {
 		return image;
 	}
 	
-	protected Dimension getSize(String text, float fontSize, float maxWidth) {
-	    return layout(text, maxWidth, null, fontSize, 
+	protected Dimension getSize(String text, Locale locale, float fontSize, float maxWidth) {
+	    return layout(text, locale, maxWidth, null, fontSize, 
 	    		createImage(new Dimension(1, 1)), false);
 	}
 	
-	protected void drawText(String text, float maxWidth, String color, 
+	protected void drawText(String text, Locale locale, float maxWidth, String color, 
 			float fontSize, BufferedImage image) {
 		
-	    layout(text, maxWidth, color, fontSize, image, true);
+	    layout(text, locale, maxWidth, color, fontSize, image, true);
 	}
 	
-	protected Dimension layout(String text, float maxWidth, String color, 
-			float fontSize, BufferedImage image, boolean draw) {
+	protected Dimension layout(String text, Locale locale, float maxWidth,
+			String color, float fontSize, BufferedImage image, boolean draw) {
 		
 		Color fg = color != null 
 				? ColorUtils.parseColor(color)
 				: this.color;
 				
-		Font font = getFont(text).deriveFont(fontSize);
+		Font font = getFont(text, locale).deriveFont(fontSize);
 		
 		Graphics2D graphics = createGraphics(image);
 		FontRenderContext fc = graphics.getFontRenderContext();

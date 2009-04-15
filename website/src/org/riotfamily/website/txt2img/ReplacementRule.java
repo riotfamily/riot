@@ -26,6 +26,7 @@ package org.riotfamily.website.txt2img;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
 
 import org.riotfamily.common.image.ImageUtils;
 
@@ -45,11 +46,11 @@ public class ReplacementRule extends ListItemRenderer {
 	public void setSelector(String selector) {
 		this.selector = selector;
 	}
-	
-	public void generate(String text, int maxWidth, String color, boolean hover, 
+
+	public void generate(String text, Locale locale, int maxWidth, String color, boolean hover, 
 			OutputStream os) throws IOException {
 		
-		BufferedImage image = generate(text, maxWidth, color, hover);
+		BufferedImage image = generate(text, locale, maxWidth, color, hover);
 		ImageUtils.write(image, "png", os);
 		image.flush();
 	}
