@@ -26,7 +26,7 @@ package org.riotfamily.website.txt2img;
 import java.awt.Font;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Map;
+import java.util.SortedMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +43,7 @@ public class FontBundle {
 	
 	private final static String UNNAMED_PREFIX = "unnamed-";
 	
-	private Map<String,Font> fonts = Generics.newHashMap();
+	private SortedMap<String,Font> fonts = Generics.newTreeMap();
 
 	public void addFont(Font font) {
 		addFont(null, font);
