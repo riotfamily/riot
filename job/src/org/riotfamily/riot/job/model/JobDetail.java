@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -256,7 +257,7 @@ public class JobDetail {
 		return "Job " + id + ": " + name;
 	}
 
-	@OneToMany(mappedBy="job", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="job", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@OrderBy("date")
 	public Set<JobLogEntry> getLog() {
 		return log;
