@@ -99,7 +99,7 @@ var Txt2ImgReplacement = Class.create({
 	},
 	
 	// Whether to use the alphaImageLoader or not (detects IE 6):
-	useFilter: document.all && typeof document.addEventListener != 'function',
+	useFilter: Prototype.Browser.IE && typeof document.body.style.maxHeight == 'undefined';
 	
 	replace: function() {
 		if (!this.el.down('img.replacement')) {
