@@ -87,6 +87,7 @@
 			<list>
 				<bean class="org.riotfamily.components.support.NoCacheHeaderInterceptor" />
 				<bean class="org.riotfamily.common.web.collaboration.SharedPropertiesInterceptor" />
+				<bean class="org.riotfamily.common.web.view.FlashScopeInterceptor" />
 			</list>
 		</property>
 	</bean>

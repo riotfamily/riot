@@ -47,6 +47,7 @@
     
     <util:list id="handlerInterceptors">
 		<ref bean="loginInterceptor" />
+		<bean class="org.riotfamily.common.web.view.FlashScopeInterceptor" />
 	</util:list>
 			
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">
@@ -230,7 +231,8 @@
 	
 	<!-- Root group screen -->
 	
-	<bean id="start" class="org.riotfamily.core.screen.GroupScreen">
+	<bean id="home" class="org.riotfamily.core.screen.GroupScreen">
+		<property name="icon" value="home" />
 		<property name="childScreens" ref="rootScreens" />
 	</bean>
 	
