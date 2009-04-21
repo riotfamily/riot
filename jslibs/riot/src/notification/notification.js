@@ -6,7 +6,7 @@ riot.notification = (function() {
 	// Private fields and functions
 	// ------------------------------------------------------------------------
 
-	var ie6 = document.all && typeof document.addEventListener != 'function';
+	var ie6 = Prototype.Browser.IE && typeof document.body.style.maxHeight == 'undefined';
 		
 	var template = new Template('<table cellspacing="0" cellpadding="0">\
 		  <tbody>\
