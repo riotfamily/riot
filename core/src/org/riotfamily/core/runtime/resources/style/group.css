@@ -1,48 +1,20 @@
-@import url(common.css);
-
-.group .box-title {
-	background: ${title_bg_color} url(images/corner.gif) top left no-repeat;
+.screens {
+	border-top: 1px solid #dadada;
 }
-.group .box-title span {
-	margin: 0 0 0 1px;
-}
-
 .group a {
 	display: block;
-	border-bottom: 1px solid #ebebeb;
-	height: 80px;
+	border-bottom: 1px solid #dadada; 
 	color: #3d3d3d;
 	text-decoration: none;
+	padding: 20px 20px 20px 6px;
 }
-.group .icon {
-	display: -moz-inline-stack;
-	display: inline-block;
-	width: 80px;
-	height: 80px;
-	_height: 79px;
-	vertical-align: middle;
-	background: ${highlight_color} url(icons/editors/arrow.gif) no-repeat;
-}
-
 .group a:hover,
 .group a:focus {
-	background-color: #ebebeb;
+	background-color: #f0f0f0;
 	outline: none;
 	-moz-outline: none;
 }
-.group a:hover .icon,
-.group a:focus .icon {
-	background-position: 0px -80px;
-}
-.group .text {
-	display: -moz-inline-stack;
-	display: inline-block;
-	vertical-align: middle;
-	padding-left: 16px;
-}
-
 .group a.screen .label {
 	font-size: 14px;
 	font-weight: bold;
-	color: ${label_color};
 }

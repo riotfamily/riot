@@ -1,4 +1,4 @@
-<form id="${form.id}" action="${form.action}" method="post" enctype="multipart/form-data">
+<form action="${form.action}" method="post" enctype="multipart/form-data">
 <script type="text/javascript" language="JavaScript">
 	function toggleHint(id) {
 		var el = document.getElementById(id);

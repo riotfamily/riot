@@ -1,103 +1,78 @@
 @import url(common.css);
 
-#login {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 300px;
-	height: 264px;
-	margin: -180px 0 0 -150px;
+table.center {
+	height: 100%;
+	margin:auto;
+}
+td.center {
+	width: 100%;
+	vertical-align: middle;
+}
+#wrapper {
+	height: 100%;
+	background: url(images/riot_footer.gif) bottom right no-repeat;
 }
 
-#logo {
-	height: 120px;
-	background: url(images/logo.gif) right 55px no-repeat;
-	margin-right: 14px;
+.username td,
+.password td {
+	padding-bottom: 10px;
+	vertical-align: middle;
 }
-
-form {
-	margin: 0;
-	padding: 0;
-}
-
-#form {
-	border-top: 1px solid #ebebeb;
-	border-bottom: 1px solid #ebebeb;
-	padding: 14px 14px 12px 14px;
-	margin-bottom: 40px;
+td.label,
+tr.button td.input {
 	text-align: right;
+	font-weight: bold;
+	padding-left: 3px;
 }
-
-label {
-	display: -moz-inline-stack;
-	display: inline-block;
-	margin-right: 5px;
-	vertical-align: middle;
+td.input {
+	padding-left: 10px;
 }
-
-input {
-	vertical-align: middle;
+#username, #password {
+	border: 1px solid #cacaca;
+	padding: 4px;
 }
 
 .error {
-	text-align: left;
-	color: ${highlight_color};
-	padding: 0 0 10px 105px; 
-}
-
-div.username {
-	margin-bottom: 8px;
-}
-div.password {
+	background: url(images/error.png) left center no-repeat;
+	line-height: 20px;
+	padding-left: 20px;
 	margin-bottom: 10px;
 }
 
-#username, 
-#password {
-	width: 167px;
-	xline-height: 11px;
-	_height: 16px;
-	_overflow: visible;	
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	border: 1px solid #ebebeb;
-	padding: 6px 4px;	
+.box .t,
+.box .b {
+	height: 18px;
+}
+.box .l,
+.box .r {
+	width: 25px;
 }
 
-.button {
-	display: -moz-inline-stack;
-	display: inline-block;
-	zoom:1;
-	*display:inline;
-	height: 46px;
-	background: ${highlight_color} url(images/button-notch.gif) repeat-x;
+.box .t .l {
+	background-image: url(images/login/tl.png);
 }
-.button-login {
-	height: 46px;
-	display: block;
-	position: relative;
-	padding: 10px 40px 30px 36px;
-	_padding: 10px 10px 36px 38px;
-	background: ${highlight_color} url(images/login.gif) 10px 10px no-repeat;
-	border: 0;
-	margin: 0 1px;
-	color: #fff;
-	text-decoration: none;
-	font-size: 11px;
-	font-family: Arial;
-	text-transform: uppercase;
-	text-align: left;
-	vertical-align: top;
+.box .t .c {
+	background-image: url(images/login/tc.png);
 }
-
-#tip { 
-	margin: 0 1px;
-	padding: 1px 0;
-	background-color: #e5e4e0;
+.box .t .r {
+	background-image: url(images/login/tr.png);
 }
-
-#tip p { 
-	margin: 0 -1px;
-	padding: 12px;
-	background-color: #e5e4e0;
+.box .m .l {
+	background-image: url(images/login/ml.png);
+}
+.box .m .c {
+	background-color: #f0f0f0;
+	padding: 20px;
+}
+.box .m .r {
+	background-image: url(images/login/mr.png);
+}
+.box .b .l {
+	background-image: url(images/login/bl.png);
+}
+.box .b .c {
+	background-image: url(images/login/bc.png);
+}
+.box .b .r {
+	background-image: url(images/login/br.png);
 }

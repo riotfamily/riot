@@ -1,5 +1,3 @@
-@import url(common.css);
-
 #childLists .list {
 	margin-top:10px;
 }
@@ -11,7 +9,7 @@
 }
 
 .commands .saveButton {
-	background-image: url(icons/commands/save.gif);
+	background-image: url(images/save.png);
 }
 
 #form-options,
@@ -29,6 +27,7 @@
 	clear:both;
 	margin-bottom: 30px;
 	text-align: right;
+	display: none;
 }
 
 .riot-dialog form {
@@ -39,32 +38,19 @@
 .buttons span {
 	display: -moz-inline-stack;
 	_display: inline-block;
-	height: 46px;
-	background: ${highlight_color} url(images/button-notch.gif) repeat-x;
+	height: 33px;
+	background: url(images/button_bg.gif) 0 -33px repeat-x;
 }
 
 .buttons input {
-	height: 46px;
-	display: block;
-	padding: 10px 40px 36px 36px;
-	_padding: 10px 10px 36px 38px;
-	background-color: ${highlight_color};
-	background-position: 10px 10px;
-	background-repeat: no-repeat;
+	background: url(images/button_bg.gif) repeat-x;
 	border: 0;
-	margin: 0 1px;
-	color: #fff;
-	text-decoration: none;
-	font-size: 11px;
 	font-family: Arial;
-	text-transform: uppercase;
-	text-align: left;
-	vertical-align: top;
+	font-size: 11px;
+	padding: 0 20px;
+	margin: 0 1px;
 }
 
-.buttons input.button-save {
-	background-image: url(images/save.gif);
-} 
 
 #saving {
 	margin-left: 32px;
@@ -100,7 +86,7 @@ label {
 	margin-bottom:4px;
 }
 .composite-title label {
-	color: ${highlight_color};
+	font-size: 15px;
 }
 label.disabled,
 .disabled label,
@@ -124,10 +110,10 @@ label.disabled,
 .element-switch {
 	margin-bottom: 12px;
 }
-
 input {
 	color: #3d3d3d;
 }
+
 textarea, input.text, input.number, input.password, select, option {
 	font-family: arial, sans-serif;
 	font-size: 11px;
@@ -138,6 +124,7 @@ textarea, input.text, input.number, input.password {
 textarea, input.text, input.number, input.password {
 	display: block;
 }
+
 textarea.disabled, 
 input.disabled {
 	color: #999;
@@ -153,6 +140,7 @@ select.disabled {
 textarea, input.text, input.password {
 	width: 100%;
 }
+
 input.number {
 	width: auto;
 }
@@ -302,7 +290,7 @@ ul.checkboxGroup label {
 	margin: 0;
 	background-color: #fff;
 	xborder-bottom: 1px solid #ebebeb;
-	vertical-align: top; /* Eliminates vertical gap in IE */ 
+	vertical-align: top; 
 }
 
 .collectionEditor table {
