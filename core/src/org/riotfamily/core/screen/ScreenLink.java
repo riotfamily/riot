@@ -32,10 +32,13 @@ public class ScreenLink {
 	
 	private String icon;
 	
-	public ScreenLink(String title, String url, String icon) {
+	private boolean isNew;
+	
+	public ScreenLink(String title, String url, String icon, boolean isNew) {
 		this.title = title;
 		this.url = url;
 		this.icon = icon;
+		this.isNew = isNew;
 	}
 
 	public String getTitle() {
@@ -61,5 +64,9 @@ public class ScreenLink {
 	public void setIcon(String icon) {
 		this.icon = icon;
 	}
-		
+
+	public boolean isNew() {
+		return isNew;
+	}
+
 }

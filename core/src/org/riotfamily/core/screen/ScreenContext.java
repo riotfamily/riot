@@ -31,6 +31,7 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mapping.HandlerUrlUtils;
 import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.core.dao.RiotDao;
+import org.riotfamily.core.screen.form.FormScreen;
 
 public class ScreenContext {
 
@@ -193,7 +194,9 @@ public class ScreenContext {
 	}
 	
 	public ScreenLink getLink() {
-		return new ScreenLink(getTitle(), getUrl(), screen.getIcon());
+		//TODO Support isNew for other screen types too
+		boolean isNew = objectId == null && screen instanceof FormScreen; 
+		return new ScreenLink(getTitle(), getUrl(), screen.getIcon(), isNew);
 	}
 	
 	public List<ScreenLink> getPath() {

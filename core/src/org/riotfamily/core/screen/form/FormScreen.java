@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.web.view.FlashScopeView;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.RiotDaoException;
@@ -49,7 +49,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 public class FormScreen extends AjaxFormController
 		implements RiotScreen, BeanNameAware {
@@ -68,11 +67,13 @@ public class FormScreen extends AjaxFormController
 	private String id;
 	
 	private String formId;
+
+	private String icon;
 	
 	private RiotScreen parentScreen;
 	
 	private List<RiotScreen> childScreens;
-	
+
 	public FormScreen(FormContextFactory formContextFactory,
 			FormRepository formRepository,
 			PlatformTransactionManager transactionManager) {
@@ -97,13 +98,10 @@ public class FormScreen extends AjaxFormController
 		this.formId = formId;
 	}
 	
-	public String getTitle(Object object) {
-		if (object != null) {
-			return ScreenUtils.getLabel(object, this);
-		}
-		return "*new*";
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
-
+	
 	public void setBeanName(String beanName) {
 		if (id == null) {
 			id = beanName;
@@ -143,7 +141,6 @@ public class FormScreen extends AjaxFormController
 		
 		ScreenContext context = ScreenContext.get(request);
 		mv.addObject("listStateKey", context.createParentContext().getListStateKey());
-		
 		return mv;
 	}
 
@@ -215,29 +212,26 @@ public class FormScreen extends AjaxFormController
 			Form form, HttpServletRequest request,
 			ScreenContext context, boolean save) {
 		
+		ModelAndView mv;
 		String focus = request.getParameter("focus");
 		if (focus != null || (save && hasChildScreens())) {
-			return reloadForm(form, context, focus);
+			mv = reloadForm(form, context, focus);
 		}
 		else {
-			return showParentList(context);
+			mv = showParentList(context);
 		}
+		mv.addObject("notification", "Your changes have been saved.");
+		return mv;
 	}
 
 	protected ModelAndView showParentList(ScreenContext context) {
 		String listUrl = context.createParentContext().getUrl();
-		return new ModelAndView(new RedirectView(listUrl, true));
+		return new ModelAndView(new FlashScopeView(listUrl, true));
 	}
 
-	protected ModelAndView reloadForm(Form form, ScreenContext context,
-			String focusElement) {
-
-		String formUrl = context.getUrl();
-		formUrl = ServletUtils.addParameter(formUrl, "saved", "true");
-		if (focusElement != null) {
-			formUrl = ServletUtils.addParameter(formUrl, "focus", focusElement);
-		}
-		return new ModelAndView(new RedirectView(formUrl, true));
+	protected ModelAndView reloadForm(Form form, ScreenContext context, String focus) {
+		return new ModelAndView(new FlashScopeView(context.getUrl(), true))
+				.addObject("focus", focus);
 	}
 
 	// -----------------------------------------------------------------------
@@ -249,7 +243,7 @@ public class FormScreen extends AjaxFormController
 	}
 
 	public String getIcon() {
-		return null;
+		return icon;
 	}
 
 	public String getId() {
@@ -262,6 +256,13 @@ public class FormScreen extends AjaxFormController
 
 	public void setParentScreen(RiotScreen parentScreen) {
 		this.parentScreen = parentScreen;
+	}
+	
+	public String getTitle(Object object) {
+		if (object != null) {
+			return ScreenUtils.getLabel(object, this);
+		}
+		return "New";
 	}
 	
 }

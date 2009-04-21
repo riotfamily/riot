@@ -394,6 +394,14 @@
 </#macro>
 
 <#---
+  - Wraps the nested content inside the specified tag, if parameter "if" 
+  - evaluates to true.
+  -->
+<#macro wrap if tag attributes...>
+	<#if if><${tag}${joinAttributes(attributes)}><#nested /></${tag}><#else><#nested /></#if><#t>
+</#macro>
+
+<#---
   - Wraps the nested content inside an &lt;a&gt;-tag if the href parameter 
   - has any content.
   -->

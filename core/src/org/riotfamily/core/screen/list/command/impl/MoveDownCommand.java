@@ -37,4 +37,9 @@ public class MoveDownCommand extends SwapCommand {
 		return "moveDown";
 	}
 
+	@Override
+	protected String getIcon(String action) {
+		return "down";
+	}
+
 }

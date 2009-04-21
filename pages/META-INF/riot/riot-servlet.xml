@@ -88,6 +88,7 @@
 	</bean>
 	
 	<bean id="sitemap" class="org.riotfamily.core.screen.list.TreeListScreen">
+		<property name="icon" value="sitemap" />
 		<property name="dao" ref="pageRiotDao" />
 		<property name="columns">
 			<list>
@@ -115,7 +116,9 @@
 			</list>
 		</property>
 		<property name="itemScreen">
-			<bean id="page" class="org.riotfamily.core.screen.form.FormScreen" autowire="constructor" />
+			<bean id="page" class="org.riotfamily.core.screen.form.FormScreen" autowire="constructor">
+				<property name="icon" value="page" />
+			</bean>
 		</property>
 	</bean>
 	

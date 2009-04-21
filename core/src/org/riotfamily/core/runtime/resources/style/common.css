@@ -103,18 +103,22 @@ span.messageCode {
 
 #path a {
 	text-decoration: none;
+	outline: none;
+	-moz-outline: none;
 }
-#path .screen {
-	display: block;
-	float: left;
-	line-height: 31px;
-	height: 31px;
-	color: #333;
-}
-#path b {
+
+#path a,
+#path b,
+#path span {
 	display: block;
 	line-height: 31px;
 	background-repeat: no-repeat;
+	padding: 0;
+}
+
+#path .screen {
+	float: left;
+	color: #333;
 }
 
 #path .screen {
@@ -127,37 +131,40 @@ span.messageCode {
 }
 
 #path .first {
-	background-repeat: no-repeat;
 	background-image: url(images/path/left.gif);
-	padding: 0 0 0 4px;
+	padding-left: 4px;
 	margin-left: 0;
 }
 #path a.first:hover {
 	background-position: 0 -31px;
 }
-#path .active b {
+#path b.active {
 	background-position: top right;
 	background-image: url(images/path/right.gif);
-	padding: 0 4px 0 0;
+	padding-right: 4px;
 }
 #path .screen b b {
 	background-repeat: repeat-x;
 	background-image: url(images/path/center.gif);
-	padding: 0 23px 0 8px;
+	padding-left: 4px; 
+	padding-right: 23px;
 }
 #path a.screen:hover b b {
 	background-position: 0 -31px;
 }
-#path .active b b {
-	padding: 0 10px 0 8px;
+#path b.active b {
+	padding-right: 8px;
 }
 #path .first b b {
 	text-indent: -999px;
-	width: 34px;
-	background-position: 0 0;
-	background-image: url(images/path/home.gif);
+	padding-left: 14px; 
 }
-#path a.first:hover b b {
-	background-position: 0 -31px;
-}	
+#path .icon {
+	padding-left: 22px; 
+	background-position: center left;
+}
 
+#path .new {
+	padding-right: 16px;
+	background: url(images/icons/new.png) right 3px no-repeat;
+}

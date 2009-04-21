@@ -25,20 +25,36 @@
 			</div>
 		</div>
 		<script type="text/javascript" language="JavaScript">
-		
+			var form = $$('form')[0];
+			var focusedElement = '';
+			
+			<#if focus??>
+				var el = $('${focus}');
+				if (el && el.focus) el.focus();
+			</#if>
+			
+			onInsertElement = function(element) {
+				element.select('textarea','input:not(input[type="submit"])').each(function(el) {
+					el.onfocus = function() {
+						focusedElement = el.id || '';
+					}
+				});
+			}
+			
+			onInsertElement(form); 
+					
 			<#--
 			  - Submits the form by clicking on the submit button. 
 			  - This function is invoked by the 'Save' button
 			  - in the right-hand column.
 			  -->
 			function save(stayInForm) {
-				var form = $$('form')[0];
 				if (stayInForm) {
 					form.insert(new Element('input', {type: 'hidden', name: 'focus', value: focusedElement}));
 				}
 				form.down('input.button-save').click();
 			}
-
+			
 			<#--
 			  - Registers a keypress listener on the given document. Note: 
 			  - this function is also invoked by the setupcontent_callback of

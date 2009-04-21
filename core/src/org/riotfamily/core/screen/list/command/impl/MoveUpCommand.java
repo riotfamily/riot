@@ -36,5 +36,10 @@ public class MoveUpCommand extends SwapCommand {
 	protected String getAction(CommandContext context) {
 		return "moveUp";
 	}
+	
+	@Override
+	protected String getIcon(String action) {
+		return "up";
+	}
 
 }

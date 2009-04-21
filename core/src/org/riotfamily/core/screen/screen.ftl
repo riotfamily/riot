@@ -38,19 +38,27 @@
 	<div id="footer">
 		<div id="footer-content"></div>
 	</div>
+	<#if notification??>
+		<script language="JavaScript" type="text/javascript">
+			riot.notification.show({message: '${notification}'});
+		</script>
+	</#if>
 </body>
 </html>
 </@template.root>
 
 <#macro renderPath path>
 	<div id="path">
-		<#list path as link><#--
-		 --><#if link_has_next><#--
-		 	 --><a href="${c.url(link.url)}" class="screen<#if link_index == 0> first</#if>"><b><b>${link.title}</b></b></a><#--
-		--><#else><#--
-			 --><span class="active screen <#if link_index == 0> first</#if>"><b><b>${link.title}</b></b></span><#--
-		--></#if><#--
-	 --></#list>
+		<#list path as link>
+			<#if link_has_next>
+		 	 	<a href="${c.url(link.url)}" class="screen<#if link_index == 0> first</#if>"><@renderLabel link /></a><#t>
+			<#else>
+				<span class="screen <#if link_index == 0> first</#if>"><@renderLabel link true /></span><#t>
+			</#if>
+		</#list>
 	</div>
 </#macro>
 
+<#macro renderLabel link active=false>
+	<b<#if active> class="active"</#if>><b><@c.wrap if=link.new tag="span" class="new"><@c.wrap if=link.icon?? tag="span" class="icon" style="background-image:url("+c.resolve(riot.resource("style/images/icons/"+ (link.icon!)+".png")) +")">${link.title}</@c.wrap></@c.wrap></b></b><#t>
+</#macro>
