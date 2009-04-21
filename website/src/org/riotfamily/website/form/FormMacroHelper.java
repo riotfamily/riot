@@ -88,12 +88,7 @@ public class FormMacroHelper {
 		}
 		return null;
 	}
-	
-	public boolean hasErrors(String command, RequestContext requestContext) {
-		Errors errors = getErrors(command, requestContext);
-		return errors != null && errors.hasErrors();
-	}
-	
+
 	private Errors getErrors() {
 		if (this.command != null) {
 			return getErrors(this.command, this.requestContext);
@@ -108,10 +103,10 @@ public class FormMacroHelper {
 		}
 		return null;
 	}
-	
-	public boolean hasFieldErrors(String field) {
-		List<FieldError> errors = getFieldErrors(field);
-		return errors != null && !errors.isEmpty();
+
+	public boolean hasErrors(String command, RequestContext requestContext) {
+		Errors errors = getErrors(command, requestContext);
+		return errors != null && errors.hasErrors();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -122,16 +117,40 @@ public class FormMacroHelper {
 		}
 		return null;
 	}
+
+	public boolean hasGlobalErrors() {
+		Errors errors = getErrors();
+		return errors != null && errors.hasGlobalErrors();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ObjectError> getGlobalErrors() {
+		Errors errors = getErrors();
+		if (errors != null) {
+			return errors.getGlobalErrors();
+		}
+		return null;
+	}
+
+	public boolean hasFieldErrors(String field) {
+		List<FieldError> errors = getFieldErrors(field);
+		return errors != null && !errors.isEmpty();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<FieldError> getFieldErrors(String field) {
 		Errors errors = getErrors();
 		if (errors != null) {
-			return errors.getFieldErrors(field);
+			if (StringUtils.hasText(field)) {
+				return errors.getFieldErrors(field);
+			}
+			else {
+				return errors.getFieldErrors();
+			}
 		}
 		return null;
 	}
-	
+
 	public Object getValue(String field) {
 		BindStatus status = getFieldStatus(field);
 		if (status != null) {

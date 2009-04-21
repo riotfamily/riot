@@ -26,6 +26,13 @@
 </#function>
 
 <#---
+  - Returns whether the form has any global errors.
+  -->
+<#function hasGlobalErrors>
+	<#return formMacroHelper.hasGlobalErrors() />
+</#function>
+
+<#---
   - Returns whether the field has any errors.
   -->
 <#function hasFieldErrors field>
@@ -52,6 +59,40 @@
 		<#if tag?has_content></${tag}></#if>
 	</#if>
 </#macro>
+
+<#--- 
+  - Loops over the errors of the specified field. In case no field is given, 
+  - the macro will loop over all field errors.
+  - Use this macro with two loop variables, to expose the error message
+  - and the message code to the nested content.
+  -->
+<#macro listFieldErrors field="" tag="" attributes...>
+	<#local errors = formMacroHelper.getFieldErrors(field) />
+	<#if errors?has_content>
+		<#if tag?has_content><${tag + c.joinAttributes(attributes)}></#if>
+		<#list errors as error>
+			<#nested commonMacroHelper.getMessage(error), error />
+		</#list>
+		<#if tag?has_content></${tag}></#if>
+	</#if>
+</#macro>
+
+<#--- 
+  - Loops over the global errors.
+  - Use this macro with two loop variables, to expose the error message
+  - and the message code to the nested content.
+  -->
+<#macro listGlobalErrors tag="" attributes...>
+	<#local errors = formMacroHelper.getGlobalErrors() />
+	<#if errors?has_content>
+		<#if tag?has_content><${tag + c.joinAttributes(attributes)}></#if>
+		<#list errors as error>
+			<#nested commonMacroHelper.getMessage(error), error />
+		</#list>
+		<#if tag?has_content></${tag}></#if>
+	</#if>
+</#macro>
+
 
 <#---
   - Renders a label for a field. If no nested content is present, the macro
