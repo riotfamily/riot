@@ -12,7 +12,7 @@ public class ClearHibernateStatisticsBaselineCommand extends AbstractCommand {
 	private SessionFactory sessionFactory;
 	
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
+	protected String getIcon(String action) {
 		return "clear";
 	}
 	

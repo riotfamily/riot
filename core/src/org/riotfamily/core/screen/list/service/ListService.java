@@ -64,18 +64,22 @@ public class ListService {
 	private FormContextFactory formContextFactory;
 	
 	private HandlerUrlResolver handlerUrlResolver;
-
-	private ObjectRenderer defaultObjectRenderer;
 	
+	private String resourcePath;
+	
+	private ObjectRenderer defaultObjectRenderer;
+
 	public ListService(PlatformTransactionManager transactionManager,
 			ScreenRepository screenRepository,
 			FormContextFactory formContextFactory,
-			HandlerUrlResolver handlerUrlResolver) {
+			HandlerUrlResolver handlerUrlResolver, 
+			String resourcePath) {
 		
 		this.transactionManager = transactionManager;
 		this.screenRepository = screenRepository;
 		this.formContextFactory = formContextFactory;
 		this.handlerUrlResolver = handlerUrlResolver;
+		this.resourcePath = resourcePath;
 		this.defaultObjectRenderer = new StringRenderer();
 	}
 		
@@ -94,7 +98,7 @@ public class ListService {
 	public ScreenRepository getScreenRepository() {
 		return screenRepository;
 	}
-		
+	
 	public MessageResolver getMessageResolver(HttpServletRequest request) {
 		Locale locale = RequestContextUtils.getLocale(request);
 		return formContextFactory.getMessageResolver(locale);
@@ -106,6 +110,10 @@ public class ListService {
 			renderer = defaultObjectRenderer;
 		}
 		return renderer;
+	}
+	
+	public String getResourcePath() {
+		return resourcePath;
 	}
 
 	@RemoteMethod

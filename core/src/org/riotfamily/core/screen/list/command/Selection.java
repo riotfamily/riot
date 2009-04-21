@@ -63,6 +63,19 @@ public class Selection implements Iterable<SelectionItem> {
 		
 		return items.get(0);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof Selection) {
+			Selection other = (Selection) obj;
+			return items.size() == other.items.size() && 
+					items.containsAll(other.items);
+		}
+		return false;
+	}
 			
 	private class SelectionItemImpl implements SelectionItem {
 		
@@ -97,6 +110,17 @@ public class Selection implements Iterable<SelectionItem> {
 				object = dao.load(objectId);
 			}
 			return object;
+		}
+		
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (obj instanceof ObjectReference) {
+				ObjectReference other = (ObjectReference) obj;
+				return objectId != null && objectId.equals(other.getObjectId()); 
+			}
+			return false;
 		}
 
 	}

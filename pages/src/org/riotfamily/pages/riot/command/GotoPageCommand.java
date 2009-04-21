@@ -38,7 +38,7 @@ public class GotoPageCommand extends AbstractBatchCommand<Page> {
 	}
 	
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
+	protected String getIcon(String action) {
 		return "browse";
 	}
 

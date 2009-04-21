@@ -140,6 +140,10 @@ public class FormScreen extends AjaxFormController
 		renderForm(form, new PrintWriter(sw));
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject("form", sw.toString());
+		
+		ScreenContext context = ScreenContext.get(request);
+		mv.addObject("listStateKey", context.createParentContext().getListStateKey());
+		
 		return mv;
 	}
 

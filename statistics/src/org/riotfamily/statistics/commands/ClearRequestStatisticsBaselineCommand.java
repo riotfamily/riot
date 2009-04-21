@@ -16,7 +16,7 @@ public class ClearRequestStatisticsBaselineCommand extends AbstractCommand  {
 	}
 	
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
+	protected String getIcon(String action) {
 		return "clear";
 	}
 

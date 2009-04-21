@@ -37,12 +37,12 @@ public class CommandButton {
 	private String label;
 	
 	@RemoteProperty
-	private String styleClass;
+	private String icon;
 	
 	public CommandButton(String id, CommandInfo info) {
 		this.id = id;
 		this.label = info.getLabel();
-		this.styleClass = info.getStyleClass();
+		this.icon = info.getIcon();
 	}
 
 	public String getId() {
@@ -53,8 +53,8 @@ public class CommandButton {
 		return label;
 	}
 
-	public String getStyleClass() {
-		return styleClass;
+	public String getIcon() {
+		return icon;
 	}
 	
 }

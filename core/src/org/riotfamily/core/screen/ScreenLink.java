@@ -30,9 +30,12 @@ public class ScreenLink {
 	
 	private String url;
 	
-	public ScreenLink(String title, String url) {
+	private String icon;
+	
+	public ScreenLink(String title, String url, String icon) {
 		this.title = title;
 		this.url = url;
+		this.icon = icon;
 	}
 
 	public String getTitle() {
@@ -49,6 +52,14 @@ public class ScreenLink {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 		
 }

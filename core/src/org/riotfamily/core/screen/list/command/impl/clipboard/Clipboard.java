@@ -47,6 +47,10 @@ public class Clipboard {
 		this.command = command;
 	}
 	
+	public boolean isAlreadySet(ClipboardCommand command, Selection selection) {
+		return command.equals(this.command) && selection.equals(this.selection); 
+	}
+	
 	public boolean canPaste(ListScreen target, SelectionItem parent) {
 		if (command != null) {
 			return command.canPaste(source, selection, target, parent);

@@ -62,7 +62,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 	}
 	
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
+	protected String getIcon(String action) {
 		return "import";
 	}
 	

@@ -27,10 +27,12 @@ import org.riotfamily.core.dao.RiotDao;
 
 public interface ListScreen extends RiotScreen {
 
-	public abstract RiotDao getDao();
+	public RiotDao getDao();
 
-	public abstract RiotScreen getItemScreen();
+	public RiotScreen getItemScreen();
 
-	public abstract String getItemLabel(Object object);
+	public String getItemLabel(Object object);
+	
+	public String getListStateKey(ScreenContext screenContext);
 
 }

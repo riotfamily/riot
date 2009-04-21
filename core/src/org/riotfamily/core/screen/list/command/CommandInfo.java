@@ -30,16 +30,16 @@ public class CommandInfo {
 	
 	private String label;
 	
-	private String styleClass;
+	private String icon;
 
 	private boolean showOnForm;
 	
-	public CommandInfo(String action, String label, String styleClass,
+	public CommandInfo(String action, String label, String icon,
 			boolean showOnForm) {
 		
 		this.action = action;
 		this.label = label;
-		this.styleClass = styleClass;
+		this.icon = icon;
 		this.showOnForm = showOnForm;
 	}
 
@@ -51,8 +51,8 @@ public class CommandInfo {
 		return label;
 	}
 
-	public String getStyleClass() {
-		return styleClass;
+	public String getIcon() {
+		return icon;
 	}
 
 	public boolean isShowOnForm() {

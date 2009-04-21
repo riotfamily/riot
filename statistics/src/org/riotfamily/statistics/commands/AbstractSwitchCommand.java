@@ -5,7 +5,7 @@ import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.BatchResult;
-import org.riotfamily.core.screen.list.command.result.RefreshListCommandsResult;
+import org.riotfamily.core.screen.list.command.result.UpdateCommandsResult;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public abstract class AbstractSwitchCommand extends AbstractCommand {
@@ -20,7 +20,7 @@ public abstract class AbstractSwitchCommand extends AbstractCommand {
 	}
 	
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
+	protected String getIcon(String action) {
 		return action == ACTION_DISABLE ? "switchOn" : "switchOff"; 
 	}
 		
@@ -28,7 +28,7 @@ public abstract class AbstractSwitchCommand extends AbstractCommand {
 		setEnabled(!isEnabled());
 		return new BatchResult(
 				new RefreshListResult(), 
-				new RefreshListCommandsResult());
+				new UpdateCommandsResult());
 	}
 	
 	protected abstract boolean isEnabled();

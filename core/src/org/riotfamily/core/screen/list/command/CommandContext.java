@@ -38,6 +38,8 @@ public interface CommandContext {
 	
 	public MessageResolver getMessageResolver();
 	
+	public String getResourcePath();
+	
 	public String getListKey();
 	
 	public ListParams getParams();

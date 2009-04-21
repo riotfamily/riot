@@ -96,9 +96,9 @@ public class ListItem implements ObjectReference {
 		if (obj == this) {
 			return true;
 		}
-		if (obj instanceof ListItem) {
-			ListItem other = (ListItem) obj;
-			return objectId != null && objectId.equals(other.objectId); 
+		if (obj instanceof ObjectReference) {
+			ObjectReference other = (ObjectReference) obj;
+			return objectId != null && objectId.equals(other.getObjectId()); 
 		}
 		return false;
 	}

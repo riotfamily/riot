@@ -68,10 +68,6 @@
 		<constructor-arg ref="cacheService" /> 
 	</bean>
 	
-	<override:properties ref="loginFormController">
-		<property name="viewName" value="classpath:org/riotfamily/components/runtime/view/login-form.ftl" />
-	</override:properties>
-
 	<!--
 	  - Login-popup that is opend by the Riot-login bookmarklet.
 	  -->

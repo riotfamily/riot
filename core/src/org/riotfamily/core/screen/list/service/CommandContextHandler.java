@@ -183,4 +183,8 @@ class CommandContextHandler extends ListServiceHandler
 		return messageResolver;
 	}
 	
+	public String getResourcePath() {
+		return request.getContextPath() + service.getResourcePath();
+	}
+	
 }

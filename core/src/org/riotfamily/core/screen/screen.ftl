@@ -23,12 +23,20 @@
 	
 </head>
 <body>
-	<@template.block name="header">
-		<@renderPath path!context.path />	
-	</@template.block>
-	<div id="content">
-		<@template.block name="content">
-		</@template.block>
+	<div id="page">
+		<div id="header">
+			<@template.block name="header">
+				<@renderPath path!context.path />	
+			</@template.block>
+			<div id="logo"></div>
+		</div>
+		<div id="content">
+			<@template.block name="content">
+			</@template.block>
+		</div>
+	</div>
+	<div id="footer">
+		<div id="footer-content"></div>
 	</div>
 </body>
 </html>
@@ -36,12 +44,13 @@
 
 <#macro renderPath path>
 	<div id="path">
-		<#list path as link>
-			<#if link_has_next>
-				<b><a class="screen" href="${c.url(link.url)}">${link.title}</a></b>
-			<#else>
-				<b class="active"><span class="screen">${link.title}</span></b>
-			</#if>
-		</#list>
+		<#list path as link><#--
+		 --><#if link_has_next><#--
+		 	 --><a href="${c.url(link.url)}" class="screen<#if link_index == 0> first</#if>"><b><b>${link.title}</b></b></a><#--
+		--><#else><#--
+			 --><span class="active screen <#if link_index == 0> first</#if>"><b><b>${link.title}</b></b></span><#--
+		--></#if><#--
+	 --></#list>
 	</div>
 </#macro>
+

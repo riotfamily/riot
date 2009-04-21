@@ -245,6 +245,7 @@
 		<constructor-arg ref="screenRepository" />
 		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="handlerUrlResolver" />
+		<constructor-arg ref="resourcePath" />
 	</bean>
 	
 	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.core.screen.list" />

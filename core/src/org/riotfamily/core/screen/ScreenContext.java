@@ -149,6 +149,10 @@ public class ScreenContext {
 		return new ScreenContext(itemScreen, item, null, false, this);
 	}
 	
+	public String getListStateKey() {
+		return ScreenUtils.getListScreen(getScreen()).getListStateKey(this);
+	}
+	
 	public void setObject(Object object) {
 		this.object = object;
 	}
@@ -189,7 +193,7 @@ public class ScreenContext {
 	}
 	
 	public ScreenLink getLink() {
-		return new ScreenLink(getTitle(), getUrl());
+		return new ScreenLink(getTitle(), getUrl(), screen.getIcon());
 	}
 	
 	public List<ScreenLink> getPath() {

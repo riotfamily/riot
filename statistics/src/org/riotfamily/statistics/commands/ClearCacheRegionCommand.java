@@ -24,7 +24,7 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 	}
 
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
+	protected String getIcon(String action) {
 		return "clear";
 	}
 	

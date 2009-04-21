@@ -29,8 +29,9 @@ var RiotList = Class.create({
 
 	renderFormCommands: function(item, target) {
 		this.selection = [item];
-		var handler = this.execItemCommand.bind(this);
-		ListService.getFormCommands(this.key, item.objectId, this.renderCommands.bind(this, $(target), handler));
+		ListService.getFormCommands(this.key, item.objectId, 
+				this.renderCommands.bind(this, $(target), 
+				this.execCommand.bind(this)));
 	},
 
 	renderTable: function(model) {
@@ -171,10 +172,6 @@ var RiotList = Class.create({
 		}
 	},
 		
-	refreshListCommands: function() {
-		ListService.getListCommands(this.key, this.renderListCommands.bind(this));
-	},
-	
 	refreshList: function(objectId, refreshAll) {
 		if (refreshAll) {
 			ListService.getModel(this.key, objectId, this.updateRowsAndPager.bind(this));
@@ -267,8 +264,8 @@ var RiotList = Class.create({
 			else if (result.action == 'refreshList') {
 				this.refreshList(result.objectId, result.refreshAll);
 			}
-			else if (result.action == 'refreshListCommands') {
-				this.refreshListCommands();
+			else if (result.action == 'updateCommands') {
+				this.updateCommandStates();
 			}
 			else if (result.action == 'gotoUrl') {
 				var win = eval(result.target);
@@ -558,8 +555,10 @@ var CommandButton = Class.create({
 		this.list = list;
 		this.command = command;
 		this.handler = handler;
+		var icon = new Element('span').addClassName('icon');
+		icon.style.backgroundImage = 'url(' + command.icon + ')';
 		this.element = new Element('a', {href: '#'}).addClassName('action')
-			.insert(new Element('span').addClassName('icon action-' + command.styleClass))
+			.insert(icon)
 			.insert(new Element('span').addClassName('label')
 				.insert(new Element('div').insert(command.label))
 			).observe('click', this.onclick.bindAsEventListener(this));

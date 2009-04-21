@@ -30,17 +30,26 @@ import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.SelectionItem;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
+import org.riotfamily.core.screen.list.command.result.BatchResult;
 import org.riotfamily.core.screen.list.command.result.NotificationResult;
+import org.riotfamily.core.screen.list.command.result.UpdateCommandsResult;
 
 public class CutCommand extends AbstractCommand implements ClipboardCommand {
 
+	@Override
+	public boolean isEnabled(CommandContext context, Selection selection) {
+		return !Clipboard.get(context).isAlreadySet(this, selection);
+	}
+	
 	public CommandResult execute(CommandContext context, Selection selection) {
 		Clipboard.get(context).set(context.getScreen(), selection, this);
-		return new NotificationResult(context, this)
-				.setArgs(selection.size())
-				.setDefaultMessage("{0,choice,1#Item|1<{0} items} put into the clipboard");
+		return new BatchResult(
+				new UpdateCommandsResult(),
+				new NotificationResult(context, this)
+					.setArgs(selection.size())
+					.setDefaultMessage("{0,choice,1#Item|1<{0} items} put into the clipboard"));
 	}
-
+	
 	public boolean canPaste(ListScreen source, Selection selection, 
 			ListScreen target, SelectionItem newParent) {
 		

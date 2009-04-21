@@ -178,7 +178,13 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 		return null;
 	}
 	
-	private String getStateKey(ScreenContext context, ChooserSettings chooserSettings) {
+	public String getListStateKey(ScreenContext context) {
+		return getListStateKey(context, null);
+	}
+	
+	private String getListStateKey(ScreenContext context, 
+			ChooserSettings chooserSettings) {
+		
 		StringBuilder key = new StringBuilder();
 		key.append(getId()).append('/');
 		if (context.getObjectId() != null) {
@@ -193,7 +199,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 				key.append('/').append(getId());	
 			}
 		}
-		if (chooserSettings.getTargetScreenId() != null) {
+		if (chooserSettings != null && chooserSettings.getTargetScreenId() != null) {
 			key.append("?choose=").append(chooserSettings.getTargetScreenId());
 		}
 		return key.toString();
@@ -202,7 +208,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 	public ListState getOrCreateListState(HttpServletRequest request, 
 			ScreenContext screenContext, ChooserSettings chooserSettings) {
 		
-		String key = getStateKey(screenContext, chooserSettings);
+		String key = getListStateKey(screenContext, chooserSettings);
 		ListState state = ListState.get(request, key);
 		if (state == null) {
 			Locale locale = RequestContextUtils.getLocale(request);
