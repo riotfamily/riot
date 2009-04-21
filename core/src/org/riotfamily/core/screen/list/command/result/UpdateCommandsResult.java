@@ -28,11 +28,11 @@ import org.directwebremoting.annotations.RemoteProperty;
 import org.riotfamily.core.screen.list.command.CommandResult;
 
 @DataTransferObject
-public class RefreshListCommandsResult implements CommandResult {
+public class UpdateCommandsResult implements CommandResult {
 
 	@RemoteProperty
 	public String getAction() {
-		return "refreshListCommands";
+		return "updateCommands";
 	}
 
 }
