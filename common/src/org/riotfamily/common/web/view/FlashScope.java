@@ -31,19 +31,34 @@ import javax.servlet.http.HttpSession;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.ServletUtils;
 
+/**
+ * Class that temporarily stores data in the HTTP session to pass it from one 
+ * request to another. Used by the {@link FlashScopeView} and its subclasses
+ * to pass on data during redirects.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 8.1
+ */
 public class FlashScope {
 
 	private static final String SESSION_ATTRIBUTE = FlashScope.class.getName();
 
 	private Map<String, Map<String, ?>> models = Generics.newHashMap();
 		
+	/**
+	 * Stores a model map in the HTTP session for later retrieval by the next 
+	 * request. 
+	 * @param request The current request
+	 * @param model The model to store
+	 * @param url The URL of the next request  
+	 */
 	@SuppressWarnings("unchecked")
 	public static void store(HttpServletRequest request, Map<?, ?> model, String url) {
 		FlashScope flashScope = getFlashScope(request, true);
 		flashScope.models.put(url, (Map<String, ?>) model);
 	}
 	
-	public static void expose(HttpServletRequest request) {
+	static void expose(HttpServletRequest request) {
 		FlashScope flashScope = getFlashScope(request, false);
 		if (flashScope != null) {
 			String url = ServletUtils.getRequestUrlWithQueryString(request);

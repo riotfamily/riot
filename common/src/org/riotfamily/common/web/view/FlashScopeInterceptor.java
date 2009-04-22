@@ -28,6 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+/**
+ * HandlerInterceptor that exposes data stored in the {@link FlashScope} as
+ * request attributes.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 8.1
+ */
 public class FlashScopeInterceptor extends HandlerInterceptorAdapter {
 
 	@Override

@@ -32,6 +32,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
+/**
+ * Replacement for Spring's RedirectView that stores the model in the 
+ * {@link FlashScope} instead of appending it to the target URL.
+ * The {@link FlashScopeInterceptor} must be registered in order to make the
+ * data accessible by the next request.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 8.1
+ */
 public class FlashScopeView extends AbstractUrlBasedView {
 
 	private boolean contextRelative = false;
