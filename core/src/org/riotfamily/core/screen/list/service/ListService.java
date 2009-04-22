@@ -155,10 +155,10 @@ public class ListService {
 	}
 	
 	@RemoteMethod
-	public List<CommandButton> getFormCommands(String key, String objectId, 
+	public List<CommandButton> getFormCommands(String key, ListItem item, 
 			HttpServletRequest request) {
 
-		return new CommandContextHandler(this, key, request).createButtons(true);
+		return new CommandContextHandler(this, key, request).createFormButtons(item);
 	}
 
 	@RemoteMethod

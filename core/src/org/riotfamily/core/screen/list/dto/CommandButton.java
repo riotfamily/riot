@@ -39,10 +39,18 @@ public class CommandButton {
 	@RemoteProperty
 	private String icon;
 	
+	@RemoteProperty
+	private boolean enabled;
+	
 	public CommandButton(String id, CommandInfo info) {
+		this(id, info, false);
+	}
+	
+	public CommandButton(String id, CommandInfo info, boolean enabled) {
 		this.id = id;
 		this.label = info.getLabel();
 		this.icon = info.getIcon();
+		this.enabled = enabled;
 	}
 
 	public String getId() {
@@ -55,6 +63,10 @@ public class CommandButton {
 
 	public String getIcon() {
 		return icon;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
 	}
 	
 }

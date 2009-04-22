@@ -29,9 +29,8 @@ var RiotList = Class.create({
 
 	renderFormCommands: function(item, target) {
 		this.selection = [item];
-		ListService.getFormCommands(this.key, item.objectId, 
-				this.renderCommands.bind(this, $(target), 
-				this.execCommand.bind(this)));
+		ListService.getFormCommands(this.key, item, 
+				this.renderCommands.bind(this, $(target), this.execCommand.bind(this)));
 	},
 
 	renderTable: function(model) {

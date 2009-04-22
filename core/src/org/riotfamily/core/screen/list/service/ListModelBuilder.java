@@ -75,7 +75,7 @@ public class ListModelBuilder extends ListItemLoader {
 		
 		ListModel model = new ListModel(items, itemsTotal, params);
 		model.setColumns(createColumns());
-		model.setCommandButtons(createButtons(false));
+		model.setCommandButtons(createButtons());
 		model.setTree(dao instanceof TreeDao);
 		
 		//model.setInstantAction(chooser || singleAction);

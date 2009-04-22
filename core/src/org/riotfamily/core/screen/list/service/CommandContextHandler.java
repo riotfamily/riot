@@ -24,6 +24,7 @@
 package org.riotfamily.core.screen.list.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,15 +62,34 @@ class CommandContextHandler extends ListServiceHandler
 		super(service, key, request);
 	}
 	
-	public List<CommandButton> createButtons(boolean formCommandsOnly) {
+	public List<CommandButton> createButtons() {
 		ArrayList<CommandButton> result = Generics.newArrayList();
 		Map<String, Command> commands = getCommands();
 		if (commands != null) {
 			for (Map.Entry<String, ? extends Command> entry : commands.entrySet()) {
 				commandId = entry.getKey();
 				CommandInfo info = entry.getValue().getInfo(this);
-				if (info != null && !formCommandsOnly || info.isShowOnForm()) {
+				if (info != null) {
 					result.add(new CommandButton(commandId, info));
+				}
+			}
+		}
+		return result;
+	}
+	
+	public List<CommandButton> createFormButtons(ListItem item) {
+		ArrayList<CommandButton> result = Generics.newArrayList();
+		List<ListItem> items = item != null ? Collections.singletonList(item) : null;
+		Selection selection = new Selection(dao, items);
+		Map<String, Command> commands = getCommands();
+		if (commands != null) {
+			for (Map.Entry<String, ? extends Command> entry : commands.entrySet()) {
+				commandId = entry.getKey();
+				Command command = entry.getValue();
+				CommandInfo info = command.getInfo(this);
+				if (info != null && info.isShowOnForm()) {
+					boolean enabled = command.isEnabled(this, selection);
+					result.add(new CommandButton(commandId, info, enabled));
 				}
 			}
 		}
