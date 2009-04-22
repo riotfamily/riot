@@ -23,12 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list;
 
+import java.io.Serializable;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.core.screen.ScreenLink;
 
-public class ChooserSettings {
+public class ChooserSettings implements Serializable {
 
 	private String targetScreenId;
 	
