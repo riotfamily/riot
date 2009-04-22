@@ -36,6 +36,8 @@ public class ScreenRepository implements ApplicationContextAware {
 
 	private Map<String, RiotScreen> screenMap = Generics.newHashMap();
 	
+	private RiotScreen rootScreen;
+	
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		registerScreens(SpringUtils.listBeansOfType(
 				applicationContext, RiotScreen.class));
@@ -45,12 +47,18 @@ public class ScreenRepository implements ApplicationContextAware {
 		if (screens != null) {
 			for (RiotScreen screen : screens) {
 				screenMap.put(screen.getId(), screen);
+				if (screen.getParentScreen() == null && rootScreen == null) {
+					rootScreen = screen;
+				}
 				registerScreens(screen.getChildScreens());
 			}
 		}
 	}
 	
 	public RiotScreen getScreen(String id) {
+		if (id == null) {
+			return rootScreen;
+		}
 		return screenMap.get(id);
 	}
 	

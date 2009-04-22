@@ -46,7 +46,9 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 		String path = ServletUtils.getPathWithoutServletMapping(request);
 		String[] s = StringUtils.tokenizeToStringArray(path, "/");
 		
-		if ("screen".equals(stringAt(s, 0))) {
+		if (!StringUtils.hasLength(path) || path.equals("/") 
+				|| "screen".equals(stringAt(s, 0))) {
+			
 			String screenId = stringAt(s, 1);
 			String objectId = stringAt(s, 2);
 			String parentId = null;
