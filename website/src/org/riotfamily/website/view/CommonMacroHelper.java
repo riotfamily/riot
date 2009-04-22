@@ -43,6 +43,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
@@ -412,6 +414,10 @@ public class CommonMacroHelper {
 		return FormatUtils.xmlEscapeDanglingAmps(s);
 	}
 		
+	public String toJSON(Object obj) {
+		return JSONObject.fromObject(obj).toString();
+	}
+	
 	/**
 	 * Splits a list into a specified number of groups. The items are 
 	 * distributed evenly. Example:

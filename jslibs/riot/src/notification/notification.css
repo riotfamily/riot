@@ -54,7 +54,10 @@
 }
 
 .notification .icon {
-	background-position: center center;
+	width: 22px;
+	background-position: 0 2px;
+	background-repeat: no-repeat;
+	vertical-align: top;
 }
 
 .notification .text {

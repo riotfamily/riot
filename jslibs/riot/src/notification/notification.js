@@ -21,7 +21,7 @@ riot.notification = (function() {
 				<table>\
 					<tbody>\
 						<tr>\
-							<td class="icon"></td>\
+							<td#{icon}></td>\
 							<td class="text">\
 								<div class="title">#{title}</div>\
 								<div class="message">#{message}</div>\
@@ -73,7 +73,8 @@ riot.notification = (function() {
 			}, o);
 			
 			var data = {
-				title: o.title, 
+				title: o.title,
+				icon: o.icon ? ' class="icon" style="background-image:url('+o.icon+')"' : '',
 				message: o.message
 			};
 			this.el = new Element('div', {className: 'notification'}).setStyle({visibility: 'hidden'})

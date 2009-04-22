@@ -332,6 +332,14 @@
 </#function>
 
 <#---
+  - Returns the given object as JSON String. 
+  -->
+<#function toJSON obj>
+	<#return commonMacroHelper.toJSON(obj) />
+</#function>
+
+
+<#---
   - Strips HTML tags and whitespaces from the given String
   -->
 <#function stripTagsAndWhitespaces s>

@@ -159,12 +159,18 @@ span.messageCode {
 	text-indent: -999px;
 	padding-left: 14px; 
 }
-#path .icon {
+#path .icon,
+.screen .icon {
 	padding-left: 22px; 
 	background-position: center left;
+	background-repeat: no-repeat;
 }
 
 #path .new {
 	padding-right: 16px;
 	background: url(images/icons/new.png) right 3px no-repeat;
+}
+
+#riot-notifications {
+	bottom: 56px;
 }

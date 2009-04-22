@@ -162,18 +162,12 @@
 		<property name="loginHandlerName">
 			<idref bean="loginFormController"/>
 		</property>
-		<property name="includesOverwriteExcludes" value="true" />
 		<property name="excludes">
 			<list>
 				<value>/login</value>
 				<value>/logout</value>
 				<value>/resources/**</value>
 				<value>/joined/**</value>
-			</list>
-		</property>
-		<property name="includes">
-			<list>
-				<value>/resources/*/dwr/**</value>
 			</list>
 		</property>
 	</bean>

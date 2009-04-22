@@ -21,18 +21,12 @@
  *   Carsten Woelk [cwoelk at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command.result;
+package org.riotfamily.core.screen;
 
-import org.directwebremoting.annotations.DataTransferObject;
-import org.directwebremoting.annotations.RemoteProperty;
 import org.riotfamily.common.i18n.MessageResolver;
-import org.riotfamily.core.screen.list.command.Command;
-import org.riotfamily.core.screen.list.command.CommandContext;
-import org.riotfamily.core.screen.list.command.CommandInfo;
-import org.riotfamily.core.screen.list.command.CommandResult;
+import org.springframework.util.Assert;
 
-@DataTransferObject
-public class NotificationResult implements CommandResult {
+public class Notification {
 	
 	private MessageResolver messageResolver;
 	
@@ -50,28 +44,14 @@ public class NotificationResult implements CommandResult {
 	
 	private String title;
 	
-	private String icon;
-	
 	private String message;
 	
-	public NotificationResult(CommandContext context) {
-		this.messageResolver = context.getMessageResolver();
+	private String icon;
+		
+	public Notification(MessageResolver messageResolver) {
+		this.messageResolver = messageResolver;
 	}
-	
-	public NotificationResult(CommandContext context, Command command) {
-		CommandInfo info = command.getInfo(context);
-		this.messageResolver = context.getMessageResolver();
-		this.keyPrefix = "command." + info.getAction() + ".notification";
-		this.defaultTitle = info.getLabel();
-		this.icon = info.getIcon();
-	}
-	
-	@RemoteProperty
-	public String getAction() {
-		return "notification";
-	}
-	
-	@RemoteProperty
+
 	public String getTitle() {
 		if (title == null && messageResolver != null) {
 			title = messageResolver.getMessage(getTitleKey(), args, defaultTitle);
@@ -79,12 +59,6 @@ public class NotificationResult implements CommandResult {
 		return title;
 	}
 	
-	@RemoteProperty
-	public String getIcon() {
-		return icon;
-	}
-	
-	@RemoteProperty
 	public String getMessage() {
 		if (message == null && messageResolver != null) {
 			message = messageResolver.getMessage(getMessageKey(), args, defaultMessage);
@@ -92,62 +66,69 @@ public class NotificationResult implements CommandResult {
 		return message;
 	}
 	
-	public NotificationResult setKeyPrefix(String keyPrefix) {
-		this.keyPrefix = keyPrefix;
+	public String getIcon() {
+		return icon;
+	}
+
+	public Notification setIcon(String icon) {
+		this.icon = icon;
 		return this;
 	}
 	
-	public NotificationResult setTitleKey(String titleKey) {
+	public void setKeyPrefix(String keyPrefix) {
+		Assert.notNull(messageResolver, "A MessageResolver must be set first");
+		this.keyPrefix = keyPrefix;
+	}
+	
+	public Notification setTitleKey(String titleKey) {
+		Assert.notNull(messageResolver, "A MessageResolver must be set first");
 		this.titleKey = titleKey;
 		return this;
 	}
 	
 	private String getTitleKey() {
-		if (titleKey == null) {
+		if (titleKey == null && keyPrefix != null) {
 			titleKey = keyPrefix + ".title";
 		}
 		return titleKey;
 	}
 	
-	public NotificationResult setTitle(String title) {
+	public Notification setTitle(String title) {
 		this.title = title;
 		return this;
 	}
 	
-	public NotificationResult setDefaultTitle(String defaultTitle) {
+	public Notification setDefaultTitle(String defaultTitle) {
 		this.defaultTitle = defaultTitle;
 		return this;
 	}
 	
-	public NotificationResult setIcon(String icon) {
-		this.icon = icon;
-		return this;
-	}
-	
-	public NotificationResult setMessageKey(String messageKey) {
+	public Notification setMessageKey(String messageKey) {
+		Assert.notNull(messageResolver, "A MessageResolver must be set first");
 		this.messageKey = messageKey;
 		return this;
 	}
 	
 	private String getMessageKey() {
-		if (messageKey == null) {
+		if (messageKey == null && keyPrefix != null) {
 			messageKey = keyPrefix + ".message";
 		}
 		return titleKey;
 	}
 	
-	public NotificationResult setMessage(String message) {
+	public Notification setMessage(String message) {
 		this.message = message;
 		return this;
 	}
 	
-	public NotificationResult setDefaultMessage(String defaultMessage) {
+	public Notification setDefaultMessage(String defaultMessage) {
 		this.defaultMessage = defaultMessage;
 		return this;
 	}
 
-	public NotificationResult setArgs(Object... args) {
+	public Notification setArgs(Object... args) {
 		this.args = args;
 		return this;
 	}
+	
 }

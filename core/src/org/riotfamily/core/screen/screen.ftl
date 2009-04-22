@@ -40,7 +40,7 @@
 	</div>
 	<#if notification??>
 		<script language="JavaScript" type="text/javascript">
-			riot.notification.show({message: '${notification}'});
+			riot.notification.show(${c.toJSON(notification)});
 		</script>
 	</#if>
 </body>

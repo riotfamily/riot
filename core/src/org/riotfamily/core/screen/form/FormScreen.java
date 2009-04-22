@@ -220,7 +220,11 @@ public class FormScreen extends AjaxFormController
 		else {
 			mv = showParentList(context);
 		}
-		mv.addObject("notification", "Your changes have been saved.");
+		
+		mv.addObject("notification", new FormNotification(form)
+				.setIcon("save")
+				.setMessage("Your changes have been saved."));
+		
 		return mv;
 	}
 

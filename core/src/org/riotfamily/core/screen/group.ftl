@@ -8,7 +8,7 @@
 			<div class="screens">
 				<#list context.screen.childScreens as child>
 					<a class="screen" href="${c.urlForHandler(child.id, context)}">
-						<div class="label">${child.id}</div>
+						<div class="label"><span class="icon" style="background-image:url(${c.resolve(riot.resource("style/images/icons/"+(child.icon!"brick")+".png"))})">${child.id}</span></div>
 						<div class="description"></div>
 					</a>
 				</#list>

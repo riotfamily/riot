@@ -71,7 +71,7 @@ public class DeleteCommand extends DialogCommand {
 	public CommandResult handleInput(CommandContext context,
 			Selection selection, Object input, String button) {
 	
-		return new NotificationResult().setMessage("Input: " + input + " Button: " + button);
+		return new NotificationResult(context).setMessage("Input: " + input + " Button: " + button);
 	}
 
 }
