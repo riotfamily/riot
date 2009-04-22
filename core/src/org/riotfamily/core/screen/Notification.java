@@ -75,9 +75,10 @@ public class Notification {
 		return this;
 	}
 	
-	public void setKeyPrefix(String keyPrefix) {
+	public Notification setKeyPrefix(String keyPrefix) {
 		Assert.notNull(messageResolver, "A MessageResolver must be set first");
 		this.keyPrefix = keyPrefix;
+		return this;
 	}
 	
 	public Notification setTitleKey(String titleKey) {
