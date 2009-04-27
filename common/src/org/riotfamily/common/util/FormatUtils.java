@@ -581,6 +581,7 @@ public final class FormatUtils {
 		c.set(Calendar.YEAR, 1970);
 		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 		return df.format(c.getTime())
+				.replaceAll("\\s+", "")
 				.replace("12", "MM")
 				.replace("1970", "YYYY")				
 				.replace("24", "DD")
@@ -597,7 +598,7 @@ public final class FormatUtils {
 	 * </pre>
 	 * 	 
 	 */
-	public static String getDateDelimiter(String dateFormat) {
+	public static String getDateDelimiter(String dateFormat) {		
 		Matcher m = DATE_DELIMITER_PATTERN.matcher(dateFormat);
 		if (m.matches()) {				
 			return m.group(1);
