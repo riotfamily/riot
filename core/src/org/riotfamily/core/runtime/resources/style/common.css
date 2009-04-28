@@ -31,7 +31,8 @@ td {
 
 #page {
 	background-color: #fff;
-	height: 100%;
+	min-height: 100%;
+	_height: 100%;
 }
 #header {
 	padding: 30px;
@@ -108,12 +109,12 @@ span.messageCode {
 }
 
 #path a,
-#path b,
-#path span {
+#path b {
 	display: block;
 	line-height: 31px;
 	background-repeat: no-repeat;
 	padding: 0;
+	margin: 0;
 }
 
 #path .screen {
@@ -156,19 +157,26 @@ span.messageCode {
 	padding-right: 8px;
 }
 #path .first b b {
-	text-indent: -999px;
-	padding-left: 14px; 
+	width: 22px;
+	height: 31px;
+	padding-left: 16px;
 }
-#path .icon,
-.screen .icon {
-	padding-left: 22px; 
-	background-position: center left;
+#path .title {
+}
+#path .first .title {
+	display: none;
+}
+#path span.icon {
+	display: block;
+	float: left;
+	height: 16px;
+	width: 16px;
+	margin: 7px 4px 0 0;
 	background-repeat: no-repeat;
 }
-
 #path .new {
-	padding-right: 16px;
-	background: url(images/icons/new.png) right 3px no-repeat;
+	padding-right: 12px;
+	background: url(images/path/new.gif) right top no-repeat;
 }
 
 #riot-notifications {

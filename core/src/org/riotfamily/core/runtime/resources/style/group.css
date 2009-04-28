@@ -14,7 +14,16 @@
 	outline: none;
 	-moz-outline: none;
 }
+
 .group a.screen .label {
 	font-size: 14px;
 	font-weight: bold;
+	padding-left: 22px; 
+	background-position: center left;
+	background-repeat: no-repeat;
+	_height: 1px;
 }
+.group a.screen .description {
+	display: none;
+}
+

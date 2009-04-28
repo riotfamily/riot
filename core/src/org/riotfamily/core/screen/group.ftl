@@ -6,9 +6,10 @@
 	<@template.block name="content" cache=false>
 		<div class="main group">
 			<div class="screens">
-				<#list context.screen.childScreens as child>
-					<a class="screen" href="${c.urlForHandler(child.id, context)}">
-						<div class="label"><span class="icon" style="background-image:url(${c.resolve(riot.resource("style/images/icons/"+(child.icon!"brick")+".png"))})">${child.id}</span></div>
+				<#list links as link>
+					<a class="screen" href="${c.url(link.url)}">
+						<#assign url = c.resolve(riot.resource("style/images/icons/"+(link.icon!"brick")+".png")) />
+						<div class="label" style="background-image:url(${url});_background-image:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${url}', sizingMethod='crop');">${link.title}</div>
 						<div class="description"></div>
 					</a>
 				</#list>

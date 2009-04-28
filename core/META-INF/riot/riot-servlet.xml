@@ -230,7 +230,15 @@
 		<property name="childScreens" ref="rootScreens" />
 	</bean>
 	
-	<util:list id="rootScreens" />
+	<util:list id="rootScreens">
+		<bean id="systemPreferences" class="org.riotfamily.core.screen.GroupScreen">
+			<property name="icon" value="wrench" />
+			<property name="childScreens" ref="systemScreens" />
+		</bean>
+	</util:list>
+	
+	<util:list id="systemScreens">
+	</util:list>
 		
 	<!-- List screens -->
 	

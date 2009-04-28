@@ -60,5 +60,7 @@
 </#macro>
 
 <#macro renderLabel link active=false>
-	<b<#if active> class="active"</#if>><b><@c.wrap if=link.new tag="span" class="new"><@c.wrap if=link.icon?? tag="span" class="icon" style="background-image:url("+c.resolve(riot.resource("style/images/icons/"+ (link.icon!)+".png")) +")">${link.title}</@c.wrap></@c.wrap></b></b><#t>
+	<#local url = c.resolve(riot.resource("style/images/icons/" + (link.icon!) +".png")) />
+	<#local style="background-image:url(" + url +");_background-image:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+url+"', sizingMethod='scale');" />
+	<b<#if active> class="active"</#if>><b><#if link.icon??><span class="icon" style="${style}"></span></#if><span class="title<#if link.new> new</#if>">${link.title}</span></b></b><#t>
 </#macro>

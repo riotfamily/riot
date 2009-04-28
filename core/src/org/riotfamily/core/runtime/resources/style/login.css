@@ -1,5 +1,6 @@
-@import url(common.css);
-
+table {
+	border-collapse: collapse;
+}
 table.center {
 	height: 100%;
 	margin:auto;
@@ -30,6 +31,7 @@ td.input {
 #username, #password {
 	border: 1px solid #cacaca;
 	padding: 4px;
+	width: 140px;
 }
 
 .error {
@@ -50,15 +52,23 @@ td.input {
 
 .box .t .l {
 	background-image: url(images/login/tl.png);
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/tl.png', sizingMethod='scale');
+	_background: transparent;
 }
 .box .t .c {
 	background-image: url(images/login/tc.png);
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/tc.png', sizingMethod='scale');
+	_background: transparent;
 }
 .box .t .r {
 	background-image: url(images/login/tr.png);
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/tr.png', sizingMethod='scale');
+	_background: transparent;
 }
 .box .m .l {
 	background-image: url(images/login/ml.png);
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/ml.png', sizingMethod='scale');
+	_background: transparent;
 }
 .box .m .c {
 	background-color: #f0f0f0;
@@ -66,13 +76,21 @@ td.input {
 }
 .box .m .r {
 	background-image: url(images/login/mr.png);
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/mr.png', sizingMethod='scale');
+	_background: transparent;
 }
 .box .b .l {
 	background-image: url(images/login/bl.png);
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/bl.png', sizingMethod='scale');
+	_background: transparent;
 }
 .box .b .c {
 	background-image: url(images/login/bc.png);
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/bc.png', sizingMethod='scale');
+	_background: transparent;
 }
 .box .b .r {
 	background-image: url(images/login/br.png);
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/br.png', sizingMethod='scale');
+	_background: transparent;
 }

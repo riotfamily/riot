@@ -15,6 +15,8 @@ riot.window = (function() {
 	// Stack of open windows
 	var stack = [];
 	
+	var ie6 = Prototype.Browser.IE && typeof document.documentElement.style.maxHeight == 'undefined';
+	
 	// ------------------------------------------------------------------------
 	// Window stack management
 	// ------------------------------------------------------------------------
@@ -26,9 +28,9 @@ riot.window = (function() {
 		if (dialog.options.modal) {
 			if (!top) {
 				var initialWidth = document.body.offsetWidth;
-				root.makeClipping();
+				Element.makeClipping(root);
 				
-				var h = Math.max(document.viewport.getHeight(), document.body.getHeight());
+				var h = Math.max(document.viewport.getHeight(), Element.getHeight(document.body));
 				overlay.style.height = h + 'px';
 				document.body.appendChild(overlay);
 		
@@ -59,7 +61,7 @@ riot.window = (function() {
 				}
 				//showElements('object');
 				//showElements('embed');
-				overlay.remove();
+				Element.remove(overlay);
 			}
 		}
 	}
@@ -92,10 +94,28 @@ riot.window = (function() {
 			}
 		});
 	}
+
+	function fixPNGs(el) {
+		if (ie6) {
+			el.select('td').each(function(td) {
+				if (td.style.filter) {
+					td.style.backgroundImage = '';
+				}
+				var bg = td.getStyle('background-image');
+				if (bg && bg != 'none') {
+					bg = bg.replace(/url\(['"]?(.*?)['"]?\)/, '$1');
+					td.style.backgroundImage = 'none';
+					var repeat = td.getStyle('background-repeat') != 'no-repeat';
+					var method = (repeat ? "scale" : "image")
+					td.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + bg + "', sizingMethod='" + method +"')";
+				}
+			});
+		}
+	}
 	
 	// Resize overlay and center dialogs on resize events
 	Event.observe(window, 'resize', function() {
-		var h = Math.max(document.viewport.getHeight(), document.body.getHeight());
+		var h = Math.max(document.viewport.getHeight(), Element.getHeight(document.body));
 		overlay.style.height = h + 'px';
 		stack.invoke('center');
 	});
@@ -115,22 +135,23 @@ riot.window = (function() {
 					openOnLoad: true
 				}, options);
 				
-				this.box = new Element('table', {className: 'riot-dialog'})
+				this.box = new Element('table').addClassName('riot-dialog')
 					.setStyle({position: 'absolute', top: 0, left: 0}).insert(
 					'<tr><td class="border border-top-left"></td><td class="border border-top"></td><td class="border border-top-right"></td></tr>' +
 					'<tr><td class="border border-left"></td><td class="pane">' +
-					'<div class="title-bar"></div></div><div class="content"></div>' + 
+					'<div class="title-bar"></div><div class="content"></div>' + 
 					'</td><td class="border border-right"></td></tr>' +
 					'<tr><td class="border border-bottom-left"></td><td class="border border-bottom"></td><td class="border border-bottom-right"></td></tr>');
 				
 				this.content = this.box.down('.content');
+				this.pane = this.box.down('.pane');
 				
 				var t = this.box.down('.title-bar');
 				if (this.options.title) {
 					t.insert('<div class="title">' + this.options.title + '</div>');
 				}
 				if (this.options.closeButton) {
-					t.insert(new Element('div', {className: 'close-button'}).observe('click', this.close.bind(this)));
+					t.insert(new Element('div').addClassName('close-button').observe('click', this.close.bind(this)));
 				}
 				
 				if (this.options.url) {
@@ -170,14 +191,15 @@ riot.window = (function() {
 					}
 					el = doc.body;
 				}
-				this.content.style.width = Math.max(this.options.minWidth, el.offsetWidth) + 'px';
-				this.content.style.height = Math.max(this.options.minHeight, Math.min(Math.round(document.viewport.getHeight() * 0.8), el.offsetHeight)) + 'px';
+				this.pane.style.width = Math.max(this.options.minWidth, el.offsetWidth) + 'px';
+				this.pane.style.height = Math.max(this.options.minHeight, Math.min(Math.round(document.viewport.getHeight() * 0.8), el.offsetHeight)) + 'px';
 				this.center();
 			},
 			
 			open: function() {
 				if (!this.isOpen) {
 					document.body.appendChild(this.box);
+					fixPNGs(this.box);
 					this.resize();
 					this.box.style.zIndex = windowOpened(this);
 					this.isOpen = true;
@@ -193,7 +215,7 @@ riot.window = (function() {
 		
 		ask: function(title, question, answers, callback) {
 			var dlg;	
-			var buttons = new Element('form', {className: 'buttons'});
+			var buttons = new Element('form').addClassName('buttons');
 			answers.each(function(s, i) {
 				buttons.insert(new Element('input', {type: 'button', value: s}).observe('click', function() {
 					dlg.close();
@@ -202,7 +224,7 @@ riot.window = (function() {
 			});
 			
 			var content = new Element('div')
-				.insert(new Element('div', {className: 'message question'}).insert(question))
+				.insert(new Element('div').addClassName('message question').insert(question))
 				.insert(buttons);
 				
 			dlg = new this.Dialog({title: title, content: content});

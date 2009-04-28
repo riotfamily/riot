@@ -133,12 +133,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 		}
 		return Collections.singleton(itemScreen);
 	}
-	
-	@Override
-	public String getTitle(Object object) {
-		return getId();
-	}
-	
+		
 	/* (non-Javadoc)
 	 * @see org.riotfamily.core.screen.list.ListScreen#getItemLabel(java.lang.Object)
 	 */

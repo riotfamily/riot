@@ -262,9 +262,9 @@ public class FormScreen extends AjaxFormController
 		this.parentScreen = parentScreen;
 	}
 	
-	public String getTitle(Object object) {
-		if (object != null) {
-			return ScreenUtils.getLabel(object, this);
+	public String getTitle(ScreenContext context) {
+		if (context.getObject() != null) {
+			return ScreenUtils.getLabel(context.getObject(), this);
 		}
 		return "New";
 	}

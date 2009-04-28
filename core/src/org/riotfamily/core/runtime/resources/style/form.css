@@ -23,8 +23,8 @@
 	margin-top: 10px;
 }
 
-.buttons {
-	clear:both;
+.main .buttons {
+	clear: both;
 	margin-bottom: 30px;
 	text-align: right;
 	display: none;
@@ -35,11 +35,16 @@
 	padding: 20px;
 }
 
+.buttons {
+	text-align: right;
+}
+
 .buttons span {
+	display: inline-block;
 	display: -moz-inline-stack;
 	_display: inline-block;
-	height: 33px;
-	background: url(images/button_bg.gif) 0 -33px repeat-x;
+	height: 32px;
+	background: url(images/button_bg.gif) 0 -32px repeat-x;
 }
 
 .buttons input {
@@ -47,6 +52,7 @@
 	border: 0;
 	font-family: Arial;
 	font-size: 11px;
+	height: 32px;
 	padding: 0 20px;
 	margin: 0 1px;
 }

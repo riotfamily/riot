@@ -2,20 +2,22 @@
 	border-collapse: collapse;
 }
 .riot-dialog .pane {
-	background: #3d3d3d;
+	background: #fff;
+	vertical-align: top;
 }
 .riot-dialog .title-bar {
 	color: #fff;
 	overflow: hidden;
 	background: #3d3d3d;
+	width: 100%;
 }
-.riot-dialog .title {
+.riot-dialog .title-bar .title {
 	padding: 4px;
 	float: left;
 	font-family: Arial,Helvetica,sans-serif;
 	font-size: 13px;
 }
-.riot-dialog .close-button {
+.riot-dialog .title-bar .close-button {
 	float: right;
 	width: 22px;
 	height: 22px;
@@ -25,6 +27,7 @@
 .riot-dialog .content {
 	background: #fff;
 	overflow: hidden;
+	width: 100%;
 }
 
 .riot-dialog td {
@@ -33,23 +36,23 @@
 .riot-dialog .border {
 	width: 10px;
 	height: 10px;
-	background: url(images/c.png);
+	background-image: url(images/c.png);
 }
 .riot-dialog .border-top-left {
-	background: url(images/tl.png);
+	background-image: url(images/tl.png);
 }
 .riot-dialog .border-top-right {
-	background: url(images/tr.png);
+	background-image: url(images/tr.png);
 }
 .riot-dialog .border-bottom-left {
-	background: url(images/bl.png);
+	background-image: url(images/bl.png);
 }
 .riot-dialog .border-bottom-right {
-	background: url(images/br.png);
+	background-image: url(images/br.png);
 }
 
 .riot-dialog iframe {
-	border: none;
+	border: 0px;
 }
 
 #riot-overlay {

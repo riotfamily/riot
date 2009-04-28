@@ -25,11 +25,17 @@ package org.riotfamily.core.screen;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 
-public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware {
+public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware, 
+		MessageSourceAware {
 
 	private String id;
 	
@@ -37,10 +43,16 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware {
 	
 	private RiotScreen parentScreen;
 	
+	private MessageSource messageSource;
+	
 	public void setBeanName(String beanName) {
 		if (id == null) {
 			id = beanName;
 		}
+	}
+	
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 	
 	public String getId() {
@@ -71,8 +83,11 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware {
 		return Collections.emptySet();
 	}
 	
-	public String getTitle(Object object) {
-		return getId();
+	public String getTitle(ScreenContext context) {
+		String code = "screen." + getId();
+		String defaultTitle = FormatUtils.xmlToTitleCase(getId());
+		Locale locale = RequestContextUtils.getLocale(context.getRequest());
+		return messageSource.getMessage(code, null, defaultTitle, locale);
 	}
 
 }

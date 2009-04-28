@@ -59,7 +59,7 @@ import org.springframework.validation.Validator;
  */
 public class Form implements BeanEditor {
 
-	private static final String DEFAULT_ID = "form";
+	private static final String DEFAULT_ID = "f0";
 
 	private static final String FORM_ATTR = "form";
 

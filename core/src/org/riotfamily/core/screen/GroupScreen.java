@@ -28,7 +28,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.mapping.HandlerUrlUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -52,17 +54,25 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 	}
 	
 	@Override
-	public String getTitle(Object object) {
-		if (object != null) {
-			return ScreenUtils.getLabel(object, this);
+	public String getTitle(ScreenContext context) {
+		if (context.getObject() != null) {
+			return ScreenUtils.getLabel(context.getObject(), this);
 		}
-		return getId();
+		return super.getTitle(context);
 	}
-	
+		
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		
+
+		ScreenContext context = ScreenContext.get(request);
 		ModelAndView mv = new ModelAndView(viewName);
+		List<ScreenLink> links = Generics.newArrayList();
+		for (RiotScreen screen : childScreens) {
+			links.add(new ScreenLink(screen.getTitle(context),
+					HandlerUrlUtils.getUrl(request, screen.getId(), context),
+					screen.getIcon(), false));
+		}
+		mv.addObject("links", links);
 		return mv;
 	}
 

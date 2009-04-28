@@ -186,7 +186,7 @@ public class ScreenContext {
 	}
 	
 	public String getTitle() {
-		return screen.getTitle(getObject());
+		return screen.getTitle(this);
 	}
 	
 	public String getUrl() {
@@ -194,7 +194,7 @@ public class ScreenContext {
 	}
 	
 	public ScreenLink getLink() {
-		//TODO Support isNew for other screen types too
+		//TODO Remove instanceof test to support isNew for other screen types too
 		boolean isNew = objectId == null && screen instanceof FormScreen; 
 		return new ScreenLink(getTitle(), getUrl(), screen.getIcon(), isNew);
 	}

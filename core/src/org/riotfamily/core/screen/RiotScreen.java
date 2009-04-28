@@ -38,6 +38,6 @@ public interface RiotScreen {
 	
 	public String getIcon();
 	
-	public String getTitle(Object object);
+	public String getTitle(ScreenContext context);
 	
 }
