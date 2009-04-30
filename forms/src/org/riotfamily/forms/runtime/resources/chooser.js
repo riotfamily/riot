@@ -18,7 +18,7 @@ riot.chooser = (function() {
 		
 		choose: function(ev) {
 			ev.stop();
-			this.dialog = new riot.window.Dialog({url: this.url, modal: true, closeButton: true});
+			this.dialog = new riot.window.Dialog({url: this.url, modal: true, closeButton: true, minWidth: 2000, minHeight: 2000});
 			activeChooser = this;
 		},
 		

@@ -156,7 +156,7 @@ riot.window = (function() {
 				
 				if (this.options.url) {
 					this.box.style.visibility = 'hidden';
-					this.iframe = new Element('iframe', {src: this.options.url, width: '100%', height: '100%'}).observe('load', function() {
+					this.iframe = new Element('iframe', {src: this.options.url, width: '100%'}).observe('load', function() {
 						this.resize();
 						this.box.style.visibility = 'visible';
 					}.bind(this));
@@ -191,8 +191,17 @@ riot.window = (function() {
 					}
 					el = doc.body;
 				}
-				this.pane.style.width = Math.max(this.options.minWidth, el.offsetWidth) + 'px';
-				this.pane.style.height = Math.max(this.options.minHeight, Math.min(Math.round(document.viewport.getHeight() * 0.8), el.offsetHeight)) + 'px';
+
+				var w = Math.max(this.options.minWidth, el.offsetWidth);
+				var h = Math.max(this.options.minHeight, el.offsetHeight);
+				w = Math.min(w, document.viewport.getWidth() - 50);
+				h = Math.min(h, document.viewport.getHeight() - 100); 
+				
+				this.pane.style.width = w + 'px';
+				this.pane.style.height = h + 'px';
+				if (this.iframe) {
+					this.iframe.style.height = this.pane.style.height; 
+				}
 				this.center();
 			},
 			
