@@ -86,7 +86,7 @@ label {
 	font-weight: bold;
 	color: ${label_color};
 	-moz-user-select: none;
-	margin: 4px 0;
+	vertical-align: middle;
 }
 .title {
 	margin-bottom:4px;
@@ -100,12 +100,11 @@ label.disabled,
 	color: #888;
 }
 .composite-element {
-	border-top: 1px solid #d2d1ce;
+	border-top: 1px solid #dadada; 
 }
 
 .element {
 	margin-bottom: 30px;
-	padding-right: 2px;
 }
 .collectionEditor .element {
 	margin-bottom: 0;
@@ -283,7 +282,7 @@ ul.checkboxGroup label {
 	margin: 0;
 }
 .collectionEditor span .button-add {
-	margin-top: 1px;
+	margin-left: 17px;
 }
 .collectionEditor ul.drag-drop {
 	background-color: #a4a4a4;
@@ -322,7 +321,8 @@ table.item td.handle div {
 }
 table.item td.itemElement {
 	width: 100%;
-	padding: 10px;
+	padding: 10px 2px 10px 10px;
+	background: url(images/form/list_item_bg_left.jpg) repeat-y;
 }
 .mapEditor table.item td.itemElement {
 	padding: 10px 0;
@@ -336,16 +336,17 @@ table.item .draggable td.itemElement {
 }
 
 table.item td.removeButton {
-	background: #ebebeb;
+	background: url(images/form/list_item_bg_right.jpg) repeat-y;
 	vertical-align: middle;
 }
 .listEditor ul.items {
-	margin-top: -1px;
+		border-left: 1px solid #dadada;
+		border-right: 1px solid #dadada;
 }
 .listEditor li.item {
-    border-top: 1px solid #cdcdcd;
-    border-bottom: 1px solid #cdcdcd;
-    margin-bottom: 1px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #dadada;
+    xmargin-bottom: 1px;
 }
 
 .listEditor td.button,
@@ -403,10 +404,7 @@ table.item .indent {
 .listEditor .button-add,
 .collectionEditor .button-remove {
 	margin: 0;
-	border: none;
-	background-color: #fff;
-	background-repeat: no-repeat;
-	background-position: center center;
+	border: 0;
 	padding: 0;
 	width: 32px;
 	height: 32px;
@@ -419,14 +417,13 @@ table.item .indent {
 }
 
 .listEditor .button-add {
-	background-image: url(images/add.gif);
+	background: transparent url(images/form/list_item_add.gif) no-repeat;
+	width: 38px;
+	height: 23px;
 }
 
 .collectionEditor .button-remove {
-	background: #fff url(images/remove_invert.gif) no-repeat;
-}
-.collectionEditor .button-remove:hover {
-	background-color: ${highlight_color};
+	background: transparent url(images/form/list_item_remove.gif) center center no-repeat;
 }
 
 .calendar-button {
@@ -532,10 +529,10 @@ ul.radioButtonGroup {
 
 .hint-trigger {
 	display: inline;
-	padding-left: 12px;
-	height: 12px;
+	padding-left: 14px;
+	height: 14px;
 	cursor: help;
-	background: url(images/hint.gif) left center no-repeat;
+	background: url(images/form/hint.gif) left center no-repeat;
 	vertical-align: middle;
 }
 

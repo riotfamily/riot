@@ -61,7 +61,7 @@ td {
 	background: url(images/riot_footer.gif) right 18px no-repeat;
 }
 .main {
-	padding-right: 300px;
+	padding: 0 300px 50px 0;
 
 }
 .extra {

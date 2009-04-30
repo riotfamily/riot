@@ -8,21 +8,24 @@
 						${editor.render()}
 						${item.form.errors.renderErrors(editor)}
 					</td>
+					<td class="removeButton" rowspan="3">
+						${removeButton.render()}
+					</td>
 				</tr>
 				<tr>
-					<td class="removeButton">${removeButton.render()}</td>
+					<td class="blind"></td>
 				</tr>
 				<tr>
 					<td class="button down disabled"></td>
 				</tr>
 			<#else>
 				<tr<#if item.list.sortable> class="draggable"</#if>>
-					<td class="removeButton">${removeButton.render()}</td>
+					<#if item.list.sortable><td class="handle"><div></div></td></#if>					
 					<td class="itemElement">
 						${editor.render()}
 						${item.form.errors.renderErrors(editor)}
 					</td>
-					<#if item.list.sortable><td class="handle"><div></div></td></#if>
+					<td class="removeButton">${removeButton.render()}</td>
 				</tr>
 			</#if>
 		</tbody>
