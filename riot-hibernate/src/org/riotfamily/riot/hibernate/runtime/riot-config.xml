@@ -1,50 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<riot-config
-	xmlns="http://www.riotfamily.org/schema/riot/riot-config"
-	xmlns:ed="http://www.riotfamily.org/schema/riot/editor-config"
-	xmlns:list="http://www.riotfamily.org/schema/riot/list-config"
-	xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+<form-config
+	xmlns="http://www.riotfamily.org/schema/forms/form-config"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-		http://www.riotfamily.org/schema/riot/riot-config
-		http://www.riotfamily.org/schema/riot/riot-config-8.0.xsd
-		http://www.riotfamily.org/schema/riot/editor-config
-		http://www.riotfamily.org/schema/riot/editor-config-8.0.xsd
-		http://www.riotfamily.org/schema/riot/list-config
-		http://www.riotfamily.org/schema/riot/list-config-8.0.xsd
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd">
 
-	<!-- 
-	<ed:group name="systemPreferences" icon="tools">
-		<ed:list id="riotUsers" list-ref="riotUsers" icon="users">
-			<ed:form form-ref="riotUser" />
-		</ed:list>
-	</ed:group>
-		
-	<list:list id="riotUsers">
-		<list:dao ref="riotUserDao" />			
-		<list:columns>
-			<list:column property="id" />
-			<list:column property="name" />
-			<list:command id="edit" />
-			<list:command id="delete" />
-		</list:columns>
-		<list:command id="add" />
-	</list:list>
- 	-->
- 
-	<form:form id="riotUser" bean-class="org.riotfamily.riot.hibernate.security.User">
-		<form:group>
-			<form:editable-if-new>
-				<form:textfield bind="id" required="true" />
-			</form:editable-if-new>
-			<form:textfield bind="name" />
-			<form:textfield bind="email" />
-		</form:group>
-		<form:group>
-			<form:passwordfield bind="newPassword" confirm="true"/>
-		</form:group>
-	</form:form>
+	<form id="riotUser" bean-class="org.riotfamily.riot.hibernate.security.User">
+		<group>
+			<editable-if-new>
+				<textfield bind="id" required="true" />
+			</editable-if-new>
+			<textfield bind="name" />
+			<textfield bind="email" />
+		</group>
+		<group>
+			<passwordfield bind="newPassword" confirm="true"/>
+		</group>
+	</form>
 
-</riot-config>
+</form-config>

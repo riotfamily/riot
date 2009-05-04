@@ -1,117 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<riot-config
-	xmlns="http://www.riotfamily.org/schema/riot/riot-config"
-	xmlns:ed="http://www.riotfamily.org/schema/riot/editor-config"
-	xmlns:list="http://www.riotfamily.org/schema/riot/list-config"
-	xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+<form-config
+	xmlns="http://www.riotfamily.org/schema/forms/form-config"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-		http://www.riotfamily.org/schema/riot/riot-config
-		http://www.riotfamily.org/schema/riot/riot-config-8.0.xsd
-		http://www.riotfamily.org/schema/riot/editor-config
-		http://www.riotfamily.org/schema/riot/editor-config-8.0.xsd
-		http://www.riotfamily.org/schema/riot/list-config
-		http://www.riotfamily.org/schema/riot/list-config-8.0.xsd
 		http://www.riotfamily.org/schema/forms/form-config
-		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd
-		">
-
-	<!--
-	<list:list id="messageBundleEntries" search="code">
-		<list:dao class="org.riotfamily.dbmsgsrc.riot.MessageBundleEntryDao" />
-		<list:columns>
-			<list:column property="code" />
-			<list:column property="defaultMessage.text" sortable="false" />
-			<list:column property="translated" sortable="false" />
-			<list:command id="edit" />
-			<list:command id="delete" />
-		</list:columns>
-		<list:command class="org.riotfamily.dbmsgsrc.riot.RemoveEmptyEntriesCommand" />
-		<list:command id="importMessages" />
-		<list:command id="exportMessages" />		
-		<list:command id="add" />
-	</list:list>
-	-->
+		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd">
 	 
-	<form:form id="messageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
-		<form:textfield bind="code" required="true" />
-		<form:textarea bind="comment" />
-		<form:nested-form bind="defaultMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
-			<form:textarea bind="text" required="true" />
-		</form:nested-form>
-		<form:map bind="messages" label-renderer="localeRenderer">
-			<form:key-options ref="locales" />
-			<form:nested-form indent="false" bean-class="org.riotfamily.dbmsgsrc.model.Message">
-				<form:textarea bind="text" required="true" />
-			</form:nested-form>
-		</form:map>
-	</form:form>
+	<form id="messageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
+		<textfield bind="code" required="true" />
+		<textarea bind="comment" />
+		<nested-form bind="defaultMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
+			<textarea bind="text" required="true" />
+		</nested-form>
+		<map bind="messages" label-renderer="localeRenderer">
+			<key-options ref="locales" />
+			<nested-form indent="false" bean-class="org.riotfamily.dbmsgsrc.model.Message">
+				<textarea bind="text" required="true" />
+			</nested-form>
+		</map>
+	</form>
 	
-	<!-- 
-	<ed:group name="systemPreferences" icon="tools">
-		<ed:list id="dbMessages" list-ref="messageBundleEntries" icon="bubble">
-			<ed:form form-ref="messageBundleEntry" />
-		</ed:list>
-	</ed:group>
-
-	<list:list id="localDbMessages" search="entry.code,entry.defaultMessage.text,text" filter-form="dbMessageFilter">
-		<list:dao class="org.riotfamily.dbmsgsrc.riot.LocalMessageDao" />
-		<list:columns>
-			<list:column property="entry.code" />
-			<list:column property="entry.defaultMessage.text" />
-			<list:column renderer="localMessageRenderer" sortable="false" />
-			<list:command class="org.riotfamily.dbmsgsrc.riot.EditMessageCommand" />
-			<list:command class="org.riotfamily.dbmsgsrc.riot.TranslateMessageCommand" />
-		</list:columns>
-		<list:command id="importLocalMessages" />
-		<list:command id="exportLocalMessages" />
-	</list:list>
-	-->
+	<form id="dbMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
+		<textarea bind="entry.comment" read-only="true" />
+		<textarea bind="text" required="true" />
+	</form>
+	
+	<form id="dbMessageFilter" bean-class="java.util.HashMap">
+		<checkbox bind="notTranslatedOnly" />
+		<checkbox bind="equalToDefaultText" />		
+	</form>
+	
+	<form id="riotMessageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
+		<textfield bind="code" read-only="true" />
+		<map bind="messages" label-renderer="localeRenderer">
+			<key-options class="org.riotfamily.dbmsgsrc.support.CurrentLocaleOptionsModel" />
+			<nested-form indent="false" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">
+				<textarea bind="text" />
+			</nested-form>
+		</map>
+	</form>
 	 
-	<form:form id="dbMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
-		<form:textarea bind="entry.comment" read-only="true" />
-		<form:textarea bind="text" required="true" />
-	</form:form>
-	
-	<form:form id="dbMessageFilter" bean-class="java.util.HashMap">
-		<form:checkbox bind="notTranslatedOnly" />
-		<form:checkbox bind="equalToDefaultText" />		
-	</form:form>
-	
-	<!-- 
-	<ed:list id="localDbMessages" list-ref="localDbMessages" icon="bubble" hidden="true">
-		<ed:form form-ref="dbMessage" />
-	</ed:list>
-
-	<list:list id="riotMessageBundleEntries">
-		<list:dao class="org.riotfamily.riot.hibernate.dao.HqlDao">
-			<list:property name="entityClass" value="org.riotfamily.dbmsgsrc.model.MessageBundleEntry" />
-			<list:property name="where" value="this.bundle = 'riot'" />
-		</list:dao>
-		<list:columns>
-			<list:column property="code" />
-			<list:column property="defaultMessage.text" sortable="false" />
-			<list:command id="edit" />
-			<list:command id="delete" />
-		</list:columns>
-		<list:command id="add" />
-	</list:list>
-	 -->
-	 
-	<form:form id="riotMessageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
-		<form:textfield bind="code" read-only="true" />
-		<form:map bind="messages" label-renderer="localeRenderer">
-			<form:key-options class="org.riotfamily.dbmsgsrc.support.CurrentLocaleOptionsModel" />
-			<form:nested-form indent="false" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">
-				<form:textarea bind="text" />
-			</form:nested-form>
-		</form:map>
-	</form:form>
-	
-	<!-- 
-	<ed:list list-ref="riotMessageBundleEntries" hidden="true">
-		<ed:form form-ref="riotMessageBundleEntry" />
-	</ed:list>
-	 -->
-	 
-</riot-config>
+</form-config>
