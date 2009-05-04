@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="lib/servlet.jar"/>
 	<classpathentry kind="lib" path="lib/spring.jar" sourcepath="lib/spring-src.zip"/>
 	<classpathentry kind="lib" path="lib/c3p0.jar"/>
+	<classpathentry kind="lib" path="lib/javamail.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -13,5 +13,6 @@
 		<dependency org="json" name="json-lib" rev="0.9" />
 		<dependency org="getahead" name="dwr" rev="2.0-RC2" />
 		<dependency org="sun" name="jaf" rev="1.1" />
+		<dependency org="sun" name="javamail" rev="1.4" conf="*->default" />
     </dependencies>
 </ivy-module>
