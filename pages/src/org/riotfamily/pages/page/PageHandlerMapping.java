@@ -58,6 +58,11 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up handler for [" + path + "]");
 		}
+		if (!pageMap.isInitialized()) {
+			log.warn("PageMap not initialized ...");
+			pageMap.initMappings();
+			log.info("... pageMap built");
+		}
 		PageAndController pc = pageMap.getPageAndController(path);
 		
 		if (pc != null) {

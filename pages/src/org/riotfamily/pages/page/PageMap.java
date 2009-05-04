@@ -84,6 +84,8 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 	
 	private long lastModified;
 	
+	private boolean initialized;
+	
 	private String defaultControllerName = DEFAULT_CONTROLLER;
 
 	private Controller defaultController;
@@ -151,6 +153,7 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 	 * Called upon startup and when an ApplicationEvent is received ...
 	 */
 	public final synchronized void initMappings() {
+		initialized = false;
 		lastModified = System.currentTimeMillis();
 		pageAndControllerMap = new HashMap();
 		
@@ -166,6 +169,7 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 				}
 			}
 		);
+		initialized = true;
 	}
 	
 	protected void registerPages(Collection pages) {
@@ -304,6 +308,10 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 
 	public long getLastModified() {
 		return this.lastModified;
+	}	
+	
+	public boolean isInitialized() {
+		return this.initialized;
 	}
 	
 }
