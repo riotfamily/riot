@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +45,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
@@ -331,6 +333,35 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	@Transient
 	public List<Page> getChildPages() {
 		return Page.findRootPagesBySite(this);
+	}
+	
+	@Transient
+	public Collection<Page> getChildPagesWithFallback() {
+		List<Page> pages = Generics.newArrayList();
+		pages.addAll(getChildPages());
+		pages.addAll(getTranslationCandidates());
+		return pages;
+	}
+	
+	@Transient
+	public Collection<Page> getTranslationCandidates() {
+		List<Page> candidates = Generics.newArrayList();
+		Site master = getMasterSite();
+		if (master != null) {
+			for (Page page : master.getChildPages()) {
+				boolean translated = false;
+				for (Page child : getChildPages()) {
+					if (page.equals(child.getMasterPage())) {
+						translated = true;
+						break;
+					}
+				}
+				if (!translated) {
+					candidates.add(page);
+				}
+			}			
+		}
+		return candidates;
 	}
 	
 	public void addPage(Page page) {

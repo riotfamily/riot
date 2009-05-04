@@ -81,7 +81,7 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		if (parentItem == null) {
 			parentItem = Site.loadDefaultSite();
 		}
-		return parentItem.getChildPages(); //FIXME getChildPagesWithFallback();
+		return parentItem.getChildPagesWithFallback();
 	}
 	
 	public Object getParentNode(Object node) {

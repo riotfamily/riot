@@ -68,13 +68,14 @@ public class ListState implements Serializable {
 		request.getSession().setAttribute(key, state);
 	}
 	
-	ListState(String key, String screenId, Locale locale, 
-			Form filterForm, TextField searchField, 
+	ListState(String key, String screenId, Locale locale,
+			String parentId, Form filterForm, TextField searchField, 
 			ChooserSettings chooserSettings) {
 		
 		this.key = key;
 		this.screenId = screenId;
 		this.locale = locale;
+		this.parentId = parentId;
 		this.filterForm = filterForm;
 		this.searchField = searchField;
 		this.chooserSettings = chooserSettings;

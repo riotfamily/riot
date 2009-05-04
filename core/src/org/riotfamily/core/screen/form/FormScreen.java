@@ -143,7 +143,10 @@ public class FormScreen extends AjaxFormController
 		mv.addObject("form", sw.toString());
 		
 		ScreenContext context = ScreenContext.get(request);
-		mv.addObject("listStateKey", context.createParentContext().getListStateKey());
+		if (context.getObject() != null) {
+			//REVISIT
+			mv.addObject("listStateKey", context.createParentContext().getListStateKey());
+		}
 		return mv;
 	}
 

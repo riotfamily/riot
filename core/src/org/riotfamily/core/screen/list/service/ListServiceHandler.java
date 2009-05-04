@@ -81,8 +81,8 @@ abstract class ListServiceHandler {
 		this.request = request;
 		this.messageResolver = service.getMessageResolver(request);
 		this.transactionManager = service.getTransactionManager();
-		this.screenContext = new ScreenContext(screen, request, null, 
-				state.getParentId(), false);
+		this.screenContext = new ScreenContext(screen, request, 
+				null, state.getParentId(), false);
 		
 		if (state.getChooserSettings().getTargetScreenId() != null) {
 			String id = state.getChooserSettings().getTargetScreenId();

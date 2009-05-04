@@ -96,7 +96,7 @@ public class ScreenContext {
 	}
 
 	public String getParentId() {
-		if (parentId == null && parent != null) {
+		if (parentId == null && getParent() != null) {
 			if (nestedTreeItem) {
 				parentId = dao.getObjectId(parent);
 			}
@@ -131,22 +131,27 @@ public class ScreenContext {
 		if (parentScreen == null) {
 			return null;
 		}
-		Object parentObject = object;
-		if (parentScreen instanceof ListScreen) {
-			parentObject = getParent();
+		if (screen instanceof ListScreen) {
+			return new ScreenContext(parentScreen, getParent(), null, false, this);
 		}
-		return new ScreenContext(parentScreen, null, parentObject, false, this);
+		if (getObject() == null) {
+			return new ScreenContext(parentScreen, null, getParent(), false, this);		
+		}
+		return new ScreenContext(parentScreen, getObject(), null, false, this);
 	}
 	
 	public ScreenContext createNewItemContext(Object parentTreeItem) {
 		boolean nested = parentTreeItem != null;
-		Object newParent = nested ? parentTreeItem : getObject();
+		Object newParent = nested ? parentTreeItem : getParent();
 		RiotScreen itemScreen = ScreenUtils.getListScreen(screen).getItemScreen();
 		return new ScreenContext(itemScreen, null, newParent, nested, this);
 	}
 	
 	public ScreenContext createItemContext(Object item) {
 		RiotScreen itemScreen = ScreenUtils.getListScreen(screen).getItemScreen();
+		if (itemScreen instanceof ListScreen) {
+			return new ScreenContext(itemScreen, null, item, false, this);
+		}
 		return new ScreenContext(itemScreen, item, null, false, this);
 	}
 	

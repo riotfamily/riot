@@ -76,9 +76,10 @@
 			}
 			
 			registerKeyHandler(document);
-			
-			var list = new RiotList('${listStateKey}');
-			list.renderFormCommands({objectId: <#if context.objectId??>'${context.objectId}'<#else>null</#if>}, 'commands');
+			<#if context.objectId??>
+				var list = new RiotList('${listStateKey}');
+				list.renderFormCommands({objectId: '${context.objectId}'}, 'commands');
+			</#if>
 		</script>
 	</@template.block>
 

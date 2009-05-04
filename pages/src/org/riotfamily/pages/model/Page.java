@@ -426,7 +426,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	
 	
 	@Transient
-	public List<Page> getChildPagesWithFallback() {
+	public Collection<Page> getChildPagesWithFallback() {
 		List<Page> pages = Generics.newArrayList();
 		pages.addAll(getChildPages());
 		pages.addAll(getTranslationCandidates());
@@ -434,7 +434,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	}
 	
 	@Transient
-	public List<Page> getTranslationCandidates() {
+	public Collection<Page> getTranslationCandidates() {
 		List<Page> candidates = Generics.newArrayList();
 		Page master = getMasterPage();
 		if (master != null) {

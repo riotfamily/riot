@@ -32,6 +32,8 @@ public interface SiteMapItem {
 
 	public Collection<Page> getChildPages();
 	
+	public Collection<Page> getChildPagesWithFallback();
+	
 	public void addPage(Page page);
 	
 	public void removePage(Page page);

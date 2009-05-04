@@ -44,6 +44,7 @@ import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenLink;
+import org.riotfamily.core.screen.ScreenUtils;
 import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.TextField;
@@ -82,6 +83,15 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 		return dao;
 	}
 
+	@Override
+	public String getTitle(ScreenContext context) {
+		if (context.getParent() != null) {
+			return ScreenUtils.getParentListScreen(this)
+					.getItemLabel(context.getParent());
+		}
+		return super.getTitle(context);
+	}
+	
 	public void setDao(RiotDao dao) {
 		this.dao = dao;
 	}
@@ -181,13 +191,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 			ChooserSettings chooserSettings) {
 		
 		StringBuilder key = new StringBuilder();
-		key.append(getId()).append('/');
-		if (context.getObjectId() != null) {
-			key.append(context.getObjectId());
-		}
-		else {
-			key.append("new");
-		}
+		key.append(getId()).append("/new");
 		if (context.getParentId() != null) {
 			key.append('/').append(context.getParentId());
 			if (context.isNestedTreeItem()) {
@@ -222,7 +226,8 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 				searchField.setLabel("Search");
 				filterForm.addElement(searchField);
 			}
-			state = new ListState(key, getId(), locale, filterForm, 
+			state = new ListState(key, getId(), locale, 
+					screenContext.getParentId(), filterForm, 
 					searchField, chooserSettings);
 			
 			ListState.put(request, key, state);
