@@ -7,33 +7,34 @@
 	"style/command-custom.css"
 ] />
 <@template.extend file="../screen.ftl">
-	<@template.block name="content" cache=false>
+	
+	<@template.block name="main">
 		<@riot.script src="/engine.js" />
 		<@riot.script src="/util.js" />
-
 		<@riot.script src="/interface/ListService.js" />
 		<@riot.script src="riot-js/pager.js" />
 		<@riot.script src="list.js" />
-	
-		<div class="main">
-			<div id="list"></div>
-		</div>
-		<div id="extra" class="extra">
-			<#if filterForm??>
-				<div id="filter" class="box">
-					<div class="box-title">
-						<span class="label"><@c.message "label.list.filter">Filter</@c.message></span>
-					</div>
-					<div id="filterForm">
-					</div>
-				</div>
-			</#if>
-			<div class="box command-box">
+		<#if chooser??>
+			<@template.set bodyClass="chooser" />
+		</#if>
+		<div id="list"></div>
+	</@template.block>
+
+	<@template.block name="extra">	
+		<#if filterForm??>
+			<div id="filter" class="box">
 				<div class="box-title">
-					<span class="label"><@c.message "label.commands">Commands</@c.message></span>
+					<span class="label"><@c.message "label.list.filter">Filter</@c.message></span>
 				</div>
-				<div id="commands" class="commands">
+				<div id="filterForm">
 				</div>
+			</div>
+		</#if>
+		<div class="box command-box">
+			<div class="box-title">
+				<span class="label"><@c.message "label.commands">Commands</@c.message></span>
+			</div>
+			<div id="commands" class="commands">
 			</div>
 		</div>
 		
@@ -42,4 +43,5 @@
 			list.render('list', 'commands', <#if expand??>'${expand}'<#else>null</#if><#if listState. filterForm??>, 'filterForm'</#if>);
 		</script>
 	</@template.block>
+
 </@template.extend>

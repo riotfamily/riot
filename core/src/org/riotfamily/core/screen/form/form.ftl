@@ -5,25 +5,25 @@
 	"style/command-custom.css"
 ] />
 <@template.extend file="../screen.ftl">
-	<@template.block name="content" cache=false>
+			
+	<@template.block name="main">
 		<@riot.script src="/engine.js" />
 		<@riot.script src="/util.js" />
 
 		<@riot.script src="/interface/ListService.js" />
 		<@riot.script src="riot-js/pager.js" />
 		<@riot.script src="list.js" />
-	
-		<div class="main">
-			<div id="form">${form}</div>
-		</div>
-		<div id="extra" class="extra">
-			<div class="box">
-				<div class="commands">
-					<a class="action enabled" href="javascript:save()"><span class="icon saveButton"></span><span class="label"><@c.message "label.form.button.save">Save</@c.message></span></a>
-					<div id="commands"></div>
-				</div>
+		<div id="form">${form}</div>
+	</@template.block>
+		
+	<@template.block name="extra">
+		<div class="box">
+			<div class="commands">
+				<a class="action enabled" href="javascript:save()"><span class="icon saveButton"></span><span class="label"><@c.message "label.form.button.save">Save</@c.message></span></a>
+				<div id="commands"></div>
 			</div>
 		</div>
+	
 		<script type="text/javascript" language="JavaScript">
 			var form = $$('form')[0];
 			var focusedElement = '';
@@ -81,4 +81,5 @@
 			list.renderFormCommands({objectId: <#if context.objectId??>'${context.objectId}'<#else>null</#if>}, 'commands');
 		</script>
 	</@template.block>
+
 </@template.extend>

@@ -147,10 +147,7 @@
 		<property name="compressResources" value="${riot.resources.compress=true}" />
 	</bean>
 		
-	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory">
-		<constructor-arg ref="cacheService" />
-		<constructor-arg ref="cacheKeyAugmentor" />
-	</bean>
+	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory" />
 		
 	<!-- Security -->
 
@@ -228,6 +225,11 @@
 	<bean id="home" class="org.riotfamily.core.screen.GroupScreen">
 		<property name="icon" value="home" />
 		<property name="childScreens" ref="rootScreens" />
+		<property name="screenlets">
+			<list>
+				<bean class="org.riotfamily.core.security.ui.LoginStatusScreenlet" />
+			</list>
+		</property>
 	</bean>
 	
 	<util:list id="rootScreens">

@@ -22,7 +22,7 @@
 	</script>
 	
 </head>
-<body>
+<body class="${template.vars.bodyClass!"screen"}">
 	<div id="page">
 		<div id="header">
 			<@template.block name="header">
@@ -32,6 +32,14 @@
 		</div>
 		<div id="content">
 			<@template.block name="content">
+				<div class="main">
+					<@template.block name="main" />	
+				</div>
+				<div id="extra" class="extra">
+					<@template.block name="extra">
+					</@template.block>
+					<@renderScreenlets />
+				</div>
 			</@template.block>
 		</div>
 	</div>
@@ -46,6 +54,14 @@
 </body>
 </html>
 </@template.root>
+
+<#macro renderScreenlets>
+	<#if context.screen.screenlets??>
+		<#list context.screen.screenlets as screenlet>
+			${screenlet.render(context)}
+		</#list>
+	</#if>
+</#macro>
 
 <#macro renderPath path>
 	<div id="path">

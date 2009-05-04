@@ -1,21 +1,21 @@
 .screens {
 	border-top: 1px solid #dadada;
 }
-.group a {
+.screens a {
 	display: block;
 	border-bottom: 1px solid #dadada; 
 	color: #3d3d3d;
 	text-decoration: none;
 	padding: 20px 20px 20px 6px;
 }
-.group a:hover,
-.group a:focus {
+.screens a:hover,
+.screens a:focus {
 	background-color: #f0f0f0;
 	outline: none;
 	-moz-outline: none;
 }
 
-.group a.screen .label {
+.screens a.screen .label {
 	font-size: 14px;
 	font-weight: bold;
 	padding-left: 22px; 
@@ -23,7 +23,7 @@
 	background-repeat: no-repeat;
 	_height: 1px;
 }
-.group a.screen .description {
+.screens a.screen .description {
 	display: none;
 }
 

@@ -39,6 +39,7 @@ import org.riotfamily.core.dao.RiotDaoException;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenUtils;
+import org.riotfamily.core.screen.Screenlet;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
 import org.riotfamily.forms.controller.FormContextFactory;
@@ -73,6 +74,8 @@ public class FormScreen extends AjaxFormController
 	private RiotScreen parentScreen;
 	
 	private List<RiotScreen> childScreens;
+	
+	private List<Screenlet> screenlets;
 
 	public FormScreen(FormContextFactory formContextFactory,
 			FormRepository formRepository,
@@ -267,6 +270,14 @@ public class FormScreen extends AjaxFormController
 			return ScreenUtils.getLabel(context.getObject(), this);
 		}
 		return "New";
+	}
+
+	public List<Screenlet> getScreenlets() {
+		return screenlets;
+	}
+
+	public void setScreenlets(List<Screenlet> screenlets) {
+		this.screenlets = screenlets;
 	}
 	
 }

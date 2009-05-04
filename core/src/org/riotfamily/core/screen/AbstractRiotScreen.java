@@ -25,6 +25,7 @@ package org.riotfamily.core.screen;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.common.util.FormatUtils;
@@ -44,6 +45,8 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware,
 	private RiotScreen parentScreen;
 	
 	private MessageSource messageSource;
+	
+	private List<Screenlet> screenlets;
 	
 	public void setBeanName(String beanName) {
 		if (id == null) {
@@ -90,4 +93,12 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware,
 		return messageSource.getMessage(code, null, defaultTitle, locale);
 	}
 
+	public List<Screenlet> getScreenlets() {
+		return screenlets;
+	}
+
+	public void setScreenlets(List<Screenlet> screenlets) {
+		this.screenlets = screenlets;
+	}
+	
 }

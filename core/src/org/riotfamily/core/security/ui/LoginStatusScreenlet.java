@@ -23,36 +23,20 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.security.ui;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.core.screen.ModelAndViewScreenlet;
 import org.riotfamily.core.security.session.LoginManager;
-import org.riotfamily.core.security.session.SessionMetaData;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
-public class LoginStatusController implements Controller {
+public class LoginStatusScreenlet extends ModelAndViewScreenlet {
 
-	private String viewName = ResourceUtils.getPath(
-			LoginStatusController.class, "LoginStatusView.ftl");
-	
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
-	}
-	
-	public ModelAndView handleRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
-		
-		if (request.getParameter("update") != null) {
-			//Currently this is just used for session keep-alive.
-			//So nothing to do here ...
-			return null;
-		}
-		else {
-			SessionMetaData data = LoginManager.getSessionMetaData(request);
-			return new ModelAndView(viewName, "sessionData", data);
-		}
+	@Override
+	protected void populateModel(Map<String, Object> model,
+			HttpServletRequest request) {
+
+		model.put("sessionData", LoginManager.getSessionMetaData(request));
 	}
 
 }

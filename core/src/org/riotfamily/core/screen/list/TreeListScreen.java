@@ -239,6 +239,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 		ModelAndView mv = new ModelAndView(viewName);
 		
 		if (chooserSettings.getTargetScreenId() != null) {
+			mv.addObject("chooser", true);
 			List<ScreenLink> path = Generics.newArrayList();
 			ScreenContext ctx = screenContext;
 			while (ctx != null) {

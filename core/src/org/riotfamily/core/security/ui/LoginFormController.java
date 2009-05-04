@@ -39,7 +39,7 @@ public class LoginFormController implements Controller {
 	private LoginManager loginManager;
 	
 	private String viewName = ResourceUtils.getPath(
-			LoginFormController.class, "LoginFormView.ftl");
+			LoginFormController.class, "LoginForm.ftl");
 	
 	private String successViewName;
 	
