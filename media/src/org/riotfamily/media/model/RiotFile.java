@@ -117,8 +117,12 @@ public class RiotFile {
 	public RiotFile(byte[] bytes, String fileName) throws IOException {
 		setBytes(bytes, fileName);
 	}
-	
+
 	public RiotFile(RiotFile riotFile) throws IOException {
+		this(riotFile, true);
+	}
+	
+	public RiotFile(RiotFile riotFile, boolean copyVariants) throws IOException {
 		this.fileName = riotFile.getFileName();
 		this.uri = mediaService.store(new FileInputStream(riotFile.getFile()), fileName);
 		this.contentType = riotFile.getContentType();
@@ -127,20 +131,22 @@ public class RiotFile {
 		this.owner = riotFile.getOwner();
 		this.creationDate = riotFile.getCreationDate();
 
-		Map<String, RiotFile> otherVariants = riotFile.getVariants();
-		if (otherVariants != null) {
-			this.variants = Generics.newHashMap();
-			for (Entry<String, RiotFile> entry : otherVariants.entrySet()) {
-				RiotFile variant = entry.getValue();
-				if (variant != null) {
-					addVariant(entry.getKey(), variant.deepCopy());
+		if (copyVariants) {
+			Map<String, RiotFile> otherVariants = riotFile.getVariants();
+			if (otherVariants != null) {
+				this.variants = Generics.newHashMap();
+				for (Entry<String, RiotFile> entry : otherVariants.entrySet()) {
+					RiotFile variant = entry.getValue();
+					if (variant != null) {
+						addVariant(entry.getKey(), variant.copy(true));
+					}
 				}
 			}
 		}
 	}
 	
-	public RiotFile deepCopy() throws IOException {
-		return new RiotFile(this);
+	public RiotFile copy(boolean copyVariants) throws IOException {
+		return new RiotFile(this, copyVariants);
 	}	
 
 	@Transient

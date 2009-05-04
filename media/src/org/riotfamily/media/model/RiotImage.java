@@ -71,7 +71,11 @@ public class RiotImage extends RiotFile {
 	}
 
 	public RiotImage(RiotImage riotImage) throws IOException {
-		super(riotImage);
+		this(riotImage, true);
+	}
+
+	public RiotImage(RiotImage riotImage, boolean copyVariants) throws IOException {
+		super(riotImage, copyVariants);
 		this.format = riotImage.getFormat();
 		this.width = riotImage.getWidth();
 		this.height = riotImage.getHeight();
@@ -79,8 +83,8 @@ public class RiotImage extends RiotFile {
 	}
 	
 	@Override
-	public RiotImage deepCopy() throws IOException {
-		return new RiotImage(this);
+	public RiotImage copy(boolean copyVariants) throws IOException {
+		return new RiotImage(this, copyVariants);
 	}
 
 	protected void inspect(File file) throws IOException {

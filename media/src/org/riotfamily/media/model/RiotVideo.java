@@ -80,7 +80,11 @@ public class RiotVideo extends RiotFile {
 	}
 
 	public RiotVideo(RiotVideo riotVideo) throws IOException {
-		super(riotVideo);
+		this(riotVideo, true);
+	}
+	
+	public RiotVideo(RiotVideo riotVideo, boolean copyVariants) throws IOException {
+		super(riotVideo, copyVariants);
 		this.width = riotVideo.getWidth();
 		this.height = riotVideo.getHeight();
 		this.duration = riotVideo.getDuration();
@@ -93,8 +97,8 @@ public class RiotVideo extends RiotFile {
 	}
 	
 	@Override
-	public RiotVideo deepCopy() throws IOException {
-		return new RiotVideo(this);
+	public RiotVideo copy(boolean copyVariants) throws IOException {
+		return new RiotVideo(this, copyVariants);
 	}
 
 	protected void inspect(File file) throws IOException {

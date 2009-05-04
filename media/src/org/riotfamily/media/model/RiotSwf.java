@@ -68,19 +68,23 @@ public class RiotSwf extends RiotFile {
 	public RiotSwf(byte[] bytes, String fileName) throws IOException {
 		super(bytes, fileName);
 	}
-	
+
 	public RiotSwf(RiotSwf riotSwf) throws IOException {
-		super(riotSwf);
+		this(riotSwf, true);
+	}
+
+	public RiotSwf(RiotSwf riotSwf, boolean copyVariants) throws IOException {
+		super(riotSwf, copyVariants);
 		this.width = riotSwf.getWidth();
 		this.height = riotSwf.getHeight();
 		this.version = riotSwf.getVersion();
 	}
 	
 	@Override
-	public RiotSwf deepCopy() throws IOException {
-		return new RiotSwf(this);
+	public RiotSwf copy(boolean copyVariants) throws IOException {
+		return new RiotSwf(this, copyVariants);
 	}
-
+	
 	protected void inspect(File file) throws IOException {
 		FlashInfo flashInfo = new FlashInfo(file);
 		setContentType(CONTENT_TYPE);
