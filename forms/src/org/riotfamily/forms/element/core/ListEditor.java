@@ -235,14 +235,16 @@ public class ListEditor extends TemplateElement implements Editor,
 	}	
 	
 	protected void validate() {
-		int size = ((Collection) getValue()).size();
-		if (minSize > 0 && size < minSize) {
-			ErrorUtils.reject(this, "list.size.tooSmall", 
-					new Object[] {new Integer(minSize)});
-		}
-		if (maxSize > 0 && size > maxSize) {
-			ErrorUtils.reject(this, "list.size.tooLarge", 
-					new Object[] {new Integer(maxSize)});
+		if (minSize > 0 || maxSize > 0) {
+			int size = ((Collection) getValue()).size();
+			if (minSize > 0 && size < minSize) {
+				ErrorUtils.reject(this, "list.size.tooSmall", 
+						new Object[] {new Integer(minSize)});
+			}
+			if (maxSize > 0 && size > maxSize) {
+				ErrorUtils.reject(this, "list.size.tooLarge", 
+						new Object[] {new Integer(maxSize)});
+			}
 		}
 	}
 	
