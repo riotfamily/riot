@@ -128,6 +128,10 @@ public class PageFacade {
 		return pageUrlBuilder.getUrl(page, request, secure);
 	}
 
+	public Page getMasterPage() {
+		return page.getMasterPage();
+	}
+	
 	public boolean isWildcard() {
 		return page.isWildcard();
 	}

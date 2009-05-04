@@ -245,6 +245,18 @@ public class Page {
 		return version != null ? version.getProperty(key) : null;
 	}
 
+	public Page getMasterPage() {
+		Page masterPage = null;
+		if (site != null) {
+			Site masterSite = site.getMasterSite();
+			while (masterPage == null && masterSite != null) {
+				masterPage = node.getPage(masterSite);
+				masterSite = masterSite.getMasterSite();
+			}
+		}
+		return masterPage;
+	}
+	
 	public String getTitle() {
 		return getTitle(true);
 	}
