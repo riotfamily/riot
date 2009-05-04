@@ -195,10 +195,7 @@
 		<constructor-arg ref="buttonService" />
 	</bean>
 	
-	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory">
-		<constructor-arg ref="cacheService" />
-		<constructor-arg ref="cacheKeyAugmentor" />
-	</bean>
+	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory" />
 	
 	<bean id="riotHyphenator" class="org.riotfamily.website.hyphenate.RiotHyphenator">
 		<property name="baseDir" value="/WEB-INF/hyphenation" />
