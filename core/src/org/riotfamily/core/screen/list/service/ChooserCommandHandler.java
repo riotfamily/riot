@@ -105,6 +105,11 @@ public class ChooserCommandHandler extends CommandContextHandler {
 			return selection.size() == 1;
 		}
 		
+		@Override
+		protected String getIcon(String action) {
+			return "accept";
+		}
+		
 		public CommandResult execute(CommandContext context, Selection selection) {
 			return new ScriptResult("parent.riot.chooser.chosen('" + 
 					selection.getSingleItem().getObjectId() + "')");
