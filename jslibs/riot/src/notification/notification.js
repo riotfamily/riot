@@ -6,7 +6,7 @@ riot.notification = (function() {
 	// Private fields and functions
 	// ------------------------------------------------------------------------
 
-	var ie6 = Prototype.Browser.IE && typeof document.documentElement.style.maxHeight == 'undefined';
+	var ie6 = Prototype.Browser.IE && typeof document.body.style.maxHeight == 'undefined';
 		
 	var template = new Template('<table cellspacing="0" cellpadding="0">\
 		  <tbody>\
@@ -54,16 +54,12 @@ riot.notification = (function() {
 	function fixPNGs(el) {
 		if (ie6) {
 			el.select('td').each(function(td) {
-				if (td.style.filter) {
-					td.style.backgroundImage = '';
-				}
+				td.style.backgroundImage = '';
 				var bg = td.getStyle('background-image');
 				if (bg && bg != 'none') {
 					bg = bg.replace(/url\(['"]?(.*?)['"]?\)/, '$1');
 					td.style.backgroundImage = 'none';
-					var repeat = td.getStyle('background-repeat') != 'no-repeat';
-					var method = (repeat ? "scale" : "image")
-					td.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + bg + "', sizingMethod='" + method +"')";
+					td.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + bg + "', sizingMethod='scale')";
 				}
 			});
 		}
@@ -81,7 +77,7 @@ riot.notification = (function() {
 				icon: o.icon ? ' class="icon" style="background-image:url('+o.icon+')"' : '',
 				message: o.message
 			};
-			this.el = new Element('div').addClassName('notification').setStyle({visibility: 'hidden'})
+			this.el = new Element('div', {className: 'notification'}).setStyle({visibility: 'hidden'})
 				.insert(template.evaluate(data))
 				.observe('mouseover', this.mouseover.bind(this))
 				.observe('mouseout', this.mouseout.bind(this));
@@ -98,7 +94,7 @@ riot.notification = (function() {
 			}
 			fixPNGs(this.el);
 			this.el.hide().setStyle({visibility: 'visible'});
-			if (Prototype.Browser.IE) {
+			if (ie6) {
 				this.el.show();
 			}
 			else {
