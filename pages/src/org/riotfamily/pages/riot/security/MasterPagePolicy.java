@@ -31,18 +31,30 @@ import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.policy.ReflectionPolicy;
 import org.riotfamily.pages.model.Page;
 
-public class SystemPagePolicy extends ReflectionPolicy {
+public class MasterPagePolicy extends ReflectionPolicy {
 	
-	public SystemPagePolicy() {
-		setOrder(Integer.MAX_VALUE - 3);
+	public MasterPagePolicy() {
+		setOrder(Integer.MAX_VALUE - 2);
 	}
 	
-	public Permission copy(RiotUser user, Page page, CommandContext context) {
-		return page.isSystemPage() ? DENIED : ABSTAIN;
+	public Permission translatePage(RiotUser user, Page page, CommandContext context) {
+		if (context.getParent() == null 
+				|| page.getSite().equals(context.getParent())) {
+			
+			return DENIED;
+		}
+		return ABSTAIN;
 	}
 	
-	public Permission delete(RiotUser user, Page page, CommandContext context) {
-		return page.isSystemPage() ? DENIED : ABSTAIN;
+	public Permission getPermission(RiotUser user, String action, 
+			Page page, CommandContext context) {
+		
+		if (context.getParent() != null 
+				&& !page.getSite().equals(context.getParent())) {
+			
+			return DENIED;
+		}
+		return ABSTAIN;
 	}
 	
 }

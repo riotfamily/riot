@@ -40,9 +40,11 @@ import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandInfo;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.SelectionItem;
 import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
 import org.riotfamily.core.screen.list.dto.CommandButton;
 import org.riotfamily.core.screen.list.dto.ListItem;
+import org.riotfamily.core.security.AccessController;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormContext;
 import org.springframework.transaction.TransactionStatus;
@@ -106,7 +108,10 @@ class CommandContextHandler extends ListServiceHandler
 			Selection selection = new Selection(dao, items);
 			for (Map.Entry<String, Command> entry : getCommands().entrySet()) {
 				commandId = entry.getKey();
-				if (entry.getValue().isEnabled(this, selection)) {
+				Command command = entry.getValue();
+				if (command.isEnabled(this, selection) 
+						&& isGranted(command, selection)) {
+					
 					result.add(commandId);
 				}
 			}
@@ -114,6 +119,16 @@ class CommandContextHandler extends ListServiceHandler
 		return result;
 	}
 	
+	private boolean isGranted(Command command, Selection selection) {
+		String action = command.getInfo(this).getAction();
+		for (SelectionItem item : selection) {
+			if (!AccessController.isGranted(action, item.getObject(), this)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public CommandResult execCommand(String commandId, List<ListItem> items) {
 		this.commandId = commandId;
 		CommandResult result = null;

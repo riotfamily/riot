@@ -111,9 +111,8 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		this.site = site;
 	}
 
-	public Page(Page master, Site site) {
+	public Page(Page master) {
 		this.masterPage = master;
-		this.site = site;
 		this.creationDate = new Date();
 		this.pathComponent = master.getPathComponent();
 		this.folder = master.isFolder();

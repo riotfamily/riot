@@ -69,6 +69,8 @@
 	
 	<bean id="systemPagePolicy" class="org.riotfamily.pages.riot.security.SystemPagePolicy" />
 	
+	<bean id="masterPagePolicy" class="org.riotfamily.pages.riot.security.MasterPagePolicy" />
+	
 	<!--  FreeMarker Object Wrappers  -->
 	
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
@@ -104,6 +106,7 @@
 				<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.PasteCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
+				<bean class="org.riotfamily.pages.riot.command.TranslatePageCommand" />
 			</list>
 		</property>
 		<property name="itemScreen">

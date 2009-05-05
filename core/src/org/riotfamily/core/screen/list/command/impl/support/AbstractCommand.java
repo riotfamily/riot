@@ -42,6 +42,9 @@ public abstract class AbstractCommand implements Command {
 	
 	public CommandInfo getInfo(CommandContext context) {
 		String action = getAction(context);
+		if (action == null) {
+			return null;
+		}
 		return new CommandInfo(
 				action,
 				getLabel(context, action),

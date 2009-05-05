@@ -51,7 +51,7 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 
 	public Object getParent(Object entity) {
 		Page page = (Page) entity;
-		return page.getParent();
+		return page.getSite();
 	}
 
 	public void delete(Object entity, Object parent) throws DataAccessException {
@@ -92,15 +92,7 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 	public boolean hasChildren(Object parent, Object root, ListParams params) {
 		Page page = (Page) parent;
 		if (root != null) {
-			Site rootSite;
-			if (root instanceof Site) {
-				rootSite = (Site) root;
-			}
-			else {
-				Page rootPage = (Page) root;
-				rootSite = rootPage.getSite();
-			}
-			if (!page.getSite().equals(rootSite)) {
+			if (!page.getSite().equals(((SiteMapItem) root).getSite())) {
 				return false;
 			}
 		}

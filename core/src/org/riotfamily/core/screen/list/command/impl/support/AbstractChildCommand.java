@@ -33,6 +33,9 @@ public abstract class AbstractChildCommand extends AbstractCommand {
 
 	@Override
 	public final boolean isEnabled(CommandContext context, Selection selection) {
+		if (selection.size() > 1) {
+			return false;
+		}
 		return isEnabled(context, getParent(context, selection));
 	}
 	
@@ -40,7 +43,9 @@ public abstract class AbstractChildCommand extends AbstractCommand {
 		return execute(context, getParent(context, selection));
 	}
 	
-	protected abstract boolean isEnabled(CommandContext context, SelectionItem parent);
+	protected boolean isEnabled(CommandContext context, SelectionItem parent) {
+		return true;
+	}
 	
 	protected abstract CommandResult execute(CommandContext context, SelectionItem parent);
 

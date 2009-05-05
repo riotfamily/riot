@@ -21,21 +21,39 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command.impl;
+package org.riotfamily.pages.riot.command;
 
-import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
-import org.riotfamily.core.screen.list.command.SelectionItem;
-import org.riotfamily.core.screen.list.command.impl.support.AbstractChildCommand;
-import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractBatchCommand;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.model.SiteMapItem;
 
-public class AddCommand extends AbstractChildCommand {
+public class TranslatePageCommand extends AbstractBatchCommand<Page> {
+
+	@Override
+	public String getAction(CommandContext context) {
+		Site site = (Site) context.getParent();
+		if (site == null || site.getMasterSite() == null) {
+			return null;
+		}
+		return super.getAction(context);
+	}
+
+	@Override
+	protected String getIcon(String action) {
+		return "page_add";
+	}
 	
 	@Override
-	protected CommandResult execute(CommandContext context, SelectionItem parent) {
-		ScreenContext childContext = context.createNewItemContext(parent.getObject());
-		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
+	protected CommandResult execute(CommandContext context, Page page,
+			int index, int selectionSize) {
+
+		SiteMapItem parent = (SiteMapItem) context.getParent();
+		parent.addPage(new Page(page));
+		return new RefreshListResult();
 	}
 
 }

@@ -76,41 +76,41 @@ public class ReflectionPolicy implements AssertionPolicy {
 	public Permission getPermission(RiotUser user, String action, Object object) {
 		Method method = getMethod(action, object, false);
 		if (method != null) {
-			return (Permission) invoke(method, user, object);
+			return (Permission) invoke(method, user, action, object);
 		}
 		return Permission.ABSTAIN;
 	}
 	
 	public void assertIsGranted(RiotUser user, String action, Object object) {
-		Method method = getMethod(action, object, false);
+		Method method = getMethod(action, object, true);
 		if (method != null) {
-			invoke(method, user, object);
+			invoke(method, user, action, object);
 		}
 		else if (getPermission(user, action, object) == Permission.DENIED) {
 			throw new PermissionDeniedException(user, action, object, this);
 		}
 	}
 	
-	private Object invoke(Method method, RiotUser user, Object object) {
-		Object[] args = null;
-		if (object != null && object.getClass().isArray()) {
-			Object[] objects = (Object[]) object;
-			List<Object> tempArgs = Generics.newArrayList();				
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] != null) {
-					tempArgs.add(objects[i]);
-				}					
+	private Object invoke(Method method, RiotUser user, String action, Object object) {
+		List<Object> args = Generics.newArrayList();
+		if (object != null) {
+			if (object.getClass().isArray()) {
+				Object[] objects = (Object[]) object;
+				for (Object obj : objects) {
+					if (obj != null) {
+						args.add(obj);
+					}					
+				}
 			}
-			args = new Object[tempArgs.size() + 1];
-			args[0] = user;
-			for (int i = 0; i < tempArgs.size(); i++) {
-				args[i+1] = tempArgs.get(i);
+			else {
+				args.add(object);
 			}
 		}
-		else {
-			args = new Object[] {user, object};
+		if (method.getParameterTypes().length - args.size() == 2) {
+			args.add(0, action);	
 		}
-		return ReflectionUtils.invokeMethod(method, delegate, args);
+		args.add(0, user);
+		return ReflectionUtils.invokeMethod(method, delegate, args.toArray());
 	}
 	
 	private Method getMethod(String action, Object object, boolean isVoid) {
@@ -127,26 +127,17 @@ public class ReflectionPolicy implements AssertionPolicy {
 	
 	private Method findMethod(ActionAndClass aac) {
 		Method bestMatch = null;
+		Method[] methods = delegate.getClass().getMethods();
 		if (aac.classes != null) {
-			int smallestDiff = Integer.MAX_VALUE;
-			Method[] methods = delegate.getClass().getMethods();
-			for (int i = 0; i < methods.length; i++) {
-				Method method = methods[i];
-				if (signatureMatches(method, aac.action, aac.classes, aac.isVoid)) {
-					int diff = 0;
-					for (int j = 0; j < aac.classes.length; j++) {
-						diff += TypeComparatorUtils.getTypeDifference(method.getParameterTypes()[j+1], aac.classes[j]);
-					}					
-					if (diff < smallestDiff) {
-						smallestDiff = diff;
-						bestMatch = method;
-					}
-				}
+			bestMatch = getBestMatch(methods, aac.action, aac.classes, aac.isVoid);
+			if (bestMatch == null) {
+				bestMatch = getBestMatch(methods, null, aac.classes, aac.isVoid);
 			}
 		}
 		if (bestMatch == null) {
-			bestMatch = findSingleParamMethod(aac.action, aac.isVoid);
+			bestMatch = getBestMatch(methods, aac.action, null, aac.isVoid);
 		}
+		
 		if (bestMatch != null) {
 			log.debug("Using " + bestMatch + " for " + aac);
 		}
@@ -157,42 +148,75 @@ public class ReflectionPolicy implements AssertionPolicy {
 		
 	}
 	
+	private Method getBestMatch(Method[] methods, String action, 
+			Class<?>[] classes, boolean isVoid) {
+		
+		Method bestMatch = null;
+		int smallestDiff = Integer.MAX_VALUE;
+		for (int i = 0; i < methods.length; i++) {
+			Method method = methods[i];
+			if (signatureMatches(method, action, classes, isVoid)) {
+				if (classes == null) {
+					return method;
+				}
+				int diff = 0;
+				for (int j = 0; j < classes.length; j++) {
+					diff += TypeComparatorUtils.getTypeDifference(
+							method.getParameterTypes()[j+1], classes[j]);
+				}					
+				if (diff < smallestDiff) {
+					smallestDiff = diff;
+					bestMatch = method;
+				}
+			}
+		}
+		return bestMatch;
+	}
+	
 	
 	private boolean signatureMatches(Method method, String action, 
-			Class<?>[] types, boolean isVoid) {
+			Class<?>[] classes, boolean isVoid) {
 		
-		if (method.getName().equals(action) && Modifier.isPublic(method.getModifiers())
-				&& (isVoid ^ method.getReturnType() != Void.TYPE)) {
-			
-			Class<?>[] paramTypes = method.getParameterTypes();
-			if (paramTypes.length > 0 && RiotUser.class.isAssignableFrom(paramTypes[0])) {
-				if (types == null) {
-					return paramTypes.length == 1;
-				}
-				
-				if (paramTypes.length == types.length + 1) {
-					for (int i = 0; i < types.length; i++) {
-						if (!paramTypes[i+1].isAssignableFrom(types[i])) {
-							return false;
-						}						
-					}
-					return true;
-				}				
+		if (!Modifier.isPublic(method.getModifiers())) {
+			return false;
+		}
+		if (isVoid && method.getReturnType() != Void.TYPE) {
+			return false;
+		}
+		if (!isVoid && !method.getReturnType().equals(Permission.class)) {
+			return false;
+		}
+		Class<?>[] paramTypes = method.getParameterTypes();
+		if (action != null) {
+			if (method.getName().equals(action)) {
+				return paramTypesMatch(paramTypes, classes, 1);
+			}
+		}
+		else {
+			if (method.getName().equals("getPermission")) {
+				return paramTypesMatch(paramTypes, classes, 2) 
+						&& paramTypes[1].equals(String.class);
 			}
 		}
 		return false;
 	}
 	
-	private Method findSingleParamMethod(String action, boolean isVoid) {
-		Method[] methods = delegate.getClass().getMethods();
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
-			if (signatureMatches(method, action, null, isVoid)) {
-				return method;
-			}
+	private boolean paramTypesMatch(Class<?>[] paramTypes, 
+			Class<?>[] classes, int offset) {
+		
+		if (classes == null) {
+			return paramTypes.length == offset;
 		}
-		return null;
-	}	
+		if (paramTypes.length == classes.length + offset) {
+			for (int i = 0; i < classes.length; i++) {
+				if (!paramTypes[i + offset].isAssignableFrom(classes[i])) {
+					return false;
+				}						
+			}
+			return true;
+		}
+		return false;
+	}
 	
 	private static class ActionAndClass {
 		

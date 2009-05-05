@@ -53,7 +53,7 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 			String objectId = stringAt(s, 2);
 			String parentId = null;
 			boolean parentIsNode = false;
-			if ("new".equals(objectId)) {
+			if ("-".equals(objectId)) {
 				objectId = null;
 				parentId = stringAt(s, 3);
 				String parentScreenId = stringAt(s, 4);
@@ -89,7 +89,7 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 				path.append(context.getObjectId());
 			}
 			else if (context.getParentId() != null) {
-				path.append("new/").append(context.getParentId());
+				path.append("-/").append(context.getParentId());
 				if (context.isNestedTreeItem()) {
 					path.append('/').append(handlerName);	
 				}

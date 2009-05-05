@@ -38,4 +38,6 @@ public interface SiteMapItem {
 	
 	public void removePage(Page page);
 	
+	public Site getSite();
+	
 }

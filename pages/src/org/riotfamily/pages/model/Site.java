@@ -303,31 +303,8 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 		return url.toString();
 	}
 
-	public String toString() {
-		return getName();
-	}
-	
-	public int hashCode() {
-		return getName().hashCode();
-	}
-	
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		}
-		if (!(obj instanceof Site)) {
-			return false;
-		}
-		Site other = (Site) obj;
-		
-		return ObjectUtils.nullSafeEquals(this.hostName, other.getHostName())
-				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.getPathPrefix())
-				&& ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
-				&& ObjectUtils.nullSafeEquals(this.masterSite, other.getMasterSite());
-	}
-	
 	// ----------------------------------------------------------------------
-	// 
+	// Implementation of the SiteMapItem interface
 	// ----------------------------------------------------------------------
 
 	@Transient
@@ -344,7 +321,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	}
 	
 	@Transient
-	public Collection<Page> getTranslationCandidates() {
+	private Collection<Page> getTranslationCandidates() {
 		List<Page> candidates = Generics.newArrayList();
 		Site master = getMasterSite();
 		if (master != null) {
@@ -373,6 +350,42 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	public void removePage(Page page) {
 		page.setSite(null);
 	}
+	
+	@Transient
+	public Site getSite() {
+		return this;
+	}
+	
+	// ----------------------------------------------------------------------
+	// Object identity methods
+	// ----------------------------------------------------------------------
+
+	public String toString() {
+		return getName();
+	}
+	
+	public int hashCode() {
+		return getName().hashCode();
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Site)) {
+			return false;
+		}
+		Site other = (Site) obj;
+		
+		return ObjectUtils.nullSafeEquals(this.hostName, other.getHostName())
+				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.getPathPrefix())
+				&& ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
+				&& ObjectUtils.nullSafeEquals(this.masterSite, other.getMasterSite());
+	}
+	
+	// ----------------------------------------------------------------------
+	// ActiveRecord methods
+	// ----------------------------------------------------------------------
 	
 	public List<String> listWildcardPaths() {
 		return find("select path from Page where site = ?", this);

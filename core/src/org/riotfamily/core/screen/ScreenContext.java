@@ -135,7 +135,10 @@ public class ScreenContext {
 			return new ScreenContext(parentScreen, getParent(), null, false, this);
 		}
 		if (getObject() == null) {
-			return new ScreenContext(parentScreen, null, getParent(), false, this);		
+			if (nestedTreeItem) {
+				return new ScreenContext(parentScreen, getParent(), null, false, this);		
+			}
+			return new ScreenContext(parentScreen, null, getParent(), false, this);
 		}
 		return new ScreenContext(parentScreen, getObject(), null, false, this);
 	}
