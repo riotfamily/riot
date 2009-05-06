@@ -212,8 +212,8 @@ public final class HibernateUtils {
 
 	/**
 	 * Returns a HQL term that can be used within a where-clause to perform
-	 * a search. Example: <code>"(lower(&lt;alias&gt;.&lt;property[0]&gt;)
-	 * like :&lt;searchParamName&gt; or lower(&lt;alias&gt;.&lt;property[1]&gt;)
+	 * a search. Example: <code>"(lower(str(&lt;alias&gt;.&lt;property[0]&gt;))
+	 * like :&lt;searchParamName&gt; or lower(str(&lt;alias&gt;.&lt;property[1]&gt;))
 	 * like :&lt;searchParamName&gt; or ...)"</code>
 	 * @since 6.4
 	 */
@@ -248,8 +248,8 @@ public final class HibernateUtils {
 				}
 				hql.append(" and ");
 			}
-			hql.append("lower(").append(alias).append('.').append(name);
-			hql.append(") like :").append(searchParamName).append(')');;
+			hql.append("lower(str(").append(alias).append('.').append(name);
+			hql.append(")) like :").append(searchParamName).append(')');;
 		}
 		hql.append(')');		
 		return hql.toString();
