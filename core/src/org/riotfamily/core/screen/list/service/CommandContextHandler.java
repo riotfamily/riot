@@ -120,7 +120,11 @@ class CommandContextHandler extends ListServiceHandler
 	}
 	
 	private boolean isGranted(Command command, Selection selection) {
-		String action = command.getInfo(this).getAction();
+		CommandInfo info = command.getInfo(this);
+		if (info == null) {
+			return false;
+		}
+		String action = info.getAction();
 		for (SelectionItem item : selection) {
 			if (!AccessController.isGranted(action, item.getObject(), this)) {
 				return false;

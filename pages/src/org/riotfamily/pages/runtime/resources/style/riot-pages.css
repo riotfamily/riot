@@ -19,22 +19,6 @@ table.pages tr.hidden-page td {
 	color: #a4a4a4;
 }
 
-.action-translate {
-	background-image: url(icons/commands/add.gif);
-}
-
-.action-publish {
-	background-image: url(icons/commands/publish.gif);
-}
-
-.action-unpublish {
-	background-image: url(icons/commands/unpublish.gif);
-}
-
-.action-discard {
-	background-image: url(icons/commands/discard.gif);
-}
-
 .publish-status {
 	width: 32px;
 	height: 32px;
@@ -42,16 +26,16 @@ table.pages tr.hidden-page td {
 }
 
 .publish-status-translatable {
-	background: url(icons/publish_state.png) 2px -96px no-repeat;
+	background: url(images/publish_state.png) 2px -96px no-repeat;
 }
 .publish-status-published {
-	background: url(icons/publish_state.png) 2px -64px no-repeat;
+	background: url(images/publish_state.png) 2px -64px no-repeat;
 }
 .publish-status-dirty {
-	background: url(icons/publish_state.png) 2px -32px no-repeat;
+	background: url(images/publish_state.png) 2px -32px no-repeat;
 }
 .publish-status-new {
-	background: url(icons/publish_state.png) 2px 0px no-repeat;
+	background: url(images/publish_state.png) 2px 0px no-repeat;
 }
 
 .pageProperty b {
