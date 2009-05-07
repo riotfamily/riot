@@ -58,6 +58,8 @@ class CommandContextHandler extends ListServiceHandler
 
 	private String commandId;
 	
+	private int itemsTotal = -1;
+	
 	CommandContextHandler(ListService service, String key,
 			HttpServletRequest request) {
 		
@@ -207,7 +209,13 @@ class CommandContextHandler extends ListServiceHandler
 	}
 	
 	public int getItemsTotal() {
-		return dao.getListSize(getParent(), getParams());
+		if (itemsTotal == -1) {
+			itemsTotal = dao.getListSize(getParent(), getParams());
+		}
+		if (itemsTotal == -1) {
+			itemsTotal = dao.list(getParent(), getParams()).size();
+		}
+		return itemsTotal;
 	}
 	
 	public HttpServletRequest getRequest() {

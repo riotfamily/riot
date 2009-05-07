@@ -4,14 +4,23 @@
 ] />
 <@template.extend file="screen.ftl">
 	<@template.block name="main">
-		<div class="screens">
+		<ul class="screens">
 			<#list links as link>
-				<a class="screen" href="${c.url(link.url)}">
+				<li class="screen">
 					<#assign url = c.resolve(riot.resource("style/images/icons/"+(link.icon!"brick")+".png")) />
-					<div class="label" style="background-image:url(${url});_background-image:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${url}', sizingMethod='crop');">${link.title}</div>
-					<div class="description"></div>
-				</a>
+					<a href="${c.url(link.url)}" class="label" style="background-image:url(${url});_background-image:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${url}', sizingMethod='crop');">${link.title}</a>
+					<#if link.childLinks??>
+						<span class="nested">
+							<#list link.childLinks as child>
+								<#assign url = c.resolve(riot.resource("style/images/icons/"+(child.icon!"brick")+".png")) />
+								<a class="nested-screen" href="${c.url(child.url)}"	style="background-image:url(${url});_background-image:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${url}', sizingMethod='crop');">
+									${child.title}
+								</a>
+							</#list>
+						</span>
+					</#if>
+				</li>
 			</#list>
-		</div>
+		</ul>
 	</@template.block>
 </@template.extend>

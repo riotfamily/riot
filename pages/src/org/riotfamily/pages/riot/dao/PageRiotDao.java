@@ -25,10 +25,8 @@ package org.riotfamily.pages.riot.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.CutAndPasteEnabledDao;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.ParentChildDao;
@@ -130,14 +128,12 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 	
 		List<Page> pages = new ArrayList<Page>(list(parent, params));
 		int i = pages.indexOf(page);
-		
 		Page otherPage = pages.get(i + swapWith);
-		List<Page> siblings = Generics.newArrayList(page.getSiblings());
-
-		int pos = siblings.indexOf(page);
-		int otherPos = siblings.indexOf(otherPage);
 		
-		Collections.swap(siblings, pos, otherPos);
+		long pos = page.getPosition();
+		page.setPosition(otherPage.getPosition());
+		otherPage.setPosition(pos);
+		
 		//TODO PageCacheUtils.invalidateNode(cacheService, parent);
 	}
 

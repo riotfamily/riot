@@ -60,6 +60,9 @@ td {
 	height: 38px;
 	background: url(images/riot_footer.gif) right 18px no-repeat;
 }
+.chooser #footer {
+	display: none;
+}
 .main {
 	padding: 0 300px 50px 0;
 

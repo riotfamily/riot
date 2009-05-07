@@ -222,13 +222,19 @@ riot.window = (function() {
 			}
 		}),
 		
+		alert: function(msg, onclose) {
+			ask(null, msg, ['Ok'], onclose);
+		},
+	
 		ask: function(title, question, answers, callback) {
 			var dlg;	
 			var buttons = new Element('form').addClassName('buttons');
 			answers.each(function(s, i) {
 				buttons.insert(new Element('input', {type: 'button', value: s}).observe('click', function() {
 					dlg.close();
-					callback(i, s);
+					if (callback) {
+						callback(i, s);
+					}
 				}));
 			});
 			

@@ -422,7 +422,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	}
 	
 	public static List<Site> findAll() {
-		return find("from Site");
+		return find("from Site order by position");
 	}
 	
 	public static Site loadByHostNameAndPath(String hostName, String path) {

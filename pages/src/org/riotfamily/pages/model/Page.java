@@ -510,7 +510,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	}
 	
 	public static List<Page> findRootPagesBySite(Site site) {
-		return find("from Page where parentPage is null and site = ?", site);
+		return find("from Page where parentPage is null and site = ? order by position", site);
 	}
 	
 }

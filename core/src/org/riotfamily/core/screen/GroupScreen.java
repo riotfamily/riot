@@ -68,12 +68,43 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 		ModelAndView mv = new ModelAndView(viewName);
 		List<ScreenLink> links = Generics.newArrayList();
 		for (RiotScreen screen : childScreens) {
-			links.add(new ScreenLink(screen.getTitle(context),
+			GroupScreenLink link = new GroupScreenLink(screen.getTitle(context),
 					HandlerUrlUtils.getUrl(request, screen.getId(), context),
-					screen.getIcon(), false));
+					screen.getIcon());
+			
+			if (screen instanceof GroupScreen) {
+				for (RiotScreen nested : screen.getChildScreens()) {
+					link.addChildLink(new GroupScreenLink(nested.getTitle(context),
+							HandlerUrlUtils.getUrl(request, nested.getId(), context),
+							nested.getIcon()));
+				}
+				
+			}
+			links.add(link);
 		}
 		mv.addObject("links", links);
 		return mv;
+	}
+	
+	public static class GroupScreenLink extends ScreenLink {
+
+		private List<ScreenLink> childLinks;
+		
+		public GroupScreenLink(String title, String url, String icon) {
+			super(title, url, icon, false);
+		}
+		
+		public void addChildLink(ScreenLink link) {
+			if (childLinks == null) {
+				childLinks = Generics.newArrayList();
+			}
+			childLinks.add(link);
+		}
+		
+		public List<ScreenLink> getChildLinks() {
+			return childLinks;
+		}
+		
 	}
 
 }
