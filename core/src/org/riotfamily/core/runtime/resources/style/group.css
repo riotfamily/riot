@@ -1,12 +1,22 @@
 .screens {
 	border-top: 1px solid #dadada;
+	margin: 0 0 20px 0;
+	padding: 0;
+}
+.screens li {
+	list-style-type: none;
+	border-bottom: 1px solid #dadada;
 }
 .screens a {
 	display: block;
-	border-bottom: 1px solid #dadada; 
+	background-repeat: no-repeat;
+	background-position: 6px center;
 	color: #3d3d3d;
 	text-decoration: none;
-	padding: 20px 20px 20px 6px;
+	padding: 20px 20px 20px 26px;
+	font-size: 14px;
+	font-weight: bold;
+	_height: 1px;
 }
 .screens a:hover,
 .screens a:focus {
@@ -15,15 +25,12 @@
 	-moz-outline: none;
 }
 
-.screens a.screen .label {
-	font-size: 14px;
-	font-weight: bold;
-	padding-left: 22px; 
-	background-position: center left;
-	background-repeat: no-repeat;
-	_height: 1px;
+.nested {
+	display: block;
+	margin: 0 0 18px 26px;
 }
-.screens a.screen .description {
-	display: none;
+.screens .nested a {
+	font-weight: normal;
+	padding: 6px 0 6px 26px;
 }
 
