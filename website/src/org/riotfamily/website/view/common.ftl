@@ -122,6 +122,30 @@
 </#function>
 
 <#---
+  - Adds the current locale to the given path and checks whether such a file
+  - exists. The search strategy is the same as the one used by the Java
+  - ResourceBundle class.
+  - <p>
+  - The given path must be context-relative, i.e. it must not contain the 
+  - contextPath.
+  - </p>
+  - <p>
+  - <b>Example:</b> If the request locale is <code>de_DE</code>, the expression
+  - <ode>${resource(localize('/foo/bar.jpg'))}</code> will look for the 
+  - following files and return the first match:
+  - <ol>
+  -  <li><i>&lt;webapp-root&gt;</i>/foo/bar_de_DE.jpg</li>
+  -  <li><i>&lt;webapp-root&gt;</i>/foo/bar_de.jpg</li>
+  -  <li><i>&lt;webapp-root&gt;</i>/foo/bar.jpg</li>  
+  - </ol>
+  - </p>
+  -->
+<#function localize path>
+	<#return commonMacroHelper.localize(path) />
+</#function>
+
+
+<#---
   - Adds the server startup time to the given URI.
   - <h4>Example:</h4>
   - <pre>${stamp('main.css')}
