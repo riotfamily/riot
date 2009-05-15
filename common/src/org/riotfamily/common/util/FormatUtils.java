@@ -414,8 +414,7 @@ public final class FormatUtils {
 	 */
 	public static String stripExtension(String filename) {
 		String extension = getExtension(filename);
-		return filename
-				.substring(0, filename.length() - extension.length() - 1);
+		return filename.substring(0, filename.length() - extension.length() - 1);
 	}
 
 	/**
