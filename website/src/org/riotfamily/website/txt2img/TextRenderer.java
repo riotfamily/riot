@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.ColorUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -56,6 +57,8 @@ import org.springframework.util.StringUtils;
  * @since 6.5
  */
 public class TextRenderer implements InitializingBean {
+	
+	private RiotLog log = RiotLog.get(TextRenderer.class);
 	
 	private FontBundle fontBundle = new FontBundle();
 	
@@ -336,9 +339,15 @@ public class TextRenderer implements InitializingBean {
 	protected Dimension layout(String text, Locale locale, float maxWidth,
 			String color, float fontSize, BufferedImage image, boolean draw) {
 		
-		Color fg = color != null 
-				? ColorUtils.parseColor(color)
-				: this.color;
+		Color fg = this.color;
+		if (color != null) {
+			try {
+				fg = ColorUtils.parseColor(color);
+			}
+			catch (IllegalArgumentException e) {
+				log.warn("Browser didn't send a valid color value, using default.");
+			}
+		}
 				
 		Font font = getFont(text, locale).deriveFont(fontSize);
 		
