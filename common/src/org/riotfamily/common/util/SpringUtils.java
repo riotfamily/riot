@@ -90,6 +90,13 @@ public final class SpringUtils {
 		return lbf.getBeansOfType(type);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static<T> Map<String, T> beansOfType(ListableBeanFactory lbf, 
+			Class<T> type, boolean includeNonSingletons, boolean allowEagerInit) {
+		
+		return lbf.getBeansOfType(type, includeNonSingletons, allowEagerInit);
+	}
+	
 	public static<T> Collection<T> listBeansOfType(
 			ListableBeanFactory lbf, Class<T> type) {
 		
