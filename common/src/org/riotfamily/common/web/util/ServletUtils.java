@@ -636,7 +636,7 @@ public final class ServletUtils {
 	
 	/**
 	 * Appends the given parameter to the given URL's query string.
-	 * @since 8.1
+	 * @since 9.0
 	 */
 	public static void appendParameter(StringBuilder url, String name, String value) {
 		boolean first = url.indexOf("?") == -1;
@@ -681,7 +681,7 @@ public final class ServletUtils {
 	
 	/**
 	 * Appends all of the given request's parameters to the given URL's query string.
-	 * @since 8.1
+	 * @since 9.0
 	 */
 	@SuppressWarnings("unchecked")
 	public static void appendRequestParameters(StringBuilder url, HttpServletRequest request) {
