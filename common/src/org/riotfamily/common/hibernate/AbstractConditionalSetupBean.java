@@ -23,28 +23,44 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.hibernate;
 
-import java.util.List;
-
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-public class SetupBean extends AbstractConditionalSetupBean {
+public abstract class AbstractConditionalSetupBean extends AbstractSetupBean {
 
-	private List<?> objects;
-	
-	public SetupBean(SessionFactory sessionFactory) {
+	private String condition;
+
+	public AbstractConditionalSetupBean(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
-
-	public void setObjects(List<?> objects) {
-		this.objects = objects;
+	
+	public void setCondition(String condition) {
+		this.condition = condition;
 	}
 
 	@Override
-	protected void doSetup(Session session) {
-		for (Object object : objects) {
-			session.save(object);
+	protected final void setup(Session session) throws Exception {
+		if (isSetupRequired(session)) {
+			doSetup(session);
 		}
+	}
+	
+	protected abstract void doSetup(Session session);
+
+	private boolean isSetupRequired(Session session) {
+		if (condition == null) {
+			return true;
+		}
+		Query query = session.createQuery(condition).setMaxResults(1);
+		Object test = query.uniqueResult();
+		if (test instanceof Number) {
+			return ((Number) test).intValue() == 0;
+		}
+		if (test instanceof Boolean) {
+			return ((Boolean) test).booleanValue();
+		}
+		return test == null;
 	}
 	
 }

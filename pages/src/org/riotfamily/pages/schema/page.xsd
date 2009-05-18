@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.riotfamily.org/schema/pages/page"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:tool="http://www.springframework.org/schema/tool"
+	attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.riotfamily.org/schema/pages/page">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.5.xsd" />
+		
+	<xsd:import namespace="http://www.springframework.org/schema/tool"
+		schemaLocation="http://www.springframework.org/schema/tool/spring-tool-2.5.xsd" />
+
+	<xsd:element name="schema">
+		<xsd:complexType>
+			<xsd:annotation>
+				<xsd:appinfo>
+					<tool:annotation>
+						<tool:exports type="org.riotfamily.pages.setup.PageSetupBean" identifier="@id" />
+					</tool:annotation>
+				</xsd:appinfo>
+			</xsd:annotation>			
+			<xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="type" type="type" />
+					<xsd:element name="page" type="page" />
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:ID" />
+			<xsd:attribute name="dao" type="xsd:string" />
+			<xsd:attribute name="tx" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+		
+	<xsd:complexType name="type">
+		<xsd:sequence>
+			<xsd:element name="type" type="type" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" />
+		<xsd:attribute name="ref" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="page">
+		<xsd:sequence minOccurs="0" maxOccurs="1">
+			<xsd:element name="type" type="type" minOccurs="0" />
+			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="page" type="page" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+		<xsd:attribute name="system-id" type="xsd:string" use="required" />
+		<xsd:attribute name="path-component" type="xsd:string" />
+		<xsd:attribute default="false" name="folder" type="xsd:boolean" />
+	</xsd:complexType>
+</xsd:schema>

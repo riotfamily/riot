@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
+import java.util.List;
+
 import org.riotfamily.core.screen.form.FormUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
@@ -31,7 +33,8 @@ import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.setup.PageTypeHierarchy;
+import org.riotfamily.pages.schema.SitemapSchema;
+import org.riotfamily.pages.schema.TypeInfo;
 
 /**
  * FormInitializer that imports form fields defined in content-forms.xml.
@@ -44,14 +47,14 @@ import org.riotfamily.pages.setup.PageTypeHierarchy;
  */
 public class PageFormInitializer implements FormInitializer {
 
-	private PageTypeHierarchy pageTypeHierarchy;
+	private SitemapSchema sitemapSchema;
 	
 	private FormRepository repository;
 
-	public PageFormInitializer(PageTypeHierarchy pageTypeHierarchy, 
+	public PageFormInitializer(SitemapSchema sitemapSchema, 
 			FormRepository repository) {
 		
-		this.pageTypeHierarchy = pageTypeHierarchy;
+		this.sitemapSchema = sitemapSchema;
 		this.repository = repository;
 	}
 
@@ -70,10 +73,10 @@ public class PageFormInitializer implements FormInitializer {
 				Site site = (Site) parent;
 				form.setAttribute("siteId", site.getId());
 			}
-			String[] pageTypes = pageTypeHierarchy.getChildTypeOptions(parentPage);
-			if (pageTypes.length > 0) {
+			List<TypeInfo> pageTypes = sitemapSchema.getChildTypeOptions(parentPage);
+			if (pageTypes != null) {
 				sb = createPageTypeBox(form, pageTypes);
-				pageType = pageTypes[0];
+				pageType = pageTypes.get(0).getName();
 			}
 			else {
 				pageType = "default";
@@ -94,11 +97,12 @@ public class PageFormInitializer implements FormInitializer {
 		form.addElement(ppe, "pageProperties");
 	}
 	
-	private SelectBox createPageTypeBox(Form form, String[] handlerNames) {
-		if (handlerNames.length > 1) {
+	private SelectBox createPageTypeBox(Form form, List<TypeInfo> pageTypes) {
+		if (pageTypes.size() > 1) {
 			SelectBox sb = new SelectBox();
 			sb.setRequired(true);
-			sb.setOptions(handlerNames);
+			sb.setOptions(pageTypes);
+			sb.setLabelProperty("name");
 			sb.setLabelMessageKey("page.pageType.");
 			sb.setAppendLabel(true);
 			NestedForm nodeForm = new NestedForm();

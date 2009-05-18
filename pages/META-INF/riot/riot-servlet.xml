@@ -13,7 +13,7 @@
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 
 	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
-		<constructor-arg ref="pageTypeHierarchy" />
+		<constructor-arg ref="sitemapSchema" />
 		<constructor-arg ref="contentFormRepository" />
 	</bean>
 

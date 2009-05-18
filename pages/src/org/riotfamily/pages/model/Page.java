@@ -87,7 +87,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 
 	private String pathComponent;
 
-	private boolean systemPage;
+	private String systemId;
 	
 	private boolean hidden;
 
@@ -117,6 +117,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		this.pathComponent = master.getPathComponent();
 		this.folder = master.isFolder();
 		this.hidden = master.isHidden();
+		this.systemId = master.getSystemId();
 		if (master.isSystemPage()) {
 			published = master.isPublished();
 		}
@@ -222,14 +223,19 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		this.pathComponent = pathComponent;
 	}
 
+	public String getSystemId() {
+		return systemId;
+	}
+
+	public void setSystemId(String systemId) {
+		this.systemId = systemId;
+	}
+
+	@Transient
 	public boolean isSystemPage() {
-		return systemPage;
+		return systemId != null;
 	}
-
-	public void setSystemPage(boolean systemPage) {
-		this.systemPage = systemPage;
-	}
-
+	
 	public boolean isHidden() {
 		return this.hidden;
 	}
@@ -505,8 +511,12 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		return load("from Page where site = ? and path = ?", site, path);
 	}
 	
+	public static Page loadBySystemIdAndSite(String systemId, Site site) {
+		return load("from Page where systemId = ? and site = ?", systemId, site);
+	}
+	
 	public static List<Page> findByTypeAndSite(String type, Site site) {
-		return find("from Page where type = ? and site = ?", type, site);
+		return find("from Page where pageType = ? and site = ?", type, site);
 	}
 	
 	public static List<Page> findRootPagesBySite(Site site) {

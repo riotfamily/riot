@@ -4,47 +4,44 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *   flx
+ *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.hibernate;
+package org.riotfamily.pages.schema;
 
-import java.util.List;
+import org.riotfamily.common.hibernate.EntityListener;
+import org.riotfamily.pages.model.Site;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-
-public class SetupBean extends AbstractConditionalSetupBean {
-
-	private List<?> objects;
+public class SystemPageSyncListener implements EntityListener<Site> {
 	
-	public SetupBean(SessionFactory sessionFactory) {
-		super(sessionFactory);
+	private SitemapSchema sitemapSchema;
+	
+	public SystemPageSyncListener(SitemapSchema sitemapSchema) {
+		this.sitemapSchema = sitemapSchema;
 	}
 
-	public void setObjects(List<?> objects) {
-		this.objects = objects;
-	}
-
-	@Override
-	protected void doSetup(Session session) {
-		for (Object object : objects) {
-			session.save(object);
-		}
+	public void onSave(Site site) throws Exception {
+		sitemapSchema.syncSystemPages(site);
 	}
 	
+	public void onDelete(Site site) throws Exception {
+	}
+
+	public void onUpdate(Site site) throws Exception {
+	}
+
 }
