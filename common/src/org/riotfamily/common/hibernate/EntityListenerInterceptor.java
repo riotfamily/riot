@@ -24,7 +24,6 @@
 package org.riotfamily.common.hibernate;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -34,14 +33,15 @@ import java.util.Set;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.type.Type;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
 /**
  * Hibernate {@link Interceptor} that scans the ApplicationContext for beans
@@ -51,6 +51,7 @@ import org.springframework.context.ApplicationContextAware;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
+@SuppressWarnings("serial")
 public class EntityListenerInterceptor extends EmptyInterceptor
 		implements ApplicationContextAware {
 
@@ -58,7 +59,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	
 	private String sessionFactoryName;
 	
-	private SessionFactory sessionFactory;
+	private ThreadBoundHibernateTemplate template;
 	
 	private Map<Class<?>, List<EntityListener<Object>>> listeners = Generics.newHashMap();
 	
@@ -177,26 +178,27 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	@Override
 	@SuppressWarnings("unchecked")
 	public void postFlush(Iterator entities) {
-		Interceptions i = interceptions.get();
+		final Interceptions i = interceptions.get();
 		if (i != null) {
 			try {
-				Session session = createTemporarySession();
-				for (Object entity : i.getSavedEntites()) {
-					Object mergedEntity = session.merge(entity);
-					List<EntityListener<Object>> listeners = getListeners(mergedEntity);
-					for (EntityListener<Object> listener : listeners) {
-						listener.onSave(mergedEntity);
-					}	
-				}
-				for (Object entity : i.getUpdatedEntites()) {
-					Object mergedEntity = session.merge(entity);
-					List<EntityListener<Object>> listeners = getListeners(mergedEntity);
-					for (EntityListener<Object> listener : listeners) {
-						listener.onUpdate(mergedEntity);
-					}	
-				}
-				session.flush();
-				session.close();
+				getHibernateTemplate().execute(new HibernateCallbackWithoutResult() {
+					public void doWithoutResult(Session session) throws Exception {
+						for (Object entity : i.getSavedEntites()) {
+							Object mergedEntity = session.merge(entity);
+							List<EntityListener<Object>> listeners = getListeners(mergedEntity);
+							for (EntityListener<Object> listener : listeners) {
+								listener.onSave(mergedEntity);
+							}	
+						}
+						for (Object entity : i.getUpdatedEntites()) {
+							Object mergedEntity = session.merge(entity);
+							List<EntityListener<Object>> listeners = getListeners(mergedEntity);
+							for (EntityListener<Object> listener : listeners) {
+								listener.onUpdate(mergedEntity);
+							}	
+						}
+					}
+				});
 			}
 			catch (Exception e) {
 				throw new CallbackException(e);
@@ -219,25 +221,20 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	 * </p>  
 	 */
 	private SessionFactory getSessionFactory() {
-		if (sessionFactory == null) {
-			if (sessionFactoryName != null) {
-				sessionFactory = SpringUtils.getBean(context, 
-						sessionFactoryName, SessionFactory.class);
-			}
-			else {
-				sessionFactory = SpringUtils.beanOfType(context, SessionFactory.class);
-			}
+		if (sessionFactoryName != null) {
+			return SpringUtils.getBean(context,	sessionFactoryName, SessionFactory.class);
 		}
-		return sessionFactory;
+		return SpringUtils.beanOfType(context, SessionFactory.class);
 	}
 	
-	@SuppressWarnings("deprecation")
-	private Session createTemporarySession() {
-		SessionFactory sf = getSessionFactory();
-		Connection connection = sf.getCurrentSession().connection();
-		return sf.openSession(connection, NoOpInterceptor.INSTANCE);
+	private HibernateTemplate getHibernateTemplate() {
+		if (template == null) { 
+			template = new ThreadBoundHibernateTemplate(getSessionFactory());
+			template.setAlwaysUseNewSession(true);
+			template.setEntityInterceptor(NoOpInterceptor.INSTANCE);
+		}
+		return template;
 	}
-	
 	
 	/**
 	 * Interceptor that does nothing. This implementation is used with the
