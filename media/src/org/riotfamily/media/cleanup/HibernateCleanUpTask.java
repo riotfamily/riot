@@ -33,7 +33,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
-import org.riotfamily.common.scheduling.LongConversationTask;
+import org.riotfamily.common.scheduling.HibernateTask;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.media.model.RiotFile;
@@ -43,7 +43,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-public class HibernateCleanUpTask extends LongConversationTask {
+public class HibernateCleanUpTask extends HibernateTask {
 
 	private RiotLog log = RiotLog.get(HibernateCleanUpTask.class);
 	
@@ -64,7 +64,7 @@ public class HibernateCleanUpTask extends LongConversationTask {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void doInHibernate(final Session session) throws Exception {
+	protected void doWithoutResult(final Session session) throws Exception {
 		
 		log.info("Looking for orphaned files ...");
 
