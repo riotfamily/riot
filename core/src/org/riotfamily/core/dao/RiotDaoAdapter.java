@@ -30,7 +30,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 /**
- * @author flx
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
 public class RiotDaoAdapter implements RiotDao {
