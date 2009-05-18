@@ -37,7 +37,7 @@ import org.riotfamily.common.web.util.ServletUtils;
  * to pass on data during redirects.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 8.1
+ * @since 9.0
  */
 public class FlashScope {
 

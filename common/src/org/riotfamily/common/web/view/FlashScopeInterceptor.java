@@ -33,7 +33,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * request attributes.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 8.1
+ * @since 9.0
  */
 public class FlashScopeInterceptor extends HandlerInterceptorAdapter {
 

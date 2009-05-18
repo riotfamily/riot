@@ -39,7 +39,7 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView;
  * data accessible by the next request.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 8.1
+ * @since 9.0
  */
 public class FlashScopeView extends AbstractUrlBasedView {
 
