@@ -28,6 +28,7 @@ import java.sql.SQLException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.riotfamily.common.util.FormatUtils;
@@ -38,6 +39,12 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean;
 import org.springframework.util.StringUtils;
 
+/**
+ * SessionFactory that validates the database schema by checking if
+ * {@link Configuration#generateSchemaUpdateScript(Dialect, DatabaseMetadata)}
+ * returns any statements. If so, a HibernateException is thrown and the 
+ * update script is logged.
+ */
 public class RiotSessionFactoryBean extends AnnotationSessionFactoryBean {
 
 	private RiotLog log = RiotLog.get(RiotSessionFactoryBean.class);
