@@ -23,7 +23,7 @@ import org.riotfamily.pages.model.Site;
  * i.e. the pattern above will also match "/bar/baz/foo.html", even though
  * "/bar/baz" is no valid Site prefix.
  * </p>
- * @author flx
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class SiteBeanNameHandlerMapping extends AdvancedBeanNameHandlerMapping {
 
