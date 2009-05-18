@@ -28,7 +28,7 @@ import java.beans.PropertyEditor;
 import org.springframework.beans.PropertyEditorRegistrySupport;
 
 /**
- * PropertyEditorRegistry that provides a method to return eiter a custom
+ * PropertyEditorRegistry that provides a method to return either a custom
  * editor or a suitable default editor as fallback.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
