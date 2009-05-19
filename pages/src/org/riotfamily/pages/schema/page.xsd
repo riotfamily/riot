@@ -27,9 +27,6 @@
 					<xsd:element name="page" type="page" />
 				</xsd:choice>
 			</xsd:sequence>
-			<xsd:attribute name="id" type="xsd:ID" />
-			<xsd:attribute name="dao" type="xsd:string" />
-			<xsd:attribute name="tx" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 		

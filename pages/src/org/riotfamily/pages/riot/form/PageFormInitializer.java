@@ -28,7 +28,6 @@ import java.util.List;
 import org.riotfamily.core.screen.form.FormUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
-import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.model.Page;
@@ -105,11 +104,7 @@ public class PageFormInitializer implements FormInitializer {
 			sb.setLabelProperty("name");
 			sb.setLabelMessageKey("page.pageType.");
 			sb.setAppendLabel(true);
-			NestedForm nodeForm = new NestedForm();
-			nodeForm.setIndent(false);
-			nodeForm.setRequired(true);
-			form.addElement(nodeForm, "node");
-			nodeForm.addElement(sb, "pageType");
+			form.addElement(sb, "pageType");
 			return sb;
 		}
 		return null;

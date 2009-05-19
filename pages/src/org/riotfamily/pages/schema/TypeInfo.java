@@ -24,10 +24,15 @@
 package org.riotfamily.pages.schema;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.util.Assert;
 
 public class TypeInfo {
 
 	private String name;
+	
+	private String ref;
 	
 	private List<TypeInfo> childTypes;
 
@@ -45,6 +50,14 @@ public class TypeInfo {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getRef() {
+		return ref;
+	}
+
+	public void setRef(String ref) {
+		this.ref = ref;
+	}
 
 	public List<TypeInfo> getChildTypes() {
 		return childTypes;
@@ -52,6 +65,13 @@ public class TypeInfo {
 
 	public void setChildTypes(List<TypeInfo> childTypes) {
 		this.childTypes = childTypes;
+	}
+
+	void resolve(Map<String, TypeInfo> typeMap) {
+		TypeInfo refType = typeMap.get(ref);
+		Assert.notNull(refType, "Referenced type not found: " + ref);
+		setName(refType.getName());
+		setChildTypes(refType.getChildTypes());
 	}
 	
 }

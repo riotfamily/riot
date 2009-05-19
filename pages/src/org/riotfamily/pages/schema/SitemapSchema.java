@@ -34,31 +34,68 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class SitemapSchema implements InitializingBean {
 
-	private List<TypeInfo> typeInfos;
+	private List<TypeInfo> types;
 	
-	private List<SystemPage> systemPages;
+	private List<SystemPage> pages;
 	
 	private Map<String, TypeInfo> typeMap = Generics.newHashMap();
 	
-	public void setTypeInfos(List<TypeInfo> typeInfos) {
-		this.typeInfos = typeInfos;
+	private List<TypeInfo> typesRefs = Generics.newArrayList();
+	
+	public void setTypes(List<TypeInfo> types) {
+		this.types = types;
 	}
 	
-	public void setSytemPages(List<SystemPage> systemPages) {
-		this.systemPages = systemPages;
+	public List<TypeInfo> getTypes() {
+		return types;
+	}
+	
+	public void setPages(List<SystemPage> pages) {
+		this.pages = pages;
+	}
+	
+	public List<SystemPage> getPages() {
+		return pages;
 	}
 	
 	public void afterPropertiesSet() throws Exception {
-		registerTypes(typeInfos);
+		registerTypes(types);
+		registerSystemPageTypes(pages);
+		resolveTypeRefs();
 	}
 
 	private void registerTypes(List<TypeInfo> types) {
 		if (types != null) {
 			for (TypeInfo type : types) {
-				if (typeMap.put(type.getName(), type) != null) {
-					throw new IllegalArgumentException("Duplicate type: " + type.getName());
-				}
+				registerType(type);
 			}
+		}
+	}
+	
+	private void registerSystemPageTypes(List<SystemPage> pages) {
+		if (pages != null) {
+			for (SystemPage page : pages) {
+				registerType(page.getType());
+				registerSystemPageTypes(page.getPages());
+			}
+		}
+	}
+
+	private void registerType(TypeInfo type) {
+		if (type.getRef() != null) {
+			typesRefs.add(type);
+		}
+		else {
+			if (typeMap.put(type.getName(), type) != null) {
+				throw new IllegalArgumentException("Duplicate type: " + type.getName());
+			}
+			registerTypes(type.getChildTypes());
+		}
+	}
+	
+	private void resolveTypeRefs() {
+		for (TypeInfo type : typesRefs) {
+			type.resolve(typeMap);
 		}
 	}
 
@@ -79,8 +116,8 @@ public class SitemapSchema implements InitializingBean {
 	}
 	
 	void syncSystemPages(Site site) {
-		if (systemPages != null) {
-			for (SystemPage systemPage : systemPages) {
+		if (pages != null) {
+			for (SystemPage systemPage : pages) {
 				systemPage.sync(site);
 			}
 		}
@@ -88,7 +125,7 @@ public class SitemapSchema implements InitializingBean {
 
 	public List<TypeInfo> getChildTypeOptions(Page parentPage) {
 		if (parentPage == null) {
-			return typeInfos;
+			return types;
 		}
 		TypeInfo typeInfo = typeMap.get(parentPage.getPageType());
 		return typeInfo != null ? typeInfo.getChildTypes() : null;

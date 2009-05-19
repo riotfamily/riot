@@ -23,7 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.schema;
 
+import org.riotfamily.common.beans.xml.ContextualBeanDecorator;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.xml.ListItemDecorator;
+import org.riotfamily.common.beans.xml.MapEntryDecorator;
+import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
 
 /**
  * NamespaceHandler that handles the <code>page</code> namspace as
@@ -32,25 +36,15 @@ import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		/*
-		register("setup", PageSetupBean.class)
-				.addTranslation("tx", "transactionManager")
-				.addReference("tx");
-
-		register("site", SiteDefinition.class, 
-				new ListItemDecorator("siteDefinitions"))
-				.addTranslation("host", "hostName")
-				.addTranslation("prefix", "pathPrefix")
-				.setAliasAttribute(null);
-		
-		register("page", PageDefinition.class,
-				new ListItemDecorator("pageDefinitions"))
-				.addTranslation("system", "systemNode");
-
+		register("schema", SitemapSchema.class);
+		register("page", SystemPage.class, new ListItemDecorator("pages"));
 		registerBeanDefinitionDecorator("prop", new MapEntryDecorator("properties", "key"));
-		
-		register("page-type", ChildPageTypeDefinition.class);
-		*/
+		register("type", TypeInfo.class, 
+				new ContextualBeanDecorator()
+					.register("schema", new ListItemDecorator("types"))
+					.register("type", new ListItemDecorator("childTypes"))
+					.register("page", new NestedPropertyDecorator("type"))
+		);
 	}
 	
 }

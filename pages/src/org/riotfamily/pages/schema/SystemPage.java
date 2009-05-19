@@ -27,10 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.model.SiteMapItem;
-import org.springframework.util.Assert;
 
 public class SystemPage {
 
@@ -42,7 +40,7 @@ public class SystemPage {
 	
 	private TypeInfo type;
 	
-	private List<SystemPage> childPages;
+	private List<SystemPage> pages;
 	
 	private Map<String, Object> properties;
 
@@ -84,12 +82,12 @@ public class SystemPage {
 		this.type = type;
 	}
 
-	public List<SystemPage> getChildPages() {
-		return childPages;
+	public List<SystemPage> getPages() {
+		return pages;
 	}
 
-	public void setChildPages(List<SystemPage> childPages) {
-		this.childPages = childPages;
+	public void setPages(List<SystemPage> pages) {
+		this.pages = pages;
 	}
 
 	public Map<String, Object> getProperties() {
@@ -119,8 +117,8 @@ public class SystemPage {
 
 	private void update(Page page) {
 		page.setPageType(getType().getName());
-		if (childPages != null) {
-			for (SystemPage child : childPages) {
+		if (pages != null) {
+			for (SystemPage child : pages) {
 				child.sync(page);
 			}
 		}
