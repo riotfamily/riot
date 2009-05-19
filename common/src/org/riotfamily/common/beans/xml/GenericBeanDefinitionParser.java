@@ -45,9 +45,7 @@ import org.w3c.dom.NamedNodeMap;
  */
 public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionParser {
 
-	public static final String DEFAULT_ALIAS_ATTRIBUTE = "name";
-	
-	public String aliasAttribute = DEFAULT_ALIAS_ATTRIBUTE;
+	public String aliasAttribute;
 
 	private HashMap<String, String> translations = Generics.newHashMap();
 
