@@ -18,11 +18,10 @@
 	<context:annotation-config />
 	<tx:annotation-driven />
 
-	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+	<bean id="configurer" class="org.riotfamily.common.beans.config.ProfileConfigurer">
 		<description>
 			Configurer that fills in placeholders from application.properties
 		</description>
-		<property name="location" value="classpath:/application.properties" />
 		<property name="ignoreResourceNotFound" value="true" />
 		<property name="contextOverride" value="true" />
 	</bean>

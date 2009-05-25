@@ -24,8 +24,7 @@
 	<dwr:configuration />
 	<dwr:annotation-config />
 	
-	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
-		<property name="location" value="classpath:/application.properties" />
+	<bean id="configurer" class="org.riotfamily.common.beans.config.ProfileConfigurer">
 		<property name="ignoreResourceNotFound" value="true" />
 		<property name="contextOverride" value="true" />
 	</bean>

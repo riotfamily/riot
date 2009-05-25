@@ -44,9 +44,7 @@
 				<value>org.riotfamily.</value>
 			</list> 	
 		</property>
-		<property name="hibernateProperties">
-			<util:properties location="classpath:/application.properties" />
-		</property>
+		<property name="hibernateProperties" value="${hibernate.*}" />
 		<property name="filterDefinitions">
 			<list>
 				<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
@@ -88,6 +86,6 @@
     	<constructor-arg ref="sessionFactory" />
     </bean>
 
-	<bean class="org.riotfamily.common.beans.config.SpringConfigurer" />
+	<bean class="org.riotfamily.common.beans.config.SpringBeanConfigurer" />
 
 </beans>

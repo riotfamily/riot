@@ -23,11 +23,11 @@
         <property name="basename" value="/WEB-INF/i18n/messages" />
     </bean>
 	
-	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+	<bean id="configurer" class="org.riotfamily.common.beans.config.ProfileConfigurer">
 		<description>
 			Configurer that fills in placeholders from application.properties
 		</description>
-		<property name="location" value="classpath:/application.properties" />
+		<property name="ignoreResourceNotFound" value="true" />
 		<property name="contextOverride" value="true" />
 	</bean>
 	
@@ -131,7 +131,7 @@
 		        <value>/WEB-INF/view</value>
 		    </list>
 		</property>
-		<property name="freemarkerSettings" value="${website-servlet.freemarker.*}" />
+		<property name="freemarkerSettings" value="${website-servlet.freemarker.(*)}" />
 		<property name="useTemplateCache" value="${website-servlet.useTemplateCache=true}" />
 		<property name="macroLibraries">
 			<props>
