@@ -32,7 +32,7 @@ package org.riotfamily.common.beans.config;
  */
 public abstract class ConfigurableBean {
 
-	static Configurer configurer;
+	static BeanConfigurer configurer;
 
 	public ConfigurableBean() {
 		if (configurer != null) {

@@ -28,7 +28,7 @@ package org.riotfamily.common.beans.config;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public interface Configurer {
+public interface BeanConfigurer {
 
 	public void configure(ConfigurableBean bean);
 

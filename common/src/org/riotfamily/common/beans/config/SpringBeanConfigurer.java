@@ -36,7 +36,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.util.ClassUtils;
 
 /**
- * Configurer implementation that uses Spring prototype beans to
+ * BeanConfigurer implementation that uses Spring prototype beans to
  * inject dependencies.
  * <p>
  * Looks for prototype bean definitions who's class is a sub-class of 
@@ -50,7 +50,7 @@ import org.springframework.util.ClassUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public class SpringConfigurer implements Configurer, BeanFactoryPostProcessor {
+public class SpringBeanConfigurer implements BeanConfigurer, BeanFactoryPostProcessor {
 
 	private ConfigurableListableBeanFactory beanFactory;
 	
