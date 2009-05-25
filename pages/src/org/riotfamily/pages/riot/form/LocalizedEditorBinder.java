@@ -1,6 +1,7 @@
 package org.riotfamily.pages.riot.form;
 
 import java.beans.PropertyEditor;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,7 +110,9 @@ public class LocalizedEditorBinder implements EditorBinder {
 				propertyEditor);
 	}
 
-	public void registerPropertyEditors(PropertyEditorRegistrar[] registrars) {
+	public void registerPropertyEditors(
+			Collection<PropertyEditorRegistrar> registrars) {
+		
 		delegate.registerPropertyEditors(registrars);
 	}
 

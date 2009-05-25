@@ -24,6 +24,7 @@
 package org.riotfamily.forms;
 
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,7 +49,7 @@ public interface FormContext extends RenderContext {
 	
 	public String getUploadUrl(String uploadId);
 
-	public PropertyEditorRegistrar[] getPropertyEditorRegistrars();
+	public Collection<PropertyEditorRegistrar> getPropertyEditorRegistrars();
 
 	public List<OptionsModelFactory> getOptionValuesAdapters();
 	

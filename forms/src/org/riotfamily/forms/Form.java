@@ -507,6 +507,9 @@ public class Form implements BeanEditor {
 	public void setFormContext(FormContext formContext) {
 		this.formContext = formContext;
 		this.errors = new FormErrors(this);
+		this.editorBinder.registerPropertyEditors(
+				formContext.getPropertyEditorRegistrars());
+		
 		Iterator<Element> it = getRegisteredElements().iterator();
 		while (it.hasNext()) {
 			Element element = it.next();

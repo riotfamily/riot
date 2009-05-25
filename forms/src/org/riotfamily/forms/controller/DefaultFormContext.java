@@ -24,6 +24,7 @@
 package org.riotfamily.forms.controller;
 
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,7 +55,7 @@ public class DefaultFormContext implements FormContext {
 
 	private String formUrl;
 	
-	private PropertyEditorRegistrar[] propertyEditorRegistrars;
+	private Collection<PropertyEditorRegistrar> propertyEditorRegistrars;
 	
 	private List<OptionsModelFactory> optionValuesAdapters;
 	
@@ -64,6 +65,7 @@ public class DefaultFormContext implements FormContext {
 	public DefaultFormContext(MessageResolver messageResolver,
 			TemplateRenderer templateRenderer,
 			String contextPath, String resourcePath, String formUrl,
+			Collection<PropertyEditorRegistrar> propertyEditorRegistrars,
 			List<OptionsModelFactory> optionValuesAdapters) {
 
 		this.messageResolver = messageResolver;
@@ -71,6 +73,7 @@ public class DefaultFormContext implements FormContext {
 		setResourcePath(resourcePath);
 		this.templateRenderer = templateRenderer;
 		this.formUrl = formUrl;
+		this.propertyEditorRegistrars = propertyEditorRegistrars;
 		this.optionValuesAdapters = optionValuesAdapters;
 	}
 
@@ -139,12 +142,12 @@ public class DefaultFormContext implements FormContext {
 		return createFormUrlBuffer().append("uploadId=" + uploadId).toString();
 	}
 
-	public PropertyEditorRegistrar[] getPropertyEditorRegistrars() {
+	public Collection<PropertyEditorRegistrar> getPropertyEditorRegistrars() {
 		return this.propertyEditorRegistrars;
 	}
 
 	public void setPropertyEditorRegistrars(
-			PropertyEditorRegistrar[] registrars) {
+			Collection<PropertyEditorRegistrar> registrars) {
 		
 		this.propertyEditorRegistrars = registrars;
 	}

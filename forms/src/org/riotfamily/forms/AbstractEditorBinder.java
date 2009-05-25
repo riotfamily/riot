@@ -25,6 +25,7 @@ package org.riotfamily.forms;
 
 import java.beans.PropertyEditor;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -128,10 +129,12 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		return props;
 	}
 
-	public void registerPropertyEditors(PropertyEditorRegistrar[] registrars) {
+	public void registerPropertyEditors(
+			Collection<PropertyEditorRegistrar> registrars) {
+		
 		if (registrars != null) {
-			for (int i = 0; i < registrars.length; i++) {
-				registrars[i].registerCustomEditors(this);
+			for (PropertyEditorRegistrar registrar : registrars) {
+				registrar.registerCustomEditors(this);
 			}
 		}
 	}

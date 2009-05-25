@@ -24,6 +24,7 @@
 package org.riotfamily.forms;
 
 import java.beans.PropertyEditor;
+import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.beans.PropertyEditorRegistrar;
@@ -91,6 +92,7 @@ public interface EditorBinder extends PropertyEditorRegistry {
 	 */
 	public Object populateBackingObject();
 	
-	public void registerPropertyEditors(PropertyEditorRegistrar[] registrars);
+	public void registerPropertyEditors(
+			Collection<PropertyEditorRegistrar> registrars);
 
 }

@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.controller;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,9 +43,13 @@ import org.riotfamily.forms.TemplateRenderer;
 import org.riotfamily.forms.options.ArrayOptionsModelFactory;
 import org.riotfamily.forms.options.CollectionOptionsModelFactory;
 import org.riotfamily.forms.options.DependentOptionsModelFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyEditorRegistrar;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -54,7 +59,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import freemarker.template.Configuration;
 
 public final class FormContextFactory implements MessageSourceAware, 
-		ResourceLoaderAware, ApplicationContextAware, InitializingBean {
+		ResourceLoaderAware, BeanFactoryAware, InitializingBean {
 	
 	private MessageSource messageSource;
 
@@ -65,9 +70,11 @@ public final class FormContextFactory implements MessageSourceAware,
 	private TemplateRenderer templateRenderer;
 	
 	private String resourcePath = "/riot/resources";
+
+	private Collection<PropertyEditorRegistrar> propertyEditorRegistrars;
 	
 	private List<OptionsModelFactory> optionValuesAdapters = Generics.newArrayList();
-	
+
 	public FormContextFactory() {
 		registerDefaultOptionValuesAdapters();
 	}
@@ -100,9 +107,17 @@ public final class FormContextFactory implements MessageSourceAware,
 		this.resourceLoader = resourceLoader;
 	}
 	
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		optionValuesAdapters.addAll(SpringUtils.beansOfType(
-				applicationContext, OptionsModelFactory.class).values());
+	@SuppressWarnings("unchecked")
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		if (beanFactory instanceof AbstractBeanFactory) {
+			AbstractBeanFactory abf = (AbstractBeanFactory) beanFactory;
+			this.propertyEditorRegistrars = abf.getPropertyEditorRegistrars();
+		}
+		if (beanFactory instanceof ListableBeanFactory) {
+			ListableBeanFactory lbf = (ListableBeanFactory) beanFactory;
+			optionValuesAdapters.addAll(SpringUtils.beansOfType(
+					lbf, OptionsModelFactory.class).values());			
+		}
 	}
 	
 	private void registerDefaultOptionValuesAdapters() {
@@ -150,7 +165,8 @@ public final class FormContextFactory implements MessageSourceAware,
 			String contextPath, String formUrl) {
 		
 		return new DefaultFormContext(messageResolver, templateRenderer, 
-				contextPath, resourcePath, formUrl, optionValuesAdapters);
+				contextPath, resourcePath, formUrl,
+				propertyEditorRegistrars, optionValuesAdapters);
 	}
 
 }
