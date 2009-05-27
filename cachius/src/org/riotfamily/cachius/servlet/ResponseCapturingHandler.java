@@ -64,7 +64,7 @@ public abstract class ResponseCapturingHandler extends SessionIdCacheHandler {
 	protected abstract void handleInternal(HttpServletResponse response) 
 			throws Exception;
 	
-	protected final void writeCacheItemInternal(CacheItem cacheItem) throws IOException {
+	public final void writeCacheItem(CacheItem cacheItem) throws IOException {
 		HttpServletResponse wrapper = response;
 		if (getSessionIdEncoder().urlsNeedEncoding()) {
 			wrapper = new SessionIdInsertingResponseWrapper(response, getSessionIdEncoder());

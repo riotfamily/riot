@@ -23,16 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.cachius.servlet;
 
-import java.io.IOException;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheHandler;
 import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.cachius.support.SessionCreationPreventingRequestWrapper;
 import org.riotfamily.cachius.support.SessionIdEncoder;
-import org.riotfamily.common.web.collaboration.SharedProperties;
 
 /**
  * Abstract CacheHandler that can cache content containing links with 
@@ -95,11 +91,8 @@ public abstract class SessionIdCacheHandler implements CacheHandler {
 	public final boolean updateCacheItem(CacheItem cacheItem) 
 			throws Exception {
 		
-		Map<String, String> propertySnapshot = SharedProperties.getSnapshot(request);
 		boolean ok = updateCacheItemInternal(cacheItem);
 		postProcess(cacheItem);
-		Map<String, String> props = SharedProperties.getDiff(request, propertySnapshot);
-		cacheItem.setProperties(props);
 		return ok;		
 	}
 	
@@ -108,12 +101,5 @@ public abstract class SessionIdCacheHandler implements CacheHandler {
 	
 	protected void postProcess(CacheItem cacheItem) throws Exception {
 	}
-	
-	public final void writeCacheItem(CacheItem cacheItem) throws IOException {
-		writeCacheItemInternal(cacheItem);
-		SharedProperties.setProperties(request, cacheItem.getProperties());
-	}
-	
-	protected abstract void writeCacheItemInternal(CacheItem cacheItem) throws IOException;
-
+		
 }

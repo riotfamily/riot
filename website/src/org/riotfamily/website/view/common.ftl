@@ -24,11 +24,6 @@
  -->
 <#assign templateName = .data_model['org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView.templateName']! />
 
-
-<#function invokeStaticMethod method args...>
-	<#return commonMacroHelper.invokeStaticMethod(method, args)! />
-</#function>
-
 <#---
   - Excludes the currently processed template block from getting cached.
   -->
@@ -58,23 +53,6 @@
 <#function capture path="" dynamic=false>
 	<#if dynamic><@preventCaching /></#if>
 	<#return commonMacroHelper.capture(path) />
-</#function>
-
-<#---
-  - Sets a shared property. The concept and purpose of shared properties is 
-  - described <a href="http://www.riotfamily.org/docs/push-ups.html#collaboration">here</a>.
-  -->
-<#macro setSharedProperty key value>
-	<#local x = commonMacroHelper.setSharedProperty(key, value) />
-</#macro>
-
-<#---
-  - Gets a shared property. The concept and purpose of shared properties is 
-  - described <a href="http://www.riotfamily.org/docs/push-ups.html#collaboration">here</a>.
-  -->
-
-<#function getSharedProperty key>
-	<#return commonMacroHelper.getSharedProperty(key) />
 </#function>
 
 <#---
@@ -413,8 +391,11 @@
   - Wraps the nested content inside an &lt;a&gt;-tag if the href parameter 
   - has any content.
   -->
-<#macro link href="" tag="a" externalClass="externalLink" externalTarget="_blank" attributes...>
+<#macro link href="" tag="a" externalClass="externalLink" externalTarget="_blank" transform=false attributes...>
 	<#if href?has_content>
+		<#if transform?is_macro>
+			<#local href = transform(href) />
+		</#if>
 		<#local attributes = unwrapAttributes(attributes) + {"href": href} />
 		<#if isExternalUrl(href)>
 			<#local attributes = attributes + {

@@ -37,17 +37,12 @@ public abstract class ServletWriterHandler extends SessionIdCacheHandler {
 	
 	protected abstract void render(Writer out) throws Exception;
 
-	@Override
-	protected void writeCacheItemInternal(CacheItem cacheItem)
-			throws IOException {
-		
+	public final void writeCacheItem(CacheItem cacheItem) throws IOException {
 		Writer writer = out;
 		if (getSessionIdEncoder().urlsNeedEncoding()) {
            	writer = getSessionIdEncoder().createIdInsertingWriter(out);
         }
 		cacheItem.writeTo(writer);
 	}
-
-	
 
 }
