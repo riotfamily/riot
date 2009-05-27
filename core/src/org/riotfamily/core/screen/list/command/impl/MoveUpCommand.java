@@ -39,7 +39,7 @@ public class MoveUpCommand extends SwapCommand {
 	
 	@Override
 	protected String getIcon(String action) {
-		return "up";
+		return "arrow_up";
 	}
 
 }

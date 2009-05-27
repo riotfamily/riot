@@ -37,6 +37,11 @@ import org.riotfamily.core.screen.list.command.result.UpdateCommandsResult;
 public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 
 	@Override
+	protected String getIcon(String action) {
+		return "page_copy";
+	}
+	
+	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
 		return !Clipboard.get(context).isAlreadySet(this, selection);
 	}

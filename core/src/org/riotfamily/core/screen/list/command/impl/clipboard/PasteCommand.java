@@ -35,6 +35,11 @@ import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 public class PasteCommand extends AbstractChildCommand {
 
 	@Override
+	protected String getIcon(String action) {
+		return "paste_plain";
+	}
+	
+	@Override
 	public boolean isEnabled(CommandContext context, SelectionItem parent) {
 		return Clipboard.get(context).canPaste(context.getScreen(), parent);
 	}

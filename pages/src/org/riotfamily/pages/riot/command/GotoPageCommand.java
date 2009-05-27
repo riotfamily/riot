@@ -39,7 +39,7 @@ public class GotoPageCommand extends AbstractBatchCommand<Page> {
 	
 	@Override
 	protected String getIcon(String action) {
-		return "browse";
+		return "application_go";
 	}
 
 	@Override

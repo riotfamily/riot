@@ -222,7 +222,7 @@
 	<!-- Root group screen -->
 	
 	<bean id="home" class="org.riotfamily.core.screen.GroupScreen">
-		<property name="icon" value="home" />
+		<property name="icon" value="house" />
 		<property name="childScreens" ref="rootScreens" />
 		<property name="screenlets">
 			<list>
