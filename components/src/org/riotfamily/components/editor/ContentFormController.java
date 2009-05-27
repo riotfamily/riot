@@ -27,6 +27,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.NonUniqueObjectException;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
@@ -73,12 +74,18 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 	protected ContentContainer getContainer(HttpServletRequest request) {
 		Long id = new Long((String) request.getAttribute("containerId"));
 		return ContentContainer.load(id);
-		
 	}
-	protected void reattach(Object object, HttpServletRequest request) {
+	
+	protected Object reattach(Object object, HttpServletRequest request) {
 		Content content = (Content) object;
-		content.update();
+		try {
+			content.update();
+		}
+		catch (NonUniqueObjectException ex) {
+			content = content.merge();
+		}
 		ComponentCacheUtils.invalidatePreviewVersion(cacheService, getContainer(request));
+		return content;
 	}
 	
 	protected void update(Object object, HttpServletRequest request) {
