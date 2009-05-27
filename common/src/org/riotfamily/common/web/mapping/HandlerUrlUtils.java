@@ -51,13 +51,13 @@ public final class HandlerUrlUtils {
 	}
 	
 	/**
-	 * Returns the URL of a mapped handler.
+	 * Returns the URL of a mapped handler <em>without</em> the context-path.
 	 * @param handlerName The name of the handler
 	 * @param attributes Optional attributes to fill out wildcards. Can either 
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
 	 * @param request The current request
 	 */
-	public static String getUrl(HttpServletRequest request,
+	public static String getContextRelativeUrl(HttpServletRequest request,
 			String handlerName, Object attributes) {
 		
 		return getUrlResolver(request).getUrlForHandler(
@@ -70,7 +70,7 @@ public final class HandlerUrlUtils {
 	 * @param attributes Optional attributes to fill out wildcards.
 	 * @param request The current request
 	 */
-	public static String getContextRelativeUrl(HttpServletRequest request, 
+	public static String getUrl(HttpServletRequest request, 
 			String handlerName, Object... attributes) {
 		
 		return request.getContextPath() + getUrlResolver(request)
@@ -84,7 +84,7 @@ public final class HandlerUrlUtils {
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
 	 * @param request The current request
 	 */
-	public static String getContextRelativeUrl(HttpServletRequest request,
+	public static String getUrl(HttpServletRequest request,
 			String handlerName, Object attributes) {
 		
 		return request.getContextPath() + getUrlResolver(request)
@@ -92,12 +92,12 @@ public final class HandlerUrlUtils {
 	}
 	
 	/**
-	 * Returns the URL of a mapped handler.
+	 * Returns the URL of a mapped handler <em>without</em> the context-path.
 	 * @param handlerName The name of the handler
 	 * @param attributes Optional attributes to fill out wildcards.
 	 * @param request The current request
 	 */
-	public static String getUrl(HttpServletRequest request, 
+	public static String getContextRelativeUrl(HttpServletRequest request, 
 			String handlerName, Object... attributes) {
 		
 		return getUrlResolver(request).getUrlForHandler(
@@ -115,7 +115,7 @@ public final class HandlerUrlUtils {
 			HttpServletResponse response, String handlerName) 
 			throws IOException {
 		
-		String url = getUrl(request, handlerName);
+		String url = getContextRelativeUrl(request, handlerName);
 		ServletUtils.resolveAndRedirect(request, response, url);
 	}
 	

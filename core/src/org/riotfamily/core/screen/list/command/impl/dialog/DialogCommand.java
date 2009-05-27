@@ -48,7 +48,7 @@ public abstract class DialogCommand extends AbstractCommand {
 		
 		String formSessionAttribute = "foo"; //FIXME Generate a distinct key
 		context.getRequest().getSession().setAttribute(formSessionAttribute, form);
-		String formUrl = HandlerUrlUtils.getContextRelativeUrl(context.getRequest(), 
+		String formUrl = HandlerUrlUtils.getUrl(context.getRequest(), 
 				"commandDialogController", formSessionAttribute);
 
 		form.setFormContext(context.createFormContext(formUrl));

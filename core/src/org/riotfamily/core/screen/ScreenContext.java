@@ -198,7 +198,7 @@ public class ScreenContext {
 	}
 	
 	public String getUrl() {
-		return HandlerUrlUtils.getUrl(request, screen.getId(), this);
+		return HandlerUrlUtils.getContextRelativeUrl(request, screen.getId(), this);
 	}
 	
 	public ScreenLink getLink() {
