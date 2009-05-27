@@ -90,6 +90,18 @@ td {
 .extra .box-title {
 	display: none;
 }
+.extra .box a {
+	color: #3d3d3d;
+	text-decoration: none;
+}
+.extra .box a:hover {
+	text-decoration: underline;
+}
+
+.extra .box .status {
+	background-repeat: no-repeat;
+	padding-left: 22px;
+}
 
 span.locale img {
 	margin-right: 6px;
@@ -100,6 +112,7 @@ span.messageCode {
 	text-decoration: none;
 	background: url(images/i18n.gif) right center no-repeat;
 }
+
 
 #path {
 	overflow: hidden;
@@ -163,8 +176,6 @@ span.messageCode {
 	width: 22px;
 	height: 31px;
 	padding-left: 16px;
-}
-#path .title {
 }
 #path .first .title {
 	display: none;
