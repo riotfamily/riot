@@ -41,3 +41,12 @@
 <#macro scripts srcs compress=commonMacroHelper.compressResources type="text/javascript" attributes...>
 	<@c.scripts resources(srcs) compress type c.unwrapAttributes(attributes) /> 
 </#macro>
+
+<#function iconStyle icon="">
+	<#if icon?has_content>
+		<#local url = c.resolve(resource("style/images/icons/" + icon + ".png")) />
+		<#return "background-image:url(" + url + ");_background-image:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url + "', sizingMethod='crop');" />
+	<#else>
+		<#return "" />
+	</#if>
+</#function>
