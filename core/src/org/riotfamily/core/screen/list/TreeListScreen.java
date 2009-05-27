@@ -191,7 +191,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 			ChooserSettings chooserSettings) {
 		
 		StringBuilder key = new StringBuilder();
-		key.append(getId()).append("/new");
+		key.append(getId()).append("/-");
 		if (context.getParentId() != null) {
 			key.append('/').append(context.getParentId());
 			if (context.isNestedTreeItem()) {
