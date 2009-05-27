@@ -47,28 +47,32 @@ public class ModelAndViewScreenlet implements Screenlet, ApplicationContextAware
     }
 	
 	public String render(ScreenContext context) throws Exception {
-		HttpServletRequest request = context.getRequest();
 		StringWriter sw = new StringWriter();
 		HttpServletResponse response = new DummyHttpServletResponse(sw);
-		ModelAndView mv = handleRequest(request);
+		ModelAndView mv = handleRequest(context);
+		HttpServletRequest request = context.getRequest();
 		View view = viewResolverHelper.resolveView(request, mv);
 		view.render(mv.getModel(), request, response);
 		return sw.toString();
 	}
 
 	protected String getViewName() {
-		return TemplateUtils.getTemplatePath(this);
+		return TemplateUtils.getTemplatePath(getTemplateClass());
 	}
 	
-	protected ModelAndView handleRequest(HttpServletRequest request) {
+	protected Class<?> getTemplateClass() {
+		return getClass();
+	}
+
+	protected ModelAndView handleRequest(ScreenContext context) {
 		Map<String, Object> model = Generics.newHashMap();
-		populateModel(model, request);
+		populateModel(model, context);
 		ModelAndView mv = new ModelAndView(getViewName(), model);
 		return mv;
 	}
 
 	protected void populateModel(Map<String, Object> model, 
-			HttpServletRequest request) {
+			ScreenContext context) {
 	}
 
 }

@@ -23,42 +23,30 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.status;
 
-import java.sql.SQLException;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.riotfamily.riot.status.AbstractStatusMonitor;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.status.I18nStatusMonitor;
+import org.springframework.beans.factory.annotation.Required;
 
-public class HqlStatusMonitor extends AbstractStatusMonitor {	
+public class HqlStatusMonitor extends I18nStatusMonitor {	
 	
 	private SessionFactory sessionFactory;
 	
 	private String hql;
 	
-	
-	public void setSessionFactory(SessionFactory sessionFactory) {
+	public HqlStatusMonitor(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 
+	@Required
 	public void setHql(String hql) {
 		this.hql = hql;
 	}
 
-	protected Object[] getArgs() {		
-		Object result = new HibernateTemplate(sessionFactory).execute(
-				new HibernateCallback() {
-					
-			public Object doInHibernate(Session session) 
-					throws HibernateException, SQLException {
-				
-				Query query = session.createQuery(hql);
-				return query.uniqueResult();
-			}		
-		});
+	protected Object[] getArgs(ScreenContext context) {	
+		Object result = sessionFactory.getCurrentSession()
+				.createQuery(hql)
+				.uniqueResult();
 		
 		if (result == null) {
 			return null;

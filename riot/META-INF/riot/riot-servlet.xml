@@ -110,8 +110,6 @@
 
 	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />
 
-	<bean id="statusController" name="/status" class="org.riotfamily.riot.status.StatusController" />
-
 	<!-- 
 	<bean id="exportController" name="/export/@{listSessionKey}/@{commandId}" class="org.riotfamily.riot.list.command.export.ExportController" />
 	<alias alias="/export/@{listSessionKey}/@{commandId}/@{objectId}" name="exportController"/>

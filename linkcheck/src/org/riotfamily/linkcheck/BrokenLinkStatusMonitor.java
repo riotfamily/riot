@@ -1,18 +1,16 @@
 package org.riotfamily.linkcheck;
 
-import org.riotfamily.riot.status.AbstractStatusMonitor;
+import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.status.I18nStatusMonitor;
 
-public class BrokenLinkStatusMonitor extends AbstractStatusMonitor {
+public class BrokenLinkStatusMonitor extends I18nStatusMonitor {
 
-	public static final String DEFAULT_MESSAGE_KEY = "status.brokenLinks";
-	
 	public BrokenLinkStatusMonitor() {
-		setHideZeroStatus(false);
-		setMessageKey(DEFAULT_MESSAGE_KEY);
+		setMessageKey("status.brokenLinks");
 	}
 
-	protected Object[] getArgs() {
-		return new Object[] { new Integer(Link.countBrokenLinks()) };
+	protected Object getArg(ScreenContext context) {
+		return Link.countBrokenLinks();
 	}
 
 }
