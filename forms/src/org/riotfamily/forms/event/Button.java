@@ -44,6 +44,8 @@ public class Button extends AbstractEditorBase
 	
 	private String labelKey;
 	
+	private String defaultLabel;
+	
 	private String label;
 	
 	private boolean submit = false;
@@ -71,12 +73,20 @@ public class Button extends AbstractEditorBase
 		this.labelKey = labelKey;
 	}
 	
+	public String getDefaultLabel() {
+		return defaultLabel;
+	}
+
+	public void setDefaultLabel(String defaultLabel) {
+		this.defaultLabel = defaultLabel;
+	}
+
 	public String getLabel() {
 		if (label != null) {
 			return label;
 		}
 		if (getLabelKey() != null) {
-			return MessageUtils.getMessage(this, getLabelKey());
+			return MessageUtils.getMessage(this, getLabelKey(), null, getDefaultLabel());
 		}
 		return "Submit";
 	}
