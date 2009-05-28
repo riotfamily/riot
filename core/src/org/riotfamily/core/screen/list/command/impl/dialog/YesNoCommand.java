@@ -21,38 +21,51 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.screen.list.command.impl;
+package org.riotfamily.core.screen.list.command.impl.dialog;
+
+import java.util.HashMap;
 
 import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.impl.dialog.YesNoCommand;
+import org.riotfamily.core.screen.list.command.result.NotificationResult;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.element.StaticText;
 
-public class DeleteCommand extends YesNoCommand {
-
-	public boolean isEnabled(CommandContext context, Selection selection) {
-		return selection.size() > 0;
-	}
+public class YesNoCommand extends DialogCommand {
 
 	@Override
-	protected void initForm(Form form, CommandContext context, Selection selection) {
-		String codes[] = {
-				"confirm.delete." + context.getScreen().getId(),
-				"confirm.delete." + context.getScreen().getDao().getEntityClass(),
-				"confirm.delete"
-		};
-		String label = null;
-		if (selection.size() == 1) {
-			label = context.getScreen().getItemLabel(selection.getSingleItem().getObject());
-		}
-		Object[] args = { 
-				selection.size(),
-				label
-		};
-		String question = context.getMessageResolver().getMessage(codes, args, 
-				"Do you really want to delete the selected element(s)?");
-
-		form.addElement(new StaticText(question));
+	public Form createForm(CommandContext context, Selection selection) {
+		Form form = new Form(HashMap.class);
+		addButton(form, "yes");
+		addButton(form, "no");
+		initForm(form, context, selection);
+		return form;
 	}
+	
+	protected void initForm(Form form, CommandContext context, Selection selection) {
+	}
+	
+	@Override
+	public CommandResult handleInput(CommandContext context,
+			Selection selection, Object input, String button) {
+	
+		if ("yes".equals(button)) {
+			return handleYes(context, selection, input);
+		}
+		return handleNo(context, selection, input);
+	}
+	
+	protected CommandResult handleYes(CommandContext context,
+			Selection selection, Object input) {
+	
+		return new NotificationResult(context).setMessage("Yes!");
+	}
+	
+	protected CommandResult handleNo(CommandContext context,
+			Selection selection, Object input) {
+	
+		return null;
+	}
+	
+	
 }

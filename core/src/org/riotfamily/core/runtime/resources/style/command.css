@@ -39,4 +39,6 @@
 	opacity: 0.5;
 }
 
-
+.box .commands a:hover {
+	text-decoration: none;
+}
