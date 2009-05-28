@@ -68,9 +68,8 @@ public class ImportMessagesCommand extends DialogCommand {
 	}
 	
 	@Override
-	public Form createForm(Selection selection) {
+	public Form createForm(CommandContext context, Selection selection) {
 		Form form = new Form(Upload.class);
-		form.setId("importMessagesForm");
 		FileUpload fileUpload = new FileUpload();
 		fileUpload.setRequired(true);
 		form.addElement(fileUpload, "data");
