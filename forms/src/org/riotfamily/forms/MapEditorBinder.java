@@ -38,6 +38,7 @@ public class MapEditorBinder extends AbstractEditorBinder {
 
 	private Map<Object,Object> map;
 	
+	@SuppressWarnings("unchecked")
 	private Class<? extends Map> mapClass = HashMap.class;
 	
 	private Class<?> valueClass = null;
@@ -52,6 +53,7 @@ public class MapEditorBinder extends AbstractEditorBinder {
 		editingExisitingMap = true;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public MapEditorBinder(Class<? extends Map> mapClass) {
 		Assert.isAssignable(Map.class, mapClass);
 		this.mapClass = mapClass; 
@@ -59,7 +61,8 @@ public class MapEditorBinder extends AbstractEditorBinder {
 		this.map = SpringUtils.newInstance(mapClass);
 	}
 
-	protected void setBackingObjectInternal(Object backingObject) {
+	@SuppressWarnings("unchecked")
+	public void setBackingObject(Object backingObject) {
 		if (backingObject != null) {
 			Assert.isInstanceOf(mapClass, backingObject);
 			map = (Map<Object, Object>) backingObject;

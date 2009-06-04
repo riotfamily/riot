@@ -88,10 +88,6 @@ public class PagePropertiesEditor extends CompositeElement
 	// Implementation of the BeanEditor interface
 	// -----------------------------------------------------------------
 	
-	public void setBackingObject(Object obj) {
-		currentForm.setBackingObject(obj);
-	}
-
 	public Editor getEditor(String property) {
 		return currentForm.getEditor(property);
 	}

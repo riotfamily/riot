@@ -190,6 +190,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	}
 
 	@ManyToOne
+	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public Site getMasterSite() {
 		return this.masterSite;
 	}

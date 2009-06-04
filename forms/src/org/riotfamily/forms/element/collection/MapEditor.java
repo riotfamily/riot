@@ -35,7 +35,6 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.StringRenderer;
-import org.riotfamily.forms.BackingObjectAware;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
@@ -52,7 +51,6 @@ import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.OptionsModelUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 
 
 /**
@@ -212,21 +210,6 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		}
 		return map;
 	}
-				
-	public void setBackingObject(Object obj) {
-		if (obj instanceof Map) {
-			Map<?,?> newValues = Generics.newHashMap((Map<?,?>) obj);
-			Iterator<Element> it = items.getElements().iterator();
-			while (it.hasNext()) {
-				MapItem item = (MapItem) it.next();
-				Object oldValue = item.getValue();
-				Object newValue = newValues.get(item.key);
-				if (ObjectUtils.nullSafeEquals(oldValue, newValue) && oldValue != newValue) {
-					item.setBackingObject(newValue);
-				}
-			}
-		}
-	}
 	
 	public Editor getEditor(String property) {
 		if (property != null) {
@@ -346,13 +329,6 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 			binding.setExistingItem(!newItem);
 			binding.setValue(value);
 			editor.setValue(value);
-		}
-		
-		public void setBackingObject(Object obj) {
-			binding.setValue(obj);
-			if (editor instanceof BackingObjectAware) {
-				((BackingObjectAware) editor).setBackingObject(obj);
-			}
 		}
 		
 		public void focus() {

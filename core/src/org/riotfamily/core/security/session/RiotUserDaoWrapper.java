@@ -85,14 +85,10 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 		wrappedInstance.save(entity, parent);		
 	}
 	
-	public Object merge(Object entity) {		
-		return wrappedInstance.merge(entity);
-	}
-	
-	public void update(Object entity) {		
-		wrappedInstance.update(entity);
-		RiotUser user = (RiotUser) entity;
+	public Object update(Object entity) {		
+		RiotUser user = (RiotUser) wrappedInstance.update((RiotUser) entity);
 		UserHolder.updateUser(user.getUserId(), user);
+		return user;
 	}
 
 	public void delete(Object entity, Object parent) {

@@ -72,11 +72,6 @@ public class ObjectChooser extends AbstractChooser {
 	}
 
 	@Override
-	protected Object mergeBean(Object bean) {
-		return targetList.getDao().merge(bean);
-	}
-
-	@Override
 	protected void renderLabel(Object object, PrintWriter writer) {
 		writer.print(targetList.getItemLabel(object));
 	}

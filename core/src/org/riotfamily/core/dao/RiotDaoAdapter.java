@@ -88,9 +88,10 @@ public class RiotDaoAdapter implements RiotDao {
 	}
 	
 	/**
-	 * Does nothing.
+	 * Returns the entity as-is.
 	 */
-	public void update(Object entity) throws DataAccessException {
+	public Object update(Object entity) throws DataAccessException {
+		return entity;
 	}
 	
 	/**

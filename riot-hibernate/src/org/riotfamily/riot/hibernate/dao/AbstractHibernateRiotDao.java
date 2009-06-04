@@ -63,11 +63,8 @@ public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport imple
 		getSession().save(entity);
 	}
 
-	public Object merge(Object entity) throws DataAccessException {
+	public Object update(Object entity) throws DataAccessException {
 		return getSession().merge(entity);
-	}
-	
-	public void update(Object entity) throws DataAccessException {
 	}
 	
 	public void delete(Object entity, Object parent) throws DataAccessException {

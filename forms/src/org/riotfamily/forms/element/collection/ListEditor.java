@@ -224,25 +224,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 			}
 		}
 	}
-	
-	public void setBackingObject(Object obj) {
-		if (obj instanceof Collection) {
-			List<?> newValues = Generics.newArrayList((Collection<?>) obj);
-			for (ListItem item : items) {
-				if (!item.isNew()) {
-					Object oldValue = item.getBackingObject();
-					int i = newValues.indexOf(oldValue);
-					if (i >= 0) {
-						Object newValue = newValues.get(i);
-						if (newValue != oldValue) {
-							item.setBackingObject(newValue);
-						}
-					}
-				}
-			}
-		}
-	}
-	
+		
 	public Editor getEditor(String property) {
 		if (property != null) {
 			int i = property.indexOf('.');

@@ -131,10 +131,7 @@ public abstract class AbstractFrontOfficeFormController
 		
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
 		try {
-			Object bean = form.getBackingObject();
-			bean = reattach(bean, request);
-			form.setBackingObject(bean);
-			form.populateBackingObject();
+			Object bean = form.populateBackingObject();
 			update(bean, request);
 		}
 		catch (Exception e) {
@@ -144,8 +141,6 @@ public abstract class AbstractFrontOfficeFormController
 		transactionManager.commit(status);
 	}
 	
-	protected abstract Object reattach(Object object, HttpServletRequest request);
-	
-	protected abstract void update(Object object, HttpServletRequest request);
+	protected abstract Object update(Object object, HttpServletRequest request);
 
 }

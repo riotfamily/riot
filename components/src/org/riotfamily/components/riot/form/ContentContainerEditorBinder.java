@@ -42,7 +42,7 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 	}
 
 	@Override
-	protected void setBackingObjectInternal(Object backingObject) {
+	public void setBackingObject(Object backingObject) {
 		container = (ContentContainer) backingObject;
 		if (container == null) {
 			container = createContainer();

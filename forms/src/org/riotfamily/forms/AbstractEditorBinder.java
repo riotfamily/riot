@@ -139,21 +139,11 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		}
 	}
 
-	public final void setBackingObject(Object backingObject) {
+	public void setBackingObject(Object backingObject) {
 		setBackingObjectInternal(backingObject);
-		if (isEditingExistingBean()) {
-			for (EditorBinding binding : bindings.values()) {
-				Editor editor = binding.getEditor();
-				if (editor instanceof BackingObjectAware) {
-					Object value = getPropertyValue(binding.getProperty());
-					BackingObjectAware boa = (BackingObjectAware) editor;
-					boa.setBackingObject(value);
-				}
-			}
-		}
 	}
 	
-	protected void setBackingObjectInternal(Object backingObject) {
+	protected final void setBackingObjectInternal(Object backingObject) {
 	}
 	
 	public void initEditors() {

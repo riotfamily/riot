@@ -45,19 +45,9 @@ public class ContentListItem extends ListItem {
 	public Object getBackingObject() {
 		return wrapper;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
-	public void setBackingObject(Object obj) {
-		if (obj != null) {
-			wrapper = (ValueWrapper<Object>) obj;
-			obj = wrapper.getValue();
-		}
-		super.setBackingObject(obj);
-	}
-	
 	@SuppressWarnings("unchecked")
-	@Override
 	public void setValue(Object value, boolean newItem) {
 		if (value != null) {
 			wrapper = (ValueWrapper<Object>) value;

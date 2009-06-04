@@ -196,11 +196,8 @@ public class FormScreen extends AjaxFormController
 			}
 			else {
 				log.debug("Updating entity ...");
-				Object bean = form.getBackingObject();
-				Object merged = dao.merge(bean);
-				form.setBackingObject(merged);
-				form.populateBackingObject();
-				dao.update(merged);
+				Object bean = form.populateBackingObject();
+				dao.update(bean);
 			}
 		}
 		catch (Exception e) {

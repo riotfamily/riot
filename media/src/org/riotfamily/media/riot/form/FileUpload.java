@@ -28,7 +28,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.forms.BackingObjectAware;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ErrorUtils;
@@ -43,8 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * A widget to upload files.
  */
-public class FileUpload extends AbstractFileUpload 
-		implements BackingObjectAware {
+public class FileUpload extends AbstractFileUpload {
 
 	private RiotFile file;
 	
@@ -53,11 +51,7 @@ public class FileUpload extends AbstractFileUpload
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
-	
-	public void setBackingObject(Object obj) {
-		setValue(obj);
-	}
-	
+		
 	public void setValue(Object value) {
 		log.debug("Value set to: " + value);
 		if (value == null) {

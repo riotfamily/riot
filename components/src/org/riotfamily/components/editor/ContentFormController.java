@@ -76,19 +76,10 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 		return ContentContainer.load(id);
 	}
 	
-	protected Object reattach(Object object, HttpServletRequest request) {
+	protected Object update(Object object, HttpServletRequest request) {
 		Content content = (Content) object;
-		try {
-			content.update();
-		}
-		catch (NonUniqueObjectException ex) {
-			content = content.merge();
-		}
 		ComponentCacheUtils.invalidatePreviewVersion(cacheService, getContainer(request));
-		return content;
-	}
-	
-	protected void update(Object object, HttpServletRequest request) {
+		return content.merge();
 	}
 
 }
