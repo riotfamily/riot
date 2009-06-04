@@ -413,8 +413,7 @@ public final class FormatUtils {
 	 */
 	public static String stripExtension(String filename) {
 		String extension = getExtension(filename);
-		return filename
-				.substring(0, filename.length() - extension.length() - 1);
+		return filename.substring(0, filename.length() - extension.length() - 1);
 	}
 
 	/**
@@ -455,100 +454,99 @@ public final class FormatUtils {
 	 * days
 	 */
 	public static Date parseDate(String s) {
+		String op = null;
+		int days = 0;
+		int months = 0;
+		int years = 0;
+		
 		if (s.startsWith("today")) {
-			String op = null;
-			int days = 0;
-			int months = 0;
-			int years = 0;
-
 			s = s.substring(5);
-			int i = 0;
-			int length = s.length();
-			long delta = 0;
-			while (i < length) {
-
-				char ch = 0;
-				for (; i < length; i++) {
-					ch = s.charAt(i);
-					if (!Character.isDigit(ch)) {
-						i++;
-						break;
-					}
-					delta *= 10;
-					delta += Character.getNumericValue(ch);
-				}
-				switch (ch) {
-				case '+':
-					op = OP_ADDITION;
-					break;
-				case '-':
-					op = OP_SUBTRACTION;
-					break;
-				case 'd':
-				case 'D':
-					if (OP_ADDITION.equals(op)) {
-						days += delta;
-					}
-					else if (OP_SUBTRACTION.equals(op)) {
-						days -= delta;
-					}
-					op = null;
-					delta = 0;
-					break;
-
-				case 'w':
-				case 'W':
-					if (OP_ADDITION.equals(op)) {
-						days += 7 * delta;
-					}
-					else if (OP_SUBTRACTION.equals(op)) {
-						days -= 7 * delta;
-					}
-					op = null;
-					delta = 0;
-					break;
-
-				case 'M':
-					if (OP_ADDITION.equals(op)) {
-						months += delta;
-					}
-					else if (OP_SUBTRACTION.equals(op)) {
-						months -= delta;
-					}
-					op = null;
-					delta = 0;
-					break;
-
-				case 'y':
-				case 'Y':
-					if (OP_ADDITION.equals(op)) {
-						years += delta;
-					}
-					else if (OP_SUBTRACTION.equals(op)) {
-						years -= delta;
-					}
-					op = null;
-					delta = 0;
-					break;
-				}
-				if (delta > 0) {
-					if (OP_ADDITION.equals(op)) {
-						days += delta;
-					}
-					else if (OP_SUBTRACTION.equals(op)) {
-						days -= delta;
-					}
-				}
-
-			}
-			Calendar c = Calendar.getInstance();
-			c.setTime(new Date());
-			c.add(Calendar.DATE, days);
-			c.add(Calendar.MONTH, months);
-			c.add(Calendar.YEAR, years);
-			return c.getTime();
 		}
-		return null;
+		int i = 0;
+		int length = s.length();
+		long delta = 0;
+		while (i < length) {
+
+			char ch = 0;
+			for (; i < length; i++) {
+				ch = s.charAt(i);
+				if (!Character.isDigit(ch)) {
+					i++;
+					break;
+				}
+				delta *= 10;
+				delta += Character.getNumericValue(ch);
+			}
+			switch (ch) {
+			case '+':
+				op = OP_ADDITION;
+				break;
+			case '-':
+				op = OP_SUBTRACTION;
+				break;
+			case 'd':
+			case 'D':
+				if (OP_ADDITION.equals(op)) {
+					days += delta;
+				}
+				else if (OP_SUBTRACTION.equals(op)) {
+					days -= delta;
+				}
+				op = null;
+				delta = 0;
+				break;
+
+			case 'w':
+			case 'W':
+				if (OP_ADDITION.equals(op)) {
+					days += 7 * delta;
+				}
+				else if (OP_SUBTRACTION.equals(op)) {
+					days -= 7 * delta;
+				}
+				op = null;
+				delta = 0;
+				break;
+
+			case 'M':
+				if (OP_ADDITION.equals(op)) {
+					months += delta;
+				}
+				else if (OP_SUBTRACTION.equals(op)) {
+					months -= delta;
+				}
+				op = null;
+				delta = 0;
+				break;
+
+			case 'y':
+			case 'Y':
+				if (OP_ADDITION.equals(op)) {
+					years += delta;
+				}
+				else if (OP_SUBTRACTION.equals(op)) {
+					years -= delta;
+				}
+				op = null;
+				delta = 0;
+				break;
+			}
+			if (delta > 0) {
+				if (OP_ADDITION.equals(op)) {
+					days += delta;
+				}
+				else if (OP_SUBTRACTION.equals(op)) {
+					days -= delta;
+				}
+			}
+
+		}
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.DATE, days);
+		c.add(Calendar.MONTH, months);
+		c.add(Calendar.YEAR, years);
+		return c.getTime();
 	}
 
 	public static String formatDate(Date date, String pattern, Locale locale) {
@@ -581,6 +579,7 @@ public final class FormatUtils {
 		c.set(Calendar.YEAR, 1970);
 		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 		return df.format(c.getTime())
+				.replaceAll("\\s+", "")
 				.replace("12", "MM")
 				.replace("1970", "YYYY")				
 				.replace("24", "DD")
@@ -597,7 +596,7 @@ public final class FormatUtils {
 	 * </pre>
 	 * 	 
 	 */
-	public static String getDateDelimiter(String dateFormat) {
+	public static String getDateDelimiter(String dateFormat) {		
 		Matcher m = DATE_DELIMITER_PATTERN.matcher(dateFormat);
 		if (m.matches()) {				
 			return m.group(1);

@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -43,10 +44,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
@@ -61,7 +64,11 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 7.0
  */
 @Entity
-@Table(name="riot_files")
+@Table(name="riot_files",
+	uniqueConstraints={
+		@UniqueConstraint(columnNames={"uri"})			
+	}
+)
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorValue("file")
 public class RiotFile {
@@ -110,6 +117,37 @@ public class RiotFile {
 	public RiotFile(byte[] bytes, String fileName) throws IOException {
 		setBytes(bytes, fileName);
 	}
+
+	public RiotFile(RiotFile riotFile) throws IOException {
+		this(riotFile, true);
+	}
+	
+	public RiotFile(RiotFile riotFile, boolean copyVariants) throws IOException {
+		this.fileName = riotFile.getFileName();
+		this.uri = mediaService.store(new FileInputStream(riotFile.getFile()), fileName);
+		this.contentType = riotFile.getContentType();
+		this.size = riotFile.getSize();
+		this.md5 = riotFile.getMd5();
+		this.owner = riotFile.getOwner();
+		this.creationDate = riotFile.getCreationDate();
+
+		if (copyVariants) {
+			Map<String, RiotFile> otherVariants = riotFile.getVariants();
+			if (otherVariants != null) {
+				this.variants = Generics.newHashMap();
+				for (Entry<String, RiotFile> entry : otherVariants.entrySet()) {
+					RiotFile variant = entry.getValue();
+					if (variant != null) {
+						addVariant(entry.getKey(), variant.copy(true));
+					}
+				}
+			}
+		}
+	}
+	
+	public RiotFile copy(boolean copyVariants) throws IOException {
+		return new RiotFile(this, copyVariants);
+	}	
 
 	@Transient
 	public void setMultipartFile(MultipartFile multipartFile) throws IOException {
@@ -307,4 +345,5 @@ public class RiotFile {
 		}
 		return super.equals(obj);
 	}
+	
 }

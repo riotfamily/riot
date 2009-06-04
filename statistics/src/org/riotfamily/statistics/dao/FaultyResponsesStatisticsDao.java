@@ -17,4 +17,5 @@ public class FaultyResponsesStatisticsDao extends AbstractStatsItemDao {
 	protected List<? extends StatsItem> getStats() {
 		return filterPlugin.getFaultyResponses();
 	}
+	
 }

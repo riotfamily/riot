@@ -99,7 +99,7 @@ var Txt2ImgReplacement = Class.create({
 	},
 	
 	// Whether to use the alphaImageLoader or not (detects IE 6):
-	useFilter: document.all && typeof document.addEventListener != 'function',
+	useFilter: Prototype.Browser.IE && typeof document.documentElement.style.maxHeight == 'undefined',
 	
 	replace: function() {
 		if (!this.el.down('img.replacement')) {
@@ -168,10 +168,18 @@ var Txt2ImgReplacement = Class.create({
 	},
 
 	encode: function(s) {
+		// correctly encode non-ASCII characters - doesn't encode ~!*()'
+		s = encodeURIComponent(s);
+		
+		// We uses escape() to escape the remaining chars. In order to prevent
+		// double-escaping of %-chars, we temporarily convert them to slashes,
+		// which are ignored by escape()
+		s = escape(s.replace(/%/g, '/'));
+		
 		// We have to convert % characters because the AlphaImageLoader decodes
 		// correctly encoded URIs and converts %23 back to # (and %26 back to &)
-		// thereby corrupting the URL.
-		return escape(encodeURIComponent(s).replace(/%/g, '@')).replace(/%/g, '@');
+		// thereby corrupting the URL. 
+		return s.replace(/[%\/]/g, '@');
 	},
 	
 	setImageSrc: function(el, src) {

@@ -72,7 +72,7 @@ public class PageResolver {
 		Object site = request.getAttribute(SITE_ATTRIBUTE);
 		if (site == null) {
 			site = resolveSite(request);
-			expose(site, request, SITE_ATTRIBUTE);
+			exposeSite((Site) site, request);
 		}
 		if (site == null || site == NOT_FOUND) {
 			return null;
@@ -81,7 +81,11 @@ public class PageResolver {
 		result.refreshIfDetached();
 		return result; 
 	}
-		
+
+	protected void exposeSite(Site site, HttpServletRequest request) {
+		expose(site, request, SITE_ATTRIBUTE);
+	}
+
 	/**
 	 * Returns the path within the resolved Site.
 	 */
@@ -104,7 +108,7 @@ public class PageResolver {
 		Object page = request.getAttribute(PAGE_ATTRIBUTE);
 		if (page == null) {
 			page = resolvePage(request);
-			expose(page, request, PAGE_ATTRIBUTE);
+			exposePage((Page) page, request);
 		}
 		if (page == null || page == NOT_FOUND) {
 			return null;
@@ -112,6 +116,10 @@ public class PageResolver {
 		Page result = (Page) page;
 		result.refreshIfDetached();
 		return result;
+	}
+	
+	protected void exposePage(Page page, HttpServletRequest request) {
+		expose(page, request, PAGE_ATTRIBUTE);
 	}
 	
 	/**

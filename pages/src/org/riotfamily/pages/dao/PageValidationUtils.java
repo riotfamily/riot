@@ -52,9 +52,7 @@ public final class PageValidationUtils {
 	}
 
 	public static boolean containsPathComponent(Collection<Page> pages, String pathComponent) {
-		Iterator<Page> it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = it.next();
+		for (Page page : pages) {
 			if (page.getPathComponent().equals(pathComponent)) {
 				return true;
 			}

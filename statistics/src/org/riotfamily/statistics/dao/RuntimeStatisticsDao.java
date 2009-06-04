@@ -25,6 +25,7 @@ package org.riotfamily.statistics.dao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
 
 import org.riotfamily.statistics.domain.Statistics;
 
@@ -38,6 +39,8 @@ public class RuntimeStatisticsDao extends AbstractSimpleStatsDao {
 	
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
+		stats.add("Local host name", InetAddress.getLocalHost().getHostName());
+		
 		Runtime rt = Runtime.getRuntime();
 		long used = rt.totalMemory() - rt.freeMemory();
 		boolean critical = used > rt.maxMemory() * 80 / 100;
@@ -50,6 +53,7 @@ public class RuntimeStatisticsDao extends AbstractSimpleStatsDao {
 		
 		stats.add("Number of processors", rt.availableProcessors());
 		stats.add("Active threads", Thread.activeCount());
+		
 		stats.addOkIfEquals("System encoding", systemEncoding, "UTF8");
 	}
 }

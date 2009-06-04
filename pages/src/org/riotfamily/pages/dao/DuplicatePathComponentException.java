@@ -31,19 +31,18 @@ import org.riotfamily.pages.model.Page;
  * @since 6.5
  */
 public class DuplicatePathComponentException extends InvalidPropertyValueException {
+	
+	private static final String CODE_NAME = "duplicate";
 
-	Page page;
+	private static final String FIELD_NAME = "pathComponent";
 
-	public DuplicatePathComponentException(String errorCode, Page page) {
-		super("pathComponent", "duplicate", new String[] {page.getPathComponent()},
-		"There's already another page using the pathComponent.");
-		this.page = page;
-	}
+	private Page page;
 
-
-	public DuplicatePathComponentException(String errorCode, String value) {
-		super("pathComponent", "duplicate", new String[] {value},
+	public DuplicatePathComponentException(Page page) {
+		super(FIELD_NAME, CODE_NAME, new String[] { page.getPathComponent() },
 				"There's already another page using the pathComponent.");
+		
+		this.page = page;
 	}
 
 	public Page getPage() {

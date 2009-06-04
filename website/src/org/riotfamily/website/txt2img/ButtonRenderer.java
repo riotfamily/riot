@@ -27,6 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
@@ -82,9 +83,9 @@ public class ButtonRenderer extends ListItemRenderer implements BeanNameAware {
 		return Math.max(creationTime, bgFile.lastModified());
 	}
 		
-	public BufferedImage generate(String label) throws Exception {
+	public BufferedImage generate(String label, Locale locale) throws Exception {
 		
-		BufferedImage labelImage = generate(label, Integer.MAX_VALUE, null, false);
+		BufferedImage labelImage = generate(label, locale, Integer.MAX_VALUE, null, false);
 		int textImageWidth = labelImage.getWidth();
 		
 		int width = textImageWidth + bg.getWidth();
@@ -101,7 +102,7 @@ public class ButtonRenderer extends ListItemRenderer implements BeanNameAware {
 		int top = buttonHeight / 2 - labelImage.getHeight() / 2;
 		g.drawImage(labelImage, c, top, null);
 		if (hoverColor != null) {
-			BufferedImage hoverLabelImage = generate(label, Integer.MAX_VALUE, hoverColor, true);
+			BufferedImage hoverLabelImage = generate(label, locale, Integer.MAX_VALUE, hoverColor, true);
 			g.drawImage(hoverLabelImage, c, top + buttonHeight, null);
 		}
 		return image;

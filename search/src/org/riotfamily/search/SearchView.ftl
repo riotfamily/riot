@@ -7,7 +7,7 @@
 	<p>
 		${springMacroRequestContext.getMessage("riot.search.resultCount", 
 				[result.originalQuery, result.totalHitCount],
-				"Your search returned " + result.totalHitCount + " results:")}
+				"Your search for '{0}' returned {1} results:")?html}
 	</p>
 	<ul class="search-result">
 		<#list result.items as item>
@@ -51,6 +51,6 @@
 <#elseif result.originalQuery?has_content>
 	<p>
 		${springMacroRequestContext.getMessage("riot.search.noResults", 
-			[result.originalQuery], "Your search did not return any results.")}
+			[result.originalQuery], "Your search for '{0}' did not return any results.")?html}
 	</p>
 </#if>

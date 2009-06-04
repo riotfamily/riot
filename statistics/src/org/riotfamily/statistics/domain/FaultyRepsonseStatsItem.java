@@ -1,5 +1,7 @@
 package org.riotfamily.statistics.domain;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.util.ServletUtils;
@@ -7,31 +9,25 @@ import org.springframework.util.StringUtils;
 
 public class FaultyRepsonseStatsItem extends StatsItem {
 
-	private String clientIp;
-	
 	private int status;
-	
+
 	private int count;
 
+	private Date lastTime;
+
 	private String referer;
+	
+	private String clientIp;
 
 	private String userAgent;
 	
 	public FaultyRepsonseStatsItem(HttpServletRequest request, int status) {
 		super(request.getRequestURL().toString());
-		setClientIp(request.getRemoteAddr());
-		setReferer(ServletUtils.getReferer(request));
-		setUserAgent(ServletUtils.getUserAgent(request));
 		setStatus(status);
+		setReferer(ServletUtils.getReferer(request));
+		setClientIp(request.getRemoteAddr());
+		setUserAgent(ServletUtils.getUserAgent(request));
 		count();
-	}
-
-	public String getClientIp() {
-		return clientIp;
-	}
-
-	public void setClientIp(String clientIp) {
-		this.clientIp = clientIp;
 	}
 
 	public int getStatus() {
@@ -41,7 +37,7 @@ public class FaultyRepsonseStatsItem extends StatsItem {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	
+
 	public int getCount() {
 		return count;
 	}
@@ -52,6 +48,15 @@ public class FaultyRepsonseStatsItem extends StatsItem {
 	
 	public void count() {
 		this.count++;
+		setLastTime(new Date());
+	}
+
+	public Date getLastTime() {
+		return lastTime;
+	}
+	
+	public void setLastTime(Date lastTime) {
+		this.lastTime = lastTime;
 	}
 	
 	public String getReferer() {
@@ -64,6 +69,14 @@ public class FaultyRepsonseStatsItem extends StatsItem {
 	
 	public boolean hasReferer() {
 		return StringUtils.hasText(referer);
+	}
+
+	public String getClientIp() {
+		return clientIp;
+	}
+
+	public void setClientIp(String clientIp) {
+		this.clientIp = clientIp;
 	}
 	
 	public String getUserAgent() {

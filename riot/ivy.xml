@@ -17,5 +17,6 @@
 	    <dependency org="riotfamily" name="riot-website" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-forms" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,test->default;runtime->webmvc,mail,aop;src->src" />
+	    <dependency org="opensymphony" name="quartz" rev="${dep.quartz.revision}" conf="runtime->default" />
     </dependencies>
 </ivy-module>

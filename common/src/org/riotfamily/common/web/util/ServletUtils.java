@@ -600,13 +600,19 @@ public final class ServletUtils {
 	/**
 	 * This method tries to replace the given parameter's value in the given URL's
 	 * query string with the given new value or adds the parameter if it is not
-	 * yet contained. The modified URL then is returned. 
+	 * yet contained or removes it if the given value is <tt>null</tt>. The
+	 * modified URL is returned. 
 	 */
 	public static String setParameter(String url, String name, String value) {
-		Pattern pattern = Pattern.compile("([?&]" + name + "=)(.*)?(&|$)");
+		Pattern pattern = Pattern.compile("([?&])(" + name + "=).*?(&|$)");
 		Matcher m = pattern.matcher(url);
 		if (m.find()) {
-			return m.replaceFirst("$1" + FormatUtils.uriEscape(value) + "$3");
+			if (value != null) {
+				return m.replaceFirst("$1$2" + FormatUtils.uriEscape(value) + "$3");
+			}
+			else {
+				return m.replaceFirst("$1");
+			}
 		}
 		else {
 			return addParameter(url, name, value);

@@ -213,7 +213,8 @@ public class Txt2ImgController extends AbstractCacheableController
 		boolean hover = ServletRequestUtils.getBooleanParameter(request, "hover", false);
 		response.setContentType("image/png");
 		ServletUtils.setFarFutureExpiresHeader(response);
-		rule.generate(text, maxWidth, color, hover, response.getOutputStream());
+		Locale locale = RequestContextUtils.getLocale(request);
+		rule.generate(text, locale, maxWidth, color, hover, response.getOutputStream());
 	}
 
 	/**

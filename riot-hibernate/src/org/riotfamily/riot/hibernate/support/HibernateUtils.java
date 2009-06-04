@@ -138,24 +138,26 @@ public final class HibernateUtils {
 					hql.append(" and ");
 				}				
 				Class<?> propertyClass = PropertyUtils.getPropertyType(entityClass, name);
-				if (Collection.class.isAssignableFrom(propertyClass)) {
-					Collection<?> c = null;
-					if (value instanceof Collection) {
-						c = (Collection<?>) value;
+				if (propertyClass != null) {
+					if (Collection.class.isAssignableFrom(propertyClass)) {
+						Collection<?> c = null;
+						if (value instanceof Collection) {
+							c = (Collection<?>) value;
+						}
+						else {
+							c = Collections.singleton(value);
+						}					
+						hql.append("1 = 1");
+						for (int j = 0; j < c.size(); j++) {
+							hql.append(" and :").append(name).append("_").append(j)
+									.append(" in elements(").append(alias)
+									.append('.').append(name).append(')');
+						}
 					}
 					else {
-						c = Collections.singleton(value);
-					}					
-					hql.append("1 = 1");
-					for (int j = 0; j < c.size(); j++) {
-						hql.append(" and :").append(name).append("_").append(j)
-								.append(" in elements(").append(alias)
-								.append('.').append(name).append(')');
+						hql.append(alias).append('.').append(name);
+						hql.append(" = :").append(name.replaceAll("\\.", "_dot_"));
 					}
-				}
-				else {
-					hql.append(alias).append('.').append(name);
-					hql.append(" = :").append(name.replaceAll("\\.", "_dot_"));
 				}
 			}
 		}
@@ -190,7 +192,7 @@ public final class HibernateUtils {
 			}
 			if (value != null) {
 				Class<?> propertyClass = PropertyUtils.getPropertyType(entityClass, name);
-				if (Collection.class.isAssignableFrom(propertyClass)) {
+				if (propertyClass != null && Collection.class.isAssignableFrom(propertyClass)) {
 					Collection<?> c = null;
 					if (value instanceof Collection) {
 						c = (Collection<?>) value;
@@ -210,8 +212,8 @@ public final class HibernateUtils {
 
 	/**
 	 * Returns a HQL term that can be used within a where-clause to perform
-	 * a search. Example: <code>"(lower(&lt;alias&gt;.&lt;property[0]&gt;)
-	 * like :&lt;searchParamName&gt; or lower(&lt;alias&gt;.&lt;property[1]&gt;)
+	 * a search. Example: <code>"(lower(str(&lt;alias&gt;.&lt;property[0]&gt;))
+	 * like :&lt;searchParamName&gt; or lower(str(&lt;alias&gt;.&lt;property[1]&gt;))
 	 * like :&lt;searchParamName&gt; or ...)"</code>
 	 * @since 6.4
 	 */
@@ -246,8 +248,8 @@ public final class HibernateUtils {
 				}
 				hql.append(" and ");
 			}
-			hql.append("lower(").append(alias).append('.').append(name);
-			hql.append(") like :").append(searchParamName).append(')');;
+			hql.append("lower(str(").append(alias).append('.').append(name);
+			hql.append(")) like :").append(searchParamName).append(')');;
 		}
 		hql.append(')');		
 		return hql.toString();
@@ -298,6 +300,25 @@ public final class HibernateUtils {
 		}
 		return hql;
 	}
+	
+	/**
+	 * Appends the given term to the StringBuffer. If the buffer is not empty,
+	 * the provided expression is inserted right before the term (surrounded
+	 * by spaces).
+	 * @since 8.0.1
+	 */
+	public static StringBuilder appendHql(StringBuilder hql,
+			String expression, String term) {
+
+		if (StringUtils.hasText(term)) {
+			if (expression != null && hql.length() > 0) {
+				hql.append(' ').append(expression);
+			}
+			hql.append(' ');
+			hql.append(term);
+		}
+		return hql;
+	}
 
 	public static void addEqOrNull(Criteria c, String name, Object val) {
 		if (val != null) {
@@ -322,6 +343,12 @@ public final class HibernateUtils {
 				getLog().warn("No filter named " + LIVE_MODE_FILTER_NAME 
 						+ " defined for SessionFactory");
 			}
+		}
+	}
+
+	public static void setParameter(Query query, String name, Object value) {
+		if (value != null && query.getQueryString().matches(".+:" + name + "\\b.*")) {
+			query.setParameter(name, value);
 		}
 	}
 }

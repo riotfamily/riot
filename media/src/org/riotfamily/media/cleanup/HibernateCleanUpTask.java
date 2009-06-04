@@ -77,7 +77,7 @@ public class HibernateCleanUpTask extends HibernateTask {
 			referencedIds.addAll(session.createQuery(hql).list());
 		}
 
-		log.info("Deleting orphaned files ...");
+		log.info("Deleting [%s] orphaned files ...", fileIds.size() - referencedIds.size());
 		
 		for (Long id : fileIds) {
 			if (!referencedIds.contains(id)) {
@@ -100,14 +100,15 @@ public class HibernateCleanUpTask extends HibernateTask {
 	
 	private void delete(final Session session, final Long id) {
 		try {
-			transactionTemplate.execute(new TransactionCallback() {
+			RiotFile file = (RiotFile) transactionTemplate.execute(new TransactionCallback() {
 				public Object doInTransaction(TransactionStatus status) {
 					log.debug("Deleting orphaned file: " + id);
 					RiotFile file = (RiotFile) session.load(RiotFile.class, id);
 					session.delete(file);
-					return null;
+					return file;
 				}
 			});
+			session.evict(file);
 		}
 		catch (HibernateException e) {
 			log.error("Failed to delete RiotFile " + id, e);

@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheHandler;
 import org.riotfamily.cachius.CacheItem;
-import org.riotfamily.cachius.support.SessionCreationPreventingRequestWrapper;
 import org.riotfamily.cachius.support.SessionIdEncoder;
 
 /**
@@ -46,7 +45,7 @@ public abstract class SessionIdCacheHandler implements CacheHandler {
 	public SessionIdCacheHandler(HttpServletRequest request, 
 			CacheKeyAugmentor cacheKeyAugmentor) {
 		
-		this.request = new SessionCreationPreventingRequestWrapper(request);
+		this.request = request;
 		this.sessionIdEncoder = new SessionIdEncoder(request);
 		this.cacheKeyAugmentor = cacheKeyAugmentor;
 	}

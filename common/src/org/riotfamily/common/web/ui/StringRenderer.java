@@ -22,11 +22,11 @@ public class StringRenderer implements ObjectRenderer {
 	
 	public void render(Object obj, RenderContext context, PrintWriter writer) {
 		if (obj != null) {
-			renderString(convertToString(obj), context, writer);
+			renderString(convertToString(obj, context), context, writer);
 		}
 	}
 	
-	protected String convertToString(Object obj) {
+	protected String convertToString(Object obj, RenderContext context) {
 		if (obj instanceof String) {
 			return (String) obj;
 		}

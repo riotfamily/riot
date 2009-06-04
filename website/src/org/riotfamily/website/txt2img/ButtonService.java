@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class ButtonService implements ApplicationContextAware {
 
@@ -71,12 +73,12 @@ public class ButtonService implements ApplicationContextAware {
 	}
 	
 	public String getInlineStyle(String style, String label, 
-			HttpServletRequest request) 
-			throws Exception {
+			HttpServletRequest request) throws Exception {
 		
 		ButtonRenderer renderer = buttons.get(style);
 		String imageUri = getImageUri(style, label, request);
-		InlineStyleHandler handler = new InlineStyleHandler(label, renderer, imageUri);
+		Locale locale = RequestContextUtils.getLocale(request);
+		InlineStyleHandler handler = new InlineStyleHandler(label, locale, renderer, imageUri);
 		cacheService.handle(handler);
 		return handler.getInlineStyle();
 	}
@@ -87,7 +89,8 @@ public class ButtonService implements ApplicationContextAware {
 		
 		ButtonRenderer renderer = buttons.get(style);
 		String imageUri = getImageUri(style, label, request);
-		ImageHandler handler = new ImageHandler(label, renderer, imageUri, response);
+		Locale locale = RequestContextUtils.getLocale(request);
+		ImageHandler handler = new ImageHandler(label, locale, renderer, imageUri, response);
 		cacheService.handle(handler);
 	}
 	
@@ -107,22 +110,26 @@ public class ButtonService implements ApplicationContextAware {
 	
 	private String getImageUri(String style, String label, HttpServletRequest request) {
 		String encodedLabel = FormatUtils.uriEscape(label);
-		return String.format("%s/riot-utils/imagebtn/%s.png?label=%s", 
-				request.getContextPath(), style, encodedLabel);
+		String locale = RequestContextUtils.getLocale(request).toString();
+		return String.format("%s/riot-utils/imagebtn/%s.png?label=%s&locale=%s", 
+				request.getContextPath(), style, encodedLabel, locale);
 	}
 	
 	private abstract class AbstractButtonHandler implements CacheHandler {
 
 		private String label;
 		
+		private Locale locale;
+		
 		private ButtonRenderer renderer;
 
 		private String imageUri;
 		
-		public AbstractButtonHandler(String label, ButtonRenderer renderer,
-				String imageUri) {
+		public AbstractButtonHandler(String label, Locale locale,
+				ButtonRenderer renderer, String imageUri) {
 			
 			this.label = label;
+			this.locale = locale;
 			this.renderer = renderer;
 			this.imageUri = imageUri;
 		}
@@ -130,7 +137,7 @@ public class ButtonService implements ApplicationContextAware {
 		public String getCacheKey() {
 			return imageUri;
 		}
-
+		
 		public long getLastModified() throws Exception {
 			return renderer.getLastModified();
 		}
@@ -151,7 +158,7 @@ public class ButtonService implements ApplicationContextAware {
 		}
 		
 		protected BufferedImage generateImage() throws Exception {
-			return renderer.generate(label);
+			return renderer.generate(label, locale);
 		}
 		
 		protected void writeImage(BufferedImage image, OutputStream out) throws IOException {
@@ -169,12 +176,11 @@ public class ButtonService implements ApplicationContextAware {
 	private class InlineStyleHandler extends AbstractButtonHandler {
 		
 		private String inlineStyle;
-
 		
-		public InlineStyleHandler(String label, ButtonRenderer renderer,
-				String imageUri) {
+		public InlineStyleHandler(String label, Locale locale,
+				ButtonRenderer renderer, String imageUri) {
 			
-			super(label, renderer, imageUri);
+			super(label, locale, renderer, imageUri);
 		}
 
 		public void handleUncached() throws Exception {
@@ -195,10 +201,10 @@ public class ButtonService implements ApplicationContextAware {
 
 		private HttpServletResponse response;
 		
-		public ImageHandler(String label, ButtonRenderer renderer,
+		public ImageHandler(String label, Locale locale, ButtonRenderer renderer,
 				String imageUri, HttpServletResponse response) {
 			
-			super(label, renderer, imageUri);
+			super(label, locale, renderer, imageUri);
 			this.response = response;
 		}
 

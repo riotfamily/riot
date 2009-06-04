@@ -23,6 +23,7 @@
 	* ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.view;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -39,6 +40,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,6 +94,8 @@ public class CommonMacroHelper {
 
 	private HttpServletResponse response;
 
+	private ServletContext servletContext;
+	
 	private ResourceStamper stamper;
 
 	private HandlerUrlResolver handlerUrlResolver;
@@ -108,12 +112,14 @@ public class CommonMacroHelper {
 
 	public CommonMacroHelper(ApplicationContext ctx,
 			HttpServletRequest request, HttpServletResponse response, 
-			ResourceStamper stamper, HandlerUrlResolver handlerUrlResolver,
+			ServletContext servletContext, ResourceStamper stamper, 
+			HandlerUrlResolver handlerUrlResolver,
 			RiotHyphenator hyphenator, boolean compressResources) {
 
 		this.ctx = ctx;
 		this.request = request;
 		this.response = response;
+		this.servletContext = servletContext;
 		this.stamper = stamper;
 		this.handlerUrlResolver = handlerUrlResolver;
 		this.hyphenator = hyphenator;
@@ -185,6 +191,32 @@ public class CommonMacroHelper {
 	
 	public String resolveAndEncodeUrl(String url) {
 		return ServletUtils.resolveAndEncodeUrl(url, request, response);
+	}
+
+	public String localize(String path) {
+		String ext = FormatUtils.getExtension(path);
+		String prefix = path;
+		if (ext.length() > 0) {
+			ext = "." + ext;
+			prefix = path.substring(0, path.length() - ext.length()) + "_";
+		}
+		String localized = prefix + getLocale() + ext;
+		if (fileExists(localized)) {
+			return localized;
+		}
+		localized = prefix + getLocale().getLanguage() + ext;
+		if (fileExists(localized)) {
+			return localized;
+		}
+		return path;
+	}
+	
+	private boolean fileExists(String path) {
+		String realPath = servletContext.getRealPath(path);
+		if (realPath == null) {
+			return false;
+		}
+		return new File(realPath).exists();
 	}
 
 	public String resolveAndEncodeLinks(String html) {

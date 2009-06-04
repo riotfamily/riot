@@ -25,6 +25,7 @@ package org.riotfamily.website.view;
 
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,15 +35,18 @@ import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.riotfamily.website.hyphenate.RiotHyphenator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class CommonMacroHelperFactory implements MacroHelperFactory, 
-		ApplicationContextAware {
+		ApplicationContextAware, ServletContextAware {
 
 	private ApplicationContext applicationContext;
+
+	private ServletContext servletContext;
 	
 	private ResourceStamper stamper;
 	
@@ -56,6 +60,10 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 		this.applicationContext = applicationContext;
 	}
 
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
+	}
+	
 	public void setStamper(ResourceStamper stamper) {
 		this.stamper = stamper;
 	}
@@ -76,7 +84,8 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 			HttpServletResponse response, Map<String, ?> model) {
 		
 		return new CommonMacroHelper(applicationContext, request, response, 
-				stamper, handlerUrlResolver, hyphenator, compressResources);
+				servletContext, stamper, handlerUrlResolver, hyphenator, 
+				compressResources);
 	}
 
 }

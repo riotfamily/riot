@@ -25,6 +25,7 @@ package org.riotfamily.website.txt2img;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Locale;
 
 import org.riotfamily.common.image.ImageUtils;
 import org.springframework.core.io.Resource;
@@ -80,12 +81,12 @@ public class ListItemRenderer extends TextRenderer {
 	}
 	
 	@Override
-	public BufferedImage generate(String text, int maxWidth, String color) {
-		return generate(text, maxWidth, color, false);
+	public BufferedImage generate(String text, Locale locale, int maxWidth, String color) {
+		return generate(text, locale, maxWidth, color, false);
 	}
 	
-	public BufferedImage generate(String text, int maxWidth, String color, boolean hover) {
-		BufferedImage image = super.generate(text, maxWidth, color);
+	public BufferedImage generate(String text, Locale locale, int maxWidth, String color, boolean hover) {
+		BufferedImage image = super.generate(text, locale, maxWidth, color);
 		if (bulletIcon != null && !hover) {
 			image.getGraphics().drawImage(bulletIcon, bulletLeft, bulletTop, null);
 		}
