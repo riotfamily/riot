@@ -305,13 +305,15 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		return digestObjectEditorDefinition(ele, parentDef);
 	}
 
-	protected ViewDefinition digestViewDefinition(Element formElement,
+	protected ViewDefinition digestViewDefinition(Element viewElement,
 			EditorDefinition parentDef) {
 
 		ViewDefinition viewDefinition = new ViewDefinition(editorRepository);
-		XmlUtils.populate(viewDefinition, formElement, VIEW_ATTR, beanFactory);
+		XmlUtils.populate(viewDefinition, viewElement, VIEW_ATTR, beanFactory);
 		viewDefinition.setParentEditorDefinition(parentDef);
 		addEditorDefinition(viewDefinition);
+		
+		digestChildEditors(viewElement, viewDefinition);
 		return viewDefinition;
 	}
 

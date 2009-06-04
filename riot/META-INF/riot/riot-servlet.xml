@@ -524,6 +524,7 @@
 	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="listService" />
+		<property name="messageCodesResolver" ref="messageCodesResolver" />
 	</bean>
 	<alias name="viewController" alias="/view/@{editorId}" />
 	<alias name="viewController" alias="/view/@{editorId}/@{objectId}" />

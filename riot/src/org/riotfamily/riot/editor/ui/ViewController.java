@@ -23,24 +23,35 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
+import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.riot.editor.EditorConstants;
-import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.editor.ViewDefinition;
 import org.riotfamily.riot.editor.ViewReference;
 import org.riotfamily.riot.list.ui.ListService;
 import org.riotfamily.riot.list.ui.ListSession;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
-public class ViewController implements Controller {
+public class ViewController implements Controller, MessageSourceAware {
 
+	private MessageSource messageSource;
+	
+	private AdvancedMessageCodesResolver messageCodesResolver;
+	
 	private EditorRepository editorRepository;
 
 	private ListService listService;
@@ -55,6 +66,14 @@ public class ViewController implements Controller {
 		this.listService = listService;
 	}
 
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+	
+	public void setMessageCodesResolver(AdvancedMessageCodesResolver codesResolver) {
+		this.messageCodesResolver = codesResolver;
+	}
+	
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
@@ -68,7 +87,7 @@ public class ViewController implements Controller {
 		String objectId = (String) request.getAttribute(EditorConstants.OBJECT_ID);
 		Assert.notNull(objectId, "No objectId in request scope");
 
-		EditorDefinition editorDef = editorRepository.getEditorDefinition(editorId);
+		ViewDefinition editorDef = (ViewDefinition) editorRepository.getEditorDefinition(editorId);
 		Assert.notNull(editorDef, "No such EditorDefinition: " + editorId);
 
 		Object object = EditorDefinitionUtils.loadBean(editorDef, objectId);
@@ -80,6 +99,13 @@ public class ViewController implements Controller {
 		mv.addObject(EditorConstants.PARENT_ID, parentId);
 		mv.addObject("object", object);
 		mv.addObject("template", ((ViewReference) editorDef).getTemplate());
+
+		Locale locale = RequestContextUtils.getLocale(request);
+		MessageResolver messageResolver = new MessageResolver(messageSource,
+				messageCodesResolver, locale);
+		
+		mv.addObject("childLists", editorDef.getChildEditorReferences(object,
+				messageResolver));
 
 		ListDefinition listDef = EditorDefinitionUtils.getListDefinition(editorDef);
 

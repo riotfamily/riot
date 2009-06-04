@@ -120,6 +120,7 @@
 
 	<xsd:element name="view">
 		<xsd:complexType>
+			<xsd:group ref="editors" minOccurs="0" maxOccurs="unbounded" />
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="view-name" type="xsd:string" />
 			<xsd:attribute name="label-property" type="xsd:string" />

@@ -38,6 +38,21 @@
 					<div id="formCommands" class="commands"></div>
 				</div>
 	
+				<#if childLists?has_content>
+					<div id="childLists" class="box">
+						<div class="box-title">
+							<span class="label"><@spring.messageText "label.childLists", "Sub-Elements" /></span>
+						</div>
+						<div class="list">
+							<#list childLists as item>
+								<div class="item">
+									<a href="${riot.url(item.editorUrl)}">${item.label}</a>
+								</div>
+							</#list>
+						</div>
+					</div>
+				</#if>
+				
 				<script type="text/javascript" language="JavaScript">
 					var list = new RiotList('${listKey}');
 					var item = {
