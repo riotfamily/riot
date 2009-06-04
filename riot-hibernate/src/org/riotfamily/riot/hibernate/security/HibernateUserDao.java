@@ -268,9 +268,9 @@ public class HibernateUserDao extends HqlDao
 	 * Invokes {@link #hashNewPassword(Object)} and delegates the call to the
 	 * super method.
 	 */
-	public void update(Object entity) {
+	public Object update(Object entity) {
 		hashNewPassword(entity);
-		super.update(entity);
+		return super.update(entity);
 	}
 
 }

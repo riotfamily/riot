@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
-public interface NestedEditor extends BackingObjectAware {
+public interface NestedEditor {
 
 	public Editor getEditor(String property);
 

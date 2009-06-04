@@ -65,7 +65,7 @@ public interface RiotDao {
 	 * written to the database when an object has been modified within a 
 	 * transaction.
 	 */
-	public void update(Object entity) throws DataAccessException;
+	public Object update(Object entity) throws DataAccessException;
 
 	/**
 	 * Saves the given entity.

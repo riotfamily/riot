@@ -118,9 +118,6 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		
 	protected abstract Object loadBean(String objectId);
 	
-	protected abstract Object mergeBean(Object bean);
-	
-	
 	protected void setObjectId(String objectId) {
 		log.debug("Setting objectId to: " + objectId);
 		Object oldObject = object;
@@ -140,10 +137,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 
 	public Object getValue() {
-		if (object == null) {
-			return null;
-		}
-		return mergeBean(object);
+		return object;
 	}
 	
 	public void handleContentRequest(HttpServletRequest request, 

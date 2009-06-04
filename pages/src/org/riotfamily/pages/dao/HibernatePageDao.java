@@ -124,7 +124,11 @@ public class HibernatePageDao extends AbstractPageDao {
 		}				
 	}
 	
-	public Site mergeSite(Site site) {
+	protected Page mergePage(Page page) {
+		return hibernate.merge(page);
+	}
+	
+	protected Site mergeSite(Site site) {
 		return hibernate.merge(site);
 	}
 
@@ -133,10 +137,6 @@ public class HibernatePageDao extends AbstractPageDao {
 		c.add(Restrictions.eq("site", site));
 		c.add(Restrictions.eq("path", path));
 		return (Page) hibernate.uniqueResult(c);
-	}
-
-	public Page mergePage(Page page) {
-		return hibernate.reattach(page);		
 	}
 	
 	public PageNode findNodeOfType(String pageType) {

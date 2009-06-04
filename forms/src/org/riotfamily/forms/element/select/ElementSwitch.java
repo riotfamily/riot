@@ -133,10 +133,4 @@ public class ElementSwitch extends Container
 		return cases.get(discriminator).getEditor(property.substring(i + 1));
 	}
 
-	public void setBackingObject(Object obj) {
-		for (SwitchCase c : cases.values()) {
-			c.setBackingObject(obj);
-		}
-	}
-
 }

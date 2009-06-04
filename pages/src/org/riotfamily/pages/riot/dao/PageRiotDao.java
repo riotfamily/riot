@@ -150,14 +150,9 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 		}
 	}
 
-	public Object merge(Object entity) throws DataAccessException {
+	public Object update(Object entity) throws DataAccessException {
 		Page page = (Page) entity;
-		return pageDao.mergePage(page);
-	}
-	
-	public void update(Object entity) throws DataAccessException {
-		Page page = (Page) entity;
-		pageDao.updatePage(page);
+		return pageDao.updatePage(page);
 	}
 
 	public void swapEntity(Object entity, Object parent, ListParams params,

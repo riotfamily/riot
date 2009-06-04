@@ -83,16 +83,10 @@ public class RiotDaoAdapter implements RiotDao {
 	}
 
 	/**
-	 * Returns the given entity.
+	 * Returns the object as-is.
 	 */
-	public Object merge(Object entity) throws DataAccessException {
+	public Object update(Object entity) throws DataAccessException {
 		return entity;
-	}
-	
-	/**
-	 * Does nothing.
-	 */
-	public void update(Object entity) throws DataAccessException {
 	}
 	
 	/**

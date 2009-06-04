@@ -242,7 +242,7 @@ public abstract class AbstractFormController implements Controller {
 	
 	/**
 	 * Populates newly created forms. The default implementation invokes 
-	 * {@link Form#setValue(Object)} with the object returned by 
+	 * {@link Form#setBackingObject(Object)} with the object returned by 
 	 * {@link #getFormBackingObject(HttpServletRequest)}. 
 	 */
 	protected void populateForm(Form form, HttpServletRequest request) 

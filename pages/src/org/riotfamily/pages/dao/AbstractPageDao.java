@@ -104,6 +104,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	
 	protected abstract void refreshIfDetached(Object object);
 	
+	protected abstract Site mergeSite(Site site);
+	
+	protected abstract Page mergePage(Page page);
+	
 	public Page loadPage(Long id) {
 		return (Page) loadObject(Page.class, id);
 	}
@@ -207,7 +211,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		return translation;
 	}
 
-	public void updatePage(Page page) {
+	public Page updatePage(Page page) {
+		page = mergePage(page);
 		PageNode node = page.getNode();
 		validate(node.getParent(), page);
 		PageCacheUtils.invalidateNode(cacheService, node);
@@ -222,6 +227,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			createAlias(page, oldPath);
 			updatePaths(page.getChildPages());
 		}
+		return page;
 	}
 	
 	public void publishPage(Page page) {
@@ -347,8 +353,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		refreshIfDetached(site);
 	}
 
-	public void updateSite(Site site) {
+	public Site updateSite(Site site) {
+		site = mergeSite(site);
 		PageCacheUtils.invalidateSite(cacheService, site);
+		return site;
 	}
 	
 	private void translateSystemPages(PageNode node, Site masterSite, Site site) {

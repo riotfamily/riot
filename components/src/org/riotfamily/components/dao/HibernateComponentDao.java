@@ -96,8 +96,8 @@ public class HibernateComponentDao implements ComponentDao {
 		hibernate.save(version);
 	}
 		
-	public void updateContent(Content content) {
-		hibernate.update(content);
+	public Content mergeContent(Content content) {
+		return hibernate.merge(content);
 	}
 
 	public ContentContainer findContainerForComponent(Component component) {

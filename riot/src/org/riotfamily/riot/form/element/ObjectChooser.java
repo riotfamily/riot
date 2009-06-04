@@ -206,11 +206,6 @@ public class ObjectChooser extends AbstractChooser
 		return getRiotDao().load(objectId);
 	}
 	
-	@Override
-	protected Object mergeBean(Object bean) {
-		return getRiotDao().merge(bean);
-	}
-
 	protected void renderLabel(Object object, PrintWriter writer) {
 		if (object == null) {
 			return;

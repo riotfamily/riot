@@ -33,6 +33,7 @@ import org.hibernate.NonUniqueObjectException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
@@ -265,6 +266,7 @@ public class HibernateHelper extends HibernateSupport {
 			return object;
 		}
 		catch (NonUniqueObjectException e) {
+			RiotLog.get(this).warn("** Update failed - performing merge", e);
 			return merge(object);
 		}
 	}

@@ -78,13 +78,9 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 		pageDao.saveSite((Site) entity);
 	}
 
-	public Object merge(Object entity) throws DataAccessException {
-		return pageDao.mergeSite((Site) entity);
-	}
-	
-	public void update(Object entity) throws DataAccessException {
+	public Object update(Object entity) throws DataAccessException {
 		Site site = (Site) entity;
-		pageDao.updateSite(site);
+		return pageDao.updateSite(site);
 	}
 
 	public void delete(Object entity, Object parent) throws DataAccessException {

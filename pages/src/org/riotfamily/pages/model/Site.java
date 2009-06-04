@@ -197,6 +197,7 @@ public class Site {
 	}
 
 	@ManyToOne
+	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public Site getMasterSite() {
 		return this.masterSite;
 	}

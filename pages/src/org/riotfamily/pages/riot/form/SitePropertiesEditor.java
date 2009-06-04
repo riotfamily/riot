@@ -72,11 +72,7 @@ public class SitePropertiesEditor extends CompositeElement
 	// ------------------------------------------------------------------
 	// Implementation of the NestedEditor interface 
 	// ------------------------------------------------------------------
-	
-	public void setBackingObject(Object obj) {
-		propertiesForm.setBackingObject(obj);
-	}
-	
+		
 	public Editor getEditor(String property) {
 		return propertiesForm.getEditor(property);
 	}

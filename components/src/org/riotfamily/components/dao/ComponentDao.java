@@ -73,9 +73,9 @@ public interface ComponentDao {
 	public void saveContent(Content content);
 	
 	/**
-	 * Updates the given Content.
+	 * Merges the given Content.
 	 */
-	public void updateContent(Content content);
+	public Content mergeContent(Content content);
 	
 	/**
 	 * Deletes the given ComponentList.

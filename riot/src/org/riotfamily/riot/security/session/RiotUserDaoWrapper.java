@@ -84,15 +84,11 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 	public void save(Object entity, Object parent) throws DataAccessException {
 		wrappedInstance.save(entity, parent);		
 	}
-	
-	public Object merge(Object entity) {		
-		return wrappedInstance.merge(entity);
-	}
-	
-	public void update(Object entity) {		
-		wrappedInstance.update(entity);
-		RiotUser user = (RiotUser) entity;
+		
+	public Object update(Object entity) {		
+		RiotUser user = (RiotUser) wrappedInstance.update(entity);
 		UserHolder.updateUser(user.getUserId(), user);
+		return user;
 	}
 
 	public void delete(Object entity, Object parent) {

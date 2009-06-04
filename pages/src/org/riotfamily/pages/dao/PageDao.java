@@ -116,9 +116,7 @@ public interface PageDao {
 
 	public void refreshPageIfDetached(Page page);
 
-	public Object mergePage(Page page);
-
-	public void updatePage(Page page);
+	public Page updatePage(Page page);
 
 	public void publishPage(Page page);
 	
@@ -152,9 +150,7 @@ public interface PageDao {
 
 	public void refreshSiteIfDetached(Site site);
 
-	public Site mergeSite(Site site);
-	
-	public void updateSite(Site site);
+	public Site updateSite(Site site);
 
 	public void deleteSite(Site site);
 	
