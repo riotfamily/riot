@@ -193,11 +193,11 @@ riot.window = (function() {
 				}
 
 				var w = Math.max(this.options.minWidth, el.offsetWidth);
-				var h = Math.max(this.options.minHeight, el.offsetHeight);
 				w = Math.min(w, document.viewport.getWidth() - 50);
-				h = Math.min(h, document.viewport.getHeight() - 100); 
-				
 				this.pane.style.width = w + 'px';
+				
+				var h = Math.max(this.options.minHeight, el.offsetHeight);
+				h = Math.min(h, document.viewport.getHeight() - 100); 
 				this.pane.style.height = h + 'px';
 				if (this.iframe) {
 					this.iframe.style.height = this.pane.style.height; 

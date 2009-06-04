@@ -45,7 +45,7 @@ Pellentesque malesuada euismod erat. Sed in ante. Quisque scelerisque. Etiam eu 
 	}
 	function openModal(w) {
 		if (!w) w = 600;
-		new riot.window.Dialog({url: 'textarea.html', content: 'Hello World. <button onclick="openModal('+ (w-50) +')">Open Another</button> <button onclick="riot.window.closeAll()">Close All</button>', title: 'Test', closeButton: true, minWidth: 2000, minHeight: 2000});
+		new riot.window.Dialog({xurl: 'textarea.html', content: 'Hello World. <button onclick="openModal('+ (w-50) +')">Open Another</button> <button onclick="riot.window.closeAll()">Close All</button>', title: 'Test', closeButton: true, minWidth: 200, minHeight: 50});
 	}
 </script>
 </body>
