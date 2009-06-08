@@ -57,9 +57,11 @@
 
 <#macro renderScreenlets>
 	<#if context.screen.screenlets??>
-		<#list context.screen.screenlets as screenlet>
-			${screenlet.render(context)}
-		</#list>
+		<div id="screenlets">
+			<#list context.screen.screenlets as screenlet>
+				${screenlet.render(context)}
+			</#list>
+		</div>
 	</#if>
 </#macro>
 

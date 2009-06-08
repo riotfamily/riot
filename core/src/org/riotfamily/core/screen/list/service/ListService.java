@@ -187,5 +187,12 @@ public class ListService {
 		return new CommandContextHandler(this, key, request)
 				.handleDialogInput(form);
 	}
+	
+	@RemoteMethod
+	public String renderScreenlets(String key,
+			HttpServletRequest request,	HttpServletResponse response) {
+		
+		return new ScreenletRenderer(this, key, request).renderAll();
+	}
 
 }

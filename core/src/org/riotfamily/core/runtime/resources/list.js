@@ -186,6 +186,12 @@ var RiotList = Class.create({
 				return;
 			}
 		}
+		var screenlets = $('screenlets');
+		if (screenlets) {
+			ListService.renderScreenlets(this.key, function(html) {
+				screenlets.update(html);
+			});
+		}
 	},
 		
 	getSelectionIndex: function(item) {
