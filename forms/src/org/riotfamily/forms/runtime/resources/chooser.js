@@ -9,8 +9,8 @@ riot.chooser = (function() {
 			this.id = id;
 			this.url = url;
 			this.element = $(id);
-			this.element.down('button.choose').observe('click', this.choose.bindAsEventListener(this));
-			var unset = this.element.down('button.unset');
+			this.element.down('.choose').observe('click', this.choose.bindAsEventListener(this));
+			var unset = this.element.down('.unset');
 			if (unset) {
 				unset.observe('click', this.unset.bindAsEventListener(this));
 			}
