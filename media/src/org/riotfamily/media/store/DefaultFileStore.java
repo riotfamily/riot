@@ -33,7 +33,9 @@ import javax.servlet.ServletContext;
 
 import org.riotfamily.common.io.RecursiveFileIterator;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.RandomStringGenerator;
 import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.common.util.RandomStringGenerator.Chars;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
@@ -60,6 +62,9 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	private int storageDirIndex = 0;
 	
 	private int maxFilesPerDir = 500;
+	
+	private RandomStringGenerator dirNameGenerator = 
+			new RandomStringGenerator(14, true, Chars.DIGITS);
 	
 	private ServletContext servletContext;
 		
@@ -170,9 +175,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	protected File getUniqueDir() {
 		File parent = getStorageDir();
 		for (int i = 0; i < maxFilesPerDir; i++) {
-			File dir = new File(parent, String.valueOf(
-					System.currentTimeMillis()) + i);
-			
+			File dir = new File(parent, dirNameGenerator.generate());
 			if (!dir.exists()) {
 				dir.mkdir();
 				return dir;
