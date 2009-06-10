@@ -21,7 +21,7 @@
  *   flx
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.schema;
+package org.riotfamily.pages.config;
 
 import org.riotfamily.common.hibernate.EntityListener;
 import org.riotfamily.pages.model.Site;

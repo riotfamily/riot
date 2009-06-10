@@ -23,9 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.xml;
 
-import java.util.List;
-
 import org.riotfamily.common.xml.XmlUtils;
+import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
@@ -36,29 +35,34 @@ import org.w3c.dom.Node;
 
 /**
  * BeanDefinitionDecorator that calls 
- * {@link BeanDefinitionParserDelegate#parseListElement(Element, BeanDefinition)
- * delegate.parseListElement()} and sets the resulting list as property. 
+ * {@link BeanDefinitionParserDelegate#parsePropertySubElement(Element, BeanDefinition)
+ * delegate.parsePropertySubElement()} <b>with the first child element</b> and 
+ * sets the result as property. 
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */
-public class ListDecorator implements BeanDefinitionDecorator {
+public class PropertyDecorator implements BeanDefinitionDecorator {
 
 	private String propertyName;
-
-	public ListDecorator() {
+	
+	public PropertyDecorator() {
 	}
 	
-	public ListDecorator(String propertyName) {
+	public PropertyDecorator(String propertyName) {
 		this.propertyName = propertyName;
 	}
-
+	
 	public BeanDefinitionHolder decorate(Node node,
 			BeanDefinitionHolder definition, ParserContext parserContext) {
 
 		BeanDefinition bd = definition.getBeanDefinition();
-		List<?> list = parserContext.getDelegate().parseListElement((Element) node, bd);
-		bd.getPropertyValues().addPropertyValue(getPropertyName(node), list);
+		MutablePropertyValues pv = bd.getPropertyValues();
+		Element child = XmlUtils.getFirstChildElement((Element) node);
+		if (child != null) {
+			Object value = parserContext.getDelegate().parsePropertySubElement(child, bd);
+			pv.addPropertyValue(getPropertyName(node), value);
+		}
 		return definition;
 	}
 

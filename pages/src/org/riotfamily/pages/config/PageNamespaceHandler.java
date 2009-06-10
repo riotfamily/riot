@@ -21,13 +21,13 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.schema;
+package org.riotfamily.pages.config;
 
-import org.riotfamily.common.beans.xml.ContextualBeanDecorator;
+import org.riotfamily.common.beans.xml.ChildDecorator;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.ListItemDecorator;
 import org.riotfamily.common.beans.xml.MapEntryDecorator;
-import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
+import org.riotfamily.common.beans.xml.PropertyValueDecorator;
 
 /**
  * NamespaceHandler that handles the <code>page</code> namspace as
@@ -36,15 +36,16 @@ import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
 public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		register("schema", SitemapSchema.class);
-		register("page", SystemPage.class, new ListItemDecorator("pages"));
-		registerBeanDefinitionDecorator("prop", new MapEntryDecorator("properties", "key"));
-		register("type", TypeInfo.class, 
-				new ContextualBeanDecorator()
-					.register("schema", new ListItemDecorator("types"))
-					.register("type", new ListItemDecorator("childTypes"))
-					.register("page", new NestedPropertyDecorator("type"))
-		);
+		register("schema", SitemapSchema.class).setDecorator(new ChildDecorator()
+				.register("type", new ListItemDecorator("types"))
+				.register("page", new ListItemDecorator("pages")));
+		
+		register("page", SystemPage.class).setDecorator(new ChildDecorator()
+				.register("type", new PropertyValueDecorator())
+				.register("prop", new MapEntryDecorator("properties", "key")));
+		
+		register("type", TypeInfo.class).setDecorator(new ChildDecorator()
+				.register("type", new ListItemDecorator("childTypes")));
 	}
 	
 }

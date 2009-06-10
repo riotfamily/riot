@@ -86,6 +86,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			super(PropertyOverrideProcessor.class);
 		}
 		
+		@Override
 		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
 				ParserContext parserContext, Element element) {
 			
@@ -101,6 +102,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			super(MapMergeProcessor.class);
 		}
 		
+		@Override
 		@SuppressWarnings("unchecked")
 		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
 				ParserContext parserContext, Element element) {
@@ -121,6 +123,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			super(ListMergeProcessor.class);
 		}
 		
+		@Override
 		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
 				ParserContext parserContext, Element element) {
 			
@@ -140,12 +143,16 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			super(BeanOverrideProcessor.class);
 		}
 		
-		protected boolean isEligibleAttribute(String attributeName) {
+		@Override
+		protected boolean isEligibleAttribute(String attributeName, 
+				ParserContext parserContext) {
+			
 			return attributeName.equals("ref") 
 					|| attributeName.equals("merge")
 					|| attributeName.equals("order");
 		}
 		
+		@Override
 		protected void postProcess(BeanDefinitionBuilder builder, 
 				ParserContext parserContext, Element element) {
 			

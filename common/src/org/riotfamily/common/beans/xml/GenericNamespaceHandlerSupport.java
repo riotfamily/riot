@@ -34,24 +34,6 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSupport {
 
 	/**
-	 * Registers a {@link SpringBeanDefinitionParser} for the given elementName.
-	 */
-	protected void registerSpringBeanDefinitionParser(String elementName) {
-		registerBeanDefinitionParser(elementName, new SpringBeanDefinitionParser());
-	}
-
-	/**
-	 * Registers a {@link SpringBeanDefinitionParser} and a decorator
-	 * for the given elementName.
-	 */
-	protected void registerSpringBeanDefinitionParser(String elementName,
-			BeanDefinitionDecorator decorator) {
-
-		registerSpringBeanDefinitionParser(elementName);
-		registerBeanDefinitionDecorator(elementName, decorator);
-	}
-
-	/**
 	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName
 	 * that creates BeanDefinitions for the specified class.
 	 */

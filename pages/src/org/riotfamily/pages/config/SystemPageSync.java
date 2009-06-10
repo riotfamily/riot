@@ -21,7 +21,7 @@
  *   flx
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.schema;
+package org.riotfamily.pages.config;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

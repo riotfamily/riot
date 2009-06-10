@@ -30,37 +30,50 @@ import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.beans.factory.xml.XmlReaderContext;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * BeanDefinitionDecorator that delegates to different delegates, depending
- * on the local name of the parent element.
+ * BeanDefinitionDecorator that decorates child elements.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */
-public class ContextualBeanDecorator implements BeanDefinitionDecorator {
+public class ChildDecorator implements BeanDefinitionDecorator {
 
-	private Map<String,BeanDefinitionDecorator> decorators = Generics.newHashMap();
+	private Map<String, BeanDefinitionDecorator> decorators = Generics.newHashMap();
+	
+	private BeanDefinitionDecorator defaultDecorator;
 
-	public ContextualBeanDecorator register(String parentNodeName, BeanDefinitionDecorator decorator) {
-		decorators.put(parentNodeName, decorator);
+	/**
+	 * Registers a decorator for child elements with the specified name.
+	 */
+	public ChildDecorator register(String elementName, BeanDefinitionDecorator decorator) {
+		decorators.put(elementName, decorator);
+		return this;
+	}
+
+	/**
+	 * Sets a default decorator that is used for all unmatched child elements.
+	 */
+	public ChildDecorator setDefault(BeanDefinitionDecorator decorator) {
+		this.defaultDecorator = decorator;
 		return this;
 	}
 	
 	public BeanDefinitionHolder decorate(Node node,
 			BeanDefinitionHolder definition, ParserContext parserContext) {
-		
-		String parentName = XmlUtils.getLocalName(node.getParentNode());
-		BeanDefinitionDecorator decorator = decorators.get(parentName);
-		
-		if (decorator == null) {
-			XmlReaderContext ctx = parserContext.getReaderContext();
-			ctx.error("No decorator registered for type '" 
-					+ parentName + "'", ctx.extractSource(node));
+
+		for (Element el : XmlUtils.getChildElements((Element) node)) {
+			BeanDefinitionDecorator decorator = decorators.get(XmlUtils.getLocalName(el));
+			if (decorator == null) {
+				decorator = defaultDecorator;
+			}
+			if (decorator != null) {
+				decorator.decorate(el, definition, parserContext);
+			}
 		}
-		return decorator.decorate(node, definition, parserContext);
+		return definition;
 	}
 
 }

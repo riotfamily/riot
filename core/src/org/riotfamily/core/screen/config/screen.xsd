@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.riotfamily.org/schema/core/screen"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:tool="http://www.springframework.org/schema/tool"
+	attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.riotfamily.org/schema/core/screen">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.5.xsd" />
+		
+	<xsd:import namespace="http://www.springframework.org/schema/tool"
+		schemaLocation="http://www.springframework.org/schema/tool/spring-tool-2.5.xsd" />
+
+	<xsd:element name="group" type="groupType" />
+	
+	<xsd:element name="list" type="listType" />
+	
+	<xsd:element name="form" type="formType" />
+	
+	<xsd:group name="screenElements">
+		<xsd:choice>
+			<xsd:element ref="group" />
+			<xsd:element ref="list" />
+			<xsd:element ref="form" />
+			<xsd:any namespace="##other" processContents="strict" />
+		</xsd:choice>
+	</xsd:group>
+	
+	<xsd:complexType name="screenType">
+		<xsd:attribute name="id" type="xsd:string" />
+		<xsd:attribute name="icon" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="listType">
+		<xsd:complexContent>
+			<xsd:extension base="screenType">
+				<xsd:sequence>
+					<xsd:element name="dao">
+						<xsd:complexType>
+							<xsd:choice>
+								<xsd:element ref="beans:bean" />
+								<xsd:element ref="beans:ref" />
+							</xsd:choice>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="columns">
+						<xsd:complexType>
+							<xsd:choice maxOccurs="unbounded">
+								<xsd:element name="column" type="columnType" />
+							</xsd:choice>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="commands" minOccurs="0">
+						<xsd:complexType>
+							<xsd:choice maxOccurs="unbounded">
+								<xsd:element ref="beans:bean" />
+								<xsd:element ref="beans:ref" />
+							</xsd:choice>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:group ref="screenElements" minOccurs="0" />
+					<xsd:element name="screenlets" type="screenletsType" minOccurs="0" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="screenletsType">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element ref="beans:bean" />
+			<xsd:element ref="beans:ref" />
+		</xsd:choice>
+		<!-- <xsd:attribute name="ref" type="xsd:string" /> -->
+	</xsd:complexType>
+	
+	<xsd:complexType name="columnType">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element ref="beans:bean" />
+			<xsd:element ref="beans:ref" />
+		</xsd:choice>
+		<xsd:attribute name="property" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="formType">
+		<xsd:complexContent>
+			<xsd:extension base="screenType">
+				<xsd:sequence>
+					<xsd:group ref="screenElements" minOccurs="0" />
+					<xsd:element name="screenlets" type="screenletsType" minOccurs="0" />
+				</xsd:sequence>
+				<xsd:attribute name="form-id" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="groupType">
+		<xsd:complexContent>
+			<xsd:extension base="screenType">
+				<xsd:sequence>
+					<xsd:group ref="screenElements" maxOccurs="unbounded" />
+					<xsd:element name="screenlets" type="screenletsType" minOccurs="0" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+</xsd:schema>

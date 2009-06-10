@@ -21,7 +21,7 @@
  *   flx
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.schema;
+package org.riotfamily.pages.config;
 
 import java.util.List;
 import java.util.Map;

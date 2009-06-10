@@ -30,10 +30,10 @@ import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
+import org.riotfamily.pages.config.SitemapSchema;
+import org.riotfamily.pages.config.TypeInfo;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.schema.SitemapSchema;
-import org.riotfamily.pages.schema.TypeInfo;
 
 /**
  * FormInitializer that imports form fields defined in content-forms.xml.

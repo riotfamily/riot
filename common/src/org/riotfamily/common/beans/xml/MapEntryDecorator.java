@@ -31,10 +31,19 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
+import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+/**
+ * BeanDefinitionDecorator that calls 
+ * {@link BeanDefinitionParserDelegate#parsePropertyValue(Element, BeanDefinition, String)
+ * delegate.parsePropertyValue()} and puts the result into a map.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 9.0
+ */
 public class MapEntryDecorator implements BeanDefinitionDecorator {
 
 	private String mapPropertyName;
@@ -46,6 +55,7 @@ public class MapEntryDecorator implements BeanDefinitionDecorator {
 		this.keyAttribute = keyAttribute;
 	}
 
+	@SuppressWarnings("unchecked")
 	public BeanDefinitionHolder decorate(Node node,
 			BeanDefinitionHolder definition, ParserContext parserContext) {
 

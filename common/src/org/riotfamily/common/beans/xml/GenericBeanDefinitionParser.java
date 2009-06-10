@@ -105,7 +105,7 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 		for (int x = 0; x < attributes.getLength(); x++) {
 			Attr attribute = (Attr) attributes.item(x);
 			String name = attribute.getLocalName();
-			if (isEligibleAttribute(name)) {
+			if (isEligibleAttribute(name, parserContext)) {
 				String propertyName = extractPropertyName(name);
 				Assert.state(StringUtils.hasText(propertyName),
 						"Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
@@ -122,17 +122,20 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 		}
 		postProcess(builder, parserContext, element);
 	}
-
+	
 	/**
 	 * Determine whether the given attribute is eligible for being
 	 * turned into a corresponding bean property value.
 	 * <p>The default implementation considers any attribute as eligible,
-	 * except for the "id" and "name" attributes.
+	 * except for the "id" and "name" attributes in case of a top-level bean.
 	 * @param attributeName the attribute name taken straight from the
 	 * XML element being parsed (never <code>null</code>)
 	 */
-	protected boolean isEligibleAttribute(String attributeName) {
-		return !attributeName.equals(ID_ATTRIBUTE) && !attributeName.equals(aliasAttribute);
+	protected boolean isEligibleAttribute(String attributeName, 
+			ParserContext parserContext) {
+		
+		return parserContext.isNested() || (!attributeName.equals(ID_ATTRIBUTE) 
+				&& !attributeName.equals(aliasAttribute));
 	}
 
 	/**

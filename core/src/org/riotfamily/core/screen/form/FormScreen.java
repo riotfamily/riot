@@ -104,6 +104,10 @@ public class FormScreen extends AjaxFormController
 	public void setIcon(String icon) {
 		this.icon = icon;
 	}
+
+	public void setScreenlets(List<Screenlet> screenlets) {
+		this.screenlets = screenlets;
+	}
 	
 	public void setBeanName(String beanName) {
 		if (id == null) {
@@ -276,8 +280,4 @@ public class FormScreen extends AjaxFormController
 		return screenlets;
 	}
 
-	public void setScreenlets(List<Screenlet> screenlets) {
-		this.screenlets = screenlets;
-	}
-	
 }

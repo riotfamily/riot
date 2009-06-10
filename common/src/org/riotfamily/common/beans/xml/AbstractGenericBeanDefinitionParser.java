@@ -35,6 +35,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
@@ -44,7 +45,7 @@ import org.w3c.dom.Element;
 
 /**
  * Class similar to Spring's {@link AbstractSingleBeanDefinitionParser}.
- * Supports registering aliased beans and decoration of nested beans.
+ * Supports registration of aliased beans, autowire and decoration.
  *
  * @author Carsten Woelk [cwoelk at neteye dot de]
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -59,9 +60,12 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	
 	private Class<?> beanClass;
 
-	private boolean decorate = true;
+	private BeanDefinitionDecorator decorator;
+	
+	private int autowireMode = AbstractBeanDefinition.AUTOWIRE_NO;
 	
 	private boolean enabled = true;
+
 
 	public AbstractGenericBeanDefinitionParser(Class<?> beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null");
@@ -84,12 +88,23 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	}
 
 	/**
-	 * Sets whether the bean should be decorated. Default is <code>true</code>.
+	 * Sets a decorator that should be used to decorate the BeanDefinition.
 	 */
-	public void setDecorate(boolean decorate) {
-		this.decorate = decorate;
+	public AbstractGenericBeanDefinitionParser setDecorator(
+			BeanDefinitionDecorator decorator) {
+		
+		this.decorator = decorator;
+		return this;
 	}
 
+	/**
+	 * Sets the autowire mode. Default is <code>AUTOWIRE_NO</code>.
+	 */
+	public AbstractGenericBeanDefinitionParser setAutowireMode(int autowireMode) {
+		this.autowireMode = autowireMode;
+		return this;
+	}
+	
 	public final BeanDefinition parse(Element element, ParserContext parserContext) {
 		if (!enabled) {
 			throw new FatalBeanException("Support for " + element.getTagName() +
@@ -106,8 +121,8 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 				}
 				String[] aliases = resolveAliases(element, definition, parserContext);
 				BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, id, aliases);
-				if (decorate) {
-					parserContext.getDelegate().decorateBeanDefinitionIfRequired(element, holder);
+				if (decorator != null) {
+					holder = decorator.decorate(element, holder, parserContext);
 				}
 				registerBeanDefinition(holder, parserContext.getRegistry());
 				if (shouldFireEvents()) {
@@ -121,9 +136,9 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 				return null;
 			}
 		}
-		else if (decorate) {
+		else if (decorator != null) {
 			BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, "");
-			parserContext.getDelegate().decorateBeanDefinitionIfRequired(element, holder);
+			decorator.decorate(element, holder, parserContext);
 		}
 		return definition;
 	}
@@ -150,6 +165,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 			// Default-lazy-init applies to custom bean definitions as well.
 			builder.setLazyInit(true);
 		}
+		builder.setAutowireMode(autowireMode );
 		doParse(element, parserContext, builder);
 		return builder.getBeanDefinition();
 	}

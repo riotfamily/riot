@@ -20,15 +20,15 @@
 	</bean>
 	
 	<bean id="sitemapSchema" class="org.riotfamily.common.beans.config.SingletonLookupFactoryBean">
-		<constructor-arg value="org.riotfamily.pages.schema.SitemapSchema" />
+		<constructor-arg value="org.riotfamily.pages.config.SitemapSchema" />
 	</bean>
 	
-	<bean class="org.riotfamily.pages.schema.SystemPageSync">
+	<bean class="org.riotfamily.pages.config.SystemPageSync">
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="sitemapSchema" />
 	</bean>
 	
-	<bean class="org.riotfamily.pages.schema.SystemPageSyncListener">
+	<bean class="org.riotfamily.pages.config.SystemPageSyncListener">
 		<constructor-arg ref="sitemapSchema" />
 	</bean>
 		
