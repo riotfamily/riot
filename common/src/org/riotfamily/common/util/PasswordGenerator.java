@@ -60,15 +60,26 @@ public class PasswordGenerator {
     }
 
     public PasswordGenerator(
+            int passwordLength,
+            boolean useUpperChars,
+            boolean useLowerChars,
+            boolean useDigits) {
+    	
+    	this(passwordLength, useUpperChars, useLowerChars, useDigits, false);
+    }
+            
+    public PasswordGenerator(
         int passwordLength,
         boolean useUpperChars,
         boolean useLowerChars,
-        boolean useDigits) {
+        boolean useDigits,
+        boolean includeAmbiguous) {
 
         this.passwordLength = passwordLength;
         this.useUpperChars = useUpperChars;
         this.useLowerChars = useLowerChars;
         this.useDigits = useDigits;
+        this.includeAmbiguous = includeAmbiguous;
     }
 
     public static PasswordGenerator getDefaultInstance() {

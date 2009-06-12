@@ -34,6 +34,7 @@ import javax.servlet.ServletContext;
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.io.RecursiveFileIterator;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.PasswordGenerator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
@@ -62,7 +63,8 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	private int maxFilesPerDir = 500;
 	
 	private ServletContext servletContext;
-		
+	
+	private PasswordGenerator dirNameGenerator = new PasswordGenerator(14, false, false, true, true);
 	
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -170,9 +172,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	protected File getUniqueDir() {
 		File parent = getStorageDir();
 		for (int i = 0; i < maxFilesPerDir; i++) {
-			File dir = new File(parent, String.valueOf(
-					System.currentTimeMillis()) + i);
-			
+			File dir = new File(parent, dirNameGenerator.generate());
 			if (!dir.exists()) {
 				dir.mkdir();
 				return dir;
