@@ -323,12 +323,6 @@ public class RiotFile {
 		}
 		return variants.get(name);
 	}
-
-	protected void finalize() throws Throwable {
-		if (id == null && uri != null) {
-			mediaService.delete(uri);
-		}
-	}
 	
 	@Override
 	public int hashCode() {
