@@ -1,3 +1,6 @@
+body {
+	background: #575757 url(images/bg.jpg) no-repeat;
+}
 table {
 	border-collapse: collapse;
 }

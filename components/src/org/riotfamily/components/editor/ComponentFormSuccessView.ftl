@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <script language="JavaScript" type="text/javascript">
-	parent.riot.popup.component.propertiesChanged();
+	parent.riot.activeComponent.propertiesChanged();
 </script>
 </head>
 </html>

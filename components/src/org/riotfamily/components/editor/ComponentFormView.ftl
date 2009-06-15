@@ -10,25 +10,12 @@
 				<@riot.stylesheet href=item />
 			</#list>
 		</#if>
+		<@riot.stylesheet href="style/common.css" />
 		<@riot.stylesheet href="style/form.css" />
 		<@riot.stylesheet href="style/form-custom.css" />
 		<@riot.stylesheet href="style/component-form.css" />
 		<@riot.stylesheet href="style/component-form-custom.css" />
 		<@riot.script src="prototype/prototype.js" />
-		<@riot.script src="riot-js/viewport.js" />
-		<style type="text/css">
-			html, body {
-				border: none;
-			}
-			.buttons input.button-save {
-				display: none;
-			}
-		</style>
-		<script>
-			function save() {
-				$$('input.button-save').first().click();
-			}
-		</script>
 	</head>
 	<body>
 		${form}

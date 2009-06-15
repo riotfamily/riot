@@ -433,20 +433,19 @@ riot.Content = Class.create({
 		var formUrl = riot.path + '/components/form/' + this.container.id 
 				+ '/' + this.id + '/' + this.form + '?' 
 				+ $H(riotComponentFormParams).toQueryString();
-		
-		riot.popup = new riot.Popup('${title.properties}', formUrl, function() {
-			var win = this.content.contentWindow || this.content.window;
-			win.save();
-		}, this.autoSizePopup);
-		
-		// The ComponentFormSuccessView.ftl will invoke
-		// parent.riot.popup.component.propertiesChanged()
-		// ... so we need to set a reference:
-		riot.popup.component = this;
+
+		riot.activeComponent = this;
+		this.dialog = new riot.window.Dialog({
+			title: '${title.properties}', 
+			url: formUrl,
+			closeButton: true,
+			onClose: function() { riot.activeComponent = null }
+			//TODO if (!this.autoSizePopup) minHeight = ...
+		});
 	},
 	
 	propertiesChanged: function() {
-		riot.popup.close();
+		this.dialog.close();
 		// Timeout as we otherwise get an 0x8004005 [nsIXMLHttpRequest.open] error
 		// in Firefox 2.0. See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
 		setTimeout(function() {
