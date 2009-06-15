@@ -11,32 +11,32 @@
 .riotSkin .mceRight {text-align:right}
 
 /* External */
-.riotSkin .mceExternalToolbar {position:absolute; border:1px solid #E0E0E0; border-bottom:0; display:none;}
+.riotSkin .mceExternalToolbar {position:absolute; border:1px solid #CCC; border-bottom:0; display:none;}
 .riotSkin .mceExternalToolbar td.mceToolbar {padding-right:13px;}
-.riotSkin .mceExternalClose {position:absolute; top:3px; right:3px; width:7px; height:7px; background:url(../../img/icons.gif) -820px 0}
+.riotSkin .mceExternalClose {position:absolute; top:3px; right:3px; width:7px; height:7px; background:url('img/icons.png') -820px 0}
 
 /* Layout */
-.riotSkin table.mceLayout {border:0; border-left:1px solid #E0E0E0; border-right:1px solid #E0E0E0}
-.riotSkin table.mceLayout tr.mceFirst td {border-top:1px solid #E0E0E0}
-.riotSkin table.mceLayout tr.mceLast td {border-bottom:1px solid #E0E0E0}
+.riotSkin table.mceLayout {border:0; border-left:1px solid #CCC; border-right:1px solid #CCC}
+.riotSkin table.mceLayout tr.mceFirst td {border-top:1px solid #CCC}
+.riotSkin table.mceLayout tr.mceLast td {border-bottom:1px solid #CCC;}
 .riotSkin table.mceToolbar, .riotSkin tr.mceFirst .mceToolbar tr td, .riotSkin tr.mceLast .mceToolbar tr td {border:0; margin:0; padding:0;}
-.riotSkin td.mceToolbar {padding-top:1px; vertical-align:top}
-.riotSkin .mceIframeContainer {border-top:1px solid #E0E0E0; border-bottom:1px solid #E0E0E0}
-.riotSkin .mceStatusbar {font-family:'MS Sans Serif',sans-serif,Verdana,Arial; font-size:9pt; line-height:16px; overflow:visible; color:#000; display:block; height:20px}
-.riotSkin .mceStatusbar div {float:left; margin:2px}
-.riotSkin .mceStatusbar a.mceResize {display:block; float:right; background:url(../../img/icons.gif) -800px 0; width:20px; height:20px; cursor:se-resize}
+.riotSkin td.mceToolbar {padding-top:1px; vertical-align:top;background:#ebebeb;}
+.riotSkin .mceIframeContainer {border-top:1px solid #CCC; border-bottom:1px solid #CCC}
+.riotSkin .mceStatusbar {font:11px'Lucida Grande',Helvetica,Arial,sans-serif; overflow:visible; color:#666; display:block; height:20px}
+.riotSkin .mceStatusbar div {float:left; margin:3px 0 0 4px; color:#666;}
+.riotSkin .mceStatusbar a.mceResize {display:block; float:right; background:url('img/icons.png') -801px -2px; width:20px; height:20px; cursor:se-resize}
 .riotSkin .mceStatusbar a:hover {text-decoration:underline}
 .riotSkin table.mceToolbar {margin-left:3px}
-.riotSkin span.mceIcon, .riotSkin img.mceIcon {display:block; width:20px; height:20px; overflow: hidden}
-.riotSkin .mceIcon {background:${highlight_color} url(img/icons.gif) no-repeat 20px 20px}
+.riotSkin span.mceIcon, .riotSkin img.mceIcon {display:block; width:20px; height:20px}
+.riotSkin .mceIcon {background:url('img/icons.png') no-repeat 20px 20px}
 .riotSkin td.mceCenter {text-align:center;}
 .riotSkin td.mceCenter table {margin:0 auto; text-align:left;}
 .riotSkin td.mceRight table {margin:0 0 0 auto;}
 
 /* Button */
-.riotSkin .mceButton {display:block; border:1px solid #FFF; width:20px; height:20px; margin-right:1px}
-.riotSkin a.mceButtonEnabled:hover {border:1px solid #3d3d3d}
-.riotSkin a.mceButtonActive, .riotSkin a.mceButtonSelected {border:1px solid #3d3d3d; background-color:#C2CBE0}
+.riotSkin .mceButton {display:block; border:1px solid transparent; width:20px; height:20px; margin-right:1px}
+.riotSkin a.mceButtonEnabled:hover {border:1px solid #ccc; background-color:#F1F1F1}
+.riotSkin a.mceButtonActive, .riotSkin a.mceButtonSelected {border:1px solid #ccc; background-color:#F1F1F1}
 .riotSkin .mceButtonDisabled .mceIcon {opacity:0.3; filter:alpha(opacity=30)}
 .riotSkin .mceButtonLabeled {width:auto}
 .riotSkin .mceButtonLabeled span.mceIcon {float:left}
@@ -44,28 +44,28 @@
 .riotSkin .mceButtonDisabled .mceButtonLabel {color:#888}
 
 /* Separator */
-.riotSkin .mceSeparator {display:block; background:url(../../img/icons.gif) -180px 0; width:2px; height:20px; margin:2px 2px 0 4px}
+.riotSkin .mceSeparator {display:block; background:url('img/icons.png') -180px 0; width:2px; height:20px; margin:2px 2px 0 4px}
 
 /* ListBox */
 .riotSkin .mceListBox {direction:ltr}
 .riotSkin .mceListBox, .riotSkin .mceListBox a {display:block}
-.riotSkin .mceListBox .mceText {padding-left:4px; width:70px; text-align:left; border:1px solid #E0E0E0; border-right:0; background:#FFF; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; height:20px; line-height:20px; overflow:hidden}
-.riotSkin .mceListBox .mceOpen {width:9px; height:20px; background:url(../../img/icons.gif) -741px 0; margin-right:2px; border:1px solid #E0E0E0;}
+.riotSkin .mceListBox .mceText {padding-left:4px; width:70px; text-align:left; border:1px solid #CCC; border-right:0; background:#FFF; font:11px 'Lucida Grande',Helvetica,Arial,sans-serif; height:20px; line-height:20px; overflow:hidden}
+.riotSkin .mceListBox .mceOpen {width:9px; height:20px; background:url('img/icons.png') -741px 0; margin-right:2px; border:1px solid #CCC;}
 .riotSkin table.mceListBoxEnabled:hover .mceText, .riotSkin .mceListBoxHover .mceText, .riotSkin .mceListBoxSelected .mceText {border:1px solid #A2ABC0; border-right:0; background:#FFF}
 .riotSkin table.mceListBoxEnabled:hover .mceOpen, .riotSkin .mceListBoxHover .mceOpen, .riotSkin .mceListBoxSelected .mceOpen {background-color:#FFF; border:1px solid #A2ABC0}
 .riotSkin .mceListBoxDisabled a.mceText {color:gray; background-color:transparent;}
 .riotSkin .mceListBoxMenu {overflow:auto; overflow-x:hidden}
 .riotSkin .mceOldBoxModel .mceListBox .mceText {height:22px}
 .riotSkin .mceOldBoxModel .mceListBox .mceOpen {width:11px; height:22px;}
-.riotSkin select.mceNativeListBox {font-family:'MS Sans Serif',sans-serif,Verdana,Arial; font-size:7pt; background:#FFF; border:1px solid #E0E0E0; margin-right:2px;}
+.riotSkin select.mceNativeListBox {font:11px'Lucida Grande',Helvetica,Arial,sans-serif; background:#F0F0EE; border:1px solid gray; margin-right:2px;}
 
 /* SplitButton */
 .riotSkin .mceSplitButton {width:32px; height:20px; direction:ltr}
 .riotSkin .mceSplitButton a, .riotSkin .mceSplitButton span {height:20px; display:block}
 .riotSkin .mceSplitButton a.mceAction {width:20px; border:1px solid #F0F0EE; border-right:0;}
-.riotSkin .mceSplitButton span.mceAction {width:20px; background:url(../../img/icons.gif) 20px 20px;}
+.riotSkin .mceSplitButton span.mceAction {width:20px; background:url('img/icons.png') 20px 20px;}
 .riotSkin .mceSplitButton a.mceOpen {width:9px; border:1px solid #F0F0EE;}
-.riotSkin .mceSplitButton span.mceOpen {width:9px; background:url(../../img/icons.gif) -741px 0;}
+.riotSkin .mceSplitButton span.mceOpen {width:9px; background:url('img/icons.png') -741px 0;}
 .riotSkin table.mceSplitButtonEnabled:hover a.mceAction, .riotSkin .mceSplitButtonHover a.mceAction, .riotSkin .mceSplitButtonSelected a.mceAction {border:1px solid #0A246A; border-right:0; background-color:#B2BBD0}
 .riotSkin table.mceSplitButtonEnabled:hover a.mceOpen, .riotSkin .mceSplitButtonHover a.mceOpen, .riotSkin .mceSplitButtonSelected a.mceOpen {border:1px solid #0A246A;}
 .riotSkin table.mceSplitButtonEnabled:hover span.mceOpen, .riotSkin .mceSplitButtonHover span.mceOpen, .riotSkin .mceSplitButtonSelected span.mceOpen {background-color:#B2BBD0}
@@ -92,7 +92,7 @@
 .riotSkin .mceMenu a, .riotSkin .mceMenu span, .riotSkin .mceMenu {display:block}
 .riotSkin .mceMenu td {height:20px}
 .riotSkin .mceMenu a {position:relative;padding:3px 0 4px 0}
-.riotSkin .mceMenu .mceText {position:relative; display:block; font-family:Tahoma,Verdana,Arial,Helvetica; color:#000; cursor:default; margin:0; padding:0 25px 0 25px; display:block}
+.riotSkin .mceMenu .mceText {position:relative; display:block; font-family:'Lucida Grande',Helvetica,Arial,sans-serif; color:#000; cursor:thebigreason; margin:0; padding:0 25px 0 25px; display:block}
 .riotSkin .mceMenu span.mceText, .riotSkin .mceMenu .mcePreview {font-size:11px}
 .riotSkin .mceMenu pre.mceText {font-family:Monospace}
 .riotSkin .mceMenu .mceIcon {position:absolute; top:0; left:0; width:22px;}
@@ -101,14 +101,14 @@
 .riotSkin .mceMenuItemTitle a {border:0; background:#EEE; border-bottom:1px solid #DDD}
 .riotSkin .mceMenuItemTitle span.mceText {color:#000; font-weight:bold; padding-left:4px}
 .riotSkin .mceMenuItemDisabled .mceText {color:#888}
-.riotSkin .mceMenuItemSelected .mceIcon {background:url(img/menu_check.gif)}
-.riotSkin .mceNoIcons .mceMenuItemSelected a {background:url(img/menu_arrow.gif) no-repeat -6px center}
+.riotSkin .mceMenuItemSelected .mceIcon {background:url('img/menu-check.png')}
+.riotSkin .mceNoIcons .mceMenuItemSelected a {background:url('img/menu-arrow.png') no-repeat -6px center}
 .riotSkin .mceMenu span.mceMenuLine {display:none}
-.riotSkin .mceMenuItemSub a {background:url(img/menu_arrow.gif) no-repeat top right;}
+.riotSkin .mceMenuItemSub a {background:url('img/menu-arrow.png') no-repeat top right;}
 
 /* Progress,Resize */
 .riotSkin .mceBlocker {position:absolute; left:0; top:0; z-index:1000; opacity:0.5; filter:alpha(opacity=50); background:#FFF}
-.riotSkin .mceProgress {position:absolute; left:0; top:0; z-index:1001; background:url(img/progress.gif) no-repeat; width:32px; height:32px; margin:-16px 0 0 -16px}
+.riotSkin .mceProgress {position:absolute; left:0; top:0; z-index:1001; background:url('img/progress.gif') no-repeat; width:32px; height:32px; margin:-16px 0 0 -16px}
 .riotSkin .mcePlaceHolder {border:1px dotted gray}
 
 /* Formats */
@@ -125,38 +125,41 @@
 
 /* Theme */
 .riotSkin span.mce_bold {background-position:0 0}
-.riotSkin span.mce_italic {background-position:-20px 0}
-.riotSkin span.mce_underline {background-position:-40px 0}
-.riotSkin span.mce_strikethrough {background-position:-60px 0}
-.riotSkin span.mce_undo {background-position:-520px 0}
-.riotSkin span.mce_redo {background-position:-540px 0}
-.riotSkin span.mce_cleanup {background-position:-600px 0}
-.riotSkin span.mce_bullist {background-position:-180px 0}
-.riotSkin span.mce_numlist {background-position:-200px 0}
-.riotSkin span.mce_justifyleft {background-position:-380px 0}
-.riotSkin span.mce_justifyright {background-position:-440px 0}
-.riotSkin span.mce_justifycenter {background-position:-400px 0}
-.riotSkin span.mce_justifyfull {background-position:-420px 0}
-.riotSkin span.mce_anchor {background-position:-300px 0}
-.riotSkin span.mce_indent {background-position:-220px 0}
-.riotSkin span.mce_outdent {background-position:-240px 0}
-.riotSkin span.mce_link {background-position:-260px 0}
-.riotSkin span.mce_unlink {background-position:-280px 0}
-.riotSkin span.mce_sub {background-position:-100px 0}
-.riotSkin span.mce_sup {background-position:-80px 0}
-.riotSkin span.mce_removeformat {background-position:-160px 0}
-.riotSkin span.mce_image {background-position:-320px 0}
-.riotSkin span.mce_code {background-position:-580px 0}
-.riotSkin span.mce_hr {background-position:-340px 0}
-.riotSkin span.mce_visualaid {background-position:-360px 0}
-.riotSkin span.mce_charmap {background-position:-560px 0}
-.riotSkin span.mce_paste {background-position:-500px 0}
-.riotSkin span.mce_copy {background-position:-480px 0}
-.riotSkin span.mce_cut {background-position:-460px 0}
-.riotSkin span.mce_blockquote {background-position:-620px 0}
-.riotSkin .forecolor span.mce_action {background-position:-120px 0}
-.riotSkin .backcolor span.mce_action {background-position:-140px 0}
-
+.riotSkin span.mce_italic {background-position:-60px 0}
+.riotSkin span.mce_underline {background-position:-140px 0}
+.riotSkin span.mce_strikethrough {background-position:-120px 0}
+.riotSkin span.mce_undo {background-position:-160px 0}
+.riotSkin span.mce_redo {background-position:-100px 0}
+.riotSkin span.mce_cleanup {background-position:-40px 0}
+.riotSkin span.mce_bullist {background-position:-20px 0}
+.riotSkin span.mce_numlist {background-position:-80px 0}
+.riotSkin span.mce_justifyleft {background-position:-460px 0}
+.riotSkin span.mce_justifyright {background-position:-480px 0}
+.riotSkin span.mce_justifycenter {background-position:-420px 0}
+.riotSkin span.mce_justifyfull {background-position:-440px 0}
+.riotSkin span.mce_anchor {background-position:-200px 0}
+.riotSkin span.mce_indent {background-position:-400px 0}
+.riotSkin span.mce_outdent {background-position:-540px 0}
+.riotSkin span.mce_link {background-position:-500px 0}
+.riotSkin span.mce_unlink {background-position:-640px 0}
+.riotSkin span.mce_sub {background-position:-600px 0}
+.riotSkin span.mce_sup {background-position:-620px 0}
+.riotSkin span.mce_removeformat {background-position:-580px 0}
+.riotSkin span.mce_newdocument {background-position:-520px 0}
+.riotSkin span.mce_image {background-position:-380px 0}
+.riotSkin span.mce_help {background-position:-340px 0}
+.riotSkin span.mce_code {background-position:-260px 0}
+.riotSkin span.mce_hr {background-position:-360px 0}
+.riotSkin span.mce_visualaid {background-position:-660px 0}
+.riotSkin span.mce_charmap {background-position:-240px 0}
+.riotSkin span.mce_paste {background-position:-560px 0}
+.riotSkin span.mce_copy {background-position:-700px 0}
+.riotSkin span.mce_cut {background-position:-680px 0}
+.riotSkin span.mce_blockquote {background-position:-220px 0}
+.riotSkin .mce_forecolor span.mceAction {background-position:-720px 0}
+.riotSkin .mce_backcolor span.mceAction {background-position:-760px 0}
+.riotSkin span.mce_forecolorpicker {background-position:-720px 0}
+.riotSkin span.mce_backcolorpicker {background-position:-760px 0}
 
 /* Plugins */
 .riotSkin span.mce_advhr {background-position:-0px -20px}
