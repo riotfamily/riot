@@ -205,6 +205,10 @@ riot.window = (function() {
 				this.center();
 			},
 			
+			getContentHeight: function() {
+				return this.pane.getHeight() - this.box.down('.title-bar').getHeight();
+			},
+			
 			open: function() {
 				if (!this.isOpen) {
 					document.body.appendChild(this.box);
@@ -216,9 +220,13 @@ riot.window = (function() {
 			},
 			
 			close: function() {
-				this.box.remove();
+				this.box.hide();
 				windowClosed(this);
 				this.isOpen = false;
+				if (this.options.onClose) {
+					this.options.onClose(this);
+				}
+				this.box.remove();
 			}
 		}),
 		

@@ -27,118 +27,169 @@ body > #riot-notification {
 	left: 6px;
 	z-index: 1000;
 	text-align: left;
+	width: 64px;
+	background: url(images/toolbar/background.png) no-repeat;
+}
+
+#riot-toolbar-title {
 	width: 40px;
+	height: 20px;
+	margin: 2px 0 2px 4px;
+	cursor: move;
 }
 
 #riot-toolbar-buttons {
-	background-color: ${toolbar_border_color};
 	width: 38px;
 	padding: 3px 0;
-	margin: auto;
+	margin: 0 0 60px 6px;
 }
 
 #riot-toolbar-buttons a {
-	margin: 0 3px;
+	margin: 0 3px 2px 3px;
 }
 
 #riot-toolbar a.toolbar-button,
 #riot-toolbar a.toolbar-button-active,
 #riot-toolbar a.toolbar-button-disabled {
 	display: block;
-	width: 32px;
-	height: 32px;
-	background-color: #3d3d3d;
-	background-image: url(icons/toolbar.gif);
+	width: 30px;
+	height: 31px;
+	background-image: url(images/toolbar/buttons.png);
 	background-repeat: no-repeat;
 	padding: 0;
 	cursor: default;
 }
 
-#riot-toolbar a.toolbar-button:hover {
-	background-color: ${highlight_color};
-}
-
+#riot-toolbar a.toolbar-button,
 #riot-toolbar a.toolbar-button-active {
-	background-color: #3d3d3d;
 	-moz-outline: none;
 }
 
 #riot-toolbar-button-browse {
-	background-position: -32px 0;
+	background-position: -62px 0;
 }
-#riot-toolbar-button-browse.toolbar-button-active {
-	background-position: -32px -32px;
+#riot-toolbar-button-browse.toolbar-button:hover {
+	background-position: -31px 0;
+}
+#riot-toolbar-button-browse.toolbar-button-active,
+#riot-toolbar-button-browse.toolbar-button:active {
+	background-position: 0 0;
 }
 
 #riot-toolbar-button-insert {
-	background-position: -64px 0;
+	background-position: -62px -31px;
 }
-#riot-toolbar-button-insert.toolbar-button-active {
-	background-position: -64px -32px;
+#riot-toolbar-button-insert.toolbar-button:hover {
+	background-position: -31px -31px;
 }
+#riot-toolbar-button-insert.toolbar-button-active,
+#riot-toolbar-button-insert.toolbar-button:active {
+	background-position: 0 -31px;
+}
+
 
 #riot-toolbar-button-remove {
-	background-position: -96px 0;
+	background-position: -62px -62px;
 }
-#riot-toolbar-button-remove.toolbar-button-active {
-	background-position: -96px -32px;
+#riot-toolbar-button-remove.toolbar-button:hover {
+	background-position: -31px -62px;
 }
+#riot-toolbar-button-remove.toolbar-button-active,
+#riot-toolbar-button-remove.toolbar-button:active {
+	background-position: 0 -62px;
+}
+
 
 #riot-toolbar-button-edit {
-	background-position: -128px 0;
+	background-position: -62px -93px;
 }
-#riot-toolbar-button-edit.toolbar-button-active {
-	background-position: -128px -32px;
+#riot-toolbar-button-edit.toolbar-button:hover {
+	background-position: -31px -93px;
 }
-
-#riot-toolbar-button-editImages {
-	background-position: -160px 0;
-}
-#riot-toolbar-button-editImages.toolbar-button-active {
-	background-position: -160px -32px;
+#riot-toolbar-button-edit.toolbar-button-active,
+#riot-toolbar-button-edit.toolbar-button:active {
+	background-position: 0 -93px;
 }
 
 #riot-toolbar-button-properties {
-	background-position: -192px 0;
+	background-position: -62px -124px;
 }
-#riot-toolbar-button-properties.toolbar-button-active {
-	background-position: -192px -32px;
+#riot-toolbar-button-properties.toolbar-button:hover {
+	background-position: -31px -124px;
+}
+#riot-toolbar-button-properties.toolbar-button-active,
+#riot-toolbar-button-properties.toolbar-button:active {
+	background-position: 0 -124px;
 }
 
 #riot-toolbar-button-move {
-	background-position: -224px 0;
+	background-position: -62px -155px;
 }
-#riot-toolbar-button-move.toolbar-button-active {
-	background-position: -224px -32px;
+#riot-toolbar-button-move.toolbar-button:hover {
+	background-position: -31px -155px;
+}
+#riot-toolbar-button-move.toolbar-button-active,
+#riot-toolbar-button-move.toolbar-button:active {
+	background-position: 0 -155px;
 }
 
+
 #riot-toolbar-button-logout {
-	background-position: -256px 0;
+	background-position: -62px -186px;
+}
+#riot-toolbar-button-logout:hover {
+	background-position: -31px -186px;
+}
+#riot-toolbar-button-logout:active {
+	background-position: 0 -186px;
 }
 
 #riot-toolbar-button-discard {
-	background-position: -288px 0;
+	background-position: -62px -217px;
 }
-#riot-toolbar-button-discard.toolbar-button-active {
-	background-position: -288px -32px;
+#riot-toolbar-button-discard.toolbar-button:hover {
+	background-position: -31px -217px;
 }
+#riot-toolbar-button-discard.toolbar-button-active,
+#riot-toolbar-button-discard.toolbar-button:active {
+	background-position: 0 -217px;
+}
+#riot-toolbar-button-discard.toolbar-button-disabled {
+	background-position: -93px -217px;
+}
+
 
 #riot-toolbar-button-publish {
-	background-position: -320px 0;
+	background-position: -62px -248px;
 }
-#riot-toolbar-button-publish.toolbar-button-active {
-	background-position: -320px -32px;
+#riot-toolbar-button-publish.toolbar-button:hover {
+	background-position: -31px -248px;
 }
-
+#riot-toolbar-button-publish.toolbar-button-active,
+#riot-toolbar-button-publish.toolbar-button:active {
+	background-position: 0 -248px;
+}
+#riot-toolbar-button-publish.toolbar-button-disabled {
+	background-position: -93px -248px;
+}
 #riot-toolbar #riot-toolbar-button-apply {
-	background-position: -352px -32px; 
-	background-color: ${highlight_color};
-	border: 3px solid ${toolbar_border_color};
-	margin:8px auto;
+	margin-top: 8px;
+}
+#riot-toolbar-button-apply {
+	background-position: -62px -279px;
+}
+#riot-toolbar-button-apply:hover {
+	background-position: -31px -279px;
+}
+#riot-toolbar-button-apply:active {
+	background-position: 0 -279px;
+}
+#riot-toolbar-button-apply.toolbar-button-disabled {
+	background-position: -93px -279px;
 }
 
 #riot-toolbar a.toolbar-button-disabled {
-	background-color: #a4a4a4;
+	xbackground-color: #a4a4a4;
 	cursor: default;
 }
 
@@ -348,9 +399,7 @@ body > #riot-popup {
 	font-weight: 500;
 	text-align: left;
 }
-#riot-popup textarea {
-	width: 580px;
-	height: 400px;
+.riot-dialog textarea {
 	border: none;
 	margin-top: 1px;
 	padding-left: 20px;
@@ -359,58 +408,20 @@ body > #riot-popup {
 	line-height: 18px;
 }
 
-* html #riot-popup.riot-richtext textarea {
-	width: 579px;
-}
-
-#riot-popup .button-ok {
-	color: #3d3d3d;
-	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size: 12px;
-	height: 25px;
-	line-height: 23px;
-	float: right;
-	margin-top: 3px;
-	padding: 0 25px 0 45px;
-	background: #fff url(icons/dialogs/ok.gif) 18px center no-repeat;
-	cursor: pointer;
-	cursor: hand;
-}
-
-#riot-popup .riot-help-button,
-#riot-popup .riot-close-button {
-	position: absolute;
-	z-index: 1;
-	top: 7px;
-	width: 16px;
-	height: 16px;
-	cursor: pointer;
-	cursor: hand;
-}
-
-#riot-popup .riot-help-button {
-	right: 34px;
-	background: url(icons/dialogs/help.gif) center center no-repeat;
-}
-#riot-popup .riot-close-button {
-	right: 10px;
-	background: url(icons/dialogs/close.gif) center center no-repeat;
-}
-
-#riot-popup div.mceEditor {
+.riot-dialog div.mceEditor {
 	width: 100%;
 }
 
-#riot-popup .mceEditor img {
+.riot-dialog .mceEditor img {
 	margin: 0;
 }
 
-#riot-popup table.mceLayout {
+.riot-dialog table.mceLayout {
 	border-spacing: 0;
 	border-collapse: collapse;
 	border: none;
 }
-.mceEditor td {
+.riot-dialog td {
 	padding: 0;
 	margin: 0;
 }

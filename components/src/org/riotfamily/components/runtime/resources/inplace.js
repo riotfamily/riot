@@ -62,13 +62,8 @@ riot.InplaceEditor = Class.create({
 		this.content = content;
 		this.key = this.element.readAttribute('riot:key');
 		this.onclickHandler = this.onclick.bindAsEventListener(this);
-		this.oninit(options);
 		this.bShowOutline = this.showOutline.bindAsEventListener(this);
 		this.bHideOutline = this.hideOutline.bindAsEventListener(this);
-	},
-
-	/* Subclasses may override this method to perform initalization upon creation */
-	oninit: function(options) {
 		this.options = options || {};
 	},
 
@@ -113,59 +108,51 @@ riot.InplaceEditor = Class.create({
 		this.setText(this.element.innerHTML);
 	},
 
-	/* Stores the given text as property and invokes showEditor() */
 	setText: function(text) {
 		this.text = text;
-		this.showEditor();
+		this.show();
 	},
 
-	/* Subclasses must implement this method to show a widget that edits
-	 * the current text.
-	 */
-	showEditor: function() {
+	/* Subclasses must implement this method to show a widget to edit the current text */
+	show: function() {
 	},
 
+	hide: function() {
+	},
+	
 	/* Subclasses must implement this method to return the edited text. */
 	getText: function() {
-		return null;
+		return this.text;
 	},
 
 	save: function() {
 		var text = this.getText();
 		if (this.text != text) {
 			this.content.updateText(this.key, text);
+			this.text = text;
 		}
-		this.onsave(text);
 	},
 
-	/* Subclasses may override this method ... */
-	onsave: function(text) {
-	},
-
-	/* This method is invoked when the active editor is disabled (either by
+	/** 
+	 * This method is invoked when the active editor is disabled (either by
 	 * enabling another editor or by switching to another tool).
-	 * The default behaviour is to save all changes. Subclasses that provide
-	 * an explicit save button (like the PopupTextEditor) may override this
-	 * method.
+	 * The default behaviour is to save all changes.
 	 */
 	close: function() {
 		if (riot.activeEditor == this) {
 			riot.activeEditor = null;
 		}
 		this.save();
-		this.onclose();
-	},
-
-	/* Callback that is invoked after the editor has been closed. */
-	onclose: function() {
+		this.hide();
 		if (this.element.onedit) this.element.onedit();
 	}
+
 });
 
 riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 
-	oninit: function(options) {
-		this.options = options || {};
+	initialize: function($super, element, content, options) {
+		$super(element, content, options);
 		this.inline = this.element.getStyle('display') == 'inline';
 		this.input = this.inline
 				? new Element('input', {type: 'text'})
@@ -214,7 +201,7 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 		);
 	},
 
-	showEditor: function() {
+	show: function() {
 		this.paddingLeft = 0;
 		this.paddingTop = 0;
 		if (Prototype.Browser.IE || Prototype.Browser.Opera) {
@@ -253,8 +240,9 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 		this.updateElement();
 	},
 
-	close: function($super) {
-		$super();
+	hide: function() {
+		this.element.innerHTML = this.text;
+		this.element.makeVisible();
 		this.input.remove();
 		this.lastText = null;
 	},
@@ -270,12 +258,6 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 			return this.text;
 		}
 		return newText;
-	},
-
-	onsave: function(text) {
-		this.element.innerHTML = text;
-		this.input.hide();
-		this.element.makeVisible();
 	},
 
 	updateElement: function() {
@@ -305,9 +287,7 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 riot.PopupTextEditor = Class.create(riot.InplaceEditor, {
 
 	edit: function() {
-		if (!riot.activePopup) {
-			this.content.retrieveText(this.key, this.setText.bind(this));
-		}
+		this.content.retrieveText(this.key, this.setText.bind(this));
 	},
 
 	setText: function($super, text) {
@@ -317,53 +297,74 @@ riot.PopupTextEditor = Class.create(riot.InplaceEditor, {
 		$super(text);
 	},
 
-	showEditor: function() {
-		this.popup = new riot.TextareaPopup(this);
-		this.popup.open();
-	},
-
-	close: function() {
-		this.popup.close();
-		riot.activeEditor = null;
-		this.onclose();
+	show: function() {
+		this.textarea = new Element('textarea');
+		this.textarea.value = this.text || '';
+		this.dialog = new riot.window.Dialog({
+			title: '${title.editorPopup}', 
+			content: this.textarea,
+			closeButton: true,
+			onClose: this.close.bind(this),
+			minWidth: 600,
+			minHeight: document.viewport.getHeight() - 150
+		});
+		this.textarea.style.height = this.dialog.getContentHeight() + 'px';
+		this.textarea.focus();
 	},
 
 	getText: function() {
-		return this.popup.getText();
-	},
-	
-	save: function() {
-		var text = this.getText();
-		if (this.text != text) {
-			this.content.updateText(this.key, text, true);
-		}
-		this.onsave(text);
-	},
-
-	onsave: function() {
-		this.close();
+		return this.textarea.value;
 	}
+	
 });
 
 riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
-	showEditor: function() {
+	show: function($super) {
 		tinyMCE_GZ = {loaded: true};
+		var $this = this;
 		Resources.loadScript('tiny_mce/tiny_mce_src.js', 'tinymce');
-		Resources.waitFor('tinymce.WindowManager', this.openPopup.bind(this));
+		Resources.waitFor('tinymce.WindowManager', function() {
+			$super();
+			$this.initEditor();
+		});
 	},
 
-	openPopup: function() {
-		var settings = Object.extend(riot.TinyMCEProfiles[this.options.config || 'default'], riot.fixedTinyMCESettings); 
-		this.popup = new riot.TinyMCEPopup(this, settings);
+	initEditor: function() {
+		this.dialog.box.addClassName('riot-richtext');
+		if (this.textarea.value == '') {
+			this.textarea.value = '<p>&nbsp;</p>';
+		}
+		this.textarea.makeInvisible();
+		var settings = Object.extend(
+			riot.TinyMCEProfiles[this.options.config || 'default'],
+			riot.fixedTinyMCESettings);
+		
+		tinymce.dom.Event._pageInit();
+		tinyMCE.init(Object.extend({
+			elements: this.textarea.identify(),
+			auto_focus: this.textarea.id,
+			init_instance_callback: this.setInstance.bind(this)
+		}, settings));
+	},
+	
+	setInstance: function(tinymce) {
+		this.tinymce = tinymce;
+	},
+	
+	hide: function() {
+		tinymce.EditorManager.remove(this.tinymce);
 	},
 
+	getText: function() {
+		return this.cleanUp(this.tinymce.getContent());
+	},
+	
 	save: function() {
-		var text = this.getText();
-		if (this.text != text) {
+		if (this.tinymce.isDirty()) {
+			var text = this.getText();
 			if (this.options.split) {
 				var chunks = [];
-				var n = RBuilder.node('div');
-				n.innerHTML = text;
+				var n = new Element('div').update(text);
 				for (var i = 0; i < n.childNodes.length; i++) { 
 					var c = n.childNodes[i];
 					if (c.nodeType == 1) {
@@ -381,222 +382,17 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 				this.content.updateTextChunks(this.key, chunks);
 			}
 			else {
-				this.content.updateText(this.key, this.cleanUp(text), true);
+				this.content.updateText(this.key, text, true);
 			}
-			this.onsave(text);
-		}
-		else {
-			this.close();
 		}
 	},
 	
-	onclose: function() {
-	},
-	
-	cleanUp: function(str) {
- 		str = str.replace(/<!(?:--[\s\S]*?--\s*)?>\s*/g, '');
- 		return str.replace(/<\s*?br\s*?>/ig, '<br />');
-	}
-
-});
-
-riot.Popup = Class.create({
-	initialize: function(title, content, ok, autoSize) {
-		this.ok = ok;
-		this.autoSize = autoSize;
-		this.overlay = new Element('div', {id: 'riot-overlay'}).setStyle({display: 'none'});
-		
-		if (typeof content == 'string') {
-			this.content = new Element('iframe', {src: content, width: 1, height: 1}).observe('load', this.open.bind(this));
-		}
-		else {
-			this.content = content;
-		}
-		
-		this.div = new Element('div', {id: 'riot-popup'}).setStyle({position: 'absolute'})
-			.insert(new Element('div', {'class': 'riot-close-button'}).observe('click', this.close.bind(this)))
-			.insert(new Element('div', {'class': 'headline'}).insert(title))
-			.insert(this.content)
-			.insert(ok ? new Element('div', {'class': 'button-ok'}).observe('click', ok.bind(this)).insert('Ok') : '')
-			.makeInvisible();
-		
-		this.keyDownHandler = this.handleKeyDown.bindAsEventListener(this);
-		Event.observe(document, 'keydown', this.keyDownHandler);
-		
-		document.body.appendChild(this.overlay);
-		document.body.appendChild(this.div);
-	},
-
-	hideElements: function(name) {
-		var exclude = this.div;
-		$$(name).each(function (e) {
-			if (!e.childOf(exclude) && e.getStyle('visibility') != 'hidden') {
-				e.makeInvisible();
-				e.hidden = true;
-			}
-		});
-	},
-
-	showElements: function(name) {
-		$$(name).each(function (e) {
-			if (e.hidden) {
-				e.makeVisible();
-				e.hidden = false;
-			}
-		});
-	},
-
-	open: function() {
-		if (riot.activePopup) {
-			return;
-		}
-		riot.activePopup = this;
-		var initialWidth = document.body.offsetWidth;
-		if (Prototype.Browser.IE) {
-			this.hideElements('select');
-		}
-		this.root = $$(document.compatMode && document.compatMode == 'BackCompat' ? 'body' : 'html').first().makeClipping();
-		this.hideElements('object');
-		this.hideElements('embed');
-
-		var top = 50;
-		var left = 50;
-		if (this.autoSize) {
-			var doc = this.content.contentWindow || this.content.contentDocument;
-			if (doc) {
-				if (doc.document) {
-					doc = doc.document;
-				}
-				doc.viewport = document.viewport;
-				doc.body.parentNode.style.border = 'none';
-				var w = Math.max(600, doc.body.offsetWidth + 32);
-				var h = Math.min(Math.round(doc.viewport.getHeight() * 0.8), doc.body.offsetHeight + 32);
-				this.content.style.height = h + 'px';
-				this.div.style.width = w + 'px';
-			}
-			top = Math.max(5, Math.round(document.viewport.getHeight() / 2 - this.div.clientHeight / 2));
-			left = Math.round(document.viewport.getWidth() / 2 - this.div.clientWidth / 2);
-		}
-		else {
-			this.div.style.width = (document.viewport.getWidth() - 100) + 'px';
-			this.content.style.height = (document.viewport.getHeight() - 150) + 'px';
-		}
-
-		this.div.hide();
-		this.div.style.position = '';
-		if (this.div.getStyle('position') != 'fixed') {
-			var scroll = document.viewport.getScrollOffsets();
-			top += scroll.top;
-			left += scroll.left;
-		}
-		this.div.style.top = top + 'px';
-		this.div.style.left = left + 'px';
-		
-		var h = Math.max(document.viewport.getHeight(), document.body.getHeight());
-		this.overlay.style.height = h + 'px';
-		this.overlay.show();
-		riot.outline.suspended = true;
-		riot.outline.hide();
-		this.div.makeVisible().show();
-
-		// The call to makeClipping() above removes the scrollbars - add a margin to prevent visual shift. 
-		var margin = (document.body.offsetWidth - initialWidth) + 'px'; 
-		document.body.style.marginRight = margin;
-		this.overlay.style.paddingRight = margin; 
-	},
-
-	close: function() {
-		Event.stopObserving(document, 'keydown', this.keyDownHandler);
-		if (riot.activePopup == this) {
-			if (Prototype.Browser.IE) {
-				this.showElements('select');
-			}
-			// Reset the margin
-			document.body.style.marginRight = 0;
-			this.root.undoClipping();
-			if (Prototype.Browser.WebKit) {
-				// Force re-rendering of scrollbars in Safari
-				window.scrollBy(0,-1);
-				window.scrollBy(0,1);
-			}
-			this.showElements('object');
-			this.showElements('embed');
-			this.div.remove();
-			this.overlay.remove();
-			riot.outline.suspended = false;
-			riot.activePopup = null;
-		}
-	},
-
-	/* Handler that is invoked when a key has been pressed */
-	handleKeyDown: function(ev) {
-		if (ev.keyCode == Event.KEY_ESC) {
-			Event.stop(ev);
-			this.close();
-		}
-	}
-
-});
-
-riot.TextareaPopup = Class.create(riot.Popup, {
-
-	initialize: function($super, editor) {
-		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
-		$super('${title.editorPopup}', this.textarea, editor.save.bind(editor), true);
-		var availableTextareaHeight = document.viewport.getHeight() - 82;
-		if (availableTextareaHeight < this.textarea.getHeight()) {
-			this.textarea.style.height = availableTextareaHeight + 'px';
-		}
-	},
-
-	setText: function(text) {
-		this.textarea.value = text;
-		this.textarea.focus();
-	},
-
-	getText: function() {
-		return this.textarea.value;
-	}
-
-});
-
-riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
-	initialize: function($super, editor, settings) {
-		$super(editor);
-		this.div.addClassName('riot-richtext');
-		if (this.textarea.value == '') {
-			this.textarea.value = '<p>&nbsp;</p>';
-		}
-		this.textarea.makeInvisible();
-		this.open();
-
-		tinymce.dom.Event._pageInit();
-		tinyMCE.init(Object.extend({
-			elements: this.textarea.identify(),
-			auto_focus: this.textarea.id,
-			init_instance_callback: this.setInstance.bind(this)
-		}, settings));
-	},
-
-	setInstance: function(tinymce) {
-		this.tinymce = tinymce;
-	},
-	
-	close: function($super) {
-		tinymce.EditorManager.remove(this.tinymce);
-		$super();
-	},
-
-	setText: function(text) {
-		this.tinymce.setContent(text);
-	},
-
-	getText: function() {
-		var html = this.tinymce.getContent();
-		html = html.replace(/<!--(.|\n)*?-->/g, '');
-		html = html.replace(/&lt;!--(.|\n)*?(smso-|@page)(.|\n)*?--&gt;/g, '');
-		html = html.replace(/<p>\s*<\/p>/g, '');
-		return html.strip();
+	cleanUp: function(html) {
+ 		return html.replace(/<!--(.|\n)*?-->/g, '')
+ 			.replace(/&lt;!--(.|\n)*?(smso-|@page)(.|\n)*?--&gt;/g, '')
+ 			.replace(/<p>\s*<\/p>/g, '')
+ 			.replace(/<\s*?br\s*?>/ig, '<br />')
+ 			.strip();
 	}
 
 });

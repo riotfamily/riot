@@ -8,6 +8,7 @@ var riot = {
 Resources.basePath = riot.resourcePath;
 Resources.loadStyleSheet('style/toolbar.css');
 Resources.loadStyleSheet('style/edit-mode.css');
+Resources.loadStyleSheet('riot-js/window/dialog.css');
 
 Resources.loadScriptSequence([
 	{src: riot.path + '/engine.js', test: 'dwr.engine'},
@@ -20,10 +21,11 @@ function loadToolbarScripts() {
 		{src: 'prototype/prototype.js', test: 'Prototype'},
 		{src: 'riot-js/util.js', test: 'RElement'},
 		{src: 'scriptaculous/effects.js', test: 'Effect'},
-		{src: 'toolbar.js'},
 		{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
+		{src: 'toolbar.js'},
 		{src: 'riot-js/effects.js'},
 		{src: 'riot-js/window-callback.js'},
+		{src: 'riot-js/window/dialog.js'},
 		{src: 'inplace.js'},
 		{src: 'components.js'}
 	]);

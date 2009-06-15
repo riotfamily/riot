@@ -472,7 +472,7 @@ riot.Component = Class.create(riot.Content, {
 	},
 	
 	updateTextChunks: function(key, chunks) {
-		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
+		ComponentEditor.updateTextChunks(this.id, key, chunks, this.renderChunks.bind(this));
 		this.markAsDirty();
 	},
 	
@@ -481,8 +481,7 @@ riot.Component = Class.create(riot.Content, {
 	},
 	
 	replaceHtml: function(html) {
-		var tmp = RBuilder.node('div');
-		tmp.innerHTML = html.stripScripts();
+		var tmp = new Element('div').update(html.stripScripts());
 		var el = tmp.down();
 		this.element.replaceBy(el);
 		html.evalScripts.bind(html).defer();
@@ -494,6 +493,13 @@ riot.Component = Class.create(riot.Content, {
 			});
 		}
 		riot.toolbar.selectedButton.applyHandler(true);
+	},
+	
+	renderChunks: function(chunks) {
+		for (var i = chunks.length - 1; i > 0 ; i--) {
+			this.element.insert({after: chunks[i]});
+		}
+		this.replaceHtml(chunks[0]);
 	}
 
 });
@@ -547,8 +553,7 @@ riot.InsertButton = Class.create({
 	},
 
 	oninsert: function(html) {
-		var tmp = RBuilder.node('div');
-		tmp.update(html);
+		var tmp = new Element('div').update(html);
 		var el = this.componentElement = tmp.down();
 		this.componentList.element.appendChild(el);
 		this.componentList.findComponentElements();
@@ -567,8 +572,7 @@ riot.InsertButton = Class.create({
 	},
 
 	onupdate: function(html) {
-		var tmp = RBuilder.node('div');
-		tmp.innerHTML = html.stripScripts();
+		var tmp = new Element('div').update(html.stripScripts());
 		var el = tmp.down();
 		this.componentElement.replaceBy(el);
 		html.evalScripts.bind(html).defer();

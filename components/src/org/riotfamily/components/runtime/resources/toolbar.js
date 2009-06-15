@@ -3,7 +3,6 @@ riot.Toolbar = Class.create({
 		this.edit = true;
 		this.publish = true;
 		this.buttons = $H({
-			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbarButton.gotoRiot}', null, riot.path),
 			browse: new riot.ToolbarButton('browse', '${toolbarButton.browse}'),
 			insert: new riot.ToolbarButton('insert', '${toolbarButton.insert}', '.riot-component-list'),
 			remove: new riot.ToolbarButton('remove', '${toolbarButton.remove}', '.riot-component-list'),
@@ -12,28 +11,28 @@ riot.Toolbar = Class.create({
 			move: new riot.ToolbarButton('move', '${toolbarButton.move}', '.riot-component-list'),
 			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}'),
 			discard: new riot.ToolbarButton('discard', '${toolbarButton.discard}'),
-			publish: new riot.ToolbarButton('publish', '${toolbarButton.publish}')
+			publish: new riot.ToolbarButton('publish', '${toolbarButton.publish}'),
+			apply: new riot.ToolbarButton('apply', '${toolbarButton.apply}')
 		});
 
 		this.buttons.get('logout').applyHandler = this.logout;
+		this.buttons.get('apply').disable();
 		
-		var buttonElements = this.buttons.values().pluck('element');
-		document.body.appendChild(this.element = RBuilder.node('div', {id: 'riot-toolbar'},
-			RBuilder.node('div', {id: 'riot-toolbar-buttons'}, buttonElements)
-		));
-		document.body.appendChild(this.inspectorPanel = RBuilder.node('div', {id: 'riot-inspector'}));
+		var buttonsDiv = new Element('div', {id: 'riot-toolbar-buttons'});
+		this.buttons.values().each(function(b) {
+			buttonsDiv.insert(b.element);
+		});
+		document.body.appendChild(this.element = new Element('div', {id: 'riot-toolbar'})
+			.insert(new Element('div', {id: 'riot-toolbar-title'}))
+			.insert(buttonsDiv));
 
-		this.applyButton = new riot.ToolbarButton('apply', '${toolbarButton.apply}').activate();
-		this.applyButton.enable = function() {
-			this.enabled = true;
-			new Effect.Appear(this.element, {duration: 0.4});
-		}
-		this.applyButton.disable = function() {
-			this.enabled = false;
-			this.element.hide();
-		}
-		this.applyButton.element.hide();
-		this.element.appendChild(this.applyButton.element);
+		new Draggable('riot-toolbar', {
+			handle: 'riot-toolbar-title', 
+			starteffect: null, 
+			endeffect: null, 
+			scroll: this.element.getStyle('position') == 'absolute' ? 'window' : null
+		});
+		document.body.appendChild(this.inspectorPanel = new Element('div', {id: 'riot-inspector'}));
 	},
 
 	activate: function() {
@@ -116,7 +115,7 @@ riot.Toolbar = Class.create({
 			RBuilder.node('div', {id: 'riot-toolbar-buttons'}, buttonElements)
 		);
 		doc.body.appendChild(el);
-		el.appendChild(this.applyButton.createProxyElement().show());
+		//el.appendChild(this.button.get('apply').createProxyElement().show());
 	}
 })
 
