@@ -9,14 +9,11 @@ riot.Toolbar = Class.create({
 			edit: new riot.ToolbarButton('edit', '${toolbarButton.edit}', '.riot-text-editor'),
 			properties: new riot.ToolbarButton('properties', '${toolbarButton.properties}', '.riot-form'),
 			move: new riot.ToolbarButton('move', '${toolbarButton.move}', '.riot-component-list'),
-			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}'),
-			discard: new riot.ToolbarButton('discard', '${toolbarButton.discard}'),
-			publish: new riot.ToolbarButton('publish', '${toolbarButton.publish}'),
-			apply: new riot.ToolbarButton('apply', '${toolbarButton.apply}')
+			preview: new riot.ToolbarButton('preview', '${toolbarButton.preview}'),
+			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}')
 		});
 
 		this.buttons.get('logout').applyHandler = this.logout;
-		this.buttons.get('apply').disable();
 		
 		var buttonsDiv = new Element('div', {id: 'riot-toolbar-buttons'});
 		this.buttons.values().each(function(b) {
@@ -29,9 +26,10 @@ riot.Toolbar = Class.create({
 		new Draggable('riot-toolbar', {
 			handle: 'riot-toolbar-title', 
 			starteffect: null, 
-			endeffect: null, 
-			scroll: this.element.getStyle('position') == 'absolute' ? 'window' : null
+			endeffect: null 
+			//scroll: this.element.getStyle('position') == 'absolute' ? 'window' : null
 		});
+		
 		document.body.appendChild(this.inspectorPanel = new Element('div', {id: 'riot-inspector'}));
 	},
 
@@ -110,12 +108,7 @@ riot.Toolbar = Class.create({
 	},
 	
 	renderProxy: function(doc) {
-		var buttonElements = this.buttons.values().invoke('createProxyElement');
-		var el = RBuilder.node('div', {id: 'riot-toolbar'},
-			RBuilder.node('div', {id: 'riot-toolbar-buttons'}, buttonElements)
-		);
-		doc.body.appendChild(el);
-		//el.appendChild(this.button.get('apply').createProxyElement().show());
+		riot.components.showPreviewFrame();
 	}
 })
 
@@ -214,9 +207,7 @@ riot.ToolbarButton = Class.create({
 	},
 
 	getHandlerTargets: function() {
-		return document.body.select(this.selector).reject(function(el) {
-			return el.up('.riot-child-dump');
-		});
+		return document.body.select(this.selector);
 	},
 
 	applyHandler: function(enable) {
@@ -242,7 +233,7 @@ riot.ToolbarButton = Class.create({
 		if (this.selector) {
 			var targets = this.getHandlerTargets();
 			for (var i = 0; i < targets.length; i++) {
-				var target = riot.getWrapper(targets[i], this.selector)
+				var target = riot.components.getWrapper(targets[i], this.selector)
 				var method = this.handler + (enable ? 'On' : 'Off');
 				if (target[method]) {
 					target[method]();
@@ -251,8 +242,8 @@ riot.ToolbarButton = Class.create({
 		}
 		else {
 			var method = this.handler + (enable ? 'On' : 'Off');
-			if (riot[method]) {
-				riot[method]();
+			if (riot.components[method]) {
+				riot.components[method]();
 			}
 		}
 	},

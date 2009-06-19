@@ -121,21 +121,22 @@ public class ComponentListRenderer implements ServletContextAware {
 
 		ComponentList list = null;
 		RenderStrategy strategy = liveModeRenderStrategy;
-		if (EditModeUtils.isEditMode(request)) {
+		if (EditModeUtils.isPreview(request, container)) {
 			list = (ComponentList) container.getPreviewVersion().getValue(key);
-			if (list == null) {
-				list = createList(container.getPreviewVersion(), key, config);
-				
-				// If the new list is not empty, we have to store it and mark
-				// the container as dirty.
-				if (list.getSize() > 0) {
-					container.getPreviewVersion().setValue(key, list);
-					container.setDirty(true);
+			if (EditModeUtils.isEditMode(request)) {
+				if (list == null) {
+					list = createList(container.getPreviewVersion(), key, config);
+					
+					// If the new list is not empty, we have to store it and mark
+					// the container as dirty.
+					if (list.getSize() > 0) {
+						container.getPreviewVersion().setValue(key, list);
+						container.setDirty(true);
+					}
 				}
-			}
-			
-			if (AccessController.isGranted("edit", container)) {
-				strategy = editModeRenderStrategy;
+				if (AccessController.isGranted("edit", container)) {
+					strategy = editModeRenderStrategy;
+				}
 			}
 		}
 		else if (container.getLiveVersion() != null) {
@@ -158,8 +159,8 @@ public class ComponentListRenderer implements ServletContextAware {
 		ComponentList list;
 		RenderStrategy strategy = liveModeRenderStrategy;
 		request.setAttribute(PARENT_ATTRIBUTE, component);
+		list = (ComponentList) component.getValue(key);
 		if (EditModeUtils.isEditMode(request)) {
-			list = (ComponentList) component.getValue(key);
 			if (list == null) {
 				list = createList(component, key, config);
 			}
@@ -167,9 +168,6 @@ public class ComponentListRenderer implements ServletContextAware {
 			if (AccessController.isGranted("edit", list)) {
 				strategy = editModeRenderStrategy;
 			}
-		}
-		else {
-			list = (ComponentList) component.getValue(key);
 		}
 		
 		StringWriter sw = new StringWriter();

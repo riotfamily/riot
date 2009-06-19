@@ -39,19 +39,23 @@
 				riot.toolbar.publish = ${inplaceMacroHelper.isPublishGranted()?string};
 			}
 		</script>
-	<#else>
-		<#if inplaceMacroHelper.isLiveModePreview()>
-			<@riot.stylesheet href="style/toolbar.css" />
-			<@riot.stylesheet href="style/edit-mode.css" />
-			<script type="text/javascript" language="JavaScript">
-				parent.riot.toolbar.renderProxy(document);
-			</script>
-		<#elseif bookmarklet>
-			<script type="text/javascript" language="JavaScript">
-				// This variable is read by the login-bookmarklet:
-				var riotPagesUrl = '${riot.href("/pages")}';
-			</script>
-		</#if>
+	<#elseif inplaceMacroHelper.liveMode>
+		<script type="text/javascript" language="JavaScript">
+			if (parent && parent.liveLoaded) {
+				parent.liveLoaded();
+			}
+		</script>
+	<#elseif inplaceMacroHelper.previewMode>
+		<script type="text/javascript" language="JavaScript">
+			if (parent && parent.previewLoaded) {
+				parent.previewLoaded();
+			}
+		</script>
+	<#elseif bookmarklet>
+		<script type="text/javascript" language="JavaScript">
+			// This variable is read by the login-bookmarklet:
+			var riotPagesUrl = '${riot.resource("/pages")}';
+		</script>
 	</#if>
 </#macro>
 

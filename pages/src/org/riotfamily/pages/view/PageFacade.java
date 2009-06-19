@@ -71,7 +71,7 @@ public class PageFacade {
 		this.page = page;
 		this.request = request;
 		this.pathConverter = pathConverter;
-		this.preview = EditModeUtils.isEditMode(request);
+		this.preview = EditModeUtils.isPreview(request, page.getPageProperties());
 		PageCacheUtils.addNodeTag(page);
 	}
 	

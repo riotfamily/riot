@@ -50,7 +50,7 @@ public final class ComponentCacheUtils {
 	}
 	
 	public static void addContainerTags(ContentContainer container, HttpServletRequest request) {
-		addContainerTags(container, EditModeUtils.isEditMode(request));
+		addContainerTags(container, EditModeUtils.isPreview(request, container));
 	}
 	
 	public static void addContainerTags(ContentContainer container, boolean preview) {

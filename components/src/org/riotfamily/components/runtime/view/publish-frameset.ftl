@@ -1,0 +1,91 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<@riot.script src="prototype/prototype.js" />
+<script>
+
+	var previewUrl;
+	var liveUrl;
+	
+	var leftShown = true;
+	var rightShown = false;
+	
+	function init(containerIds) {
+		var params = $H(parent.location.search.parseQuery());
+		params.set('riotMode', 'live');
+		liveUrl = parent.location.pathname + '?' + params.toQueryString();
+	
+		params.set('riotMode', 'preview');
+		params.set('riotContainer', containerIds);
+		previewUrl = parent.location.pathname + '?' + params.toQueryString();
+		
+		left.location.replace(previewUrl);
+		right.location.replace(liveUrl);
+	}
+	
+	function previewLoaded() {
+		parent.riot.components.showPreviewFrame();
+		left.onscroll = function(e) {
+			right.scrollTo(left.scrollX, left.scrollY)
+		}
+		if (!leftShown) {
+			left.document.body.style.display = 'none';
+		}
+	}
+	
+	function liveLoaded() {
+		right.onscroll = function(e) {
+			left.scrollTo(right.scrollX, right.scrollY)
+		}
+		Event.observe(right, 'load', function() {
+			right.document.body.style.display = 'none';
+		});
+		toolbar.enable();
+	}
+
+	function show(showLeft, showRight) {
+		var c = $('content');
+		
+		// Adjust visibility
+		left.document.body.style.display = showLeft ? '' : 'none';
+		right.document.body.style.display = showRight ? '' : 'none';
+		
+		if (showLeft && showRight) {
+			c.cols = '*,*';
+			if (!(leftShown && rightShown)) {
+				// Switch to split-screen view ...
+				splitScreen = true;
+			}
+		}
+		else {
+			if (leftShown && rightShown) {
+				// Was split-screen before; an intermediate step is required 
+				// to work around rendering issues
+				c.cols = '*,*';
+				setTimeout(function() {c.cols = showLeft ? '*,0' : '0,*'}, 1);
+			}
+			else {
+				c.cols = showLeft ? '*,0' : '0,*';
+			}
+		}
+		leftShown = showLeft;
+		rightShown = showRight;
+	}
+	
+	function hide() {
+		parent.riot.components.hidePreviewFrame();
+		toolbar.disable();
+		left.location.replace('about:blank');
+	}
+</script>
+<style type="text/css">
+</style>
+</head>
+<frameset rows="49,*" border="0">
+	<frame id="toolbar" name="toolbar" src="publish-toolbar" />
+	<frameset id="content" cols="*,0">
+		<frame id="left" name="left" />
+		<frame id="right" name="right" />
+	</frameset>
+</frameset>
+</html>

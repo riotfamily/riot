@@ -23,13 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.support;
 
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.core.security.AccessController;
 
 /**
@@ -38,54 +38,47 @@ import org.riotfamily.core.security.AccessController;
  */
 public final class EditModeUtils {
 
-	public static final String LIVE_MODE_ATTRIBUTE = 
-			EditModeUtils.class.getName() + ".liveMode";
-	
 	private EditModeUtils() {
 	}
 	
+	private static String getMode(HttpServletRequest request) {
+		return request.getParameter("riotMode");
+	}
+	
+	private static List<String> getContainerIds(HttpServletRequest request) {
+		String[] s = request.getParameterValues("riotContainer");
+		if (s == null) {
+			return Collections.emptyList();
+		}
+		return Arrays.asList(s);
+	}
+	
 	public static boolean isEditMode(HttpServletRequest request) {
-		return AccessController.isAuthenticatedUser() && !isLiveMode(request);
+		return AccessController.isAuthenticatedUser() 
+				&& getMode(request) == null;
 	}
 	
 	public static boolean isLiveMode(HttpServletRequest request) {
-		Boolean liveMode = (Boolean) request.getAttribute(LIVE_MODE_ATTRIBUTE);
-		if (liveMode == null) {
-			liveMode = Boolean.valueOf(request.getParameter(LIVE_MODE_ATTRIBUTE));
-		}
-		return liveMode == Boolean.TRUE;
+		return AccessController.isAuthenticatedUser() 
+				&& "live".equals(getMode(request));
 	}
 	
-	public static boolean isLiveModePreview(HttpServletRequest request) {
-		return Boolean.parseBoolean(request.getParameter(LIVE_MODE_ATTRIBUTE));
+	public static boolean isPreviewMode(HttpServletRequest request) {
+		return AccessController.isAuthenticatedUser() 
+				&& "preview".equals(getMode(request));
 	}
 	
-	public static void setLiveMode(HttpServletRequest request, boolean liveMode) {
-		if (liveMode) {
-			request.setAttribute(LIVE_MODE_ATTRIBUTE, Boolean.TRUE);
-		}
-		else {
-			request.removeAttribute(LIVE_MODE_ATTRIBUTE);
-		}
-	}
-
-	public static void setLiveMode(HttpSession session, boolean liveMode) {
-		if (liveMode) {
-			session.setAttribute(LIVE_MODE_ATTRIBUTE, Boolean.TRUE);
-		}
-		else {
-			session.removeAttribute(LIVE_MODE_ATTRIBUTE);
-		}
-	}
-	
-	public static void include(HttpServletRequest request, 
-			HttpServletResponse response, String url, boolean liveMode) 
-			throws ServletException, IOException {
+	public static boolean isPreview(HttpServletRequest request, 
+			ContentContainer container) {
 		
-		boolean previouslyLive = isLiveMode(request);
-		setLiveMode(request, liveMode);
-		request.getRequestDispatcher(url).include(request, response);
-		setLiveMode(request, previouslyLive);
+		if (!isPreviewMode(request)) {
+			return false;
+		}
+		if (container == null || container.getId() == null) {
+			return true;
+		}
+		String id = container.getId().toString();
+		return getContainerIds(request).contains(id);
 	}
-	
+		
 }

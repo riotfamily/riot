@@ -68,6 +68,16 @@
 		<constructor-arg ref="cacheService" /> 
 	</bean>
 	
+	<bean name="/components/publish"
+		class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+		<property name="viewName" value="classpath:/org/riotfamily/components/runtime/view/publish-frameset.ftl" />
+	</bean>
+	
+	<bean name="/components/publish-toolbar"
+		class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+		<property name="viewName" value="classpath:/org/riotfamily/components/runtime/view/publish-toolbar.ftl" />
+	</bean>
+	
 	<!--
 	  - Login-popup that is opend by the Riot-login bookmarklet.
 	  -->
@@ -118,27 +128,5 @@
 			<property name="location" value="classpath:/org/riotfamily/components/runtime/resources/" />
 		</bean>
 	</override:add>	
-	
-	<!--
-	<override:add ref="dwrController" property="configurators">
-		<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
-			<property name="converterTypes">
-				<props>
-					<prop key="org.riotfamily.components.editor.ListRef">bean</prop>
-				</props>
-			</property>
-			<property name="serviceBeans">
-				<map>
-					<entry key="ComponentEditor" value-ref="componentEditor" />
-				</map>
-			</property>
-			<property name="serviceInterfaces">
-				<list>
-					<value>org.riotfamily.components.editor.ComponentEditor</value>
-				</list>
-			</property>
-		</bean>
-	</override:add>
-	-->
 	 
 </beans>

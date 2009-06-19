@@ -37,7 +37,15 @@ public class EditModeCacheKeyAugmentor implements CacheKeyAugmentor {
 
 	public void augmentCacheKey(StringBuffer key, HttpServletRequest request) {
 		if (AccessController.isAuthenticatedUser()) {
-			key.insert(0, EditModeUtils.isEditMode(request) ? "edit:" : "live:");
+			if (EditModeUtils.isEditMode(request)) {
+				key.insert(0, "edit:");
+			}
+			else if (EditModeUtils.isPreviewMode(request)) {
+				key.insert(0, "preview:");				
+			}
+			else {
+				key.insert(0, "live:");				
+			}
 		}
 	}
 }

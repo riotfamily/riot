@@ -69,10 +69,14 @@ public class InplaceMacroHelper {
 		return EditModeUtils.isEditMode(request);
 	}
 	
-	public boolean isLiveModePreview() {
-		return EditModeUtils.isLiveModePreview(request);
+	public boolean isPreviewMode() {
+		return EditModeUtils.isPreviewMode(request);
 	}
-
+	
+	public boolean isLiveMode() {
+		return EditModeUtils.isLiveMode(request);
+	}
+	
 	public List<String> getToolbarScripts() {
 		return this.toolbarScripts;
 	}
