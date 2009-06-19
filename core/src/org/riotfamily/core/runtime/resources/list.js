@@ -560,10 +560,13 @@ var CommandButton = Class.create({
 		this.list = list;
 		this.command = command;
 		this.handler = handler;
-		var icon = new Element('span').addClassName('icon');
-		icon.style.backgroundImage = 'url(' + command.icon + ')';
+		var style = 'background-image:url(' + command.icon 
+			+ ');_background-image:none;_filter:progid:'
+			+ 'DXImageTransform.Microsoft.AlphaImageLoader(src=\''
+			+ command.icon + '\', sizingMethod=\'crop\')';
+		
 		this.element = new Element('a', {href: '#'}).addClassName('action')
-			.insert(icon)
+			.insert(new Element('span', {style: style}).addClassName('icon'))
 			.insert(new Element('span').addClassName('label')
 				.insert(new Element('div').insert(command.label))
 			).observe('click', this.onclick.bindAsEventListener(this));

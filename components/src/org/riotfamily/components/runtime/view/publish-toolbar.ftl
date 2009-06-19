@@ -8,6 +8,8 @@
 <style type="text/css">
 body {
 	background: url(${c.resolve(riot.resource('style/images/publish/toolbar_bg.gif'))}) repeat-x;
+	margin: 9px 10px 0 10px;
+	padding 0;
 	-moz-user-select: none;
 }
 
@@ -58,6 +60,7 @@ body {
 #publish.disabled b b,
 #discard.disabled b b {
 	opacity: 0.4;
+	filter: alpha(opacity=40);
 }
 
 #preview { background-position: -62px 0 }
@@ -78,12 +81,10 @@ body {
 #view {
 	float: left;
 	display: block;
-	padding: 1px 0 0 1px;
 }
 #actions {
 	float: right;
 	display: block;
-	padding: 1px 2px 0 0;
 }
 </style>
 <script type="text/javascript" language="JavaScript">

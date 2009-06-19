@@ -71,6 +71,9 @@ public final class EditModeUtils {
 	public static boolean isPreview(HttpServletRequest request, 
 			ContentContainer container) {
 		
+		if (isEditMode(request)) {
+			return true;
+		}
 		if (!isPreviewMode(request)) {
 			return false;
 		}

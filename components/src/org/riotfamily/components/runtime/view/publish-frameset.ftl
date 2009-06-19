@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
@@ -52,10 +54,6 @@
 		
 		if (showLeft && showRight) {
 			c.cols = '*,*';
-			if (!(leftShown && rightShown)) {
-				// Switch to split-screen view ...
-				splitScreen = true;
-			}
 		}
 		else {
 			if (leftShown && rightShown) {
@@ -81,9 +79,9 @@
 <style type="text/css">
 </style>
 </head>
-<frameset rows="49,*" border="0">
-	<frame id="toolbar" name="toolbar" src="publish-toolbar" />
-	<frameset id="content" cols="*,0">
+<frameset rows="49,*" border="0" frameborder="0" framespacing="0">
+	<frame id="toolbar" name="toolbar" src="publish-toolbar" scrolling="no" noresize="noresize" />
+	<frameset id="content" cols="*,0" border="0" frameborder="0" framespacing="0">
 		<frame id="left" name="left" />
 		<frame id="right" name="right" />
 	</frameset>

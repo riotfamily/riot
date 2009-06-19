@@ -368,12 +368,17 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 				for (var i = 0; i < n.childNodes.length; i++) { 
 					var c = n.childNodes[i];
 					if (c.nodeType == 1) {
-						chunks.push('<' + c.nodeName.toLowerCase() + '>'
-								+ this.cleanUp(c.innerHTML)
-								+ '</' + c.nodeName.toLowerCase() + '>');
+						var html = this.cleanUp(c.innerHTML);
+						if (html.length > 0) {
+							var tag = c.nodeName.toLowerCase();
+							chunks.push('<'+tag+'>' + html + '</'+tag+'>');
+						}
 					}
 					else if (c.nodeType == 3) {
-						chunks.push('<p>' + c.nodeValue + '</p>');
+						var s = c.nodeValue.strip();
+						if (s.length > 0) {
+							chunks.push('<p>' + s + '</p>');
+						}
 					}
 				}
 				if (chunks.length == 0) {
@@ -390,7 +395,7 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	cleanUp: function(html) {
  		return html.replace(/<!--(.|\n)*?-->/g, '')
  			.replace(/&lt;!--(.|\n)*?(smso-|@page)(.|\n)*?--&gt;/g, '')
- 			.replace(/<p>\s*<\/p>/g, '')
+ 			.replace(/<p>(\s|&nbsp;)*<\/p>/g, '')
  			.replace(/<\s*?br\s*?>/ig, '<br />')
  			.strip();
 	}

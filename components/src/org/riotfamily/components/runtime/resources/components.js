@@ -166,7 +166,7 @@ riot.components = (function() {
 		
 		markAsDirty: function(callback) {
 			ComponentEditor.markAsDirty(this.id, callback);
-			riot.toolbar.enablePublishButtons();
+			riot.toolbar.enablePreviewButton();
 		}
 	});
 
@@ -602,7 +602,7 @@ riot.components = (function() {
 				});
 			}
 			findContainer(el).markAsDirty();
-			riot.toolbar.enablePublishButtons();
+			riot.toolbar.enablePreviewButton();
 			if (this.componentList.config.max && this.componentList.componentElements.length == this.componentList.config.max) {
 				this.componentList.insertOff();			
 			}
@@ -700,9 +700,9 @@ riot.components = (function() {
 	document.body.appendChild(previewFrame);
 	adoptFloatsAndClears();
 	
-	// -----------------------------------------------------------------------
+	// =======================================================================
 	// Public API
-	// -----------------------------------------------------------------------
+	// =======================================================================
 	
 	return {
 
@@ -726,12 +726,18 @@ riot.components = (function() {
 		},
 		
 		previewOn: function() {
+			var h = Math.max(document.viewport.getHeight(), Element.getHeight(document.body));
+			
 			var html = $$('html').first();
 			if (!html.originalOverflow) {
 				html.originalOverflow = html.style.overflow;
 			}
 			html.style.overflow = 'hidden';
-			document.body.appendChild(new Element('div', {id: 'riotLoadingOverlay'}));
+
+			var overlay = new Element('div', {id: 'riotLoadingOverlay'});
+			overlay.style.height = h + 'px';
+			document.body.appendChild(overlay);
+			
 			previewFrame.setStyle({display: 'block'}); 
 			riotPreviewFrame.init(riotContainerIds);
 		},
@@ -769,9 +775,10 @@ riot.components = (function() {
 			
 			riot.applyFunction(containerIds);	
 			previewFrame.initialized = false;	
-			riot.toolbar.disablePublishButtons();	
+			riot.toolbar.disablePreviewButton();	
 		},
 		*/
+		
 		editProperties: function(e) {
 			e = e || this;
 			var componentElement = Element.up(e, '.riot-component');

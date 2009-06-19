@@ -40,22 +40,21 @@ riot.Toolbar = Class.create({
 						parseInt(e.readAttribute('riot:containerId'))) != -1;
 			})
 			
-			if (!dirty || !this.publish) this.disablePublishButtons();
+			if (!dirty || !this.publish)
+						this.disablePreviewButton();
 			this.buttons.values().invoke('activate');
 			this.buttons.get('browse').select();
 		}
 	},
 
-	enablePublishButtons: function() {
+	enablePreviewButton: function() {
 		if (this.publish) {
-			this.buttons.get('publish').enable();
-			this.buttons.get('discard').enable();
+			this.buttons.get('preview').enable();
 		}
 	},
 	
-	disablePublishButtons: function() {
-		this.buttons.get('publish').disable();
-		this.buttons.get('discard').disable();
+	disablePreviewButton: function() {
+		this.buttons.get('preview').disable();
 	},
 	
 	buttonSelected: function(button) {
@@ -105,10 +104,6 @@ riot.Toolbar = Class.create({
 		ComponentEditor.logout(function() {
 			location.reload();
 		});
-	},
-	
-	renderProxy: function(doc) {
-		riot.components.showPreviewFrame();
 	}
 })
 
@@ -136,12 +131,6 @@ riot.ToolbarButton = Class.create({
 			className: this.getClassName(),
 			title: this.title
 		});
-	},
-	
-	createProxyElement: function() {
-		var el = this.createElement();
-		el.onclick = this.click.bind(this);
-		return el;
 	},
 	
 	getClassName: function() {
