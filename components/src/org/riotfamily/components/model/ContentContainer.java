@@ -117,7 +117,7 @@ public class ContentContainer extends ActiveRecordSupport {
 
 	// -----------------------------------------------------------------------
 	
-	public boolean publish() {
+	public void publish() {
 		if (isDirty()) {
 			Content preview = getPreviewVersion();
 			if (preview != null) {
@@ -129,13 +129,11 @@ public class ContentContainer extends ActiveRecordSupport {
 				}
 				setDirty(false);
 				//FIXME ComponentCacheUtils.invalidateContainer(cacheService, this);
-				return true;
 			}
 		}
-		return false;
 	}
 	
-	public boolean discard() {		
+	public void discard() {		
 		Content live = getLiveVersion();
 		if (live != null) {
 			Content preview = getPreviewVersion();
@@ -145,9 +143,7 @@ public class ContentContainer extends ActiveRecordSupport {
 			}
 			setDirty(false);
 			//FIXME ComponentCacheUtils.invalidateContainer(cacheService, this);
-			return true;
 		}
-		return false;
 	}
 	
 	public static ContentContainer load(Long id) {

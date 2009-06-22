@@ -6,75 +6,97 @@
 <@riot.script src="prototype/prototype.js" />
 <script>
 
-	var previewUrl;
-	var liveUrl;
-	
-	var leftShown = true;
-	var rightShown = false;
-	
-	function init(containerIds) {
-		var params = $H(parent.location.search.parseQuery());
-		params.set('riotMode', 'live');
-		liveUrl = parent.location.pathname + '?' + params.toQueryString();
-	
-		params.set('riotMode', 'preview');
-		params.set('riotContainer', containerIds);
-		previewUrl = parent.location.pathname + '?' + params.toQueryString();
-		
-		left.location.replace(previewUrl);
-		right.location.replace(liveUrl);
-	}
-	
-	function previewLoaded() {
-		parent.riot.components.showPreviewFrame();
-		left.onscroll = function(e) {
-			right.scrollTo(left.scrollX, left.scrollY)
-		}
-		if (!leftShown) {
-			left.document.body.style.display = 'none';
-		}
-	}
-	
-	function liveLoaded() {
-		right.onscroll = function(e) {
-			left.scrollTo(right.scrollX, right.scrollY)
-		}
-		Event.observe(right, 'load', function() {
-			right.document.body.style.display = 'none';
-		});
-		toolbar.enable();
-	}
+var previewUrl;
+var liveUrl;
 
-	function show(showLeft, showRight) {
-		var c = $('content');
-		
-		// Adjust visibility
-		left.document.body.style.display = showLeft ? '' : 'none';
-		right.document.body.style.display = showRight ? '' : 'none';
-		
-		if (showLeft && showRight) {
+var leftShown = true;
+var rightShown = false;
+
+var containerIds;
+
+/**
+ * Loads the live and preview version of the page into the content frames.
+ */
+function init(ids) {
+	containerIds = ids;
+	var params = $H(parent.location.search.parseQuery());
+	params.set('riotMode', 'live');
+	liveUrl = parent.location.pathname + '?' + params.toQueryString();
+
+	params.set('riotMode', 'preview');
+	params.set('riotContainer', ids);
+	previewUrl = parent.location.pathname + '?' + params.toQueryString();
+	
+	left.location.replace(previewUrl);
+	right.location.replace(liveUrl);
+}
+
+/**
+ * Callback that is invoked when the preview version is loaded.
+ */
+function previewLoaded() {
+	parent.riot.components.showPreviewFrame();
+	left.onscroll = function(e) {
+		right.scrollTo(left.scrollX, left.scrollY)
+	}
+	if (!leftShown) {
+		left.document.body.style.display = 'none';
+	}
+}
+
+/**
+ * Callback that is invoked when the live version is loaded.
+ */
+function liveLoaded() {
+	right.onscroll = function(e) {
+		left.scrollTo(right.scrollX, right.scrollY)
+	}
+	Event.observe(right, 'load', function() {
+		right.document.body.style.display = 'none';
+	});
+	toolbar.enable();
+}
+
+function show(showLeft, showRight) {
+	var c = $('content');
+	
+	// Adjust visibility
+	left.document.body.style.display = showLeft ? '' : 'none';
+	right.document.body.style.display = showRight ? '' : 'none';
+	
+	if (showLeft && showRight) {
+		c.cols = '*,*';
+	}
+	else {
+		if (leftShown && rightShown) {
+			// Was split-screen before; an intermediate step is required 
+			// to work around rendering issues
 			c.cols = '*,*';
+			setTimeout(function() {c.cols = showLeft ? '*,0' : '0,*'}, 1);
 		}
 		else {
-			if (leftShown && rightShown) {
-				// Was split-screen before; an intermediate step is required 
-				// to work around rendering issues
-				c.cols = '*,*';
-				setTimeout(function() {c.cols = showLeft ? '*,0' : '0,*'}, 1);
-			}
-			else {
-				c.cols = showLeft ? '*,0' : '0,*';
-			}
+			c.cols = showLeft ? '*,0' : '0,*';
 		}
-		leftShown = showLeft;
-		rightShown = showRight;
 	}
-	
-	function hide() {
-		parent.riot.components.hidePreviewFrame();
-		toolbar.disable();
-		left.location.replace('about:blank');
-	}
+	leftShown = showLeft;
+	rightShown = showRight;
+}
+
+function hide() {
+	parent.riot.components.hidePreviewFrame();
+	toolbar.disable();
+	left.location.replace('about:blank');
+}
+
+function publish() {
+	parent.riot.components.publish(containerIds);
+	hide();
+}
+
+function discard() {
+	parent.riot.components.discard(containerIds);
+	hide();
+}
 </script>
 <style type="text/css">
 </style>

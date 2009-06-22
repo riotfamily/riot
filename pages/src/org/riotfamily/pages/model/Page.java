@@ -484,9 +484,11 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	
 	public void publish() {
 		setPublished(true);
+		if (getPageProperties().isDirty()) {
+			getPageProperties().publish();
+		}
 		//FIXME PageCacheUtils.invalidateNode(cacheService, this);
 		//FIXME PageCacheUtils.invalidateNode(cacheService, getParent());
-		getPageProperties().publish();
 	}
 	
 	public void unpublish() {

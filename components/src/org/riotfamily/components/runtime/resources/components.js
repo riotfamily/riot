@@ -738,18 +738,27 @@ riot.components = (function() {
 			overlay.style.height = h + 'px';
 			document.body.appendChild(overlay);
 			
-			previewFrame.setStyle({display: 'block'}); 
-			riotPreviewFrame.init(riotContainerIds);
+			previewFrame.setStyle({display: 'block'});
+			
+			riotPreviewFrame.init(riotContainerIds || $$('.riot-container')
+					.collect(getContentContainer).pluck('id'));
 		},
 		
 		showPreviewFrame: function() {
 			previewFrame.setStyle({visibility: 'visible'}); 
 			$$('body > *:not(#riotPreviewFrame)').invoke('hide');
-			/*
-			riot.applyFunction = function(containerIds) {
-				ComponentEditor.discard(containerIds, function() {window.location.reload();});
-			};
-			*/
+		},
+		
+		publish: function(containerIds) {
+			ComponentEditor.publish(containerIds);
+			previewFrame.initialized = false;	
+			riot.toolbar.disablePreviewButton();
+		},
+		
+		discard: function(containerIds) {
+			ComponentEditor.discard(containerIds, function() {
+				window.location.reload();
+			});
 		},
 		
 		hidePreviewFrame: function() {
@@ -761,23 +770,6 @@ riot.components = (function() {
 			riot.outline.hide();
 			riot.toolbar.buttons.get('browse').click();
 		},
-
-		/*
-		publishOn: function() {
-			riot.applyFunction = ComponentEditor.publish;	
-		},
-
-		applyOn: function() {
-			riot.toolbar.buttons.get('browse').click();
-			var containerIds = riotContainerIds || $$('.riot-container')
-				.collect(getContentContainer)
-				.pluck('id'); 
-			
-			riot.applyFunction(containerIds);	
-			previewFrame.initialized = false;	
-			riot.toolbar.disablePreviewButton();	
-		},
-		*/
 		
 		editProperties: function(e) {
 			e = e || this;

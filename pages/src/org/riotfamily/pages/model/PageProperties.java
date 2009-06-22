@@ -84,4 +84,12 @@ public class PageProperties extends ContentContainer {
 		return super.unwrap(preview);
 	}
 	
+	@Override
+	public void publish() {
+		super.publish();
+		if (!getPage().isPublished()) {
+			getPage().publish();
+		}
+	}
+	
 }
