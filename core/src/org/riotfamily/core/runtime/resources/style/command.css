@@ -8,10 +8,10 @@
 
 .commands .action .icon {
 	float: left;
-	width: 32px;
-	height: 32px;
+	width: 16px;
+	height: 25px;
 	background-repeat: no-repeat;
-	background-position: 12px 7px;
+	margin: 7px 0 0 12px;
 }
 
 .commands .label {
@@ -32,6 +32,11 @@
 	background: url(images/command-hover-bg.gif) no-repeat;
 	outline: none;
 	-moz-outline: none;
+}
+
+.commands .disabled {
+	filter: alpha(opacity=50);
+	background: #f0f0f0;
 }
 
 .commands .disabled .icon {

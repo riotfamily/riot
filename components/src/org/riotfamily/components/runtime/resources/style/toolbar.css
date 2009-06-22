@@ -29,6 +29,9 @@ body > #riot-notification {
 	text-align: left;
 	width: 64px;
 	background: url(images/toolbar/background.png) no-repeat;
+	_background: none;
+	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/toolbar/background.png')
+	
 }
 
 #riot-toolbar-title {
