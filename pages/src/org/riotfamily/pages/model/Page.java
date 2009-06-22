@@ -47,6 +47,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.common.util.FormatUtils;
@@ -103,6 +104,8 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 
 	private PageProperties pageProperties;
 	
+	private CacheService cacheService;
+	
 	public Page() {
 	}
 
@@ -121,6 +124,16 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		if (master.isSystemPage()) {
 			published = master.isPublished();
 		}
+	}
+	
+	@Transient
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
+	}
+	
+	@Transient
+	public String getCacheTag() {
+		return Page.class.getName() + "#" + getId();
 	}
 	
 	public String getPageType() {
@@ -473,9 +486,9 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		*/
 		getChildPages().add(child);
 		child.setSite(getSite());
-		//child.setCreationDate(new Date()); // -> EntityListener
-		//deleteAlias(page); // -> EntityListener
-		//PageCacheUtils.invalidateNode(cacheService, parentNode); // -> EntityListener
+		//child.setCreationDate(new Date());
+		//deleteAlias(page);
+		getParent().invalidateCacheItems();
 	}
 	
 	public void removePage(Page child) {
@@ -487,16 +500,22 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		if (getPageProperties().isDirty()) {
 			getPageProperties().publish();
 		}
-		//FIXME PageCacheUtils.invalidateNode(cacheService, this);
-		//FIXME PageCacheUtils.invalidateNode(cacheService, getParent());
+		invalidateCacheItems();
+		getParent().invalidateCacheItems();
 	}
 	
 	public void unpublish() {
 		setPublished(false);
-		//FIXME PageCacheUtils.invalidateNode(cacheService, this);
-		//FIXME PageCacheUtils.invalidateNode(cacheService, getParent());
+		invalidateCacheItems();
+		getParent().invalidateCacheItems();
 	}
 		
+	public void invalidateCacheItems() {
+		if (cacheService != null) {
+			cacheService.invalidateTaggedItems(getCacheTag());
+		}
+	}
+	
 	public void refreshIfDetached() {
 		Session session = getSession();
 		if (!session.contains(this)) {

@@ -6,8 +6,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.model.Site;
 
 public class SiteFacade {
@@ -21,7 +21,7 @@ public class SiteFacade {
 	public SiteFacade(Site site, HttpServletRequest request) {
 		this.site = site;
 		this.request = request;
-		PageCacheUtils.addSiteTag(site);
+		TaggingContext.tag(site.getCacheTag());
 	}
 		
 	public String getAbsoluteUrl() {

@@ -31,5 +31,15 @@
 	<bean class="org.riotfamily.pages.config.SystemPageSyncListener">
 		<constructor-arg ref="sitemapSchema" />
 	</bean>
-		
+	
+	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
+	
+	<bean class="org.riotfamily.pages.model.Site" scope="prototype">
+		<property name="cacheService" ref="cacheService" />
+	</bean>
+
+	<bean class="org.riotfamily.pages.model.Page" scope="prototype">
+		<property name="cacheService" ref="cacheService" />
+	</bean>
+	
 </beans>

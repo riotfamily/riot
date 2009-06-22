@@ -44,6 +44,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CollectionOfElements;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -81,7 +82,13 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	
 	private Content properties;
 	
-		
+	private CacheService cacheService;
+	
+	
+	@Transient
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
+	}
 	
 	public boolean isEnabled() {
 		return this.enabled;
@@ -308,6 +315,17 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	// Implementation of the SiteMapItem interface
 	// ----------------------------------------------------------------------
 
+	@Transient
+	public String getCacheTag() {
+		return Site.class.getName() + "#" + getId();
+	}
+	
+	public void invalidateCacheItems() {
+		if (cacheService != null) {
+			cacheService.invalidateTaggedItems(getCacheTag());
+		}
+	}
+	
 	@Transient
 	public List<Page> getChildPages() {
 		return Page.findRootPagesBySite(this);

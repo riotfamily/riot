@@ -40,4 +40,8 @@ public interface SiteMapItem {
 	
 	public Site getSite();
 	
+	public String getCacheTag();
+	
+	public void invalidateCacheItems();
+	
 }

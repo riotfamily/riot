@@ -32,13 +32,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.support.EditModeUtils;
-import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageProperties;
@@ -72,7 +72,7 @@ public class PageFacade {
 		this.request = request;
 		this.pathConverter = pathConverter;
 		this.preview = EditModeUtils.isPreview(request, page.getPageProperties());
-		PageCacheUtils.addNodeTag(page);
+		TaggingContext.tag(page.getCacheTag());
 	}
 	
 	public PageFacade(Page page, HttpServletRequest request) {
@@ -169,13 +169,13 @@ public class PageFacade {
 	}
 
 	public Collection<Page> getChildPages() {
-		PageCacheUtils.addNodeTag(page);
+		TaggingContext.tag(page.getCacheTag());
 		return getVisiblePages(page.getChildPages());
 	}
 
 	public List<Page> getSiblings() {
 		SiteMapItem parent = page.getParent();
-		//FIXME PageCacheUtils.addNodeTag(parent);
+		TaggingContext.tag(parent.getCacheTag());
 		return getVisiblePages(parent.getChildPages());
 	}
 	
