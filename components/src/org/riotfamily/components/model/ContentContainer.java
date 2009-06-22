@@ -41,7 +41,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.criterion.Restrictions;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.wrapper.ComponentListWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.core.security.AccessController;
@@ -57,10 +59,17 @@ public class ContentContainer extends ActiveRecordSupport {
 	private Content previewVersion;
 	
 	private boolean dirty;
+
+	private CacheService cacheService;
 	
 	public ContentContainer() {
 	}
 
+	@Transient
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
+	}
+	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="live_version")
 	@Cascade(CascadeType.ALL)
@@ -128,7 +137,7 @@ public class ContentContainer extends ActiveRecordSupport {
 					liveVersion.delete();
 				}
 				setDirty(false);
-				//FIXME ComponentCacheUtils.invalidateContainer(cacheService, this);
+				ComponentCacheUtils.invalidateContainer(cacheService, this);
 			}
 		}
 	}
@@ -142,7 +151,7 @@ public class ContentContainer extends ActiveRecordSupport {
 				preview.delete();
 			}
 			setDirty(false);
-			//FIXME ComponentCacheUtils.invalidateContainer(cacheService, this);
+			ComponentCacheUtils.invalidateContainer(cacheService, this);
 		}
 	}
 	

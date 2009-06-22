@@ -21,5 +21,10 @@
 		<property name="staticMethod" value="org.riotfamily.components.model.wrapper.ValueWrapperService.setWrapperFactory" />
 		<property name="argument" ref="valueWrapperFactory" />
 	</bean>
+	
+	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
+	<bean class="org.riotfamily.components.model.ContentContainer" scope="prototype">
+		<property name="cacheService" ref="cacheService" />
+	</bean>
 
 </beans>
