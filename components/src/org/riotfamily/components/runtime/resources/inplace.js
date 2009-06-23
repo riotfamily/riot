@@ -470,7 +470,8 @@ riot.Popup = Class.create({
 				doc.viewport = document.viewport;
 				doc.body.parentNode.style.border = 'none';
 				var w = Math.max(600, doc.body.offsetWidth + 32);
-				var h = Math.min(Math.round(doc.viewport.getHeight() * 0.8), doc.body.offsetHeight + 32);
+				var offsetH = Math.max(doc.body.offsetHeight,document.documentElement.clientHeight) + 32;
+				var h = Math.min(Math.round(doc.viewport.getHeight() * 0.8), offsetH);
 				this.content.style.height = h + 'px';
 				this.div.style.width = w + 'px';
 			}
