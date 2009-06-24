@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
+import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.list.ComponentListRenderer;
@@ -56,12 +57,15 @@ public class InplaceMacroHelper {
 	
 	private RiotDaoService riotDaoService;
 	
+	private ComponentDao componentDao;
+	
 	public InplaceMacroHelper(HttpServletRequest request,
 			HttpServletResponse response, 
 			List<String> toolbarScripts,
 			List<DynamicToolbarScript> dynamicToolbarScripts, 
 			ComponentListRenderer componentListRenderer,
-			RiotDaoService riotDaoService) {
+			RiotDaoService riotDaoService,
+			ComponentDao componentDao) {
 
 		this.request = request;
 		this.response = response;
@@ -69,6 +73,7 @@ public class InplaceMacroHelper {
 		this.dynamicToolbarScripts = dynamicToolbarScripts;
 		this.componentListRenderer = componentListRenderer;
 		this.riotDaoService = riotDaoService;
+		this.componentDao = componentDao;
 	}
 
 	public boolean isEditMode() {
@@ -138,5 +143,9 @@ public class InplaceMacroHelper {
 		
 		return componentListRenderer.renderNestedComponentList(parent, key, 
 				config, request, response);
+	}
+	
+	public Component getParentComponent(Component component) {
+		return componentDao.findParentComponent(component);
 	}
 }

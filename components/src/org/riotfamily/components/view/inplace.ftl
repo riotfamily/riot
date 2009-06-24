@@ -272,6 +272,13 @@
 </#macro>
 
 <#---
+  - Returns the parent component or null if component is not in a nested list 
+  -->
+<#function getParentComponent component=this>
+	<#return inplaceMacroHelper.getParentComponent(component) />
+</#function>
+
+<#---
   - Returns either <code>"even"</code> or <code>"odd"</code>, depending on
   - the position of a component within a list.
   -->

@@ -34,6 +34,7 @@
 	<bean id="inplaceMacroHelper" class="org.riotfamily.components.view.InplaceMacroHelperFactory">
 		<constructor-arg ref="componentListRenderer" />
 		<constructor-arg ref="riotDaoService" />
+		<constructor-arg ref="componentDao" />
 		<property name="toolbarScripts">
 			<list>
 				<value>riot-js/resources.js</value>
