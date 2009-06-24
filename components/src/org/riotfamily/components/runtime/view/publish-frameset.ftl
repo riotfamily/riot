@@ -54,7 +54,7 @@ function liveLoaded() {
 	Event.observe(right, 'load', function() {
 		right.document.body.style.display = 'none';
 	});
-	toolbar.enable();
+	publishToolbar.enable();
 }
 
 function show(showLeft, showRight) {
@@ -84,7 +84,7 @@ function show(showLeft, showRight) {
 
 function hide() {
 	parent.riot.components.hidePreviewFrame();
-	toolbar.disable();
+	publishToolbar.disable();
 	left.location.replace('about:blank');
 }
 
@@ -102,7 +102,7 @@ function discard() {
 </style>
 </head>
 <frameset rows="49,*" border="0" frameborder="0" framespacing="0">
-	<frame id="toolbar" name="toolbar" src="publish-toolbar" scrolling="no" noresize="noresize" />
+	<frame id="publishToolbar" name="publishToolbar" src="publish-toolbar" scrolling="no" noresize="noresize" />
 	<frameset id="content" cols="*,0" border="0" frameborder="0" framespacing="0">
 		<frame id="left" name="left" />
 		<frame id="right" name="right" />
