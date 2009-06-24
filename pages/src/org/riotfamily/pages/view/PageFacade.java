@@ -34,18 +34,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.support.EditModeUtils;
-import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.model.SiteMapItem;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -61,29 +57,18 @@ public class PageFacade {
 	
 	private boolean preview;
 	
-	private PathConverter pathConverter;
-	
 	private Map<String, Object> properties = null;
 
-	public PageFacade(Page page, HttpServletRequest request, 
-			PathConverter pathConverter) {
-		
+	public PageFacade(Page page, HttpServletRequest request) {
 		this.page = page;
 		this.request = request;
-		this.pathConverter = pathConverter;
-		this.preview = EditModeUtils.isPreview(request, page.getPageProperties());
+		this.preview = isPreview(page);
 		TaggingContext.tag(page.getCacheTag());
 	}
-	
-	public PageFacade(Page page, HttpServletRequest request) {
-		this(page, request, getPathConverter(request));
+		
+	private boolean isPreview(Page page) {
+		return EditModeUtils.isPreview(request, page.getPageProperties());
 	}
-	
-	private static PathConverter getPathConverter(HttpServletRequest request) {
-		WebApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-		return SpringUtils.beanOfTypeIncludingAncestors(ctx, PathConverter.class);
-	}
-	
 	public Long getId() {
 		return page.getId();
 	}
@@ -117,51 +102,31 @@ public class PageFacade {
 	}
 
 	public String getUrl() {
-		return getWildcardUrl(null);
-	}
-
-	public String getWildcardUrl(Object attributes) {
 		if (!page.getSite().hostNameMatches(request.getServerName())) {
-			return getAbsoluteWildcardUrl(attributes);
+			return getAbsoluteUrl();
 		}
-		return page.getUrl(pathConverter, attributes);
+		return page.getUrl();
 	}
 	
 	public String getAbsoluteUrl() {
-		return getAbsoluteWildcardUrl(null);
-	}
-
-	public String getAbsoluteWildcardUrl(Object attributes) {
-		return page.getAbsoluteUrl(pathConverter, request.isSecure(), 
+		return page.getAbsoluteUrl(request.isSecure(), 
 				ServletUtils.getServerNameAndPort(request),
-				request.getContextPath(), attributes);
+				request.getContextPath());
 	}
 
 	public String getSecureUrl() {
-		return getSecureWildcardUrl(null);
-	}
-	
-	public String getSecureWildcardUrl(Object attributes) {
 		if (request.isSecure() && request.getServerName().equals(
 				page.getSite().getHostName())) {
 			
 			return getUrl();
 		}
-		return page.getAbsoluteUrl(pathConverter, true,
+		return page.getAbsoluteUrl(true, 
 				ServletUtils.getServerNameAndPort(request),
-				request.getContextPath(), attributes);
+				request.getContextPath());
 	}
 		
 	public Page getMasterPage() {
 		return page.getMasterPage();
-	}
-
-	public boolean isWildcard() {
-		return page.isWildcard();
-	}
-	
-	public boolean isWildcardInPath() {
-		return page.isWildcardInPath();
 	}
 
 	public Page getParent() {
@@ -271,7 +236,7 @@ public class PageFacade {
 	private List<Page> getVisiblePages(Collection<Page> pages) {
 		ArrayList<Page> result = new ArrayList<Page>();
 		for (Page page : pages) {
-			if (page.isVisible(preview)) {
+			if (page.isVisible(isPreview(page))) {
 				result.add(page);
 			}
 		}

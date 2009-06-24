@@ -27,77 +27,54 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.springframework.beans.factory.InitializingBean;
 
-public class SitemapSchema implements InitializingBean {
+public class SitemapSchema {
 
-	private List<TypeInfo> types;
+	private String defaultSuffix;
 	
-	private List<SystemPage> pages;
+	private Map<String, PageType> typeMap = Generics.newHashMap();
+		
+	private List<SystemPage> systemPages = Generics.newArrayList();
 	
-	private Map<String, TypeInfo> typeMap = Generics.newHashMap();
-	
-	private List<TypeInfo> typesRefs = Generics.newArrayList();
-	
-	public void setTypes(List<TypeInfo> types) {
-		this.types = types;
-	}
-	
-	public List<TypeInfo> getTypes() {
-		return types;
-	}
-	
-	public void setPages(List<SystemPage> pages) {
-		this.pages = pages;
-	}
-	
-	public List<SystemPage> getPages() {
-		return pages;
-	}
-	
-	public void afterPropertiesSet() throws Exception {
-		registerTypes(types);
-		registerSystemPageTypes(pages);
-		resolveTypeRefs();
+	private List<PageType> rootTypes = Generics.newArrayList();
+
+	public String getDefaultSuffix() {
+		return defaultSuffix;
 	}
 
-	private void registerTypes(List<TypeInfo> types) {
+	public void setDefaultSuffix(String defaultSuffix) {
+		this.defaultSuffix = defaultSuffix;
+	}
+
+	public void setTypes(List<PageType> types) {
 		if (types != null) {
-			for (TypeInfo type : types) {
-				registerType(type);
+			for (PageType type : types) {
+				type.register(this);
+				if (!(type instanceof SystemPage)) {
+					rootTypes.add(type);
+				}
 			}
 		}
 	}
 	
-	private void registerSystemPageTypes(List<SystemPage> pages) {
-		if (pages != null) {
-			for (SystemPage page : pages) {
-				registerType(page.getType());
-				registerSystemPageTypes(page.getPages());
-			}
+	void addType(PageType type) {
+		if (typeMap.put(type.getName(), type) != null) {
+			throw new IllegalArgumentException("Duplicate type: " + type.getName());
 		}
+	}
+	
+	public PageType getPageType(String name) {
+		return typeMap.get(name);
+	}
+	
+	void addSystemPage(SystemPage page) {
+		systemPages.add(page);
 	}
 
-	private void registerType(TypeInfo type) {
-		if (type.getRef() != null) {
-			typesRefs.add(type);
-		}
-		else {
-			if (typeMap.put(type.getName(), type) != null) {
-				throw new IllegalArgumentException("Duplicate type: " + type.getName());
-			}
-			registerTypes(type.getChildTypes());
-		}
-	}
-	
-	private void resolveTypeRefs() {
-		for (TypeInfo type : typesRefs) {
-			type.resolve(typeMap);
-		}
-	}
 
 	void syncSystemPages() {
 		List<Site> sites = Site.findAll();
@@ -116,19 +93,34 @@ public class SitemapSchema implements InitializingBean {
 	}
 	
 	void syncSystemPages(Site site) {
-		if (pages != null) {
-			for (SystemPage systemPage : pages) {
+		if (systemPages != null) {
+			for (SystemPage systemPage : systemPages) {
 				systemPage.sync(site);
 			}
 		}
 	}
 
-	public List<TypeInfo> getChildTypeOptions(Page parentPage) {
+	public List<PageType> getChildTypeOptions(Page parentPage) {
 		if (parentPage == null) {
-			return types;
+			return rootTypes;
 		}
-		TypeInfo typeInfo = typeMap.get(parentPage.getPageType());
-		return typeInfo != null ? typeInfo.getChildTypes() : null;
+		return getPageType(parentPage.getPageType()).getChildTypes();
+	}
+
+	public String getDefaultSuffix(String pageType) {
+		List<String> suffixes = getPageType(pageType).getSuffixes();
+		if (suffixes != null && !suffixes.isEmpty()) {
+			return suffixes.get(0);
+		}
+		return defaultSuffix;
+	}
+
+	public boolean isSystemPage(String pageType) {
+		return getPageType(pageType) instanceof SystemPage;
+	}
+
+	public boolean isValidPath(String path, String pageType) {
+		return true; //TODO
 	}
 	
 }

@@ -72,12 +72,9 @@
 	<bean id="masterPagePolicy" class="org.riotfamily.pages.riot.security.MasterPagePolicy" />
 	
 	<!--  FreeMarker Object Wrappers  -->
-	
+
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
-	
-	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin">
-		<property name="pathConverter" ref="pathConverter" />
-	</bean>
+	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
 	
 	<bean id="sitemap" class="org.riotfamily.core.screen.list.TreeListScreen">
 		<property name="icon" value="sitemap" />

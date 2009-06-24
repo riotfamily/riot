@@ -51,17 +51,7 @@ public class PageResolver {
 	public static final String PAGE_ATTRIBUTE = PageResolver.class.getName() + ".page";
 
 	private static final Object NOT_FOUND = new Object();
-	
-	private PathConverter pathConverter;
 
-
-	public void setPathConverter(PathConverter pathConverter) {
-		this.pathConverter = pathConverter;
-	}
-	
-	public PathConverter getPathConverter() {
-		return pathConverter;
-	}
 	
 	/**
 	 * Returns the first Site that matches the given request. The PathCompleter
@@ -161,7 +151,7 @@ public class PageResolver {
 	 * Returns the Page which is requestable at the given URL. This may return
 	 * <code>null</code> in case the given parameters do not match a page.
 	 * 
-	 * @param url url  of the requestable page
+	 * @param url url of the requestable page
 	 * @param contextPath of the application in order to strip it
 	 * @param fallbackSite in case the site can't be looked up, this site will
 	 * 			be used to find the page
@@ -181,10 +171,8 @@ public class PageResolver {
 			log.warn("The path is null. Can't continue.");
 			return null;
 		}
-		if (pathConverter != null) {
-			path = pathConverter.removeSuffix(path);
-		}
-
+		path = getLookupPath(path);
+		
 		Site site = Site.loadByHostNameAndPath(host, path);
 		if (site == null) {
 			log.debug("Could not find site for url '" + url + "'. Using fallback.");
@@ -229,23 +217,22 @@ public class PageResolver {
 		if (site == null) {
 			return null;
 		}
+		
 		String path = getPathWithinSite(request);
-		String lookupPath = pathConverter != null 
-				? pathConverter.removeSuffix(path) 
-				: path;
+		String lookupPath = getLookupPath(path);
 		
 		Page page = Page.loadBySiteAndPath(site, lookupPath);
 		if (page == null) {
 			page = findWildcardPage(site, lookupPath);
 		}
-		if (page == null || !page.isRequestable() || !suffixMatches(path)) {
+		if (page == null || !page.isRequestable() || !page.suffixMatches(path)) {
 			return null;
 		}
 		return page;
 	}
 	
-	private boolean suffixMatches(String path) {
-		return pathConverter == null || pathConverter.hasSuffix(path);
+	protected String getLookupPath(String path) {
+		return FormatUtils.stripExtension(path);
 	}
 	
 	private Page findWildcardPage(Site site, String urlPath) {

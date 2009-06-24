@@ -24,25 +24,18 @@
 package org.riotfamily.pages.mapping;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
-import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
-import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
 import org.springframework.orm.hibernate3.HibernateSystemException;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -50,30 +43,12 @@ import org.springframework.web.util.WebUtils;
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public class PageHandlerMapping extends AbstractReverseHandlerMapping {
+public class PageHandlerMapping extends AbstractHandlerMapping {
 
 	private PageResolver pageResolver;
 	
-	private PathConverter pathConverter;
-	
-	private Object defaultPageHandler;
-
-	private PathMatcher pathMatcher = new AntPathMatcher();
-	
-
 	public PageHandlerMapping(PageResolver pageResolver) {
 		this.pageResolver = pageResolver;
-		this.pathConverter = pageResolver.getPathConverter();
-	}
-
-	/**
-	 * Sets the handler to use if no matching handler for the page's
-	 * pageType is found. The handler will only be returned when the request
-	 * maps to a page. Otherwise the {@link #getDefaultHandler() default handler}
-	 * will be used.
-	 */
-	public void setDefaultPageHandler(Object defaultPageHandler) {
-		this.defaultPageHandler = defaultPageHandler;
 	}
 
 	protected Object getHandlerInternal(HttpServletRequest request)
@@ -92,15 +67,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			return getPageNotFoundHandler(site, path);
 		}
 		
-		if (!page.isWildcardInPath()) {
-			exposePathWithinMapping(path, request);
-		}
-		else {
-			exposeAttributes(page.getPath(), path, request);
-			exposePathWithinMapping(pathMatcher.extractPathWithinPattern(
-					page.getPath(), path), request);
-		}
-		
+		exposePathWithinMapping(path, request);
 		return getPageHandler(page, request);
 	}
 	
@@ -112,21 +79,14 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		if (page.isFolder()) {
 			return getFolderHandler(page.getChildPages());
 		}
-			
-		String handlerName = page.getPageType();
-		if (handlerName != null && getApplicationContext().containsBean(handlerName)) {
-			Object handler = getApplicationContext().getBean(handlerName);
-			exposeHandlerName(handlerName, request);
-			return handler;
-		}
-		return defaultPageHandler;
+		return page.getHandler();
 	}
 
 	
 	private Object getFolderHandler(Collection<Page> childPages) {
 		for (Page page : childPages) {
 			if (page.isRequestable()) {
-				String url = page.getUrl(pathConverter);
+				String url = page.getUrl();
 				return new RedirectController(url, true, false);
 			}
 		}
@@ -146,7 +106,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			if (alias != null) {
 				Page page = alias.getPage();
 				if (page != null) {
-					String url = page.getUrl(pathConverter);
+					String url = page.getUrl();
 					return new RedirectController(url, true, false);
 				}
 				else {
@@ -168,37 +128,4 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, pathWithinMapping);
 	}
 	
-	protected void exposeAttributes(String antPattern, String urlPath,
-			HttpServletRequest request) {
-
-		AttributePattern pattern = new AttributePattern(antPattern);
-		pattern.expose(urlPath, request);
-	}
-	
-	@Override
-	protected Map<String, Object> getDefaults(HttpServletRequest request) {
-		Object site = PageResolver.getResolvedSite(request);
-		return Collections.singletonMap("site", site);
-	}
-	
-	protected List<AttributePattern> getPatternsForHandler(String beanName,
-			Map<String, Object> defaults) {
-		
-		Site site = (Site) defaults.get("site");
-		if (site == null) {
-			// Check if we have a single-site website
-			List<Site> sites = Site.findAll();
-			if (sites.size() != 1) {
-				return null;
-			}
-			site = sites.get(0);
-		}
-		List<Page> pages = Page.findByTypeAndSite(beanName, site);
-		List<AttributePattern> patterns = Generics.newArrayList(pages.size());
-		for (Page page : pages) {
-			patterns.add(new AttributePattern(page.getUrl(pathConverter)));
-		}
-		return patterns;
-	}
-
 }

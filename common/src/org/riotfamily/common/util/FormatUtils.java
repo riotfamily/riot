@@ -32,8 +32,10 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -227,6 +229,14 @@ public final class FormatUtils {
 		return sb.toString();
 	}
 	
+	public static List<String> tokenize(String s, String delimiter) {
+		return Arrays.asList(StringUtils.delimitedListToStringArray(s, delimiter));
+	}
+	
+	public static List<String> tokenizeCommaDelimitedList(String s) {
+		return tokenize(s, ",");
+	}
+	
 	/**
 	 * "a", "b", "c" -> "a b c a-b a-b-c"
 	 * "a", "b", null -> "a b a-b"
@@ -413,6 +423,9 @@ public final class FormatUtils {
 	 */
 	public static String stripExtension(String filename) {
 		String extension = getExtension(filename);
+		if (extension.length() == 0) {
+			return filename;
+		}
 		return filename.substring(0, filename.length() - extension.length() - 1);
 	}
 

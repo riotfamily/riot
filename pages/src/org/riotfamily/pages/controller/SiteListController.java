@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,13 +42,7 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public class SiteListController extends AbstractCacheableController {
 
-	private PathConverter pathConverter;
-
 	private String viewName;
-
-	public SiteListController(PathConverter pathConverter) {
-		this.pathConverter = pathConverter;
-	}
 
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
@@ -62,7 +55,7 @@ public class SiteListController extends AbstractCacheableController {
 		if (sites.size() == 1) {
 			Site site = sites.get(0);
 			Page page = site.getChildPages().iterator().next();
-			String url = page.getUrl(pathConverter);
+			String url = page.getUrl();
 			return new ModelAndView(new RedirectView(url, true));
 		}
 		if (!sites.isEmpty()) {

@@ -27,34 +27,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.model.SiteMapItem;
 
-public class SystemPage {
+public class SystemPage extends PageType {
 
-	private String systemId;
-	
 	private String pathComponent;
 	
 	private boolean folder;
 	
-	private TypeInfo type;
-	
-	private List<SystemPage> pages;
+	private List<SystemPage> childPages;
 	
 	private Map<String, Object> properties;
 
-	public String getSystemId() {
-		return systemId;
-	}
-
-	public void setSystemId(String systemId) {
-		this.systemId = systemId;
-	}
-
 	public String getPathComponent() {
 		if (pathComponent == null) {
-			return systemId;
+			return getName();
 		}
 		return pathComponent;
 	}
@@ -71,23 +60,12 @@ public class SystemPage {
 		this.folder = folder;
 	}
 
-	public TypeInfo getType() {
-		if (type == null) {
-			type = new TypeInfo(systemId);
-		}
-		return type;
+	public List<SystemPage> getChildPages() {
+		return childPages;
 	}
 
-	public void setType(TypeInfo type) {
-		this.type = type;
-	}
-
-	public List<SystemPage> getPages() {
-		return pages;
-	}
-
-	public void setPages(List<SystemPage> pages) {
-		this.pages = pages;
+	public void setChildPages(List<SystemPage> childPages) {
+		this.childPages = childPages;
 	}
 
 	public Map<String, Object> getProperties() {
@@ -99,7 +77,7 @@ public class SystemPage {
 	}
 
 	public void sync(SiteMapItem parent) {
-		Page page = Page.loadBySystemIdAndSite(systemId, parent.getSite());
+		Page page = Page.loadByTypeAndSite(getName(), parent.getSite());
 		if (page == null) {
 			page = createPage(parent.getSite());
 			parent.addPage(page);
@@ -109,19 +87,28 @@ public class SystemPage {
 	
 	private Page createPage(Site site) {
 		Page page = new Page(getPathComponent(), site);
-		page.setSystemId(systemId);
 		page.setFolder(folder);
-		//TODO page.setPageProperties(...);
+		page.getPageProperties().getPreviewVersion().wrap(properties);
 		return page;
 	}
 
 	private void update(Page page) {
-		page.setPageType(getType().getName());
-		if (pages != null) {
-			for (SystemPage child : pages) {
+		page.setPageType(getName());
+		if (childPages != null) {
+			for (SystemPage child : childPages) {
 				child.sync(page);
 			}
 		}
 	}
 
+	@Override
+	void register(SitemapSchema schema) {
+		super.register(schema);
+		schema.addSystemPage(this);
+		if (childPages != null) {
+			for (SystemPage child : childPages) {
+				child.register(schema);
+			}
+		}
+	}
 }

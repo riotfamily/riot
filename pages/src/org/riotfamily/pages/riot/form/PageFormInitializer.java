@@ -31,7 +31,7 @@ import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.config.SitemapSchema;
-import org.riotfamily.pages.config.TypeInfo;
+import org.riotfamily.pages.config.PageType;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
@@ -72,7 +72,7 @@ public class PageFormInitializer implements FormInitializer {
 				Site site = (Site) parent;
 				form.setAttribute("siteId", site.getId());
 			}
-			List<TypeInfo> pageTypes = sitemapSchema.getChildTypeOptions(parentPage);
+			List<PageType> pageTypes = sitemapSchema.getChildTypeOptions(parentPage);
 			if (pageTypes != null) {
 				sb = createPageTypeBox(form, pageTypes);
 				pageType = pageTypes.get(0).getName();
@@ -96,7 +96,7 @@ public class PageFormInitializer implements FormInitializer {
 		form.addElement(ppe, "pageProperties");
 	}
 	
-	private SelectBox createPageTypeBox(Form form, List<TypeInfo> pageTypes) {
+	private SelectBox createPageTypeBox(Form form, List<PageType> pageTypes) {
 		if (pageTypes.size() > 1) {
 			SelectBox sb = new SelectBox();
 			sb.setRequired(true);

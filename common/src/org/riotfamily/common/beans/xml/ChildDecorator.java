@@ -39,7 +39,7 @@ import org.w3c.dom.Node;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */
-public class ChildDecorator implements BeanDefinitionDecorator {
+public class ChildDecorator implements BeanDefinitionDecorator, Cloneable {
 
 	private Map<String, BeanDefinitionDecorator> decorators = Generics.newHashMap();
 	
@@ -74,6 +74,15 @@ public class ChildDecorator implements BeanDefinitionDecorator {
 			}
 		}
 		return definition;
+	}
+	
+	public ChildDecorator copy() {
+		try {
+			return (ChildDecorator) clone();
+		} 
+		catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

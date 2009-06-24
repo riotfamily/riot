@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -48,15 +47,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.pages.mapping.PathConverter;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.util.ClassUtils;
+import org.riotfamily.pages.config.SitemapSchema;
+import org.springframework.beans.factory.annotation.Required;
 
 
 /**
@@ -69,7 +65,6 @@ import org.springframework.util.ClassUtils;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 public class Page extends ActiveRecordSupport implements SiteMapItem {
 
-	@Deprecated
 	public static final String TITLE_PROPERTY = "title";
 	
 	private String pageType;
@@ -88,16 +83,12 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 
 	private String pathComponent;
 
-	private String systemId;
-	
 	private boolean hidden;
 
 	private boolean folder;
 
 	private String path;
 	
-	private boolean wildcardInPath;
-
 	private boolean published;
 
 	private Date creationDate;
@@ -105,6 +96,8 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	private PageProperties pageProperties;
 	
 	private CacheService cacheService;
+	
+	private SitemapSchema schema;
 	
 	public Page() {
 	}
@@ -117,18 +110,25 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	public Page(Page master) {
 		this.masterPage = master;
 		this.creationDate = new Date();
+		this.pageType = master.getPageType();
 		this.pathComponent = master.getPathComponent();
 		this.folder = master.isFolder();
 		this.hidden = master.isHidden();
-		this.systemId = master.getSystemId();
-		if (master.isSystemPage()) {
+		if (isSystemPage()) {
 			published = master.isPublished();
 		}
 	}
 	
+	@Required	
 	@Transient
 	public void setCacheService(CacheService cacheService) {
 		this.cacheService = cacheService;
+	}
+	
+	@Required	
+	@Transient
+	public void setSchema(SitemapSchema schema) {
+		this.schema = schema;
 	}
 	
 	@Transient
@@ -235,19 +235,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
 	}
-
-	public String getSystemId() {
-		return systemId;
-	}
-
-	public void setSystemId(String systemId) {
-		this.systemId = systemId;
-	}
-
-	@Transient
-	public boolean isSystemPage() {
-		return systemId != null;
-	}
 	
 	public boolean isHidden() {
 		return this.hidden;
@@ -281,77 +268,30 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	}
 	
 	@Transient
-	private String getFullPath() {
+	public String getUrl() {
+		StringBuilder url = new StringBuilder();
 		if (site.getPathPrefix() != null) {
-			return site.getPathPrefix() + getPath();
+			url.append(site.getPathPrefix());
 		}
-		return getPath();
-	}
-
-	public String getUrl(PathConverter pathCompleter) {
-		return getUrl(pathCompleter, null);
-	}
-	
-	public String getUrl(PathConverter converter, Object attributes) {
-		String pagePath = getFullPath();
-		if (converter != null) {
-			pagePath = converter.addSuffix(pagePath);
+		url.append(getPath());
+		String suffix = schema.getDefaultSuffix(pageType);
+		if (suffix != null) {
+			url.append(suffix);
 		}
-		if (isWildcardInPath()) {
-			pagePath = fillInWildcards(pagePath, attributes);
-		}
-		return pagePath;
+		return url.toString();
 	}	
 	
-	public String getAbsoluteUrl(PathConverter converter, boolean secure,
-			String defaultHost, String contextPath, Object attributes) {
-		
-		String relativeUrl = getUrl(converter, attributes);
-		return site.makeAbsolute(secure, defaultHost, contextPath, relativeUrl);
+	public String getAbsoluteUrl(boolean secure, String defaultHost, String contextPath) {
+		return site.makeAbsolute(secure, defaultHost, contextPath, getUrl());
 	}
 	
-	@SuppressWarnings("unchecked")
-	private String fillInWildcards(String pattern, Object attributes) {
-		if (attributes == null) {
-			return pattern;
-		}
-		AttributePattern p = new AttributePattern(pattern);
-		if (attributes instanceof Map) {
-			Map<String, Object> map = (Map<String, Object>) attributes;
-			if (p.canFillIn(map, null, 0)) {
-				return p.fillInAttributes(new MapWrapper(map));
-			}
-			return null;
-		}
-		if (ClassUtils.isAssignable(String.class, attributes.getClass()) ||
-				ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
-			
-			return p.fillInAttribute(attributes);
-		}
-		return p.fillInAttributes(new BeanWrapperImpl(attributes));
-	}
-	
-	@Transient
-	public boolean isWildcard() {
-		return pathComponent.indexOf("@{") != -1;
-	}
-	
-	public boolean isWildcardInPath() {
-		return this.wildcardInPath;
-	}
-
-	public void setWildcardInPath(boolean wildcardInPath) {
-		this.wildcardInPath = wildcardInPath;
-	}
 
 	public String buildPath() {
 		StringBuffer path = new StringBuffer();
-		wildcardInPath = false;
 		Page page = this;
 		while (page != null) {
 			path.insert(0, page.getPathComponent());
 			path.insert(0, '/');
-			wildcardInPath |= page.isWildcard();
 			page = page.getParentPage();
 		}
 		return path.toString();
@@ -417,9 +357,23 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 			|| AccessController.isAuthenticatedUser();
 	}
 
+	@Transient
+	public boolean suffixMatches(String path) {
+		return schema.isValidPath(path, pageType);
+	}
+	
+	@Transient
+	public boolean isSystemPage() {
+		return schema.isSystemPage(pageType);
+	}
+	
+	@Transient
+	public Object getHandler() {
+		return schema.getPageType(pageType).getHandler();
+	}
+
 	public boolean isVisible(boolean preview) {
 		return !isHidden() 
-				&& !isWildcard() 
 				&& (published || preview)
 				&& (!folder || hasVisibleChildPage(preview));
 	}
@@ -532,16 +486,12 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		return load("from Page where site = ? and path = ?", site, path);
 	}
 	
-	public static Page loadBySystemIdAndSite(String systemId, Site site) {
-		return load("from Page where systemId = ? and site = ?", systemId, site);
+	public static Page loadByTypeAndSite(String pageType, Site site) {
+		return load("from Page where pageType = ? and site = ?", pageType, site);
 	}
-	
-	public static List<Page> findByTypeAndSite(String type, Site site) {
-		return find("from Page where pageType = ? and site = ?", type, site);
-	}
-	
+		
 	public static List<Page> findRootPagesBySite(Site site) {
 		return find("from Page where parentPage is null and site = ? order by position", site);
 	}
-	
+
 }

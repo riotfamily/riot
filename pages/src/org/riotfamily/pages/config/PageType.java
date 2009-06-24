@@ -24,22 +24,23 @@
 package org.riotfamily.pages.config;
 
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.util.Assert;
+import org.riotfamily.common.util.FormatUtils;
 
-public class TypeInfo {
+public class PageType {
 
 	private String name;
 	
-	private String ref;
+	private List<PageType> childTypes;
 	
-	private List<TypeInfo> childTypes;
+	private Object handler;
+	
+	private List<String> suffixes;
 
-	public TypeInfo() {
+	public PageType() {
 	}
 
-	public TypeInfo(String name) {
+	public PageType(String name) {
 		this.name = name;
 	}
 
@@ -51,27 +52,40 @@ public class TypeInfo {
 		this.name = name;
 	}
 	
-	public String getRef() {
-		return ref;
+	public Object getHandler() {
+		return handler;
 	}
 
-	public void setRef(String ref) {
-		this.ref = ref;
+	public void setHandler(Object handler) {
+		this.handler = handler;
+	}
+	
+	public List<String> getSuffixes() {
+		return suffixes;
 	}
 
-	public List<TypeInfo> getChildTypes() {
+	public void setSuffixes(List<String> suffixes) {
+		this.suffixes = suffixes;
+	}
+	
+	public void setSuffix(String suffix) {
+		this.suffixes = FormatUtils.tokenizeCommaDelimitedList(suffix);
+	}
+
+	public List<PageType> getChildTypes() {
 		return childTypes;
 	}
 
-	public void setChildTypes(List<TypeInfo> childTypes) {
+	public void setChildTypes(List<PageType> childTypes) {
 		this.childTypes = childTypes;
 	}
-
-	void resolve(Map<String, TypeInfo> typeMap) {
-		TypeInfo refType = typeMap.get(ref);
-		Assert.notNull(refType, "Referenced type not found: " + ref);
-		setName(refType.getName());
-		setChildTypes(refType.getChildTypes());
-	}
 	
+	void register(SitemapSchema schema) {
+		schema.addType(this);
+		if (childTypes != null) {
+			for (PageType type : childTypes) {
+				type.register(schema);
+			}
+		}
+	}
 }

@@ -21,22 +21,23 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.beans.xml;
+package org.riotfamily.pages.config;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
+import org.springframework.util.Assert;
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
- */
-public class SpringBeanDefinitionParser implements BeanDefinitionParser {
+public class PageTypeRef extends PageType {
 
-	public BeanDefinition parse(Element element, ParserContext parserContext) {
-		return parserContext.getDelegate().parseBeanDefinitionElement(
-				element, null, parserContext.getContainingBeanDefinition());
+	@Override
+	void register(SitemapSchema schema) {
+		PageType ref = schema.getPageType(getName());
+		Assert.notNull(ref, "Referenced type not found: " + getName());
+		copyFrom(ref);
 	}
-
+	
+	private void copyFrom(PageType ref) {
+		setChildTypes(ref.getChildTypes());
+		setHandler(ref.getHandler());
+		setSuffixes(ref.getSuffixes());
+	}
+	
 }

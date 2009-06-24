@@ -10,14 +10,8 @@
 		http://www.riotfamily.org/schema/common/override-8.0.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-	
-	<bean id="pathConverter" class="org.riotfamily.pages.mapping.DefaultPathConverter">
-		<property name="suffix" value=".html" />
-	</bean>
-	
-	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
-		<property name="pathConverter" ref="pathConverter" />
-	</bean>
+		
+	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver" />
 	
 	<bean id="sitemapSchema" class="org.riotfamily.common.beans.config.SingletonLookupFactoryBean">
 		<constructor-arg value="org.riotfamily.pages.config.SitemapSchema" />
@@ -40,6 +34,7 @@
 
 	<bean class="org.riotfamily.pages.model.Page" scope="prototype">
 		<property name="cacheService" ref="cacheService" />
+		<property name="schema" ref="sitemapSchema" />
 	</bean>
 	
 </beans>

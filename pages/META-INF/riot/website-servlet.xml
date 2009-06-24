@@ -14,9 +14,6 @@
 	<bean id="pageHandlerMapping" class="org.riotfamily.pages.mapping.PageHandlerMapping">
 		<constructor-arg ref="pageResolver" />
 		<property name="order" value="2" />
-		<property name="defaultPageHandler">
-			<bean class="org.riotfamily.website.view.CacheableViewController" />
-		</property>
 		<property name="interceptors">
 			<list>
 				<ref bean="riotInterceptors" />
@@ -44,10 +41,7 @@
 	</override:put>
 	
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
-	
-	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin">
-		<property name="pathConverter" ref="pathConverter" />
-	</bean>
+	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
 		 
 	<override:add ref="inplaceMacroHelper" property="dynamicToolbarScripts" append="true">
 		<bean class="org.riotfamily.pages.view.PageToolbarScript" />

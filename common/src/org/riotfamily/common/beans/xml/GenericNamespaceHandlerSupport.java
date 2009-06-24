@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.xml;
 
-import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -54,42 +52,6 @@ public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSup
 		GenericBeanDefinitionParser parser = new GenericBeanDefinitionParser(className);
 		registerBeanDefinitionParser(elementName, parser);
 		return parser;
-	}
-
-	/**
-	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName
-	 * that creates BeanDefinitions for the specified class. Additionally a
-	 * decorator is registered for the elementName.
-	 */
-	protected GenericBeanDefinitionParser register(String elementName,
-			Class<?> beanClass, BeanDefinitionDecorator decorator) {
-
-		registerBeanDefinitionDecorator(elementName, decorator);
-		return register(elementName, beanClass);
-	}
-	
-	/**
-	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName
-	 * that creates BeanDefinitions for the specified class. The bean class is 
-	 * passed as string to avoid runtime dependencies. If a dependency is 
-	 * missing, a warning is logged and support for the element is disabled.
-	 * Additionally a decorator is registered for the elementName.
-	 */
-	protected GenericBeanDefinitionParser register(String elementName,
-			String className, BeanDefinitionDecorator decorator) {
-
-		registerBeanDefinitionDecorator(elementName, decorator);
-		return register(elementName, className);
-	}
-
-	/**
-	 * Registers a parser and decorator for the given elementName.
-	 */
-	protected void register(String elementName, BeanDefinitionParser parser,
-			BeanDefinitionDecorator decorator) {
-
-		registerBeanDefinitionParser(elementName, parser);
-		registerBeanDefinitionDecorator(elementName, decorator);
 	}
 	
 }

@@ -25,27 +25,34 @@ package org.riotfamily.pages.config;
 
 import org.riotfamily.common.beans.xml.ChildDecorator;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.xml.ListDecorator;
 import org.riotfamily.common.beans.xml.ListItemDecorator;
 import org.riotfamily.common.beans.xml.MapEntryDecorator;
 import org.riotfamily.common.beans.xml.PropertyValueDecorator;
 
 /**
- * NamespaceHandler that handles the <code>page</code> namspace as
+ * NamespaceHandler that handles the <code>page</code> namespace as
  * defined in <code>page.xsd</code> which can be found in the same package.
  */
 public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		register("schema", SitemapSchema.class).setDecorator(new ChildDecorator()
-				.register("type", new ListItemDecorator("types"))
-				.register("page", new ListItemDecorator("pages")));
+		register("schema", SitemapSchema.class).setDecorator(
+				new ListDecorator("types"));
 		
-		register("page", SystemPage.class).setDecorator(new ChildDecorator()
-				.register("type", new PropertyValueDecorator())
-				.register("prop", new MapEntryDecorator("properties", "key")));
+		ChildDecorator typeDecorator = new ChildDecorator()
+				.register("bean", new PropertyValueDecorator("handler"))
+				.register("ref", new PropertyValueDecorator("handler"))
+				.register("type", new ListItemDecorator("childTypes"))
+				.register("type-ref", new ListItemDecorator("childTypes"));
+				
+		register("type", PageType.class).setDecorator(typeDecorator);
 		
-		register("type", TypeInfo.class).setDecorator(new ChildDecorator()
-				.register("type", new ListItemDecorator("childTypes")));
+		register("system-page", SystemPage.class).setDecorator(typeDecorator.copy()
+				.register("prop", new MapEntryDecorator("properties", "key"))
+				.register("system-page", new ListItemDecorator("childPages")));
+		
+		register("type-ref", PageTypeRef.class);
 	}
 	
 }

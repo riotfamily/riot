@@ -27,7 +27,6 @@ import org.riotfamily.common.web.util.RequestHolder;
 import org.riotfamily.common.web.view.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
-import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
 
 import freemarker.template.TemplateModel;
@@ -39,12 +38,6 @@ import freemarker.template.TemplateModelException;
  */
 public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 
-	private PathConverter pathConverter;
-
-	public void setPathConverter(PathConverter pathConverter) {
-		this.pathConverter = pathConverter;
-	}
-
 	public boolean supports(Object obj) {
 		return obj instanceof Page;
 	}
@@ -54,7 +47,7 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 			throws TemplateModelException {
 		
 		Page page = (Page) obj;
-		PageFacade facade = new PageFacade(page, RequestHolder.getRequest(), pathConverter);
+		PageFacade facade = new PageFacade(page, RequestHolder.getRequest());
 		return new FacadeTemplateModel(facade, page, wrapper);
 	}
 
