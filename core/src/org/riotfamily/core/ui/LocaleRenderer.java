@@ -1,4 +1,4 @@
-package org.riotfamily.riot.ui;
+package org.riotfamily.core.ui;
 
 import java.io.PrintWriter;
 import java.util.Locale;

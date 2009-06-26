@@ -18,10 +18,10 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   flx
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.form.element;
+package org.riotfamily.core.form.element;
 
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.forms.element.AbstractConditionalElement;

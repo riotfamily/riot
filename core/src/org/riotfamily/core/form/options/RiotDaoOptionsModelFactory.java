@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.form.options;
+package org.riotfamily.core.form.options;
 
 import java.util.ArrayList;
 import java.util.Collection;

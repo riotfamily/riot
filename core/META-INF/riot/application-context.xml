@@ -54,4 +54,37 @@
 
 	<bean id="riotAccessControlInterceptor" class="org.riotfamily.core.security.session.AccessControlInterceptor" />
 	
+	<!-- ImageMagick -->
+	
+	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick" />
+	
+	<!--  Scheduling -->
+	
+	<bean id="startupTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<description>
+			Quartz trigger that fires at startup.
+		</description>
+		<property name="name" value="startup" />
+		<property name="repeatCount" value="0" />
+		<property name="startDelay" value="0" />
+	</bean>
+	
+	<bean id="dailyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<description>
+			Quartz trigger that fires once a day at 3:00 AM.
+		</description>
+		<property name="name" value="daily" />
+		<property name="cronExpression" value="0 0 3 * * ?" />
+	</bean>
+	
+	<bean id="hourlyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<description>
+			Quartz trigger that fires every hour.
+		</description>
+		<property name="name" value="hourly" />
+		<property name="cronExpression" value="0 0 * * * ?" />
+	</bean>	
+	
+	<bean id="riotTaskScheduler" class="org.riotfamily.common.scheduling.ScheduledTaskSchedulerFactoryBean" />
+	
 </beans>

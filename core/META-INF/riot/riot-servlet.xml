@@ -33,6 +33,28 @@
 		<property name="reloadable" value="${riot-servlet.reloadable=true}" />
 	</bean>
 
+	<!-- I18N -->
+	
+	<util:list id="messageBasenames">
+    	<value>/WEB-INF/i18n/messages</value>
+    	<value>/WEB-INF/riot-config/messages</value>
+		<value>classpath:/org/riotfamily/core/runtime/i18n/messages</value>
+	</util:list>
+	
+	<bean id="messageSource" name="riotMessageSource" class="org.riotfamily.common.i18n.CodeRevealingMessageSource">
+		<property name="parentMessageSource">
+			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+				<property name="defaultEncoding" value="UTF-8" />
+				<property name="fallbackToSystemLocale" value="false" />
+				<property name="cacheSeconds" value="1" />
+		        <property name="basenames" ref="messageBasenames" />
+		    </bean>
+		</property>
+	</bean>
+
+	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
+	
+
 	<!-- Spring Web-MVC Setup -->
 	
 	<dwr:controller id="dwrController" debug="true" />
@@ -52,7 +74,18 @@
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">
 		<constructor-arg ref="screenRepository" />
 		<property name="order" value="1" />
-		<property name="interceptors" ref="handlerInterceptors" />
+		<property name="interceptors">
+			<bean class="org.riotfamily.common.beans.config.JoinedListFactoryBean">
+				<property name="lists">
+					<list>
+						<ref bean="handlerInterceptors" />
+						<list>
+							<bean class="org.riotfamily.components.support.NoCacheHeaderInterceptor" />
+						</list>
+					</list>
+				</property>
+			</bean>
+		</property>
 	</bean>
 	
 	<bean id="handlerMapping" class="org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping">
@@ -268,6 +301,15 @@
 		<property name="customElements" ref="customFormElements" />
 	</bean>
 	
+	<bean id="formContextFactory" class="org.riotfamily.forms.controller.FormContextFactory">
+		<property name="messageCodesResolver" ref="messageCodesResolver" />
+		<property name="resourcePath" ref="resourcePath" />
+	</bean>
+	
+	<bean id="imageCropper" class="org.riotfamily.common.image.ImageMagickCropper">
+		<constructor-arg ref="imageMagick" />
+	</bean>
+	
 	<util:map id="defaultTinyMCEConfig">
 		<entry key="gecko_spellcheck">
 			<value type="java.lang.Boolean">true</value>
@@ -289,10 +331,9 @@
 	<util:map id="customFormElements">
 		<entry key="{http://www.riotfamily.org/schema/core/form-elements}chooser"
 				value="org.riotfamily.core.form.element.ObjectChooser" />
-		<!-- 
-		<entry key="{http://www.riotfamily.org/schema/riot/form-elements}restricted"
-						value="org.riotfamily.riot.form.element.RestrictedElement" />
-		-->				
+				
+		<entry key="{http://www.riotfamily.org/schema/core/form-elements}restricted"
+				value="org.riotfamily.core.form.element.RestrictedElement" />
 	</util:map>
 	
 	<!-- Dialog commands -->
@@ -318,6 +359,15 @@
 			</property>
 		</bean>
 	</util:list>
+	
+	<util:map id="cssProperties">
+		<entry key="highlight_color" value="#cb0038" />
+		<entry key="title_bg_color" value="#3d3d3d" />
+		<entry key="label_color" value="#3d3d3d" />
+		<entry key="error_color" value="#cb0038" />
+		<entry key="toolbar_border_color" value="#3d3d3d" />
+		<entry key="resourcePath" value-ref="resourcePath" />
+	</util:map>
 	
 	<util:list id="resourceMappings">
 		<!-- Allow styles to be overwritten in WEB-INF/style -->
@@ -369,4 +419,56 @@
 		</property>
 	</bean>
 	
+	<bean name="/joined/*/joined-script.js" class="org.riotfamily.core.resource.JoiningResourceController">
+		<property name="pathParameter" value="files" />
+		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
+		<property name="filters" ref="resourceFilters" />
+		<property name="mappings" ref="resourceMappings" />
+		<property name="contentType" value="text/javascript" />
+		<property name="compressor">
+			<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+				<property name="linebreak" value="1000" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean name="/joined/*/joined-style.js" class="org.riotfamily.core.resource.JoiningResourceController">
+		<property name="pathParameter" value="files" />
+		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
+		<property name="filters" ref="resourceFilters" />
+		<property name="mappings" ref="resourceMappings" />
+		<property name="contentType" value="text/css" />
+		<property name="compressor">
+			<bean class="org.riotfamily.common.web.compressor.YUICssCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>			
+		</property>
+	</bean>
+	
+	<!-- Misc (TODO) -->
+
+	<util:list id="customStyleSheets">
+		<value>style/command.css</value>
+		<value>style/command-custom.css</value>
+	</util:list>
+	
+	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.core.form.options.RiotDaoOptionsModelFactory" />
+		
+	<!-- 
+	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />
+ 	-->
+ 
+	<!-- 
+	<bean id="exportController" name="/export/@{listSessionKey}/@{commandId}" class="org.riotfamily.riot.list.command.export.ExportController" />
+	<alias alias="/export/@{listSessionKey}/@{commandId}/@{objectId}" name="exportController"/>
+ 	-->
+ 
+	<!--
+	<bean id="org.directwebremoting.PageNormalizer"
+		class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />
+ 	-->
+ 	
 </beans>

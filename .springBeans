@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.2.2.RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.2.4.RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -11,9 +11,7 @@
 		<config>pages/META-INF/riot/application-context.xml</config>
 		<config>pages/META-INF/riot/website-servlet.xml</config>
 		<config>riot-hibernate/META-INF/riot/riot-servlet.xml</config>
-		<config>riot/META-INF/riot/riot-servlet.xml</config>
 		<config>riot-hibernate/META-INF/riot/application-context.xml</config>
-		<config>riot/META-INF/riot/application-context.xml</config>
 		<config>components/META-INF/riot/application-context.xml</config>
 		<config>components/META-INF/riot/riot-servlet.xml</config>
 		<config>components/META-INF/riot/website-servlet.xml</config>
@@ -36,11 +34,9 @@
 			<incomplete>false</incomplete>
 			<configs>
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
-				<config>riot/META-INF/riot/application-context.xml</config>
 				<config>website/META-INF/riot/application-context.xml</config>
 				<config>components/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>
-				<config>riot/META-INF/riot/riot-servlet.xml</config>
 				<config>riot-hibernate/META-INF/riot/riot-servlet.xml</config>
 				<config>components/META-INF/riot/riot-servlet.xml</config>
 				<config>pages/META-INF/riot/riot-servlet.xml</config>
@@ -58,7 +54,6 @@
 			<incomplete>false</incomplete>
 			<configs>
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
-				<config>riot/META-INF/riot/application-context.xml</config>
 				<config>website/META-INF/riot/application-context.xml</config>
 				<config>components/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>

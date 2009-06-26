@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="common/src"/>	
+	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="src" path="cachius/src"/>
 	<classpathentry kind="src" path="forms/src"/>
 	<classpathentry kind="src" path="website/src"/>
-	<classpathentry kind="src" path="riot/src"/>
 	<classpathentry kind="src" path="core/src"/>
 	<classpathentry kind="src" path="riot-hibernate/src"/>
 	<classpathentry kind="src" path="components/src"/>

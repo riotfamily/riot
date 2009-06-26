@@ -26,23 +26,21 @@
 	
 		<script type="text/javascript" language="JavaScript">
 			var form = $$('form')[0];
-			var focusedElement = '';
 			
 			<#if focus??>
-				var el = $('${focus}');
-				if (el && el.focus) el.focus();
+				focusElement($('${focus}'));
+			<#else>
+				focusElement(form);
 			</#if>
 			
-			onInsertElement = function(element) {
-				element.select('textarea','input:not(input[type="submit"])').each(function(el) {
-					el.onfocus = function() {
-						focusedElement = el.id || '';
+			if (document.addEventListener && typeof document.activeElement == 'undefined') {
+			    document.addEventListener("focus", function(e) {
+					if (e && e.target) {
+				    	document.activeElement = e.target == document ? null : e.target;
 					}
-				});
-			}
+				}, true);
+			} 
 			
-			onInsertElement(form); 
-					
 			<#--
 			  - Submits the form by clicking on the submit button. 
 			  - This function is invoked by the 'Save' button
@@ -50,7 +48,10 @@
 			  -->
 			function save(stayInForm) {
 				if (stayInForm) {
-					form.insert(new Element('input', {type: 'hidden', name: 'focus', value: focusedElement}));
+					form.insert(new Element('input', {
+						type: 'hidden', 
+						name: 'focus', 
+						value: document.activeElement}));
 				}
 				form.down('input.button-save').click();
 			}

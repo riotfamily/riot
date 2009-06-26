@@ -36,6 +36,10 @@
 	
 	<bean id="localMessageRenderer" class="org.riotfamily.dbmsgsrc.riot.LocalMessageCellRenderer" />
 	
+	<bean id="localeRenderer" class="org.riotfamily.core.ui.LocaleRenderer">
+		<constructor-arg ref="resourcePath" />
+	</bean>
+	
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.RiotDbMessageSource">
 		<constructor-arg ref="dbMessageSourceDao" />
 		<constructor-arg ref="transactionManager" />
