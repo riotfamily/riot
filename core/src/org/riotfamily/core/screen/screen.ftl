@@ -44,7 +44,9 @@
 		</div>
 	</div>
 	<div id="footer">
-		<div id="footer-content"></div>
+		<div id="footer-content">
+			<a href="${c.urlForHandler('logoutController')}" class="logout"><@c.message "logout">Logout</@c.message></a>
+		</div>
 	</div>
 	<#if notification??>
 		<script language="JavaScript" type="text/javascript">

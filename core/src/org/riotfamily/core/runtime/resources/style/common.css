@@ -52,14 +52,23 @@ td {
 	margin: 10px 20px 0 30px;
 }
 #footer {
-	background: #575757 url(images/footer_bg.gif) repeat-x;
+	background: #575757 url(images/footer/bg.gif) repeat-x;
 	height: 50px;
 	margin-top: -50px;
 }
 #footer-content {
 	height: 38px;
-	background: url(images/riot_footer.gif) right 18px no-repeat;
+	background: url(images/footer/logo.gif) right 18px no-repeat;
+	padding: 18px 0 0 30px;
 }
+
+#footer a.logout {
+	color: #cacaca; 
+	text-decoration: none;
+	padding-left: 16px;
+	background: url(images/footer/logout.gif) left center no-repeat;
+}
+
 .chooser #footer {
 	display: none;
 }
