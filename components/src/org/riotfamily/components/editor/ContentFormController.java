@@ -27,7 +27,6 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.NonUniqueObjectException;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
