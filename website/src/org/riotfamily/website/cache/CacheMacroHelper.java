@@ -6,9 +6,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.cachius.CacheHandler;
 import org.riotfamily.cachius.CacheService;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.cachius.servlet.ServletWriterHandler;
+import org.riotfamily.common.util.FormatUtils;
 
 import freemarker.core.Environment;
 import freemarker.template.SimpleScalar;
@@ -42,6 +45,13 @@ public class CacheMacroHelper {
 		return blockDirective;
 	}
 	
+	public void tag(String name) {
+		TaggingContext.tag(name);
+	}
+
+	public void preventCaching() {
+		TaggingContext.preventCaching();
+	}
 	
 	public class BlockDirective implements TemplateDirectiveModel {
 		
@@ -49,30 +59,28 @@ public class CacheMacroHelper {
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
-			String name = getRequiredStringParam(params, "name", env);
-			
-			boolean cache = getBooleanParam(params, "cache", true);
+			boolean bypass = getBooleanParam(params, "bypass", true);
 			String cacheKey = null;
+			long ttl = CacheHandler.CACHE_ETERNALLY;
 			
-			if (cache) {
-				cacheKey = getStringParam(params, "cacheKey", null);
+			if (!bypass) {
+				cacheKey = getRequiredStringParam(params, "key", env);
+				String s = getStringParam(params, "ttl", null);
+				if (s != null) {
+					ttl = FormatUtils.parseMillis(s);
+				}
 			}			
-			
-			if (cache && cacheKey == null) {
-				cacheKey = request.getRequestURL().append('#').append(name).toString();
-			}
-			
-			renderBody(body, env.getOut(), cacheKey, env);
+			renderBody(body, env.getOut(), cacheKey, ttl, env);
 		}
 		
 		
 		private void renderBody(TemplateDirectiveBody body, Writer out, 
-				String cacheKey, Environment env) 
+				String cacheKey, long ttl, Environment env) 
 				throws TemplateException, IOException {
 			
 			if (body != null) {
 				try {
-					BodyCacheHandler handler = new BodyCacheHandler(body, out, cacheKey);
+					BodyCacheHandler handler = new BodyCacheHandler(body, out, cacheKey, ttl);
 					cacheService.handle(handler);
 				}
 				catch (TemplateException e) {
@@ -92,15 +100,23 @@ public class CacheMacroHelper {
 			private TemplateDirectiveBody body;
 			
 			private String cacheKey;
-					
+			
+			private long ttl;
+			
 			public BodyCacheHandler(TemplateDirectiveBody body, Writer out, 
-					String cacheKey) {
+					String cacheKey, long ttl) {
 				
 				super(request, out, cacheKeyAugmentor);
 				this.body = body;
 				this.cacheKey = cacheKey;
+				this.ttl = ttl;
 			}
 
+			@Override
+			public long getTimeToLive() {
+				return ttl;
+			}
+			
 			@Override
 			protected String getCacheKeyInternal() {
 				return cacheKey;
