@@ -25,9 +25,11 @@ package org.riotfamily.riot.hibernate.form;
 
 import java.util.Collection;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.core.screen.form.FormUtils;
+import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
 import org.riotfamily.forms.element.suggest.AutocompleterModel;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
@@ -53,7 +55,7 @@ public class DistinctAutoCompleterModel extends HibernateSupport
 	
 	@SuppressWarnings("unchecked")
 	public Collection<String> getSuggestions(String search,
-			AutocompleteTextField element) {
+			AutocompleteTextField element, HttpServletRequest request) {
 		
 		String property = element.getEditorBinding().getProperty();
 		Class<?> clazz = element.getEditorBinding().getBeanClass();
@@ -79,7 +81,7 @@ public class DistinctAutoCompleterModel extends HibernateSupport
 				.setParameter("search", "%" + search  + "%");
 		
 		if (parentProperty != null) {
-			query.setParameter("parent", FormUtils.loadParent(element.getForm()));	
+			query.setParameter("parentId", ScreenContext.get(request).getParentId());	
 		}
 		return query.list();
 	}

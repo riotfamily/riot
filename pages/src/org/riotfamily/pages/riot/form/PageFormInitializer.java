@@ -25,13 +25,14 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.List;
 
-import org.riotfamily.core.screen.form.FormUtils;
+import org.riotfamily.common.web.util.RequestHolder;
+import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.config.PageType;
+import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
@@ -62,7 +63,7 @@ public class PageFormInitializer implements FormInitializer {
 		SelectBox sb = null;
 		if (form.isNew())  {
 			Page parentPage = null;
-			Object parent = FormUtils.loadParent(form);
+			Object parent = ScreenContext.get(RequestHolder.getRequest()).getParent();
 			if (parent instanceof Page) {
 				parentPage = (Page) parent;
 				form.setAttribute("pageId", parentPage.getId());

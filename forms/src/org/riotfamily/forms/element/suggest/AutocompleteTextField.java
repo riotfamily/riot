@@ -80,10 +80,11 @@ public class AutocompleteTextField extends AbstractTextElement
 	public void handleContentRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws IOException {
 
+		response.setContentType("text/html");
 		String search = request.getParameter(getParamName());
 		DocumentWriter doc = new DocumentWriter(response.getWriter());
 		doc.start("ul");
-		for (String value : model.getSuggestions(search, this)) {
+		for (String value : model.getSuggestions(search, this, request)) {
 			doc.start("li").body(value).end();
 		}
 		doc.end();

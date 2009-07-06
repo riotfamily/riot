@@ -24,21 +24,20 @@
 package org.riotfamily.components.editor;
 
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
-import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSession;
-import org.directwebremoting.ServerContextFactory;
+import org.directwebremoting.ScriptSessionFilter;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -61,7 +60,6 @@ import org.riotfamily.core.security.session.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
@@ -70,7 +68,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 @Transactional
 @RemoteProxy(name="ComponentEditor")
 public class ComponentEditorImpl implements ComponentEditor,
-		MessageSourceAware, ServletContextAware {
+		MessageSourceAware {
 
 	private RiotLog log = RiotLog.get(ComponentEditorImpl.class);
 
@@ -82,7 +80,6 @@ public class ComponentEditorImpl implements ComponentEditor,
 
 	private MessageSource messageSource;
 	
-	private ServletContext servletContext;
 	
 	public ComponentEditorImpl(CacheService cacheService, 
 			ComponentRenderer renderer, 
@@ -94,10 +91,6 @@ public class ComponentEditorImpl implements ComponentEditor,
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
-	}
-	
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
 	}
 	
 	@RemoteMethod
@@ -308,15 +301,24 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 
 	private void nofifyUsers() {
-		Locale locale = RequestContextUtils.getLocale(WebContextFactory.get().getHttpServletRequest());
+		
+		WebContext webContext = WebContextFactory.get();
+		HttpServletRequest request = webContext.getHttpServletRequest();
 
+		final ScriptSession currentSession = webContext.getScriptSession();
+		final String host = request.getServerName();
+		
+		currentSession.setAttribute("host", host);
+
+		Locale locale = RequestContextUtils.getLocale(request);
 		RiotUser user = AccessController.getCurrentUser();
+		
 		String userName = "";
 		if (user.getName() != null) {
 			userName = " (" + user.getName() + ")";
 		}
 		
-		String message = messageSource.getMessage(
+		final String message = messageSource.getMessage(
 				"components.concurrentModification", 
 				new Object[] {
 					userName, "javascript:location.reload()" 
@@ -324,18 +326,19 @@ public class ComponentEditorImpl implements ComponentEditor,
 				"The page has been modified by another user{0}. Please "
 				+ "<a href=\"{1}\">reload</a> the page in order "
 				+ "to see the changes.", locale);
-				
-		ScriptBuffer script = new ScriptBuffer();
-		script.appendScript("riot.showNotification(").appendData(message).appendScript(");");
-		String page = WebContextFactory.get().getCurrentPage();
-		ScriptSession currentSession = WebContextFactory.get().getScriptSession();
-		Collection<ScriptSession> sessions = ServerContextFactory.get(servletContext).getScriptSessionsByPage(page);
-		for (ScriptSession session : sessions) {
-			if (!session.equals(currentSession)) {
-				log.info("Notifying session %s: %s", session.getId(), message);
-				session.addScript(script);
-			}
-		}
+		
+		Browser.withCurrentPageFiltered(
+			new ScriptSessionFilter() {
+				public boolean match(ScriptSession session) {
+					return !session.equals(currentSession) && 
+							host.equals(currentSession.getAttribute("host"));
+				}
+			}, 
+			new Runnable() {
+				public void run() {
+					ScriptSessions.addFunctionCall("riot.showNotification", message);
+				}
+			});
 	}
 
 }
