@@ -25,13 +25,6 @@
 <#assign templateName = .data_model['org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView.templateName']! />
 
 <#---
-  - Excludes the currently processed template block from getting cached.
-  -->
-<#macro preventCaching>
-    ${invokeStaticMethod('org.riotfamily.cachius.TaggingContext.preventCaching')}
-</#macro>
-
-<#---
   - Includes the given path using a RequestDispatcher. 
   - @param path The path to include
   - @param dynamic Set to true if the current template block should not get
@@ -548,13 +541,5 @@
 <#function split items groups>
 	<#return commonMacroHelper.split(items, groups) />
 </#function>
-
-<#---
-  - Tags the current cacheItem with the given className
-  - @param className The className to tag the cacheItem with
-  -->
-<#macro tag className>
-	${commonMacroHelper.tag(className)}
-</#macro>
 
 <#assign exposeAsVariables = commonMacroHelper.exposeAsVariablesDirective />
