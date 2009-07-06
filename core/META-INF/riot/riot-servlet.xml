@@ -57,7 +57,9 @@
 
 	<!-- Spring Web-MVC Setup -->
 	
-	<dwr:controller id="dwrController" debug="true" />
+	<dwr:controller id="dwrController" debug="true">
+		<dwr:config-param name="activeReverseAjaxEnabled" value="true" />
+	</dwr:controller>
 	
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
     	<description>
@@ -69,6 +71,7 @@
     <util:list id="handlerInterceptors">
 		<ref bean="loginInterceptor" />
 		<bean class="org.riotfamily.common.web.view.FlashScopeInterceptor" />
+		<bean class="org.riotfamily.common.web.interceptor.RequestHolderInterceptor" />
 	</util:list>
 			
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">

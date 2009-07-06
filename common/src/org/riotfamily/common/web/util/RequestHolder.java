@@ -26,6 +26,8 @@ package org.riotfamily.common.web.util;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.util.Assert;
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
@@ -57,16 +59,22 @@ public final class RequestHolder {
 		holder.level++;
 	}
 	
+	private static RequestHolder get() {
+		RequestHolder holder = threadLocal.get();
+		Assert.notNull(holder, "No RequestHolder bound to Thread.");
+		return holder;
+	}
+	
 	public static HttpServletRequest getRequest() {
-		return threadLocal.get().request;
+		return get().request;
 	}
 	
 	public static HttpServletResponse getResponse() {
-		return threadLocal.get().response;
+		return get().response;
 	}
 	
 	public static void unset() {
-		RequestHolder holder = threadLocal.get();
+		RequestHolder holder = get();
 		if (--holder.level == 0) {
 			threadLocal.set(null);
 		}
