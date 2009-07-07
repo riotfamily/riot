@@ -39,7 +39,7 @@
 	</override:add>
 	
 	<override:add ref="formRepository" property="configLocations" append="true">
-		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
+		<value>classpath:/org/riotfamily/pages/runtime/forms.xml</value>
 	</override:add>
 	 	 	
 	<override:add ref="resourceMappings" append="true">			
