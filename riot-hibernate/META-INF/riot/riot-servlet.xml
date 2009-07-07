@@ -35,7 +35,7 @@
 	</override:add>
 	
 	<override:add ref="formRepository" property="configLocations">
-		<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
+		<value>classpath:/org/riotfamily/riot/hibernate/runtime/forms.xml</value>
 	</override:add>
 		
 	<override:add ref="handlerInterceptors">
