@@ -26,37 +26,31 @@ package org.riotfamily.riot.hibernate.security;
 import java.util.List;
 
 import org.riotfamily.core.security.auth.RiotUser;
-import org.riotfamily.core.security.session.SessionMetaData;
 import org.riotfamily.core.security.session.SessionMetaDataStore;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class HibernateSessionMetaDataStore extends HibernateDaoSupport 
-		implements SessionMetaDataStore {
+public class PersistentSessionMetaDataStore 
+		implements SessionMetaDataStore<PersistentSessionMetaData> {
 
-	@SuppressWarnings("unchecked")
-	public List<SessionMetaData> listAll() {
-		return getHibernateTemplate().loadAll(PersistentSessionMetaData.class);
+	public List<PersistentSessionMetaData> listAll() {
+		return PersistentSessionMetaData.findAll();
 	}
 
-	public void sessionEnded(SessionMetaData data) {
-		getSession().merge(data);
-		((PersistentSessionMetaData) data).sessionEnded();
+	public void sessionEnded(PersistentSessionMetaData data) {
+		data = data.merge();
+		data.sessionEnded();
 	}
 
-	public SessionMetaData sessionStarted(String userName, RiotUser user, 
+	public PersistentSessionMetaData sessionStarted(String userName, RiotUser user, 
 			String loginIP) {
 		
-		PersistentSessionMetaData meta = (PersistentSessionMetaData) 
-				getHibernateTemplate().get(PersistentSessionMetaData.class, 
-				user.getUserId());
-		
+		PersistentSessionMetaData meta = PersistentSessionMetaData.loadByUser(user); 
 		if (meta == null) {
 			meta = new PersistentSessionMetaData(user);
+			meta.save();
 		}
 		meta.sessionStarted(userName, loginIP);
-		getHibernateTemplate().saveOrUpdate(meta);
 		return meta;
 	}
 
