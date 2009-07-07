@@ -28,11 +28,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.riotfamily.common.hibernate.ActiveRecord;
 import org.riotfamily.core.security.auth.RiotUser;
 
 @Entity
 @Table(name="riot_users")
-public class User implements RiotUser {
+public class User extends ActiveRecord implements RiotUser {
 
 	private String id;
 	
@@ -93,7 +94,7 @@ public class User implements RiotUser {
 	
 	@Override
 	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
+		return 0;
 	}
 	
 	@Override

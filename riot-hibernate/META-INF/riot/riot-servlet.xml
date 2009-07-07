@@ -28,9 +28,7 @@
 		<property name="userDao" ref="riotUserDao" />
 	</override:properties>
 	  	
-	<override:bean ref="sessionMetaDataStore" class="org.riotfamily.riot.hibernate.security.HibernateSessionMetaDataStore">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</override:bean>
+	<override:bean ref="sessionMetaDataStore" class="org.riotfamily.riot.hibernate.security.PersistentSessionMetaDataStore" />
 	
 	<override:add ref="messageBasenames" append="true">
 		<value>classpath:/org/riotfamily/riot/hibernate/runtime/i18n/messages</value>

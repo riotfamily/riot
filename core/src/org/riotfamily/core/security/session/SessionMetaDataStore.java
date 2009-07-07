@@ -32,12 +32,12 @@ import org.riotfamily.core.security.auth.RiotUser;
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public interface SessionMetaDataStore {
+public interface SessionMetaDataStore<T extends SessionMetaData> {
 
-	public List<SessionMetaData> listAll();
+	public List<T> listAll();
 	
-	public SessionMetaData sessionStarted(String userName, RiotUser user, String loginIP);
+	public T sessionStarted(String userName, RiotUser user, String loginIP);
 	
-	public void sessionEnded(SessionMetaData data);
+	public void sessionEnded(T data);
 
 }
