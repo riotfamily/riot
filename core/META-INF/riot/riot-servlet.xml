@@ -83,7 +83,7 @@
 					<list>
 						<ref bean="handlerInterceptors" />
 						<list>
-							<bean class="org.riotfamily.components.support.NoCacheHeaderInterceptor" />
+							<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
 						</list>
 					</list>
 				</property>

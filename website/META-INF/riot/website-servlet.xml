@@ -85,7 +85,7 @@
 		</description>
 		<property name="interceptors">
 			<list>
-				<bean class="org.riotfamily.components.support.NoCacheHeaderInterceptor" />
+				<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
 				<bean class="org.riotfamily.common.web.view.FlashScopeInterceptor" />
 			</list>
 		</property>

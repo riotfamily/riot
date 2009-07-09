@@ -24,15 +24,12 @@
 package org.riotfamily.components.editor;
 
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONObject;
 
 import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSession;
@@ -44,10 +41,13 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ContentFormRepository;
+import org.riotfamily.components.meta.ComponentMetaData;
+import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
@@ -60,6 +60,7 @@ import org.riotfamily.core.security.session.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
@@ -76,6 +77,8 @@ public class ComponentEditorImpl implements ComponentEditor,
 	
 	private ComponentRenderer renderer;
 
+	private ComponentMetaDataProvider metaDataProvider;
+	
 	private Map<String, Map<String, Object>> tinyMCEProfiles;
 
 	private MessageSource messageSource;
@@ -83,10 +86,12 @@ public class ComponentEditorImpl implements ComponentEditor,
 	
 	public ComponentEditorImpl(CacheService cacheService, 
 			ComponentRenderer renderer, 
+			ComponentMetaDataProvider metaDataProvider,
 			ContentFormRepository formRepository) {
 		
 		this.cacheService = cacheService;
-		this.renderer = new EditModeComponentDecorator(renderer, formRepository);
+		this.renderer = new EditModeComponentDecorator(renderer, metaDataProvider, formRepository);
+		this.metaDataProvider = metaDataProvider;
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -133,12 +138,15 @@ public class ComponentEditorImpl implements ComponentEditor,
 		component.setValue(property, chunks[0]);
 		html[0] = renderComponent(component);
 		
+		String type = component.getType();
 		ComponentList list = component.getList();
 		int offset = list.indexOf(component);
+		
 		for (int i = 1; i < chunks.length; i++) {
-			html[i] = insertComponent(list.getId(), offset + i, 
-					component.getType(),
-					Collections.singletonMap(property, (Object) chunks[i]));
+			component = createComponent(type);
+			list.insertComponent(component, offset + i);
+			component.setValue(property, chunks[i]);
+			html[i] = renderComponent(component);
 		}
 		return html;
 	}
@@ -154,23 +162,25 @@ public class ComponentEditorImpl implements ComponentEditor,
 		return labels;
 	}
 	
+	@RemoteMethod
+	public List<ComponentMetaData> getComponentMetaData(String[] types) {
+		List<ComponentMetaData> result = Generics.newArrayList();
+		for (int i = 0; i < types.length; i++) {
+			result.add(metaDataProvider.getMetaData(types[i]));
+		}
+		return result;
+	}
+	
 	/**
 	 * Creates a new Component and inserts it in the list identified
 	 * by the given id.
 	 */
 	@RemoteMethod
-	@SuppressWarnings("unchecked")
-	public String insertComponent(Long listId, int position, String type, String properties) {
-		// NOTE: The initial properties are passed as JSON String because DWR
-		// currently doesn't support Map<String, ?>.
-		return insertComponent(listId, position, type, JSONObject.fromObject(properties));
-	}
-	
-	private String insertComponent(Long listId, int position, String type,
-			Map<String, ?> properties) {
-
+	public String insertComponent(Long listId, int position, String type) {
+		Assert.notNull(listId, "listId must not be null");
+		Assert.notNull(type, "type must not be null");
 		ComponentList componentList = ComponentList.load(listId);
-		Component component = createComponent(type, properties);
+		Component component = createComponent(type);
 		componentList.insertComponent(component, position);
 		return renderComponent(component);
 	}
@@ -179,24 +189,21 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * Creates a new Component of the given type.
 	 *
 	 * @param type The type of the version to create
-	 * @param properties Properties of the version to create
 	 * @return The newly created component
 	 */
-	private Component createComponent(String type, Map<String, ?> properties) {
+	private Component createComponent(String type) {
 		Component component = new Component(type);
-		component.wrap(properties);
+		component.wrap(metaDataProvider.getMetaData(type).getDefaults());
 		component.save();
 		return component;
 	}
 	
 	@RemoteMethod
-	@SuppressWarnings("unchecked")
-	public String setType(Long componentId, String type, String properties) {
+	public String setType(Long componentId, String type) {
+		Assert.notNull(componentId, "componentId must not be null");
+		Assert.notNull(type, "type must not be null");
 		Component component = Component.load(componentId);
 		component.setType(type);
-		if (properties != null) {
-			component.wrap(JSONObject.fromObject(properties));
-		}
 		return renderComponent(component);
 	}
 	
@@ -207,7 +214,6 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 
 	private String renderComponent(Component component) {
-
 		try {
 			ComponentList list = component.getList();
 			StringWriter sw = new StringWriter();
@@ -307,11 +313,12 @@ public class ComponentEditorImpl implements ComponentEditor,
 
 		final ScriptSession currentSession = webContext.getScriptSession();
 		final String host = request.getServerName();
+		final RiotUser user = AccessController.getCurrentUser();
 		
-		currentSession.setAttribute("host", host);
-
 		Locale locale = RequestContextUtils.getLocale(request);
-		RiotUser user = AccessController.getCurrentUser();
+
+		currentSession.setAttribute("host", host);
+		currentSession.setAttribute("userId", user.getUserId());
 		
 		String userName = "";
 		if (user.getName() != null) {
@@ -327,11 +334,12 @@ public class ComponentEditorImpl implements ComponentEditor,
 				+ "<a href=\"{1}\">reload</a> the page in order "
 				+ "to see the changes.", locale);
 		
-		Browser.withCurrentPageFiltered(
+		Browser.withAllSessionsFiltered(
 			new ScriptSessionFilter() {
 				public boolean match(ScriptSession session) {
-					return !session.equals(currentSession) && 
-							host.equals(currentSession.getAttribute("host"));
+					return !user.getUserId().equals(currentSession.getAttribute("userId")) 
+							&& session.getPage().equals(currentSession.getPage())
+							&& host.equals(currentSession.getAttribute("host"));
 				}
 			}, 
 			new Runnable() {

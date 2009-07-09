@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view.freemarker;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
 import freemarker.ext.servlet.FreemarkerServlet;
+import freemarker.template.Template;
 
 /**
  * Differences to Spring's FreeMarkerView:
@@ -122,6 +124,11 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		if (originalModel != null) {
 			model.putAll(originalModel);
 		}
+	}
+	
+	@Override
+	public Template getTemplate(Locale locale) throws IOException {
+		return super.getTemplate(locale);
 	}
 	
 	@SuppressWarnings("unchecked")

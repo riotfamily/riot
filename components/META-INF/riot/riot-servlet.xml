@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
@@ -9,18 +10,13 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
-
-	<bean id="componentRenderer" class="org.riotfamily.common.beans.config.WebApplicationContextBeanImporter">
-		<property name="servletName" value="website" />
-	</bean>
-	
-	<bean id="componentListRenderer" class="org.riotfamily.common.beans.config.WebApplicationContextBeanImporter">
-		<property name="servletName" value="website" />
-	</bean>
+		http://www.riotfamily.org/schema/common/override-8.0.xsd
+		http://www.directwebremoting.org/schema/spring-dwr
+    	http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
 	
 	<bean id="editModeRenderStrategy" class="org.riotfamily.components.render.list.EditModeRenderStrategy">
 		<constructor-arg ref="componentRenderer" />
+		<constructor-arg ref="componentMetaDataProvider" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="componentListRenderer" />
 	</bean>
@@ -31,9 +27,12 @@
 	<bean id="componentEditor" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="cacheService" />
 		<constructor-arg ref="componentRenderer" />
+		<constructor-arg ref="componentMetaDataProvider" />
 		<constructor-arg ref="contentFormRepository" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
+	
+	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.components.meta" />
 	
 	<override:put ref="customFormElements">
 		<entry key="{http://www.riotfamily.org/schema/components/form-elements}map"

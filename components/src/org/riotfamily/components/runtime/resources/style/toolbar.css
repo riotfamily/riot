@@ -161,91 +161,85 @@ body > #riot-notification {
 }
 
 #riot-toolbar a.toolbar-button-disabled {
-	xbackground-color: #a4a4a4;
 	cursor: default;
 }
 
-#riot-inspector {
-	left: 49px;
-	width: 460px;
-	z-index: 100;
-	background-color: #fff;
-	border: 3px solid ${toolbar_border_color};
-	display: none;
-}
-
-#riot-inspector .headline {
-	color: #3d3d3d;
-	background-color: #ebebeb;
-	border-bottom: 1px solid ${toolbar_border_color};
-	padding: 5px 20px;
-	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size:12px;
-	line-height: 16px;
-	font-weight: 500;
-	text-align: left;
-	margin:0;
-}
-
-.riot-close-button {
+.riot-types {
 	position: absolute;
-	z-index: 1;
-	top: 5px;
-	right: 5px;
-	width: 16px;
-	height: 16px;
-	background: url(icons/dialogs/close.gif) no-repeat;
+	line-height: 1em;
+	xborder: 5px solid rgba(0,0,0,0.6);
+	x-moz-border-radius: 5px;
+	-moz-box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
+	xborder: 5px solid #666;
+	border: 1px solid #dadada;
 }
 
-#riot-inspector .type-inspector {
-	padding: 5px 20px;
+.riot-types .riot-close-button {
+	position: absolute;
+	z-index: 2;
+	top: -18px;
+	left: -17px;
+	width: 32px;
+	height: 32px;
+	background: url(images/toolbar/close.png) no-repeat;
+}
+
+.riot-types .riot-type-list {
+	background: #f0f0f0;
+	border-style: solid;
+	border-width: 1px 0 0 1px;
+	border-color: #fff#fff;
 	max-height: 250px;
 	overflow: auto;
 }
 
-#riot-inspector .type-inspector .type {
-	padding: 1px 10px 1px 16px;
-	margin: 1px 0;
+.riot-types .type {
+	padding: 5px 25px 5px 12px;
 	font-family: "Trebuchet MS", arial, sans-serif;
 	font-size:11px;
 	text-align: left;
 	color: #3d3d3d;
-	background: url(icons/dialogs/componentType.gif) top left no-repeat;
+	background-repeat: no-repeat;
 	cursor: pointer;
 	cursor: hand;
+	line-height: 16px;
+	white-space: nowrap;
+	border: 1px solid #f0f0f0;
 }
 
-#riot-inspector .type-inspector .active-type {
-	padding: 1px 10px 1px 16px;
-	margin: 1px 0;
-	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size: 11px;
-	text-align: left;
+.riot-types .active {
+	xcolor: #fff;
+}
+
+.riot-types .type:hover {
 	color: #fff;
-	background: ${highlight_color} url(icons/dialogs/componentType_hi.gif) top left no-repeat;
+	background-color: #acacac;
+	border-color: #a0a0a0;
 }
 
-#riot-inspector span.messageCode {
-	padding: 0 0 0 20px;
-	text-decoration: none;
-	background: url(images/i18n.gif) right center no-repeat;
+.riot-types .type .icon {
+	display: block;
+	width: 16px;
+	height: 16px;
+	float: left;
+	margin-right: 4px;
 }
 
 .riot-insert-button {
 	clear: both;
 	display: block;
-	position:relative;
-	height: 16px;
-	color: #fff;
-	border: 2px solid ${toolbar_border_color};
-	background: #fff url(images/insert_bg.gif) center 0px no-repeat;
-	margin: 4px;
+	height: 32px;
+	width: 32px;
+	background: url(images/toolbar/add_glow.png) left center no-repeat;
+	background-image: url(images/toolbar/add.png);
+	margin: -16px 0 0 -16px;
+	position: absolute;
+	z-index: 1;
+}
+.riot-insert-button:hover {
+	background: url(images/toolbar/add_glow.png) left center no-repeat;
 }
 
-html .riot-insert-button-active {
-	background-color: #3d3d3d;
-	background-position: center -16px;
-}
 
 .riot-component-list:after {
     content: ".";
@@ -260,10 +254,8 @@ html .riot-insert-button-active {
 	display: inline-block;
 }
 
-/* Hides from IE-mac \*/
 * html .riot-component-list {height: 1%;}
 .riot-component-list {display: block;}
-/* End hide from IE-mac */
 
 
 .riot-component-list .riot-component {
@@ -283,8 +275,18 @@ div.riot-editor {
 	cursor: text;
 }
 
-.riot-editable-text:hover {
+.riot-editable-text,
+.riot-mode-remove .riot-component,
+.riot-mode-properties .riot-form {
 	cursor: crosshair;
+}
+
+.riot-mode-insert,
+.riot-mode-remove,
+.riot-mode-properties {
+	user-select: none;
+	-moz-user-select: none;
+	cursor: default;
 }
 
 div.riot-highlight {
@@ -308,29 +310,6 @@ div.riot-highlight-bottom {
 	padding: 10px;
 }
 
-.riot-no-inheritance {
-	display: none;
-}
-
-.riot-mode-insert .riot-no-inheritance,
-.riot-mode-remove .riot-no-inheritance,
-.riot-moveable-component .riot-no-inheritance {
-	display: block;
-	padding: 6px;
-	margin-bottom: 8px;
-	color: #3d3d3d;
-	background-color: #fff;
-	border: 2px solid ${toolbar_border_color};
-}
-
-
-.riot-stacktrace {
-	color: #3d3d3d;
-	padding: 3px;
-	height: 300px;
-	width: 100%;
-	overflow: auto;
-}
 
 .riot-dialog textarea {
 	border: none;
