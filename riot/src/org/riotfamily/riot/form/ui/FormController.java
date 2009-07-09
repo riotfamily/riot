@@ -32,10 +32,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.list.ui.ListService;
 import org.riotfamily.riot.list.ui.ListSession;
 import org.riotfamily.riot.security.AccessController;
@@ -101,24 +101,24 @@ public class FormController extends BaseFormController {
 		return model;
 	}
 
-	protected ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
+	protected ModelAndView afterSave(Form form, Object bean, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 		
 		String focus = request.getParameter("focus");
 		if (focus != null || !editorDefinition.getChildEditorDefinitions().isEmpty()) {
-			return reloadForm(form, editorDefinition, focus);
+			return reloadForm(form, bean, editorDefinition, focus);
 		}
 		else {
 			return showParentList(form, editorDefinition);
 		}
 	}
 
-	protected ModelAndView afterUpdate(Form form, ObjectEditorDefinition editorDefinition,
+	protected ModelAndView afterUpdate(Form form, Object bean, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
 		String focus = request.getParameter("focus");
 		if (focus != null) {
-			return reloadForm(form, editorDefinition, focus);
+			return reloadForm(form, bean, editorDefinition, focus);
 		}
 		else {
 			return showParentList(form, editorDefinition);
@@ -138,13 +138,12 @@ public class FormController extends BaseFormController {
 		return new ModelAndView(new RedirectView(listUrl, true));
 	}
 
-	protected ModelAndView reloadForm(Form form,
+	protected ModelAndView reloadForm(Form form, Object bean,
 			ObjectEditorDefinition editorDefinition,
 			String focusElement) {
 
 		String formUrl = editorDefinition.createEditorPath(
-				form.getBackingObject(),
-				form.getFormContext().getMessageResolver())
+				bean, form.getFormContext().getMessageResolver())
 				.getEditorUrl();
 
 		formUrl = ServletUtils.addParameter(formUrl, "saved", "true");

@@ -233,19 +233,20 @@ public abstract class BaseFormController extends RepositoryFormController
 		
 		ObjectEditorDefinition editorDef = getObjectEditorDefinition(request);
 		boolean save = form.isNew();
-		saveOrUpdate(form, editorDef);
+		Object bean = saveOrUpdate(form, editorDef);
 		removeFormFromSession(request);
 		if (save) {
-			return afterSave(form, editorDef, request, response);
+			return afterSave(form, bean, editorDef, request, response);
 		}
-		return afterUpdate(form, editorDef, request, response);
+		return afterUpdate(form, bean, editorDef, request, response);
 	}
 		
-	protected void saveOrUpdate(Form form, ObjectEditorDefinition editor)
+	protected Object saveOrUpdate(Form form, ObjectEditorDefinition editor)
 			throws Exception {
 		
 		ListDefinition listDef = EditorDefinitionUtils.getListDefinition(editor);
 		RiotDao dao = listDef.getDao();
+		Object result;
 		
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
 		try {
@@ -266,11 +267,12 @@ public abstract class BaseFormController extends RepositoryFormController
 				Object bean = form.populateBackingObject();				
 				dao.save(bean, parent);
 				FormUtils.setObjectId(form, dao.getObjectId(bean));
+				result = bean;
 			}
 			else {
 				log.debug("Updating entity ...");
 				Object bean = form.populateBackingObject();
-				dao.update(bean);
+				result = dao.update(bean); 
 			}
 		}
 		catch (Exception e) {
@@ -278,12 +280,13 @@ public abstract class BaseFormController extends RepositoryFormController
 			throw e;
 		}
 		transactionManager.commit(status);
+		return result;
 	}
 	
-	protected abstract ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
+	protected abstract ModelAndView afterSave(Form form, Object bean, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response);
 
-	protected abstract ModelAndView afterUpdate(Form form, ObjectEditorDefinition editorDefinition,
+	protected abstract ModelAndView afterUpdate(Form form, Object bean, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response);
 
 }

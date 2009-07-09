@@ -50,7 +50,7 @@ public class PopupFormController extends FormController {
 	}
 	
 	@Override
-	protected ModelAndView afterSave(Form form,
+	protected ModelAndView afterSave(Form form, Object bean,
 			ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 		
@@ -58,7 +58,7 @@ public class PopupFormController extends FormController {
 	}
 	
 	@Override
-	protected ModelAndView afterUpdate(Form form,
+	protected ModelAndView afterUpdate(Form form, Object bean,
 			ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 		
