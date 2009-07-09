@@ -77,7 +77,7 @@
 			<list:command id="cutPage" />
 			<list:command id="gotoPage" />
 		</list:columns>
-		<list:command id="add"/>
+		<list:command id="addPage"/>
 		<list:command id="pastePage" />
 	</list:list>
 	
