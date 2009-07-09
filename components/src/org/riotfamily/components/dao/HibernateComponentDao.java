@@ -99,14 +99,19 @@ public class HibernateComponentDao implements ComponentDao {
 	public Content mergeContent(Content content) {
 		return hibernate.merge(content);
 	}
+	
+	public Component findParentComponent(Component component) {
+		ComponentListWrapper wrapper = findComponentListWrapper(component);
+		if (wrapper == null) {
+			return null;
+		}
+		Query query = hibernate.createQuery("select c from Component c join c.wrappers w where w = :wrapper");
+		query.setParameter("wrapper", wrapper);
+		return (Component) hibernate.uniqueResult(query);
+	}
 
 	public ContentContainer findContainerForComponent(Component component) {
-		ComponentListWrapper wrapper = (ComponentListWrapper)
-				hibernate.createCriteria(ComponentListWrapper.class)
-				.add(Restrictions.eq("value", component.getList()))
-				.setFetchMode("value", FetchMode.SELECT)
-				.uniqueResult();
-
+		ComponentListWrapper wrapper = findComponentListWrapper(component);
 		return findContainerForWrapper(wrapper);
 	}
 	
@@ -175,6 +180,13 @@ public class HibernateComponentDao implements ComponentDao {
 			discarded = true;
 		}
 		return discarded;
+	}
+	
+	private ComponentListWrapper findComponentListWrapper(Component component) {
+		return (ComponentListWrapper) hibernate.createCriteria(ComponentListWrapper.class)
+			.add(Restrictions.eq("value", component.getList()))
+			.setFetchMode("value", FetchMode.SELECT)
+			.uniqueResult();
 	}
 
 }
