@@ -225,20 +225,24 @@ public class PageFacade {
 	}
 		
 	public PageProperties getPageProperties() {
-		PageProperties pageProperties = page.getPageProperties(); 
-		ComponentCacheUtils.addContainerTags(pageProperties, preview);
-		Page master = page.getMasterPage();
-		if (master != null) {
-			ComponentCacheUtils.addContainerTags(master.getPageProperties(), preview);
-		}
-		return pageProperties;
+		addContainerTags();
+		return page.getPageProperties(); 
 	}
 
 	public Map<String, Object> getProperties() {
 		if (properties == null) {
 			properties = getPageProperties().unwrap(preview);
 		}
+		addContainerTags();
 		return properties;
+	}
+
+	private void addContainerTags() {
+		ComponentCacheUtils.addContainerTags(page.getPageProperties(), preview);
+		Page master = page.getMasterPage();
+		if (master != null) {
+			ComponentCacheUtils.addContainerTags(master.getPageProperties(), preview);
+		}
 	}
 	
 	/**
