@@ -11,20 +11,6 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 
-	<bean id="componentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">
-		<property name="viewNamePrefix" value="components/" />
-		<property name="viewNameSuffix" value=".ftl" />
-	</bean>
-	
-	<bean id="componentListRenderer" class="org.riotfamily.components.render.list.ComponentListRenderer">
-		<constructor-arg ref="transactionManager" />
-		<property name="liveModeRenderStrategy">
-			<bean class="org.riotfamily.components.render.list.DefaultRenderStrategy">
-				<constructor-arg ref="componentRenderer" />
-			</bean>
-		</property>
-	</bean>
-	
 	<override:put ref="freemarkerConfig" property="macroLibraries">
 		<entry key="inplace" value="classpath:org/riotfamily/components/view/inplace.ftl" />
 	</override:put>
@@ -40,5 +26,10 @@
 	</bean>
 	
 	<override:bean ref="cacheKeyAugmentor" class="org.riotfamily.components.cache.EditModeCacheKeyAugmentor" />
+
+	<!-- Initialize the ComponentRenderer --> 
+ 	<bean class="org.riotfamily.components.render.component.ViewComponentRendererInitializer">
+ 		<constructor-arg ref="componentRenderer" />
+ 	</bean>
  
 </beans>

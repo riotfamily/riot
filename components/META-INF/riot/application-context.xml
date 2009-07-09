@@ -22,6 +22,25 @@
 		<property name="argument" ref="valueWrapperFactory" />
 	</bean>
 	
+	<bean id="componentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">
+		<property name="viewNamePrefix" value="components/" />
+		<property name="viewNameSuffix" value=".ftl" />
+	</bean>
+	
+	<bean id="componentMetaDataProvider" class="org.riotfamily.components.render.component.ViewComponentMetaDataProvider">
+		<constructor-arg ref="componentRenderer" />
+	</bean>
+	
+	<bean id="componentListRenderer" class="org.riotfamily.components.render.list.ComponentListRenderer">
+		<constructor-arg ref="transactionManager" />
+		<property name="metaDataProvider" ref="componentMetaDataProvider" />
+		<property name="liveModeRenderStrategy">
+			<bean class="org.riotfamily.components.render.list.DefaultRenderStrategy">
+				<constructor-arg ref="componentRenderer" />
+			</bean>
+		</property>
+	</bean>
+	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
 	<bean class="org.riotfamily.components.model.ContentContainer" scope="prototype">
 		<property name="cacheService" ref="cacheService" />

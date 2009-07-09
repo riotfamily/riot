@@ -34,6 +34,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.OrderComparator;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
@@ -83,12 +84,24 @@ public class ViewResolverHelper {
 	public View resolveView(HttpServletRequest request, String viewName)
 			throws ViewResolutionException {
 
-		try {
-			if (viewName == null) {
+		if (viewName == null) {
+			try {
 				viewName = viewNameTranslator.getViewName(request);
 			}
+			catch (Exception e) {
+				throw new ViewResolutionException(viewName, e);
+			}
+		}
+		Locale locale = RequestContextUtils.getLocale(request);
+		return resolveView(locale, viewName);
+	}
+	
+	public View resolveView(Locale locale, String viewName)
+			throws ViewResolutionException {
+
+		Assert.notNull(viewName, "viewName must not be null");
+		try {
 			for (ViewResolver viewResolver : viewResolvers) {
-			    Locale locale = RequestContextUtils.getLocale(request);
 			    View view = viewResolver.resolveViewName(viewName, locale);
 			    if (view != null) {
 			        return view;

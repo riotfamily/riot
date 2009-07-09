@@ -23,9 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.riotfamily.components.meta.ComponentMetaData;
 
 /**
  * Interface used by the Riot Toolbar to edit components. All methods defined
@@ -44,9 +47,11 @@ public interface ComponentEditor {
 
 	public String[] getComponentLabels(String[] types, HttpServletRequest request);
 	
-	public String insertComponent(Long listId, int position, String type, String properties);
+	public List<ComponentMetaData> getComponentMetaData(String[] types);
+	
+	public String insertComponent(Long listId, int position, String type);
 
-	public String setType(Long componentId, String type, String properties);
+	public String setType(Long componentId, String type);
 	
 	public String renderComponent(Long componentId);
 

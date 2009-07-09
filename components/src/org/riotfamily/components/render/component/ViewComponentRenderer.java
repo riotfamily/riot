@@ -24,6 +24,7 @@
 package org.riotfamily.components.render.component;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,10 +34,6 @@ import org.riotfamily.common.web.view.ViewResolutionException;
 import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.render.list.ComponentListRenderer;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
 /**
@@ -44,8 +41,7 @@ import org.springframework.web.servlet.View;
  * Spring's DispatcherServlet and renders the view passing the 
  * Component's properties as model.
  */
-public class ViewComponentRenderer extends AbstractComponentRenderer 
-		implements ApplicationContextAware {
+public class ViewComponentRenderer extends AbstractComponentRenderer {
 
 	private String viewNamePrefix = "";
 	
@@ -61,10 +57,18 @@ public class ViewComponentRenderer extends AbstractComponentRenderer
 		this.viewNameSuffix = viewNameSuffix;
 	}
 
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-
-		viewResolverHelper = new ViewResolverHelper(applicationContext);		
+	public void setViewResolverHelper(ViewResolverHelper viewResolverHelper) {
+		this.viewResolverHelper = viewResolverHelper;
+	}
+	
+	public View getView(String type) {
+		try {
+			String viewName = viewNamePrefix + type + viewNameSuffix;
+			return viewResolverHelper.resolveView(Locale.getDefault(), viewName);
+		}
+		catch (ViewResolutionException e) {
+			return null;
+		}
 	}
 	
 	protected void renderInternal(Component component, 
@@ -82,15 +86,14 @@ public class ViewComponentRenderer extends AbstractComponentRenderer
 		model.put(LIST_SIZE, new Integer(listSize));
 		model.put(PARENT, request.getAttribute(ComponentListRenderer.PARENT_ATTRIBUTE));
 		
-		String viewName = viewNamePrefix + component.getType() + viewNameSuffix;
-		ModelAndView mv = new ModelAndView(viewName, model);
 		try {
-			View view = viewResolverHelper.resolveView(request, mv);
+			String viewName = viewNamePrefix + component.getType() + viewNameSuffix;
+			View view = viewResolverHelper.resolveView(request, viewName);
 			view.render(model, request, response);
 		}
 		catch (ViewResolutionException e) {
 			log.warn("ViewResolutionException - Skipping component ...", e);
 		}
-	}
+	}	
 
 }

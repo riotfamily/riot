@@ -18,57 +18,24 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   flx
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.config;
+package org.riotfamily.components.render.component;
 
-import java.util.Map;
+import org.riotfamily.common.web.view.ViewResolverHelper;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-import org.riotfamily.common.beans.PropertyUtils;
+public class ViewComponentRendererInitializer implements ApplicationContextAware {
 
-public class ComponentConfig {
+	private ViewComponentRenderer renderer;
 
-	private String type;
-	
-	private int min;
-	
-	private Integer max;
-	
-	
-	@SuppressWarnings("unchecked")
-	public ComponentConfig(Object obj) {
-		if (obj instanceof String) {
-			type = (String) obj;
-		}
-		else if (obj instanceof Map) {
-			Map map = (Map) obj;
-			PropertyUtils.setProperties(this, map);
-		}
+	public ViewComponentRendererInitializer(ViewComponentRenderer renderer) {
+		this.renderer = renderer;
 	}
 
-	public String getType() {
-		return type;
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		renderer.setViewResolverHelper(new ViewResolverHelper(applicationContext));		
 	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public int getMin() {
-		return min;
-	}
-
-	public void setMin(int min) {
-		this.min = min;
-	}
-
-	public Integer getMax() {
-		return max;
-	}
-
-	public void setMax(Integer max) {
-		this.max = max;
-	}
-
 }

@@ -152,7 +152,6 @@ riot.components = (function() {
 	
 	// -----------------------------------------------------------------------
 	
-	var activeInsertButton = null;
 	var activeComponent = null;
 	
 	// -----------------------------------------------------------------------
@@ -192,7 +191,6 @@ riot.components = (function() {
 			if (!this.config.max || this.componentElements.length < this.config.max) {
 				this.element.addClassName('riot-mode-insert');
 				this.insertButton = new InsertButton(this);
-				activeInsertButton = null;
 			}
 		},
 		
@@ -201,7 +199,6 @@ riot.components = (function() {
 				this.element.removeClassName('riot-mode-insert');
 				this.insertButton.remove();
 				this.insertButton = null;
-				activeInsertButton = null;
 			}
 		},
 
@@ -346,46 +343,6 @@ riot.components = (function() {
 	});
 	
 	// -----------------------------------------------------------------------
-	// ComponentDragObserver
-	// -----------------------------------------------------------------------
-	
-	ComponentDragObserver = Class.create({
-		initialize: function(componentList) {
-			this.componentList = componentList;
-			this.element = componentList.element;
-		},
-		
-		onStart: function(eventName, draggable, event) {
-			var el = draggable.element;
-			el.addClassName('riot-drag');
-			// If the dragged element is floating, remove the vertical movement constraint
-			if (el.getStyle('float') != 'none') {
-				draggable.options.constraint = false;
-			}
-			this.nextEl = draggable.element.next('.riot-component');
-		},
-		
-		onEnd: function(eventName, draggable, event) {
-			var el = draggable.element;
-			el.removeClassName('riot-drag');
-			var nextEl = el.next('.riot-component');
-			if(el.parentNode == this.element && nextEl != this.nextEl) {
-				this.componentList.findComponentElements();
-				var nextId = null;
-				if (nextEl) {
-					nextId = getContent(nextEl).id;
-					nextEl.forceRerendering();
-				}
-				var component = getContent(el);
-				ComponentEditor.moveComponent(component.id, nextId);
-				component.markAsDirty();
-			}
-			this.componentList.updatePositionClasses();
-			this.nextEl = null;
-		}
-	});
-
-	// -----------------------------------------------------------------------
 	// Content
 	// -----------------------------------------------------------------------
 	
@@ -513,6 +470,13 @@ riot.components = (function() {
 			this.markAsDirty();
 		},
 		
+		renderChunks: function(chunks) {
+			for (var i = chunks.length - 1; i > 0 ; i--) {
+				this.element.insert({after: chunks[i]});
+			}
+			this.replaceHtml(chunks[0]);
+		},
+		
 		update: function() {
 			ComponentEditor.renderComponent(this.id, this.replaceHtml.bind(this));
 		},
@@ -530,15 +494,7 @@ riot.components = (function() {
 				});
 			}
 			riot.toolbar.selectedButton.applyHandler(true);
-		},
-		
-		renderChunks: function(chunks) {
-			for (var i = chunks.length - 1; i > 0 ; i--) {
-				this.element.insert({after: chunks[i]});
-			}
-			this.replaceHtml(chunks[0]);
 		}
-
 	});
 	
 	// -----------------------------------------------------------------------
@@ -549,50 +505,94 @@ riot.components = (function() {
 
 		initialize: function(componentList) {
 			this.componentList = componentList;
+			
+			// Filter types that exceed the max occurrence
 			this.types = componentList.config.validTypes.select(function(config) {
 				return !config.max || componentList.countComponents(config.type) < config.max;
 			});
-			this.componentList.element.insert({after: this.element = 
-				new Element('div', {className: 'riot-button-face'})
-				.wrap(new Element('div', {className: 'riot-insert-button'}))
-				.observe('click', this.onclick.bindAsEventListener(this))});
+			
+			this.element = new Element('div').insert(
+					new Element('div').addClassName('riot-insert-button')
+					.observe('click', this.onclick.bindAsEventListener(this)));
+
+			this.componentList.element.insert(this.element);
+			
+			var button = this;
+			this.moveHandler = function(ev) {
+				button.move(ev, this);
+			};
+			
+			this.trackMouse();
+		},
+		
+		trackMouse: function() {
+			this.componentList.componentElements.invoke('observe', 'mousemove', this.moveHandler);			
+		},
+		
+		stopMouseTracking: function() {
+			this.componentList.componentElements.invoke('stopObserving', 'mousemove', this.moveHandler);
+		},
+		
+		move: function(ev, el) {
+			var before;
+			var pos = el.cumulativeOffset();
+			if (el.getStyle('float') != 'none') {
+				before = ev.pointerX() < pos.left + el.getWidth() / 2;
+			}
+			else {
+				before = ev.pointerY() < pos.top + el.getHeight() / 2;
+			}
+			var content = {};
+			content[before ? 'before' : 'after'] = this.element;
+			el.insert(content);
 		},
 		
 		remove: function() {
+			this.stopMouseTracking();
 			this.element.remove();
+			if (this.menu) {
+				this.menu.element.remove();
+			}
 		},
 
 		onclick: function() {
-			if (activeInsertButton) {
-				activeInsertButton.element.removeClassName('riot-insert-button-active');
-			}
 			if (this.types.length == 1) {
-				this.insert(this.types[0]);
-				riot.toolbar.removeInspector();
+				// Only one option - insert instantly
+				this.insert(this.types[0].type);
 			}
 			else {
-				this.element.addClassName('riot-insert-button-active');
-				activeInsertButton = this;
-				this.inspector = new TypeInspector(
-						this.types, this.insert.bind(this));
-
-				riot.toolbar.setInspector(this.inspector.element);
+				// Show type menu
+				this.stopMouseTracking();
+				if (!this.menu) {
+					this.menu = new TypeMenu(this);
+				}
+				else {
+					this.menu.show();
+				}
 			}
 		},
 
-		insert: function(config) {		
-			ComponentEditor.insertComponent(this.componentList.id, -1, config.type, 
-					Object.toJSON(config.defaults), this.oninsert.bind(this));
-
-			if (this.inspector) {
-				this.inspector.onchange = this.changeType.bind(this);
+		insert: function(type) {		
+			var pos = 0;
+			var prev = this.element.previous('.riot-component');
+			if (prev) {
+				pos = this.componentList.componentElements.indexOf(prev) + 1;
 			}
+			ComponentEditor.insertComponent(this.componentList.id, pos, 
+					type, this.insertHtml.bind(this, prev));
 		},
 
-		oninsert: function(html) {
+		insertHtml: function(prev, html) {
 			var tmp = new Element('div').update(html);
 			var el = this.componentElement = tmp.down();
-			this.componentList.element.appendChild(el);
+			el.hide();
+			if (prev) {
+				prev.insert({after: el});
+			}
+			else {
+				this.componentList.element.insert({top: el});
+			}
+			
 			this.componentList.findComponentElements();
 			this.componentList.updatePositionClasses();
 			this.id = el.readAttribute('riot:contentId');
@@ -602,67 +602,123 @@ riot.components = (function() {
 				});
 			}
 			findContainer(el).markAsDirty();
-			riot.toolbar.enablePreviewButton();
-			if (this.componentList.config.max && this.componentList.componentElements.length == this.componentList.config.max) {
-				this.componentList.insertOff();			
-			}
-		},
-
-		onupdate: function(html) {
-			var tmp = new Element('div').update(html.stripScripts());
-			var el = tmp.down();
-			this.componentElement.replaceBy(el);
-			html.evalScripts.bind(html).defer();
-			this.componentList.findComponentElements();
-			this.componentElement = el;
-			if (window.riotEditCallbacks) {
-				riotEditCallbacks.each(function(callback) {
-					callback(el);
-				});
-			}
+			new Effect.BlindDown(el, {
+				duration: 0.5, 
+				afterFinish: this.afterInsert.bind(this)
+			});
 		},
 		
-		changeType: function(config) {
-			ComponentEditor.setType(this.id, config.type, Object.toJSON(config.defaults), this.onupdate.bind(this));
+		afterInsert: function() {
+			riot.toolbar.enablePreviewButton();
+			if (this.componentList.config.max 
+					&& this.componentList.componentElements.length 
+					== this.componentList.config.max) {
+
+				this.componentList.insertOff();			
+			}
+			else {
+				this.trackMouse();
+			}			
 		}
 	});
 
 	// -----------------------------------------------------------------------
-	// TypeInspector
+	// TypeMenu
 	// -----------------------------------------------------------------------
 	
-	TypeInspector = Class.create({
+	TypeMenu = Class.create({
 
-		initialize: function(configs, onchange) {
-			this.configs = configs;
-			this.onchange = onchange;
-			this.element = RBuilder.node('div', {},
-				RBuilder.node('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}),
-				RBuilder.node('div', {className: 'headline', innerHTML: '${title.typeInspector}'}),
-				this.select = RBuilder.node('div', {className: 'type-inspector'})
-			);
-			ComponentEditor.getComponentLabels(configs.pluck('type'), this.setLabels.bind(this));
+		initialize: function(button) {
+			this.button = button;	
+			this.element = new Element('div').addClassName('riot-types').hide()
+				.insert(new Element('div').addClassName('riot-close-button').hide().observe('click', this.close.bind(this)))
+				.insert(new Element('div').addClassName('riot-type-list'));
+			
+			ComponentEditor.getComponentMetaData(button.types.pluck('type'), 
+					this.setMetaData.bind(this));
+			
+			button.element.insert(this.element);
 		},
 		
-		setLabels: function(labels) {
-			for (var i = 0; i < this.configs.length; i++) {
-				var e = RBuilder.node('div', {className: 'type'},
-					RBuilder.node('span', {className: 'type-' + this.configs[i].type, innerHTML: labels[i]})
-				);
-				e.config = this.configs[i];
-				var inspector = this;
+		setMetaData: function(meta) {
+			var menu = this;
+			meta.each(function(m) {
+				var icon = riot.resourcePath + 'style/images/icons/' + (m.icon || 'plugin') + '.png';
+				var e = new Element('div').addClassName('type')
+					.insert(new Element('span', {
+						style: 'background-image:url(' + icon 
+						+ ');_background-image:none;_filter:progid:'
+						+ 'DXImageTransform.Microsoft.AlphaImageLoader(src=\''
+						+ icon + '\', sizingMethod=\'crop\')'
+					}).addClassName('icon')).insert(m.name);
+
+				e.type = m.type;
 				e.onclick = function() {
-					if (inspector.activeTypeButton) {
-						inspector.activeTypeButton.className = 'type';
-					}
-					this.className = 'active-type'
-					inspector.activeTypeButton = this;
-					inspector.onchange(this.config);
+					menu.element.select('.active').invoke('removeClassName', 'active');
+					this.addClassName('active');
+					menu.button.insert(this.type);
+					menu.element.hide();
 				}
-				this.select.appendChild(e);
-			}
+				menu.element.down('.riot-type-list').insert(e);	
+			});
+			this.show();
+		},
+		
+		show: function() {
+			new Effect.SlideDown(this.element, {
+				duration: 0.2, 
+				scaleX: true, 
+				afterFinish: function(e) {
+					new Effect.Appear(e.element.down(), {duration: 0.2});
+				}
+			});
+		},
+		
+		close: function() {
+			this.element.hide().down().hide();
+			this.button.trackMouse();
 		}
 		
+	});
+	
+	// -----------------------------------------------------------------------
+	// ComponentDragObserver
+	// -----------------------------------------------------------------------
+	
+	ComponentDragObserver = Class.create({
+		initialize: function(componentList) {
+			this.componentList = componentList;
+			this.element = componentList.element;
+		},
+		
+		onStart: function(eventName, draggable, event) {
+			var el = draggable.element;
+			el.addClassName('riot-drag');
+			// If the dragged element is floating, remove the vertical movement constraint
+			if (el.getStyle('float') != 'none') {
+				draggable.options.constraint = false;
+			}
+			this.nextEl = draggable.element.next('.riot-component');
+		},
+		
+		onEnd: function(eventName, draggable, event) {
+			var el = draggable.element;
+			el.removeClassName('riot-drag');
+			var nextEl = el.next('.riot-component');
+			if(el.parentNode == this.element && nextEl != this.nextEl) {
+				this.componentList.findComponentElements();
+				var nextId = null;
+				if (nextEl) {
+					nextId = getContent(nextEl).id;
+					nextEl.forceRerendering();
+				}
+				var component = getContent(el);
+				ComponentEditor.moveComponent(component.id, nextId);
+				component.markAsDirty();
+			}
+			this.componentList.updatePositionClasses();
+			this.nextEl = null;
+		}
 	});
 	
 	// -----------------------------------------------------------------------
