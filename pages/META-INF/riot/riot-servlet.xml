@@ -117,6 +117,10 @@
 
 	<bean id="showChildPagesCommand" class="org.riotfamily.pages.riot.command.ShowChildPagesCommand" />
 
+	<bean id="addPageCommand" class="org.riotfamily.pages.riot.command.AddPageCommand">
+		<constructor-arg ref="pageTypeHierarchy" />
+	</bean>
+
 	<bean id="pastePageCommand" class="org.riotfamily.pages.riot.command.PastePageCommand">
 		<constructor-arg ref="pageDao" />
 	</bean>

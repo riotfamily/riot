@@ -169,7 +169,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			node = new PageNode();
 		}
 
-		validate(parentNode, page);
+		validateVerbose(parentNode, page);
 
 		node.addPage(page); // It could be that the node does not yet contain
 							// the page itself, for example when edited nested...
@@ -214,7 +214,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	public Page updatePage(Page page) {
 		page = mergePage(page);
 		PageNode node = page.getNode();
-		validate(node.getParent(), page);
+		validateVerbose(node.getParent(), page);
 		PageCacheUtils.invalidateNode(cacheService, node);
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
 		ComponentCacheUtils.invalidateContainer(cacheService, page.getPageProperties());
@@ -387,6 +387,18 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		deleteObject(site);
 	}
 
+	private void validateVerbose(PageNode parentNode, Page page) throws RiotDaoException {
+		try {
+			validate(parentNode, page);
+		}
+		catch(RiotDaoException e) {
+			log.error("Validation error with parent [%s] and child [%s (type: %s)]: ",
+					e, parentNode, page, page.getNode().getPageType());
+			
+			throw e;
+		}
+	}
+	
 	public void validate(PageNode parentNode, Page page) throws RiotDaoException {
 		if (!PageValidationUtils.isValidChild(parentNode, page)) {
 			log.debug("Parent [%s] and child [%s] have duplicate pathComponents", parentNode, page);
