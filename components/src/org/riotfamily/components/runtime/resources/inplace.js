@@ -363,6 +363,9 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 			}
 			this.onsave(text);
 		}
+		else {
+			this.close();
+		}
 	},
 	
 	cleanUp: function(str) {
@@ -511,7 +514,8 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 	},
 	
 	close: function($super) {
-		tinymce.EditorManager.remove(this.tinymce);
+		if (this.tinymce != null)
+			tinymce.EditorManager.remove(this.tinymce);
 		$super();
 	},
 
@@ -541,24 +545,22 @@ riot.stylesheetMaker = {
 	selectors: ['body', 'p', 'a', 'strong', 'em', 'h1', 'h2',
 		'h3', 'h4', 'hr', 'ul', 'ul li', 'ol', 'ol li'],
 
-	addRule: function(selector, styles, sheet) {
+	getRule: function(selector, styles) {
 		var css = '';
 		for (prop in styles) {
 			if (typeof(prop) == 'function') { continue }
-			if (Prototype.Browser.IE && prop == 'font-size' && selector == 'body' && styles[prop].match(/(em|%)$/)) { continue }
+			if (Prototype.Browser.IE && prop == 'font-size' 
+					&& selector == 'body' 
+					&& styles[prop].match(/(em|%)$/)) { 
+				continue;
+			}
 			css += prop + ':' + styles[prop]
 			if (selector == 'a' && (prop == 'color' || prop == 'text-decoration')) {
 				css += ' !important';
 			}
 			css += ';'
 		}
-		if (sheet.insertRule) {
-			var rule = selector + ' {' + css + '}';
-			sheet.insertRule(rule, sheet.cssRules.length);
-		}
-		else if (sheet.addRule) {
-			sheet.addRule(selector, css);
-		}
+		return selector + ' {' + css + '}\n';
 	},
 
 	getStyles: function(el, props) {
@@ -569,8 +571,8 @@ riot.stylesheetMaker = {
 		return result;
 	},
 
-	copyStyles: function(el, doc, classes) {
-		var sheet = doc.styleSheets[doc.styleSheets.length - 1];
+	getRules: function(el, classes) {
+		var rules = '';
 		for (var i = 0; i < this.selectors.length; i++) {
 			var selector = this.selectors[i];
 			var p = el;
@@ -591,7 +593,7 @@ riot.stylesheetMaker = {
 			if (selector == 'body') {
 				styles['background-color'] = RElement.getBackgroundColor(p);
 			}
-			this.addRule(selector, styles, sheet);
+			rules += this.getRule(selector, styles);
 		}
 		if (classes) {
 			for (var i = 0; i < classes.length; i++) {
@@ -599,19 +601,30 @@ riot.stylesheetMaker = {
 				e.className = classes[i];
 				el.appendChild(e);
 				var styles = this.getStyles(e, this.properties['*']);
-				this.addRule('.' + classes[i], styles, sheet);
+				rules += this.getRule('.' + classes[i], styles);
 			}
 		}
+		return rules;
+	},
+	
+	copyStyles: function(el, doc, classes) {
+		var rules = this.getRules(el, classes);
+		var style = doc.createElement('style');
+		style.type = 'text/css';
+		var head = doc.getElementsByTagName('head')[0];
+		if (style.styleSheet) {
+			style.styleSheet.cssText = rules;
+		}
+		else {
+			style.appendChild(doc.createTextNode(rules));
+		}
+		head.appendChild(style);
 	}
 }
 
 riot.setupTinyMCEContent = function(editorId, body, doc) {
 	var inst = tinymce.EditorManager.editors[editorId];
-	var style = doc.createElement('style');
-	style.type = 'text/css';
-	var head = doc.getElementsByTagName('head')[0];
-	head.appendChild(style);
-
+	
 	var e = riot.activeEditor.element;
 	var clone = $(e.cloneNode(false));
 	clone.hide().insertSelfBefore(e);
@@ -621,7 +634,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	if (styles) {
 		classNames = styles.split(';').collect(function(pair) {return pair.split('=')[1]});
 	}
-		riot.stylesheetMaker.copyStyles(clone, doc, classNames);
+	riot.stylesheetMaker.copyStyles(clone, doc, classNames);
 	
 	clone.remove();
 

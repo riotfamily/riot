@@ -45,8 +45,9 @@ public class ContentFormRepository extends XmlFormRepository {
 			FormInitializer initializer, Validator validator) {
 		
 		if (beanClass == null) {
-			EditorBinder binder = new ContentContainerEditorBinder();
-			return new DefaultFormFactory(binder, initializer, validator);
+			DefaultFormFactory factory = new DefaultFormFactory(initializer, validator);
+			factory.setEditorBinderClass(ContentContainerEditorBinder.class);
+			return factory;
 		}
 		return super.createFormFactory(beanClass, initializer, validator);
 	}

@@ -81,14 +81,24 @@ function submitElement(id, clickedButton) {
 	});
 }
 
-function submitForm(form) {
+function submitForm(form, onSuccess, onFailure) {
 	form = $(form);
 	var url = form.action || window.loction.href;
-	var elements = form.select('textarea','input:not(input[type="submit"])');
+	var elements = form.select('textarea','input:not(input[type="submit"])', 'select');
 	var params = Form.serializeElements(elements, true);
 	params.ajaxSave = 'true';
 	var request = new Ajax.Request(url, {
-		onSuccess: processAjaxResponse,
+		onSuccess: function(transport) {
+			if (onSuccess) onSuccess(transport);
+		},
+		onException: function(transport, exception) {
+			if (onFailure) onFailure(transport);
+			return true;
+		},
+		onFailure: function(transport) {
+			if (onFailure) onFailure(transport);
+			return true;
+		},
 		parameters: params
 	});
 }

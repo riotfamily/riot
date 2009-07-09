@@ -24,6 +24,7 @@
 package org.riotfamily.forms.element;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -33,6 +34,7 @@ import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
+import org.springframework.util.Assert;
 
 public class NumberField extends TextField implements DHTMLElement,
 		ResourceElement {
@@ -48,7 +50,9 @@ public class NumberField extends TextField implements DHTMLElement,
 	private float stepSize = 1;
 
 	private String unit;
-
+	
+	private NumberFormat numberFormat;
+	
 	public NumberField() {
 		setStyleClass("number");
 	}
@@ -101,7 +105,21 @@ public class NumberField extends TextField implements DHTMLElement,
 		if (unit != null) {
 			sb.append("unit:'").append(unit).append("',");
 		}
-		if (spinner) {
+		
+		NumberFormat nf = getNumberFormat();
+		String decimalSeparator;
+		if (nf instanceof DecimalFormat) {
+		    decimalSeparator = "" + ((DecimalFormat)nf).getDecimalFormatSymbols().getDecimalSeparator();
+		} else {
+		    decimalSeparator = ".";
+		}
+	        sb.append("decimalSeparator:'").append(decimalSeparator).append("',");
+	        
+	        String mvStr = numberFormat.format(minValue == null ? 0f : minValue.floatValue()); 
+	        String def = getDefaultText() == null ? mvStr : getDefaultText();
+	        sb.append("defaultValue:'").append(def).append("',");
+                
+	        if (spinner && isEnabled()) {
 			sb.append("stepSize:").append(stepSize).append(',');
 			sb.append("spinButtonTag:'div'");
 		}
@@ -124,6 +142,27 @@ public class NumberField extends TextField implements DHTMLElement,
 		sb.append(',');
 	}
 
+	/** 
+	 * We want the CustomNumberEditor to handle NULL values.
+	 * So this method had to be overridden.
+	 * TODO Consider changing the parent class.
+	 */
+	protected void setTextFromValue() {
+	    if (getValue() instanceof String) {
+	        setText((String) getValue());
+	    }
+	    else {
+	        if (getPropertyEditor() == null) {
+	            initPropertyEditor();
+	            Assert.notNull(getPropertyEditor(), "Can't handle value of type "
+	                    + getValue().getClass().getName() + " - no PropertyEditor "
+	                    + "present");
+	        }
+	        getPropertyEditor().setValue(getValue());
+	        setText(getPropertyEditor().getAsText());
+	    }
+	}
+	       
 	protected void afterFormContextSet() {
 		Class type = getEditorBinding().getPropertyType();
 		if (type == null || Object.class.equals(type)) {
@@ -145,10 +184,21 @@ public class NumberField extends TextField implements DHTMLElement,
 		}
 		
 		if (Number.class.isAssignableFrom(type)) {
-			Locale locale = getFormContext().getLocale();
-			NumberFormat nf = NumberFormat.getNumberInstance(locale);
+			NumberFormat nf = getNumberFormat();
 			setPropertyEditor(new CustomNumberEditor(type, nf, true));
 		}
 	}
+
+        private NumberFormat getNumberFormat() {
+            if (numberFormat == null) {
+                Locale locale = getFormContext().getLocale();
+                numberFormat = (NumberFormat)NumberFormat.getNumberInstance(locale).clone();
+                if (numberFormat instanceof DecimalFormat) {
+                     ((DecimalFormat)numberFormat).setGroupingUsed(false);
+                    
+                 } 
+            }
+            return numberFormat;
+        }
 	
 }

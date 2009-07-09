@@ -907,6 +907,10 @@ riot.setLiveHtml = function(html) {
 	}
 }
 
+dwr.engine.setTextHtmlHandler(function() {
+	location.reload();
+});
+
 /**
  * DWR error handler that reloads the page if the RequestContext has expired
  */ 
@@ -919,7 +923,7 @@ dwr.engine.setErrorHandler(function(err, ex) {
 		location.reload();
 	}
 	else {
-		alert(err);
+		alert(ex.message);
 	}
 });
 

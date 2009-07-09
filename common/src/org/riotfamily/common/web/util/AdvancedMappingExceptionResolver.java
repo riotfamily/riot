@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -54,4 +56,10 @@ public class AdvancedMappingExceptionResolver
 		return mv;
 	}
 
+	/**
+	 * Applies to all requests except the ones coming from prototype.js in form of <code>XMLHttpRequest</code>
+	 */
+	protected boolean shouldApplyTo(HttpServletRequest request, Object handler) {
+		return !ServletUtils.isXmlHttpRequest(request);
+	}
 }

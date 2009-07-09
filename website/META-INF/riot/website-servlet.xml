@@ -141,5 +141,7 @@
 		<property name="defaultFlag" value="europeanunion" />
 		<property name="suffix" value=".gif" />
 	</bean>
+	
+	<bean name="/riot-utils/template-slot/@{slot}" class="org.riotfamily.website.template.RenderSlotController" />
 
 </beans>

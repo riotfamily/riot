@@ -53,6 +53,18 @@ public class ListParamsImpl implements ListParams {
 	public ListParamsImpl() {
 	}
 	
+	public ListParamsImpl(ListParams params) {
+		/*
+		offset = params.getOffset();
+		pageSize = params.getPageSize();
+		*/
+		filter = params.getFilter();
+		filteredProperties = params.getFilteredProperties();
+		search = params.getSearch();
+		searchProperties = params.getSearchProperties();
+		order = params.getOrder();
+	}
+	
 	public Object getFilter() {
 		return filter;
 	}
@@ -90,7 +102,7 @@ public class ListParamsImpl implements ListParams {
 	}
 
 	public void setOffset(int offset) {
-		this.offset = offset;
+		this.offset = offset >= 0 ? offset : 0;
 	}
 	
 	public int getPage() {
@@ -98,7 +110,7 @@ public class ListParamsImpl implements ListParams {
 	}
 	
 	public void setPage(int page) {
-		offset = (page - 1) * pageSize;
+		setOffset((page - 1) * pageSize);
 	}
 
 	public List getOrder() {

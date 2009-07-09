@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -82,7 +83,7 @@ public class EditorPath {
 				subPage.setParent(lastRef);
 				components.addLast(subPage);
 			}
-			subPage.setLabel(title);
+			subPage.setLabel(FormatUtils.xmlEscape(title));
 		}
 		else if (subPage != null) {
 			subPage.getParent().setEnabled(false);

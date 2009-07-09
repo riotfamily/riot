@@ -183,7 +183,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	public FormFactory createFormFactory(Class beanClass, 
 			FormInitializer initializer, Validator validator) {
 		
-		return new DefaultFormFactory(beanClass, initializer, validator);
+		return new DefaultFormFactory(initializer, validator, beanClass);
 	}
 	
 	public FormFactory getFormFactory(String id) {

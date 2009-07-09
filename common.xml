@@ -32,7 +32,7 @@
 	<property name="dep.commons-logging.revision" value="1.1.1" />
 	<property name="dep.spring.revision" value="2.5.1" />
 	<property name="dep.quartz.revision" value="1.6.0" />
-	<property name="dep.freemarker.revision" value="2.3.12" />
+	<property name="dep.freemarker.revision" value="2.3.14" />
 	
 	<!-- Location of this buildfile -->
 	<dirname property="root.dir" file="${ant.file.common}" />

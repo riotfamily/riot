@@ -37,7 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.util.DeferredRenderingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -60,8 +59,6 @@ public class PushUpTemplateController extends TemplateController {
 	private static final String RESPONSE_WRAPPERS_ATTRIBUTE =
 			PushUpTemplateController.class.getName() + ".responseWrappers";
 
-	protected static final String SLOT_TO_RENDER_PARAMETER = "slotToRender";
-
 	private List pushUpSlots;
 
 	public void setPushUpSlots(List pushUpSlots) {
@@ -71,11 +68,6 @@ public class PushUpTemplateController extends TemplateController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		String slotToRender = request.getParameter(SLOT_TO_RENDER_PARAMETER);
-		if (slotToRender != null) {
-			renderCapturedSlot(request, response, slotToRender);
-			return null;
-		}
 		if (handlePushUps(request, response)) {
 			return null;
 		}
@@ -107,22 +99,15 @@ public class PushUpTemplateController extends TemplateController {
 	}
 
 	/**
-	 * Returns an URL that can be requested in order to render a captured
-	 * slot. The URL is constructed from the current servletPath by appending
-	 * a parameter that contains the given slot path.
+	 * Returns an URL that can be requested in order to render a captured slot.
 	 */
 	protected String getDeferredRenderingUrl(HttpServletRequest request,
 			String slot) {
 
-		StringBuffer url = new StringBuffer()
-				.append(ServletUtils.getPathWithinApplication(request))
-				.append('?').append(SLOT_TO_RENDER_PARAMETER).append('=')
-				.append(slot);
-
-		return url.toString();
+		return "/riot-utils/template-slot/" + slot;
 	}
 
-	protected final Map getResponseWrappers(HttpServletRequest request) {
+	protected static Map getResponseWrappers(HttpServletRequest request) {
 		Map wrappers = (Map) request.getAttribute(RESPONSE_WRAPPERS_ATTRIBUTE);
 		if (wrappers == null) {
 			wrappers = new HashMap();
@@ -153,20 +138,4 @@ public class PushUpTemplateController extends TemplateController {
 		return responseWrapper.isRedirectSent();
 	}
 
-	/**
-	 * Renders a previously captured response for the given slot.
-	 */
-	protected void renderCapturedSlot(HttpServletRequest request,
-			HttpServletResponse response, String slot) throws IOException {
-
-		log.debug("Rendering captured slot: " + slot);
-		DeferredRenderingResponseWrapper responseWrapper =
-				(DeferredRenderingResponseWrapper)
-				getResponseWrappers(request).get(slot);
-
-		Assert.notNull(responseWrapper,
-				"No wrapped response found for slot: " + slot);
-
-		responseWrapper.renderResponse(response);
-	}
 }

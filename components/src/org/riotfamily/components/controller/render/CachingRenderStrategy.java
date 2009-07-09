@@ -133,7 +133,7 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 			ComponentListConfiguration config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
-		
+
 		super.render(location, config, request, response);
 	}
 	

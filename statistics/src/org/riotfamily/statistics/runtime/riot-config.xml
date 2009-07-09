@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<riot-config
+	xmlns="http://www.riotfamily.org/schema/riot/riot-config"
+	xmlns:ed="http://www.riotfamily.org/schema/riot/editor-config"
+	xmlns:list="http://www.riotfamily.org/schema/riot/list-config"
+	xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+	xmlns:riot="http://www.riotfamily.org/schema/riot/form-elements"
+	xmlns:component="http://www.riotfamily.org/schema/components/form-elements"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.riotfamily.org/schema/riot/riot-config
+		http://www.riotfamily.org/schema/riot/riot-config-7.0.xsd
+		http://www.riotfamily.org/schema/riot/editor-config
+		http://www.riotfamily.org/schema/riot/editor-config-7.0.xsd
+		http://www.riotfamily.org/schema/riot/list-config
+		http://www.riotfamily.org/schema/riot/list-config-7.0.xsd
+		http://www.riotfamily.org/schema/forms/form-config
+		http://www.riotfamily.org/schema/forms/form-config-7.0.xsd
+		http://www.riotfamily.org/schema/riot/form-elements
+		http://www.riotfamily.org/schema/riot/form-elements-7.0.xsd
+		http://www.riotfamily.org/schema/components/form-elements
+		http://www.riotfamily.org/schema/components/form-elements-7.0.xsd">
+		
+	<ed:group name="system-statistics" icon="stats">
+        <ed:group name="properties" icon="tag">
+            <ed:list list-ref="system-properties" icon="tag"  />
+            <ed:list list-ref="environment-properties" icon="tag" />
+            <ed:list list-ref="application-properties" icon="tag"  />
+        </ed:group>
+        <ed:list list-ref="riot-module-versions" icon="stats"/>
+        <ed:list list-ref="hibernate-common-statistics" icon="stats"/>
+        <ed:group name="cache-statistics" icon="stats">
+            <ed:list list-ref="hibernate-cache-statistics" icon="stats" />
+            <ed:list list-ref="hibernate-cache-regions" icon="regions" />
+        </ed:group>
+        <ed:list list-ref="connection-pool-statistics" icon="stats" />
+        <ed:list list-ref="memory-statistics" icon="stats" />    
+        <ed:group name="request-statistics" icon="stats">
+            <ed:list list-ref="request-overview-statistics" icon="stats" /> 
+            <ed:list list-ref="request-critical-statistics" icon="stats" /> 
+            <ed:list list-ref="request-current-statistics" icon="stats" /> 
+        </ed:group>
+        <ed:list list-ref="swarm-statistics" icon="stats" />    
+    </ed:group>
+		
+	<list:list id="system-properties" search="name,value" order-by="name">
+        <list:dao ref="systemPropertiesDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" sortable="true" />
+            <list:column property="value" />
+        </list:columns>
+    </list:list>
+    
+    <list:list id="application-properties" search="name,value" order-by="name">
+        <list:dao ref="applicationPropertiesDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" sortable="true" />
+            <list:column property="value" />
+        </list:columns>
+    </list:list>
+    
+    <list:list id="environment-properties" search="name,value" order-by="name">
+        <list:dao ref="environmentPropertiesDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" sortable="true" />
+            <list:column property="value" />
+        </list:columns>
+    </list:list>
+    
+    <list:list id="connection-pool-statistics" order-by="name" >
+        <list:dao ref="c3p0StatisticsDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name"  />
+            <list:column property="value" />
+        </list:columns>
+        <list:command id="refresh" />  
+    </list:list>
+    
+    <list:list id="hibernate-common-statistics" order-by="idx"  >
+        <list:dao ref="hibernateCommonStatisticsDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" />
+            <list:column property="value" />
+        </list:columns>
+        <list:command id="toggleHibernateStatistics" />  
+        <list:command id="clearHibernateStatisticsBaseline" />  
+        <list:command id="refresh" />  
+    </list:list>
+    
+    <list:list id="hibernate-cache-statistics" >
+        <list:dao ref="hibernateCacheStatisticsDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" />
+            <list:column property="value" />
+        </list:columns>
+        <!-- list:command id="clearRiotHibernateCache" />  
+        <list:command id="clearApplicationHibernateCache" / -->  
+        <list:command id="refresh" />  
+    </list:list>
+    
+    <list:list id="hibernate-cache-regions" >
+        <list:dao ref="hibernateCacheRegionDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" sortable="true" />
+            <list:column property="elementsInMemory" sortable="true" />
+            <list:column property="elementsOnDisk" sortable="true" />
+            <list:column property="hitCount" sortable="true" />
+            <list:column property="missCount" sortable="true" />
+            <list:column property="putCount" sortable="true" />
+            <list:column property="kbInMemory" sortable="true" />
+            <!-- list:command id="clearCacheRegion" / --> 
+        </list:columns>
+        <!-- list:command id="clearRiotHibernateCache" / -->  
+        <list:command id="refresh" />  
+    </list:list>
+
+    <list:list id="memory-statistics" order-by="idx">
+        <list:dao ref="memoryStatisticsDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" />
+            <list:column property="value" />
+        </list:columns>
+        <list:command id="performGarbageCollection" /> 
+        <list:command id="refresh" />  
+    </list:list>
+    
+    <list:list id="swarm-statistics" order-by="idx">
+        <list:dao ref="swarmStatisticsDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" />
+            <list:column property="value" />
+        </list:columns>
+        <list:command id="refresh" />  
+    </list:list>
+    
+    <list:list id="request-overview-statistics" order-by="idx">
+        <list:dao ref="requestOverviewStatisticsDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" />
+            <list:column property="value" />
+        </list:columns>
+        <list:command id="toggleRequestStatistics" />  
+        <list:command id="clearRequestStatisticsBaseline" />  
+        <list:command id="refresh" />  
+    </list:list>
+
+    <list:list id="request-critical-statistics" order-by="responeTime desc" search="name">
+        <list:dao ref="requestCriticalStatisticsDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" />
+            <list:column property="timestamp" />
+            <list:column property="responseTime" />
+            <list:column property="clientIp" />
+        </list:columns>
+        <list:command id="refresh" />  
+    </list:list>
+
+    <list:list id="request-current-statistics" order-by="responeTime desc" search="name">
+        <list:dao ref="requestCurrentStatisticsDao" >
+        </list:dao>
+        <list:columns>
+            <list:column property="name" sortable="true"/>
+            <list:column property="timestamp" sortable="true" />
+            <list:column property="responseTime" sortable="true" />
+            <list:column property="clientIp" sortable="true" />
+        </list:columns>
+        <list:command id="refresh" /> 
+    </list:list>
+    
+    <list:list id="riot-module-versions" >
+        <list:dao ref="packageListDao">
+        </list:dao>
+        <list:columns>
+            <list:column property="name" />
+            <list:column property="value" />
+        </list:columns>
+    </list:list>
+    
+</riot-config>
+

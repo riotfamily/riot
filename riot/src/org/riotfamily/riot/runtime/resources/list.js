@@ -25,7 +25,8 @@ var RiotList = Class.create({
 
 	renderFormCommands: function(objectId, target) {
 		var item = {objectId: objectId};
-		ListService.getFormCommands(this.key, objectId, this.appendCommands.bind(this, target, true, item, this.itemCommandClickHandler));
+		var handler = this.onFormCommandClick.bindAsEventListener(this);
+		ListService.getFormCommands(this.key, objectId, this.appendCommands.bind(this, target, true, item, handler));
 	},
 
 	renderTable: function(commandTarget, model) {
@@ -151,17 +152,17 @@ var RiotList = Class.create({
 		el = $(el);
 		var alwaysOn = item == null && this.tree;
 		return commands.collect(function(command) {
-			var button = new CommandButton(item, command, handler, renderLabel, alwaysOn);
+			var button = new CommandButton(item, command, handler, renderLabel, alwaysOn && command.targetRequired);
 			el.appendChild(button.element);
 			return button;
 		});
 	},
 
-	onItemCommandClick: function(event) {
+	onCommandClick: function(event, source) {
 		event.stop();
 		var a = event.findElement('a');
 		if (!this.selectParentMode) {
-			if (this.tree && !a.item) {
+			if (a.targetRequired && this.tree && !a.item) {
 				this.selectParent(a.command);
 				var cancel = RBuilder.node('button', {}, this.texts['label.tree.cancelCommand']);
 				this.dialog = RBuilder.node('div', {className: 'select-parent'}, 
@@ -171,11 +172,19 @@ var RiotList = Class.create({
 				new Effect.BlindDown(this.dialog, {duration: 0.3});
 			}
 			else {
-				this.execCommand(a.item, null, a.command, false);
+				this.execCommand(a.item, null, a.command, false, source);
 			}
 		}
 	},
 	
+	onItemCommandClick: function(event) {
+		this.onCommandClick(event, 'item');
+	},
+	
+	onFormCommandClick: function(event) {
+		this.onCommandClick(event, 'form');
+	},
+
 	selectParent: function(command) {
 		this.selectParentMode = true;
 		this.parentCommand = command;
@@ -213,11 +222,15 @@ var RiotList = Class.create({
 		this.execCommand(null, parentId, this.parentCommand, true);
 	},
 	
-	execCommand: function(item, parentId, command, confirmed) {
+	execCommand: function(item, parentId, command, confirmed, source) {
 		if (this.setBusy()) {
 			if (item) {
-				ListService.execItemCommand(this.key, item, command, confirmed,
-						this.processCommandResult.bind(this));
+				if (source && source == 'form')
+					ListService.execFormCommand(this.key, item, command, confirmed,
+							this.processCommandResult.bind(this));
+				else				
+					ListService.execItemCommand(this.key, item, command, confirmed,
+							this.processCommandResult.bind(this));
 			}
 			else {
 				ListService.execListCommand(this.key, parentId, command, confirmed,
@@ -588,7 +601,8 @@ var CommandButton = Class.create({
 		this.command = command;
 		this.handler = handler;
 		this.element = RBuilder.node('a', {href: '#', item: item, command: command,
-				className: 'action action-' + command.styleClass});
+				className: 'action action-' + command.styleClass,
+				targetRequired: command.targetRequired});
 
 		if (item && item.defaultCommand == command) {
 			this.element.addClassName('default');
@@ -625,13 +639,17 @@ var CommandButton = Class.create({
 	}
 });
 
+dwr.engine.setTextHtmlHandler(function() {
+	location.reload();
+});
+
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.riot.list.ui.ListSessionExpiredException') {
 		location.reload();
 	}
 	else {
 		list.setIdle();
-		throw ex;
+		alert(ex.message);
 	}
 });
 

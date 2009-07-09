@@ -61,8 +61,38 @@
 			  - is pressed.
 			  -->
 			function ajaxSubmit() {
+				showOrHidePleaseWaitMessage(true);
 				onSubmit();
-				submitForm('${formId}');
+				submitForm('${formId}', 
+					//onSuccess
+					function(transport) {showOrHidePleaseWaitMessage(false);},
+					//onFailure
+					function(transport) {showOrHidePleaseWaitMessage(false);if (transport) processXmlHttpRequestException(transport);}
+				);
+			}
+			
+			<#--
+			  - Shows or hides "Please wait..." message
+			  -->
+			function showOrHidePleaseWaitMessage(show) {
+				if (top.setLoading) top.setLoading(show);
+			}
+			
+			<#-- 
+			 - Default processing of JSON object returned by XmlHttpRequestException.
+ 			 - The response includes error class name and message.
+ 			-->
+			function processXmlHttpRequestException(transport) {
+				if (transport.responseJSON && transport.responseJSON.exceptionMessage) {
+					var errorMessage = transport.responseJSON.exceptionMessage;
+					
+					//format HTML tags for displaying as plain text in alert box
+					errorMessage = errorMessage.replace(/<(br|p)[^>]*>/ig, "\n");
+					errorMessage = errorMessage.replace(/<li[^>]*>/ig, " - ");
+					errorMessage = errorMessage.replace(/<[^>]*>/ig, "");
+					
+					alert (errorMessage); 
+				}
 			}
 			
 			<#--
@@ -71,9 +101,14 @@
 			  - TinyMCE elements.
 			  -->
 			function registerKeyHandler(doc) {
-				Event.observe(doc, 'keypress', function(e) {
+				Event.observe(doc, 'keydown', function(e) {
+				
+					//we have to use code for KEY_CTRL(17) explicitly as it is not defined in Event
+					if (e.keyCode == 17 || !e.ctrlKey)
+						return;
+					
 					var key = String.fromCharCode(e.charCode ? e.charCode : e.keyCode).toUpperCase();
-					if (key == 'S' && e.ctrlKey) {
+					if (key == 'S') {
 						ajaxSubmit();
 						e.stop();
 					}

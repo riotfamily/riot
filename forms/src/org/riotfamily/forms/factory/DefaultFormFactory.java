@@ -32,6 +32,8 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.util.Assert;
 import org.springframework.validation.Validator;
 
 
@@ -46,7 +48,7 @@ public class DefaultFormFactory implements FormFactory {
 	/** Class to be edited by the form */
 	private Class beanClass;
 
-	private EditorBinder editorBinder;
+	private Class editorBinderClass;
 	
 	/** List of factories to create child elements */
 	private List childFactories = new LinkedList();
@@ -56,22 +58,24 @@ public class DefaultFormFactory implements FormFactory {
 	private Validator validator;
 
 
-	public DefaultFormFactory(Class beanClass, FormInitializer initializer, 
-			Validator validator) {
-		
-		this.beanClass = beanClass;
+	public DefaultFormFactory(FormInitializer initializer, Validator validator) {
 		this.initializer = initializer;
 		this.validator = validator;
 	}
 	
-	public DefaultFormFactory(EditorBinder editorBinder, 
-			FormInitializer initializer, Validator validator) {
-		
-		this.editorBinder = editorBinder;
+	public DefaultFormFactory(FormInitializer initializer, Validator validator, Class beanClass) {
 		this.initializer = initializer;
 		this.validator = validator;
+		this.beanClass = beanClass;
 	}
-
+	
+	public void setEditorBinderClass(Class editorBinderClass) {
+		if (editorBinderClass != null) {
+			Assert.isAssignable(EditorBinder.class, editorBinderClass);
+		}
+		this.editorBinderClass = editorBinderClass;
+	}
+	
 	public Class getBeanClass() {
 		return this.beanClass;
 	}
@@ -89,8 +93,16 @@ public class DefaultFormFactory implements FormFactory {
 
 	public Form createForm() {
 		Form form = new Form();
-		if (editorBinder != null) {
-			form.setEditorBinder(editorBinder);
+		if (editorBinderClass != null) {
+			try {
+				form.setEditorBinder((EditorBinder) editorBinderClass.newInstance());
+			} 
+			catch (InstantiationException e) {
+				throw new BeanCreationException("Error creating EditorBinder", e);
+			} 
+			catch (IllegalAccessException e) {
+				throw new BeanCreationException("Error creating EditorBinder", e);
+			}
 		}
 		else {
 			form.setBeanClass(beanClass);			
