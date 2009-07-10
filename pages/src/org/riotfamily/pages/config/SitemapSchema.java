@@ -23,14 +23,17 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.config;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.model.SiteMapItem;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 public class SitemapSchema {
 
@@ -67,6 +70,10 @@ public class SitemapSchema {
 		}
 	}
 	
+	public PageType getPageType(Page page) {
+		return getPageType(page.getPageType());
+	}
+	
 	public PageType getPageType(String name) {
 		return typeMap.get(name);
 	}
@@ -74,7 +81,6 @@ public class SitemapSchema {
 	void addSystemPage(SystemPage page) {
 		systemPages.add(page);
 	}
-
 
 	void syncSystemPages() {
 		List<Site> sites = Site.findAll();
@@ -100,11 +106,18 @@ public class SitemapSchema {
 		}
 	}
 
-	public List<PageType> getChildTypeOptions(Page parentPage) {
-		if (parentPage == null) {
-			return rootTypes;
+	public List<PageType> getChildTypeOptions(SiteMapItem parent) {
+		List<PageType> options = null;
+		if (parent instanceof Page) {
+			options = getPageType((Page) parent).getChildTypes();
 		}
-		return getPageType(parentPage.getPageType()).getChildTypes();
+		else {
+			options = rootTypes;
+		}
+		if (options == null) {
+			options = Collections.emptyList();
+		}
+		return options;
 	}
 
 	public String getDefaultSuffix(String pageType) {
@@ -119,8 +132,30 @@ public class SitemapSchema {
 		return getPageType(pageType) instanceof SystemPage;
 	}
 
-	public boolean isValidPath(String path, String pageType) {
-		return true; //TODO
+	public boolean canHaveChildren(Page parent) {
+		return !getChildTypeOptions(parent).isEmpty();
+	}
+	
+	public boolean isValidChild(SiteMapItem parent, Page child) {
+		return getChildTypeOptions(parent).contains(getPageType(child));
+	}
+	
+	public boolean isValidSuffix(String suffix, String pageType) {
+		List<String> suffixes = getPageType(pageType).getSuffixes();
+		if (suffixes != null && !suffixes.isEmpty()) {
+			for (String s : suffixes) {
+				if (nullSafeEquals(suffix, s)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return nullSafeEquals(suffix, defaultSuffix);
+	}
+	
+	private static boolean nullSafeEquals(String s1, String s2) {
+		return ObjectUtils.nullSafeEquals(s1, s2)
+				|| (!StringUtils.hasText(s1) && !StringUtils.hasText(s2));
 	}
 	
 }

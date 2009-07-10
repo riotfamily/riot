@@ -35,6 +35,7 @@ import org.riotfamily.pages.config.PageType;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
+import org.springframework.util.Assert;
 
 /**
  * FormInitializer that imports form fields defined in content-forms.xml.
@@ -74,13 +75,9 @@ public class PageFormInitializer implements FormInitializer {
 				form.setAttribute("siteId", site.getId());
 			}
 			List<PageType> pageTypes = sitemapSchema.getChildTypeOptions(parentPage);
-			if (pageTypes != null) {
-				sb = createPageTypeBox(form, pageTypes);
-				pageType = pageTypes.get(0).getName();
-			}
-			else {
-				pageType = "default";
-			}
+			Assert.notEmpty(pageTypes, "Sitemap schema does not allow the creation of pages here");
+			sb = createPageTypeBox(form, pageTypes);
+			pageType = pageTypes.get(0).getName();
 		}
 		else {
 			Page page = (Page) form.getBackingObject();

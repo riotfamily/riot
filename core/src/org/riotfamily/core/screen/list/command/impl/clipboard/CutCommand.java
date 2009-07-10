@@ -38,7 +38,37 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		return !Clipboard.get(context).isAlreadySet(this, selection);
+		return !Clipboard.get(context).isAlreadySet(this, selection)
+				&& canCut(context.getScreen(), selection);
+	}
+	
+	protected boolean canCut(ListScreen source, Selection selection) {
+		if (source.getDao() instanceof CutAndPasteEnabledDao) {
+			CutAndPasteEnabledDao dao = (CutAndPasteEnabledDao) source.getDao();
+			for (SelectionItem item : selection) {
+				if (!dao.canCut(item.getObject())) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean canPaste(ListScreen source, Selection selection, 
+			ListScreen target, SelectionItem newParent) {
+		
+		if (target.getDao() instanceof CutAndPasteEnabledDao) {
+			Object dest = newParent.getObject();
+			CutAndPasteEnabledDao dao = (CutAndPasteEnabledDao) target.getDao();
+			for (SelectionItem item : selection) {
+				if (!dao.canPasteCut(item.getObject(), dest)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	public CommandResult execute(CommandContext context, Selection selection) {
@@ -50,12 +80,6 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 					.setDefaultMessage("{0,choice,1#Item|1<{0} items} put into the clipboard"));
 	}
 	
-	public boolean canPaste(ListScreen source, Selection selection, 
-			ListScreen target, SelectionItem newParent) {
-		
-		return true;
-	}
-			
 	public void paste(ListScreen source, Selection selection, 
 			ListScreen target, SelectionItem newParent, 
 			NotificationResult notification) {
@@ -67,11 +91,11 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 			Object obj = item.getObject();
 			if (sourceDao != null) {
 				Object oldParent = sourceDao.getParent(obj);
-				targetDao.addChild(obj, newParent.getObject());
-				sourceDao.removeChild(obj, oldParent);
+				targetDao.pasteCut(obj, newParent.getObject());
+				sourceDao.cut(obj, oldParent);
 			}
 			else {
-				targetDao.addChild(obj, newParent.getObject());
+				targetDao.pasteCut(obj, newParent.getObject());
 			}
 		}
 		notification.setDefaultMessage("{0,choice,1#Item has|1<{0} items have} been moved.");

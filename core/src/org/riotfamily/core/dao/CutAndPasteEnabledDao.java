@@ -29,14 +29,12 @@ package org.riotfamily.core.dao;
  */
 public interface CutAndPasteEnabledDao extends ParentChildDao {
 
-	/**
-	 * Removes the entity from the given parent.
-	 */
-	public void removeChild(Object entity, Object parent);
+	public boolean canCut(Object entity);
 	
-	/**
-	 * Adds the entity to a new parent.
-	 */
-	public void addChild(Object entity, Object parent);
+	public void cut(Object entity, Object parent);
+	
+	public boolean canPasteCut(Object entity, Object target);
+
+	public void pasteCut(Object entity, Object parent);
 	
 }

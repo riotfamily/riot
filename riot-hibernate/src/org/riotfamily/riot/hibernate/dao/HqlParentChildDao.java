@@ -117,22 +117,23 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 					query.setParameter(param, value);
 				}
 			}
-        }
+    	}
 	}
-    
-    
-    public void addChild(Object entity, Object parent) {
-    	PropertyUtils.setProperty(entity, parentProperty, parent);
-    	setPositionIfNeeded(entity, parent);
+
+    public boolean canCut(Object entity) {
+    	return true;
     }
     
-    /**
-     * This method does nothing. Before the parentProperty was set to null here.
-     * But since the only call is from the Clipboard's pasteCut method, which
-     * calls this after the addChild is called, setting the parentProperty to
-     * null won't have the desired effect.
-     */
-    public void removeChild(Object entity, Object parent) {
-    }
+	public void cut(Object entity, Object parent) {
+	}
+
+	public boolean canPasteCut(Object entity, Object target) {
+		return true;
+	}
+	
+	public void pasteCut(Object entity, Object parent) {
+		PropertyUtils.setProperty(entity, parentProperty, parent);
+		setPositionIfNeeded(entity, parent);
+	}
 
 }

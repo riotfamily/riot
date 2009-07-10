@@ -357,21 +357,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 			|| AccessController.isAuthenticatedUser();
 	}
 
-	@Transient
-	public boolean suffixMatches(String path) {
-		return schema.isValidPath(path, pageType);
-	}
-	
-	@Transient
-	public boolean isSystemPage() {
-		return schema.isSystemPage(pageType);
-	}
-	
-	@Transient
-	public Object getHandler() {
-		return schema.getPageType(pageType).getHandler();
-	}
-
 	public boolean isVisible(boolean preview) {
 		return !isHidden() 
 				&& (published || preview)
@@ -426,6 +411,34 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		return candidates;
 	}
 
+	// ----------------------------------------------------------------------
+	// Schema methods
+	// ----------------------------------------------------------------------
+	
+	@Transient
+	public boolean suffixMatches(String path) {
+		String suffix = null;
+		int i = path.lastIndexOf(pathComponent) + pathComponent.length();
+		if (i > path.length()) {
+			suffix = path.substring(8);
+		}
+		return schema.isValidSuffix(suffix, pageType);
+	}
+	
+	@Transient
+	public boolean isValidChild(SiteMapItem parent) {
+		return schema.isValidChild(parent, this);
+	}
+	
+	@Transient
+	public boolean isSystemPage() {
+		return schema.isSystemPage(pageType);
+	}
+	
+	@Transient
+	public Object getHandler() {
+		return schema.getPageType(pageType).getHandler();
+	}
 	
 	// ----------------------------------------------------------------------
 	// 
@@ -470,17 +483,21 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		}
 	}
 	
+	// ----------------------------------------------------------------------
+	// Persistence methods
+	// ----------------------------------------------------------------------
+	
+	
+	public static Page load(Long id) {
+		return load(Page.class, id);
+	}
+
 	public void refreshIfDetached() {
 		Session session = getSession();
 		if (!session.contains(this)) {
 			session.refresh(this);
 		}
 	}
-	
-	public static Page load(Long id) {
-		return load(Page.class, id);
-	}
-	
 	
 	public static Page loadBySiteAndPath(Site site, String path) {
 		return load("from Page where site = ? and path = ?", site, path);
