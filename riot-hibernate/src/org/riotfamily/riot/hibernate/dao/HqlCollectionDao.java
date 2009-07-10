@@ -202,18 +202,26 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao
         }
         return sb.toString();
     }
-        
-    public void addChild(Object entity, Object parent) {
-    	getCollection(parent).add(entity);
-    	if (parentProperty != null) {
-    		PropertyUtils.setProperty(entity, parentProperty, parent);
-    	}
-    }
-    
-    public void removeChild(Object entity, Object parent) {
+
+	public boolean canCut(Object entity) {
+		return true;
+	}
+	
+    public void cut(Object entity, Object parent) {
     	getCollection(parent).remove(entity);
     	if (parentProperty != null) {
     		PropertyUtils.setProperty(entity, parentProperty, null);
+    	}
+    }
+    
+    public boolean canPasteCut(Object entity, Object target) {
+    	return true;
+    }
+
+    public void pasteCut(Object entity, Object parent) {
+    	getCollection(parent).add(entity);
+    	if (parentProperty != null) {
+    		PropertyUtils.setProperty(entity, parentProperty, parent);
     	}
     }
 

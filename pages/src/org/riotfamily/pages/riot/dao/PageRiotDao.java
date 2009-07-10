@@ -131,10 +131,23 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		
 		//TODO PageCacheUtils.invalidateNode(cacheService, parent);
 	}
-
-	public void addChild(Object entity, Object parent) {
+	
+	public boolean canCut(Object entity) {
 		Page page = (Page) entity;
-		SiteMapItem parentItem = (SiteMapItem) parent;
+		return !page.isSystemPage();
+	}
+	
+	public void cut(Object entity, Object parent) {
+	}
+	
+	public boolean canPasteCut(Object entity, Object target) {
+		Page page = (Page) entity;
+		return page.isValidChild((SiteMapItem) target);
+	}
+
+	public void pasteCut(Object entity, Object dest) {
+		Page page = (Page) entity;
+		SiteMapItem parentItem = (SiteMapItem) dest;
 		if (parentItem == null) {
 			parentItem = Site.loadDefaultSite();
 		}
@@ -146,7 +159,6 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		//PageCacheUtils.invalidateNode(cacheService, node);
 		//PageCacheUtils.invalidateNode(cacheService, parentNode);
 		//PageCacheUtils.invalidateNode(cacheService, newParent);
-		
 	}
 	
 	private void updatePaths(Page page) {
@@ -157,8 +169,4 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 			updatePaths(child);
 		}
 	}
-
-	public void removeChild(Object entity, Object parent) {
-	}
-	
 }

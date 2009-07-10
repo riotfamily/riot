@@ -43,9 +43,39 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 	
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		return !Clipboard.get(context).isAlreadySet(this, selection);
+		return !Clipboard.get(context).isAlreadySet(this, selection)
+				&& canCopy(context.getScreen(), selection);
+	}
+
+	protected boolean canCopy(ListScreen source, Selection selection) {
+		if (source.getDao() instanceof CopyAndPasteEnabledDao) {
+			CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) source.getDao();
+			for (SelectionItem item : selection) {
+				if (!dao.canCopy(item.getObject())) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 	
+	public boolean canPaste(ListScreen source, Selection selection, 
+			ListScreen target, SelectionItem newParent) {
+		
+		if (target.getDao() instanceof CopyAndPasteEnabledDao) {
+			Object dest = newParent.getObject();
+			CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) target.getDao();
+			for (SelectionItem item : selection) {
+				if (!dao.canPasteCopy(item.getObject(), dest)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public CommandResult execute(CommandContext context, Selection selection) {
 		Clipboard.get(context).set(context.getScreen(), selection, this);
 		return new BatchResult(
@@ -54,20 +84,14 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 					.setArgs(selection.size())
 					.setDefaultMessage("{0,choice,1#Item|1<{0} items} put into the clipboard"));
 	}
-
-	public boolean canPaste(ListScreen source, Selection selection, 
-			ListScreen target, SelectionItem newParent) {
-		
-		return true;
-	}
-			
+	
 	public void paste(ListScreen source, Selection selection, 
 			ListScreen target, SelectionItem newParent, 
 			NotificationResult notification) {
 		
 		CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) target.getDao();
 		for (SelectionItem item : selection) {
-			dao.addCopy(item.getObject(), newParent.getObject());
+			dao.pasteCopy(item.getObject(), newParent.getObject());
 		}
 		notification.setDefaultMessage("{0,choice,1#Item has|1<{0} items have} been copied.");
 	}

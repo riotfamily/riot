@@ -29,9 +29,10 @@ package org.riotfamily.core.dao;
  */
 public interface CopyAndPasteEnabledDao extends RiotDao {
 
-	/**
-	 * Adds a copy of the given entity to the specified parent.
-	 */
-	public void addCopy(Object entity, Object parent);
+	public boolean canCopy(Object entity);
+	
+	public boolean canPasteCopy(Object entity, Object dest);
+	
+	public void pasteCopy(Object entity, Object dest);
 	
 }
