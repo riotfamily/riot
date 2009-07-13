@@ -32,6 +32,7 @@ import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.core.dao.SwappableItemDao;
 import org.riotfamily.core.dao.TreeDao;
+import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.model.SiteMapItem;
@@ -44,6 +45,8 @@ import org.springframework.dao.DataAccessException;
 public class PageRiotDao implements ParentChildDao, TreeDao, 
 		SwappableItemDao, CutAndPasteEnabledDao {
 
+	private SitemapSchema sitemapSchema;
+	
 	public PageRiotDao() {
 	}
 
@@ -52,6 +55,15 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		return page.getSite();
 	}
 
+	public boolean canAdd(Object parent) {
+		return sitemapSchema.canHaveChildren((SiteMapItem) parent);
+	}
+	
+	public boolean canDelete(Object entity) {
+		Page page = (Page) entity;
+		return !sitemapSchema.isSystemPage(page);
+	}
+	
 	public void delete(Object entity, Object parent) throws DataAccessException {
 		Page page = (Page) entity;
 		page.delete();
@@ -134,15 +146,14 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 	
 	public boolean canCut(Object entity) {
 		Page page = (Page) entity;
-		return !page.isSystemPage();
+		return !sitemapSchema.isSystemPage(page);
 	}
 	
 	public void cut(Object entity, Object parent) {
 	}
 	
 	public boolean canPasteCut(Object entity, Object target) {
-		Page page = (Page) entity;
-		return page.isValidChild((SiteMapItem) target);
+		return sitemapSchema.isValidChild((SiteMapItem) target, (Page) entity);
 	}
 
 	public void pasteCut(Object entity, Object dest) {

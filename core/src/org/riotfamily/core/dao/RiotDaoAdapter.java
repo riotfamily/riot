@@ -104,4 +104,18 @@ public class RiotDaoAdapter implements RiotDao {
 				"Delete operations are not supported by this DAO.");
 	}
 	
+	/**
+	 * Always returns <code>true</code>.
+	 */
+	public boolean canAdd(Object parent) {
+		return true;
+	}
+	
+	/**
+	 * Always returns <code>true</code>.
+	 */
+	public boolean canDelete(Object entity) {
+		return true;
+	}
+	
 }

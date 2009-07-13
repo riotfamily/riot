@@ -262,7 +262,7 @@
 		<property name="childScreens" ref="rootScreens" />
 		<property name="screenlets">
 			<list>
-				<bean class="org.riotfamily.core.security.ui.LoginStatusScreenlet" />
+				<bean class="org.riotfamily.core.screenlet.LoginStatusScreenlet" />
 			</list>
 		</property>
 	</bean>

@@ -30,6 +30,7 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
@@ -42,8 +43,6 @@ import org.springframework.util.StringUtils;
  */
 public class PageResolver {
 	
-	private RiotLog log = RiotLog.get(PageResolver.class);
-
 	public static final String PATH_ATTRIBUTE = PageResolver.class.getName() + ".path";
 
 	public static final String SITE_ATTRIBUTE = PageResolver.class.getName() + ".site";
@@ -51,8 +50,16 @@ public class PageResolver {
 	public static final String PAGE_ATTRIBUTE = PageResolver.class.getName() + ".page";
 
 	private static final Object NOT_FOUND = new Object();
-
 	
+	private RiotLog log = RiotLog.get(PageResolver.class);
+
+	private SitemapSchema sitemapSchema;
+	
+	
+	public PageResolver(SitemapSchema sitemapSchema) {
+		this.sitemapSchema = sitemapSchema;
+	}
+
 	/**
 	 * Returns the first Site that matches the given request. The PathCompleter
 	 * is used to strip the servlet mapping from the request URI.
@@ -225,7 +232,9 @@ public class PageResolver {
 		if (page == null) {
 			page = findWildcardPage(site, lookupPath);
 		}
-		if (page == null || !page.isRequestable() || !page.suffixMatches(path)) {
+		if (page == null || !page.isRequestable() 
+				|| !sitemapSchema.suffixMatches(page, path)) {
+			
 			return null;
 		}
 		return page;

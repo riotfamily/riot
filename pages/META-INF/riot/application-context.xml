@@ -11,10 +11,12 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 		
-	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver" />
-	
 	<bean id="sitemapSchema" class="org.riotfamily.common.beans.config.SingletonLookupFactoryBean">
 		<constructor-arg value="org.riotfamily.pages.config.SitemapSchema" />
+	</bean>
+	
+	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
+		<constructor-arg ref="sitemapSchema" />
 	</bean>
 	
 	<bean class="org.riotfamily.pages.config.SystemPageSync">

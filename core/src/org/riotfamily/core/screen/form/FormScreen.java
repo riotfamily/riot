@@ -36,6 +36,7 @@ import org.riotfamily.common.web.view.FlashScopeView;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.RiotDaoException;
+import org.riotfamily.core.screen.ItemScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenUtils;
@@ -52,7 +53,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.servlet.ModelAndView;
 
 public class FormScreen extends AjaxFormController
-		implements RiotScreen, BeanNameAware {
+		implements ItemScreen, BeanNameAware {
 
 	private static final DefaultTransactionDefinition TX_DEF =
 			new DefaultTransactionDefinition(

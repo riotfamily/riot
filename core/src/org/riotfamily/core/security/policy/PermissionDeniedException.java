@@ -21,10 +21,9 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.security;
+package org.riotfamily.core.security.policy;
 
 import org.riotfamily.core.security.auth.RiotUser;
-import org.riotfamily.core.security.policy.AuthorizationPolicy;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

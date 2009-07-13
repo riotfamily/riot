@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.impl;
 
+import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
@@ -35,7 +36,16 @@ import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 public class DeleteCommand extends YesNoCommand {
 
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		return selection.size() > 0;
+		if (selection.size() > 0) {
+			RiotDao dao = context.getScreen().getDao();
+			for (SelectionItem item : selection) {
+				if (!dao.canDelete(item.getObject())) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override

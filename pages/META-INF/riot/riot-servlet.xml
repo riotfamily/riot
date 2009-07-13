@@ -67,8 +67,6 @@
 		<constructor-arg ref="pageResolver" />
 	</bean>
 	
-	<bean id="systemPagePolicy" class="org.riotfamily.pages.riot.security.SystemPagePolicy" />
-	
 	<bean id="masterPagePolicy" class="org.riotfamily.pages.riot.security.MasterPagePolicy" />
 	
 	<!--  FreeMarker Object Wrappers  -->
