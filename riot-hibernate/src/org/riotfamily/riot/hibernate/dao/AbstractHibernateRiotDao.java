@@ -59,12 +59,20 @@ public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport imple
 		return getSession().createCriteria(getEntityClass()).list();
 	}
 	
+	public boolean canAdd(Object parent) {
+		return true;
+	}
+	
 	public void save(Object entity, Object parent) throws DataAccessException {
 		getSession().save(entity);
 	}
 
 	public Object update(Object entity) throws DataAccessException {
 		return getSession().merge(entity);
+	}
+	
+	public boolean canDelete(Object entity) {
+		return true;
 	}
 	
 	public void delete(Object entity, Object parent) throws DataAccessException {

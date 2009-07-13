@@ -28,6 +28,7 @@ import java.util.List;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.policy.AssertionPolicy;
 import org.riotfamily.core.security.policy.AuthorizationPolicy;
+import org.riotfamily.core.security.policy.PermissionDeniedException;
 import org.riotfamily.core.security.policy.AuthorizationPolicy.Permission;
 import org.riotfamily.core.security.session.AccessControlFilterPlugin;
 import org.riotfamily.core.security.session.AccessControlInterceptor;

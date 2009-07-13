@@ -33,6 +33,11 @@ import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 public class AddCommand extends AbstractChildCommand {
 	
 	@Override
+	protected boolean isEnabled(CommandContext context, SelectionItem parent) {
+		return context.getScreen().getDao().canAdd(parent.getObject());
+	}
+	
+	@Override
 	protected CommandResult execute(CommandContext context, SelectionItem parent) {
 		ScreenContext childContext = context.createNewItemContext(parent.getObject());
 		return new GotoUrlResult(context.getRequest(), childContext.getUrl());

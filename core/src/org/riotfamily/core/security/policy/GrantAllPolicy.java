@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.security.policy;
 
-import org.riotfamily.core.security.PermissionDeniedException;
 import org.riotfamily.core.security.auth.RiotUser;
 
 /**

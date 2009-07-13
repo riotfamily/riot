@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.model.SiteMapItem;
 

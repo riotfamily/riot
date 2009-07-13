@@ -114,9 +114,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		this.pathComponent = master.getPathComponent();
 		this.folder = master.isFolder();
 		this.hidden = master.isHidden();
-		if (isSystemPage()) {
-			published = master.isPublished();
-		}
 	}
 	
 	@Required	
@@ -410,36 +407,12 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		}
 		return candidates;
 	}
-
-	// ----------------------------------------------------------------------
-	// Schema methods
-	// ----------------------------------------------------------------------
-	
-	@Transient
-	public boolean suffixMatches(String path) {
-		String suffix = null;
-		int i = path.lastIndexOf(pathComponent) + pathComponent.length();
-		if (i > path.length()) {
-			suffix = path.substring(8);
-		}
-		return schema.isValidSuffix(suffix, pageType);
-	}
-	
-	@Transient
-	public boolean isValidChild(SiteMapItem parent) {
-		return schema.isValidChild(parent, this);
-	}
-	
-	@Transient
-	public boolean isSystemPage() {
-		return schema.isSystemPage(pageType);
-	}
 	
 	@Transient
 	public Object getHandler() {
 		return schema.getPageType(pageType).getHandler();
 	}
-	
+
 	// ----------------------------------------------------------------------
 	// 
 	// ----------------------------------------------------------------------

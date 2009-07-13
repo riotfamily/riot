@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.core.security.ui;
+package org.riotfamily.core.screenlet;
 
 import java.util.Map;
 

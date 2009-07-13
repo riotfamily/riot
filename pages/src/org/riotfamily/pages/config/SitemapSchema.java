@@ -128,11 +128,11 @@ public class SitemapSchema {
 		return defaultSuffix;
 	}
 
-	public boolean isSystemPage(String pageType) {
-		return getPageType(pageType) instanceof SystemPage;
+	public boolean isSystemPage(Page page) {
+		return getPageType(page) instanceof SystemPage;
 	}
 
-	public boolean canHaveChildren(Page parent) {
+	public boolean canHaveChildren(SiteMapItem parent) {
 		return !getChildTypeOptions(parent).isEmpty();
 	}
 	
@@ -140,8 +140,13 @@ public class SitemapSchema {
 		return getChildTypeOptions(parent).contains(getPageType(child));
 	}
 	
-	public boolean isValidSuffix(String suffix, String pageType) {
-		List<String> suffixes = getPageType(pageType).getSuffixes();
+	public boolean suffixMatches(Page page, String path) {
+		String suffix = null;
+		int i = path.lastIndexOf(page.getPathComponent()) + page.getPathComponent().length();
+		if (i > path.length()) {
+			suffix = path.substring(8);
+		}
+		List<String> suffixes = getPageType(page).getSuffixes();
 		if (suffixes != null && !suffixes.isEmpty()) {
 			for (String s : suffixes) {
 				if (nullSafeEquals(suffix, s)) {
