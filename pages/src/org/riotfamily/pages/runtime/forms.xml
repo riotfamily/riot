@@ -6,7 +6,9 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd">
 
-	<form id="site" bean-class="org.riotfamily.pages.model.Site">
+	<form id="site" bean-class="org.riotfamily.pages.model.Site" 
+			initializer="sitePropertiesFormInitializer">
+			
 		<group label-key="site.general">
 			<textfield bind="name" max-length="255" />
 			<textfield bind="locale" required="true" max-length="8" />
@@ -24,10 +26,6 @@
 		</list>
 	</form>
 	
-	<form id="siteProperties" bean-class="org.riotfamily.pages.model.Site"
-			initializer="sitePropertiesFormInitializer">
-	</form>
-
 	<form id="page" bean-class="org.riotfamily.pages.model.Page"
 			initializer="pageFormInitializer">
 		<group label-key="page.preferences">

@@ -86,6 +86,8 @@
     	<constructor-arg ref="sessionFactory" />
     </bean>
 
+	<bean class="org.riotfamily.common.hibernate.LifecycleListener" />
+	
 	<bean class="org.riotfamily.common.beans.config.SpringBeanConfigurer" />
 
 </beans>

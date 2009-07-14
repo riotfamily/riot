@@ -129,9 +129,8 @@ public abstract class AbstractMultiSelectElement
 		return !selectedValues.isEmpty();
 	}
 	
-	public boolean isSelected(OptionItem option) {
-		return selectedValues != null && 
-				selectedValues.contains(option.getValue());
+	public boolean isSelected(OptionItem item) {
+		return selectedValues != null && selectedValues.contains(item.getValue());
 	}
 
 	/**
@@ -141,26 +140,26 @@ public abstract class AbstractMultiSelectElement
 		updateSelection(request.getParameterValues(getParamName()));
 	}
 	
-	protected void updateSelection(Collection<?> optionValues) {
-		if (optionValues != null) {
-			for (Object value : optionValues) {
-				int i = selectedValues.indexOf(value);
+	protected void updateSelection(List<OptionItem> items) {
+		if (items != null) {
+			for (OptionItem item : items) {
+				int i = selectedValues.indexOf(item.getValue());
 				if (i >= 0) {
 					selectedValues.remove(i);
-					selectedValues.add(i, value);
+					selectedValues.add(i, item.getValue());
 				}
 			}
 		}
 	}
 	
 	private void updateSelection(String[] indexes) {
-		List<OptionItem> options = getOptionItems();
+		List<OptionItem> items = getOptionItems();
 		selectedValues = Generics.newArrayList();
 		if (indexes != null) {
 			for (int i = 0; i < indexes.length; i++) {
 				int index = Integer.parseInt(indexes[i]);
 				if (index != -1) {
-					selectedValues.add(((OptionItem) options.get(index)).getValue());
+					selectedValues.add(((OptionItem) items.get(index)).getValue());
 				}
 			}
 		}

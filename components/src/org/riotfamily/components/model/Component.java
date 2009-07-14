@@ -23,13 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 @Entity
 @DiscriminatorValue("Component")
@@ -54,9 +52,8 @@ public class Component extends Content {
 		this.type = type;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(name="list", insertable=false, updatable=false)
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public ComponentList getList() {
 		return list;
 	}

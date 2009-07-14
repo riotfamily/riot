@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -43,8 +44,6 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.MapKey;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.components.model.wrapper.ValueCallback;
@@ -121,10 +120,9 @@ public class Content extends ActiveRecordSupport {
 		}
 	}
 
-	@OneToMany(fetch=FetchType.EAGER)
+	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="content")
 	@MapKey(columns={@Column(name="property")})
-	@Cascade(CascadeType.ALL)
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public Map<String, ValueWrapper<?>> getWrappers() {
 		if (wrappers == null) {

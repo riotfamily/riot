@@ -57,7 +57,9 @@
 
 	<bean id="siteRiotDao" class="org.riotfamily.pages.riot.dao.SiteRiotDao" />
 
- 	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao" />
+ 	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao">
+ 		<constructor-arg ref="sitemapSchema" />
+ 	</bean>
 	
 	<bean id="locales" class="org.riotfamily.pages.riot.form.SiteLocalesOptionsModel" />
 

@@ -47,7 +47,8 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 
 	private SitemapSchema sitemapSchema;
 	
-	public PageRiotDao() {
+	public PageRiotDao(SitemapSchema sitemapSchema) {
+		this.sitemapSchema = sitemapSchema;
 	}
 
 	public Object getParent(Object entity) {
@@ -165,19 +166,9 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		page.getParent().removePage(page);
 		parentItem.addPage(page);
 		
-		updatePaths(page);
 		//FIXME Invalidate cache items
 		//PageCacheUtils.invalidateNode(cacheService, node);
 		//PageCacheUtils.invalidateNode(cacheService, parentNode);
 		//PageCacheUtils.invalidateNode(cacheService, newParent);
-	}
-	
-	private void updatePaths(Page page) {
-		String oldPath = page.getPath();
-		page.setPath(page.buildPath());
-		//FIXME createAlias(page, oldPath);
-		for (Page child : page.getChildPages()) {
-			updatePaths(child);
-		}
 	}
 }

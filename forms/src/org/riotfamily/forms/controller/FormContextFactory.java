@@ -38,11 +38,11 @@ import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
-import org.riotfamily.forms.OptionsModelFactory;
+import org.riotfamily.forms.OptionsModelAdapter;
 import org.riotfamily.forms.TemplateRenderer;
-import org.riotfamily.forms.options.ArrayOptionsModelFactory;
-import org.riotfamily.forms.options.CollectionOptionsModelFactory;
-import org.riotfamily.forms.options.DependentOptionsModelFactory;
+import org.riotfamily.forms.options.ArrayOptionsModelAdapter;
+import org.riotfamily.forms.options.CollectionOptionsModelAdapter;
+import org.riotfamily.forms.options.DependentOptionsModelAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.factory.BeanFactory;
@@ -73,7 +73,7 @@ public final class FormContextFactory implements MessageSourceAware,
 
 	private Collection<PropertyEditorRegistrar> propertyEditorRegistrars;
 	
-	private List<OptionsModelFactory> optionValuesAdapters = Generics.newArrayList();
+	private List<OptionsModelAdapter> optionValuesAdapters = Generics.newArrayList();
 
 	public FormContextFactory() {
 		registerDefaultOptionValuesAdapters();
@@ -116,14 +116,14 @@ public final class FormContextFactory implements MessageSourceAware,
 		if (beanFactory instanceof ListableBeanFactory) {
 			ListableBeanFactory lbf = (ListableBeanFactory) beanFactory;
 			optionValuesAdapters.addAll(SpringUtils.beansOfType(
-					lbf, OptionsModelFactory.class).values());			
+					lbf, OptionsModelAdapter.class).values());			
 		}
 	}
 	
 	private void registerDefaultOptionValuesAdapters() {
-		optionValuesAdapters.add(new CollectionOptionsModelFactory());
-		optionValuesAdapters.add(new ArrayOptionsModelFactory());
-		optionValuesAdapters.add(new DependentOptionsModelFactory());
+		optionValuesAdapters.add(new CollectionOptionsModelAdapter());
+		optionValuesAdapters.add(new ArrayOptionsModelAdapter());
+		optionValuesAdapters.add(new DependentOptionsModelAdapter());
 	}
 	
 	public void setResourcePath(String resourcePath) {

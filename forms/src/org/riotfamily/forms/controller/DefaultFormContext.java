@@ -31,7 +31,7 @@ import java.util.Locale;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.FormContext;
-import org.riotfamily.forms.OptionsModelFactory;
+import org.riotfamily.forms.OptionsModelAdapter;
 import org.riotfamily.forms.TemplateRenderer;
 import org.springframework.beans.PropertyEditorRegistrar;
 
@@ -57,7 +57,7 @@ public class DefaultFormContext implements FormContext {
 	
 	private Collection<PropertyEditorRegistrar> propertyEditorRegistrars;
 	
-	private List<OptionsModelFactory> optionValuesAdapters;
+	private List<OptionsModelAdapter> optionValuesAdapters;
 	
 	public DefaultFormContext() {
 	}
@@ -66,7 +66,7 @@ public class DefaultFormContext implements FormContext {
 			TemplateRenderer templateRenderer,
 			String contextPath, String resourcePath, String formUrl,
 			Collection<PropertyEditorRegistrar> propertyEditorRegistrars,
-			List<OptionsModelFactory> optionValuesAdapters) {
+			List<OptionsModelAdapter> optionValuesAdapters) {
 
 		this.messageResolver = messageResolver;
 		this.contextPath = contextPath;
@@ -152,7 +152,7 @@ public class DefaultFormContext implements FormContext {
 		this.propertyEditorRegistrars = registrars;
 	}
 
-	public List<OptionsModelFactory> getOptionValuesAdapters() {
+	public List<OptionsModelAdapter> getOptionsModelAdapters() {
 		return optionValuesAdapters;
 	}
 	

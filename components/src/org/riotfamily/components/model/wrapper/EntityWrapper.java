@@ -40,7 +40,7 @@ public class EntityWrapper extends ValueWrapper<Object> {
 	    @Column(name="entity_table"),
 	    @Column(name="entity_id")
 	})
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	@Cascade({CascadeType.MERGE})
 	public Object getValue() {
 		return value;
 	}

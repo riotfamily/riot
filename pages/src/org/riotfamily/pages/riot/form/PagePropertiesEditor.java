@@ -105,9 +105,9 @@ public class PagePropertiesEditor extends CompositeElement
 	// -----------------------------------------------------------------
 	
 	public void valueChanged(ChangeEvent event) {
-		String handlerName = (String) event.getNewValue();
+		String pageType = (String) event.getNewValue();
 		removeComponent(currentForm);
-		currentForm = new PropertiesForm(handlerName); 
+		currentForm = new PropertiesForm(pageType); 
 		addComponent(currentForm);
 		currentForm.setValue(initialValue);
 		getFormListener().elementChanged(this);

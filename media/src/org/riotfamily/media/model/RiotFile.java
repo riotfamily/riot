@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,8 +47,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.HashUtils;
@@ -299,8 +298,7 @@ public class RiotFile {
 		this.md5 = md5;
 	}
 
-	@OneToMany
-	@Cascade(CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL)
 	public Map<String, RiotFile> getVariants() {
 		return this.variants;
 	}

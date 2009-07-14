@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,10 +45,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.common.hibernate.Lifecycle;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.security.AccessController;
@@ -63,7 +63,7 @@ import org.springframework.beans.factory.annotation.Required;
 @Entity
 @Table(name="riot_pages", uniqueConstraints = {@UniqueConstraint(columnNames={"site_id", "path"})})
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class Page extends ActiveRecordSupport implements SiteMapItem {
+public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle {
 
 	public static final String TITLE_PROPERTY = "title";
 	
@@ -141,8 +141,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		this.pageType = pageType;
 	}
 
-	@ManyToOne
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	@ManyToOne(cascade=CascadeType.MERGE)
 	public Site getSite() {
 		return this.site;
 	}
@@ -175,9 +174,8 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		this.position = position;
 	}
 
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.MERGE)
 	@JoinColumn(name="parent_id", insertable=false, updatable=false)
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public Page getParentPage() {
 		return parentPage;
 	}
@@ -191,8 +189,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		return parentPage != null ? parentPage : site;
 	}
 	
-	@ManyToOne
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	@ManyToOne(cascade=CascadeType.MERGE)
 	public Page getMasterPage() {
 		return masterPage;
 	}
@@ -201,8 +198,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		this.masterPage = masterPage;
 	}
 		
-	@OneToMany(mappedBy="masterPage")
-	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	@OneToMany(mappedBy="masterPage", cascade={CascadeType.MERGE, CascadeType.PERSIST})
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<Page> getTranslations() {
 		return translations;
@@ -254,9 +250,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 	}
 
 	public String getPath() {
-		if (path == null) {
-			path = buildPath();
-		}
 		return path;
 	}
 
@@ -282,19 +275,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 		return site.makeAbsolute(secure, defaultHost, contextPath, getUrl());
 	}
 	
-
-	public String buildPath() {
-		StringBuffer path = new StringBuffer();
-		Page page = this;
-		while (page != null) {
-			path.insert(0, page.getPathComponent());
-			path.insert(0, '/');
-			page = page.getParentPage();
-		}
-		return path.toString();
-	}
-
-
 	@Transient
 	public Collection<Page> getAncestors() {
 		LinkedList<Page> pages = new LinkedList<Page>();
@@ -308,8 +288,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 
 		
 
-	@ManyToOne
-	@Cascade(CascadeType.ALL)
+	@ManyToOne(cascade=CascadeType.ALL)
 	public PageProperties getPageProperties() {
 		if (pageProperties == null) {
 			pageProperties = new PageProperties(this);
@@ -455,11 +434,48 @@ public class Page extends ActiveRecordSupport implements SiteMapItem {
 			cacheService.invalidateTaggedItems(getCacheTag());
 		}
 	}
+
+	private String buildPath() {
+		StringBuffer path = new StringBuffer();
+		Page page = this;
+		while (page != null) {
+			path.insert(0, page.getPathComponent());
+			path.insert(0, '/');
+			page = page.getParentPage();
+		}
+		return path.toString();
+	}
+	
+	private void updatePath() {
+		String path = buildPath();
+		if (!path.equals(this.path)) {
+			this.path = path;
+			if (childPages != null) {
+				for (Page child : childPages) {
+					child.updatePath();
+				}
+			}
+		}
+	}
+	
+	// ----------------------------------------------------------------------
+	// Implementation of the Lifecycle interface
+	// ----------------------------------------------------------------------
+	
+	public void onSave() {
+		updatePath();
+	}
+	
+	public void onUpdate(Object oldState) {
+		updatePath();
+	}
+	
+	public void onDelete() {
+	}
 	
 	// ----------------------------------------------------------------------
 	// Persistence methods
 	// ----------------------------------------------------------------------
-	
 	
 	public static Page load(Long id) {
 		return load(Page.class, id);

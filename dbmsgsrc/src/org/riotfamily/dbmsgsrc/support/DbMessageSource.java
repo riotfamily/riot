@@ -9,7 +9,6 @@ import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.website.cache.CacheTagUtils;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -70,10 +69,7 @@ public class DbMessageSource extends AbstractMessageSource {
 				});
 			}
 			catch (ConstraintViolationException e) {
-				result = dao.findEntry(bundle, code);
-				if (result == null) {
-					result = new MessageBundleEntry(bundle, code, defaultMessage);
-				}
+				return result = dao.findEntry(bundle, code);
 			}
 		}
 		return result;

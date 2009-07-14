@@ -95,17 +95,14 @@ public class PageFormInitializer implements FormInitializer {
 	}
 	
 	private SelectBox createPageTypeBox(Form form, List<PageType> pageTypes) {
-		if (pageTypes.size() > 1) {
-			SelectBox sb = new SelectBox();
-			sb.setRequired(true);
-			sb.setOptions(pageTypes);
-			sb.setLabelProperty("name");
-			sb.setLabelMessageKey("page.pageType.");
-			sb.setAppendLabel(true);
-			form.addElement(sb, "pageType");
-			return sb;
-		}
-		return null;
+		SelectBox sb = new SelectBox();
+		sb.setRequired(true);
+		sb.setHideIfEmpty(true);
+		sb.setOptions(pageTypes);
+		sb.setLabelProperty("label");
+		sb.setValueProperty("name");
+		form.addElement(sb, "pageType");
+		return sb;
 	}
 	
 }

@@ -31,7 +31,7 @@ import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.screen.list.ListParamsImpl;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.OptionsModelFactory;
+import org.riotfamily.forms.OptionsModelAdapter;
 import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.StaticOptionsModel;
 
@@ -39,13 +39,13 @@ import org.riotfamily.forms.options.StaticOptionsModel;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class RiotDaoOptionsModelFactory implements OptionsModelFactory {
+public class RiotDaoOptionsModelAdapter implements OptionsModelAdapter {
 
 	public boolean supports(Object model) {
 		return model instanceof RiotDao;
 	}
 	
-	public OptionsModel createOptionsModel(Object model, Element element) {
+	public OptionsModel adapt(Object model, Element element) {
 		RiotDao dao = (RiotDao) model;
 		Collection<?> values = dao.list(null, new ListParamsImpl());
 		Form form = element.getForm();

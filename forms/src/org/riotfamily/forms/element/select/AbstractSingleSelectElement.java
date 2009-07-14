@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.request.FormRequest;
@@ -50,8 +50,8 @@ public abstract class AbstractSingleSelectElement
 		return selectedValue != null;
 	}
 	
-	public boolean isSelected(OptionItem option) {
-		return hasSelection() && selectedValue.equals(option.getValue());
+	public boolean isSelected(OptionItem item) {
+		return hasSelection() && selectedValue.equals(item.getValue());
 	}
 
 	/**
@@ -64,8 +64,8 @@ public abstract class AbstractSingleSelectElement
 	public int getSelectedIndex() {
 		if (hasSelection()) {
 			for (int i = 0; i < getOptionItems().size(); i++) {
-				OptionItem option = getOptionItems().get(i);
-				if (selectedValue.equals(option.getValue())) {
+				OptionItem item = getOptionItems().get(i);
+				if (selectedValue.equals(item.getValue())) {
 					return i;
 				}
 			}
@@ -73,12 +73,11 @@ public abstract class AbstractSingleSelectElement
 		return -1;
 	}
 	
-	protected void updateSelection(Collection<?> optionValues) {
-		if (optionValues != null && selectedValue != null) {
-			for (Object item : optionValues) {
-				Object value = getOptionValue(item);
-				if (selectedValue.equals(value)) {
-					selectedValue = value;
+	protected void updateSelection(List<OptionItem> items) {
+		if (items != null && selectedValue != null) {
+			for (OptionItem item : items) {
+				if (selectedValue.equals(item.getValue())) {
+					selectedValue = item.getValue();
 					return;
 				}
 			}
