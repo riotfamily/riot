@@ -21,23 +21,14 @@
  *   flx
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.config;
+package org.riotfamily.common.hibernate;
 
-import org.hibernate.Session;
-import org.riotfamily.common.hibernate.TypedEntityListener;
-import org.riotfamily.pages.model.Site;
+public interface Lifecycle {
 
-public class SystemPageSyncListener extends TypedEntityListener<Site> {
+	public void onSave();
+
+	public void onDelete();
 	
-	private SitemapSchema sitemapSchema;
+	public void onUpdate(Object oldState);
 	
-	public SystemPageSyncListener(SitemapSchema sitemapSchema) {
-		this.sitemapSchema = sitemapSchema;
-	}
-
-	@Override
-	protected void entitySaved(Site site, Session session) throws Exception {
-		sitemapSchema.syncSystemPages(site);
-	}
-
 }

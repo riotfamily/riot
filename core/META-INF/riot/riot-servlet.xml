@@ -122,7 +122,7 @@
 		<description>
 			Exception resolver that outputs a nicely formatted error message.		
 		</description>
-		<property name="defaultErrorView" value="classpath:/org/riotfamily/riot/runtime/view/error.ftl" />
+		<property name="defaultErrorView" value="classpath:/org/riotfamily/core/runtime/view/error.ftl" />
 	</bean>
 
     <bean id="cacheKeyAugmentor" class="org.riotfamily.core.resource.CodeRevelationCacheKeyAugmentor">
@@ -458,7 +458,7 @@
 		<value>style/command-custom.css</value>
 	</util:list>
 	
-	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.core.form.options.RiotDaoOptionsModelFactory" />
+	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.core.form.options.RiotDaoOptionsModelAdapter" />
 		
 	<!-- 
 	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />

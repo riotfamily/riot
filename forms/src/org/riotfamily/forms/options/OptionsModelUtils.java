@@ -3,23 +3,23 @@ package org.riotfamily.forms.options;
 import java.util.Collection;
 
 import org.riotfamily.forms.Element;
-import org.riotfamily.forms.OptionsModelFactory;
+import org.riotfamily.forms.OptionsModelAdapter;
 
 public class OptionsModelUtils {
 
-	public static OptionsModel createOptionsModel(Object model, Element element) {
-		if (model instanceof OptionsModel) {
-			return (OptionsModel) model;
+	public static OptionsModel adapt(Object options, Element element) {
+		if (options instanceof OptionsModel) {
+			return (OptionsModel) options;
 		}
-		for (OptionsModelFactory factory : element.getFormContext().getOptionValuesAdapters()) {
-			if (factory.supports(model)) {
-				return factory.createOptionsModel(model, element);
+		for (OptionsModelAdapter adapter : element.getFormContext().getOptionsModelAdapters()) {
+			if (adapter.supports(options)) {
+				return adapter.adapt(options, element);
 			}
 		}
-		throw new IllegalStateException("No adapter registered for " + model);
+		throw new IllegalStateException("No adapter registered for " + options);
 	}
 	
 	public static Collection<?> getOptionValues(Object model, Element element) {
-		return createOptionsModel(model, element).getOptionValues(element);
+		return adapt(model, element).getOptionValues(element);
 	}
 }

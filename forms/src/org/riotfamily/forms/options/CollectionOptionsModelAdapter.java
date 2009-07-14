@@ -23,21 +23,22 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.options;
 
+import java.util.Collection;
+
 import org.riotfamily.forms.Element;
-import org.riotfamily.forms.OptionsModelFactory;
-import org.springframework.util.CollectionUtils;
+import org.riotfamily.forms.OptionsModelAdapter;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ArrayOptionsModelFactory implements OptionsModelFactory {
+public class CollectionOptionsModelAdapter implements OptionsModelAdapter {
 
 	public boolean supports(Object model) {
-		return model.getClass().isArray();
+		return model instanceof Collection<?>;
 	}
 	
-	public OptionsModel createOptionsModel(Object model, Element element) {
-		return new StaticOptionsModel(CollectionUtils.arrayToList(model));
+	public OptionsModel adapt(Object model, Element element) {
+		return new StaticOptionsModel((Collection<?>) model);
 	}
 }

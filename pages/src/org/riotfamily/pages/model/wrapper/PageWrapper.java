@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.model.wrapper;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -30,8 +31,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
@@ -62,10 +61,9 @@ public class PageWrapper extends ValueWrapper<Page> {
 		this.value = page;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(table="riot_page_wrappers", name="id")
 	@Fetch(FetchMode.SELECT)
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	@OnDelete(action=OnDeleteAction.CASCADE)
 	@NotFound(action=NotFoundAction.IGNORE)
 	public Page getValue() {

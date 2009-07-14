@@ -27,12 +27,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.image.ImageCropper;
 
 /**
@@ -73,8 +72,7 @@ public class CroppedRiotImage extends RiotImage {
 		inspect(croppedFile);
 	}
 
-	@ManyToOne
-	@Cascade(CascadeType.ALL)
+	@ManyToOne(cascade=CascadeType.ALL)
 	public RiotImage getOriginal() {
 		return this.original;
 	}

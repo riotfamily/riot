@@ -24,6 +24,7 @@
 package org.riotfamily.common.hibernate;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 /**
  * Hibernate {@link Interceptor} that scans the ApplicationContext for beans
@@ -61,10 +63,12 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	
 	private ThreadBoundHibernateTemplate template;
 	
-	private Map<Class<?>, List<EntityListener<Object>>> listeners = Generics.newHashMap();
+	private Collection<EntityListener> listeners;
+	
+	private Map<Class<?>, List<EntityListener>> mergedListeners = Generics.newHashMap();
 	
 	private ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
-	
+
 	
 	public void setSessionFactoryName(String sessionFactoryName) {
 		this.sessionFactoryName = sessionFactoryName;
@@ -72,59 +76,35 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 
 	public void setApplicationContext(ApplicationContext context) {
 		this.context = context;
-		for (EntityListener<Object> listener : SpringUtils.listBeansOfType(
-				context, EntityListener.class)) {
-
-			registerListener(getEntityClass(listener), listener);
-		}
+		this.listeners = SpringUtils.listBeansOfType(context, EntityListener.class);
 	}
-	
-	/**
-	 * Returns the generic type argument of the given EntityListener.
-	 */
-	private Class<?> getEntityClass(EntityListener<?> listener) {
-		return Generics.getTypeArguments(EntityListener.class, listener.getClass()).get(0);		
-	}
-	
-	private void registerListener(Class<?> entityClass, EntityListener<Object> listener) {
-		List<EntityListener<Object>> list = listeners.get(entityClass);
-		if (list == null) {
-			list = Generics.newArrayList();
-			listeners.put(entityClass, list);
-		}
-		list.add(listener);
-	}
-	
+		
 	private boolean listenerExists(Object entity) {
 		return !getListeners(entity).isEmpty();
 	}
 	
-	private List<EntityListener<Object>> getListeners(Object entity) {
-		Class<? >entityClass = entity.getClass();
-		List<EntityListener<Object>> result = listeners.get(entityClass);
+	private List<EntityListener> getListeners(Object entity) {
+		Class<?> entityClass = entity.getClass();
+		List<EntityListener> result = mergedListeners.get(entityClass);
 		if (result == null) {
-			for (Class<?> registeredClass : listeners.keySet()) {
-				if (registeredClass.isAssignableFrom(entityClass)) {
-					result = listeners.get(registeredClass);
-					listeners.put(entityClass, result);
-					break;
+			result = Generics.newArrayList();
+			mergedListeners.put(entityClass, result);
+			for (EntityListener listener : listeners) {
+				if (listener.supports(entityClass)) {
+					result.add(listener);
 				}
-			}
-			if (result == null) {
-				result = Collections.emptyList();
 			}
 		}
 		return result;
 	}
 	
-	
 	private Interceptions getInterceptions() {
-		Interceptions result = interceptions.get();
-		if (result == null) {
-			result = new Interceptions();
-			interceptions.set(result);
+		Interceptions i = interceptions.get(); 
+		if (i == null) {	
+			i = new Interceptions(getHibernateTemplate().getSessionFactory());
+			interceptions.set(i);
 		}
-		return result;
+		return i;
 	}
 	
 	@Override
@@ -143,7 +123,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			String[] propertyNames, Type[] types) {
 		
 		if (listenerExists(entity)) {
-			getInterceptions().entityUpdated(entity);
+			getInterceptions().entityUpdated(entity, id);
 		}
 		return false;
 	}
@@ -156,7 +136,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			PersistentCollection pc = (PersistentCollection) collection;
 			Object entity = pc.getOwner();
 			if (listenerExists(entity)) {
-				getInterceptions().entityUpdated(entity);
+				getInterceptions().entityUpdated(entity, key);
 			}
 		}
 	}
@@ -166,46 +146,44 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			String[] propertyNames, Type[] types) {
 		
 		try {
-			for (EntityListener<Object> listener : getListeners(entity)) {
-				listener.onDelete(entity);
+			Session session = getSessionFactory().getCurrentSession();
+			for (EntityListener listener : getListeners(entity)) {
+				listener.onDelete(entity, session);
 			}
 		}
 		catch (Exception e) {
 			throw new CallbackException(e);
 		}
 	}
-	
+		
 	@Override
 	@SuppressWarnings("unchecked")
 	public void postFlush(Iterator entities) {
-		final Interceptions i = interceptions.get();
-		if (i != null) {
-			try {
-				getHibernateTemplate().execute(new HibernateCallbackWithoutResult() {
-					public void doWithoutResult(Session session) throws Exception {
-						for (Object entity : i.getSavedEntites()) {
-							Object mergedEntity = session.merge(entity);
-							List<EntityListener<Object>> listeners = getListeners(mergedEntity);
-							for (EntityListener<Object> listener : listeners) {
-								listener.onSave(mergedEntity);
-							}	
-						}
-						for (Object entity : i.getUpdatedEntites()) {
-							Object mergedEntity = session.merge(entity);
-							List<EntityListener<Object>> listeners = getListeners(mergedEntity);
-							for (EntityListener<Object> listener : listeners) {
-								listener.onUpdate(mergedEntity);
-							}	
-						}
+		final Interceptions i = getInterceptions();
+		try {
+			getHibernateTemplate().execute(new HibernateCallbackWithoutResult() {
+				public void doWithoutResult(Session session) throws Exception {
+					for (Object entity : i.getSavedEntites()) {
+						Object mergedEntity = session.merge(entity);
+						for (EntityListener listener : getListeners(mergedEntity)) {
+							listener.onSave(mergedEntity, session);
+						}	
 					}
-				});
-			}
-			catch (Exception e) {
-				throw new CallbackException(e);
-			}
-			finally {
-				interceptions.set(null);			
-			}
+					for (Update update : i.getUpdates()) {
+						Object newState = session.merge(update.getEntity());
+						for (EntityListener listener : getListeners(newState)) {
+							listener.onUpdate(newState, update.getOldState(), session);
+						}	
+					}
+				}
+			});
+		}
+		catch (Exception e) {
+			throw new CallbackException(e);
+		}
+		finally {
+			i.closeOldStateSession();
+			interceptions.remove();			
 		}
 	}
 	
@@ -235,7 +213,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		return template;
 	}
-	
+		
 	/**
 	 * Interceptor that does nothing. This implementation is used with the
 	 * temporary session created in {@link #postFlush(Iterator)} to prevent
@@ -247,10 +225,21 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	
 	private static class Interceptions {
 		
+		private Session oldStateSession;
+		
 		private Set<Object> savedEntites;
 		
-		private Set<Object> updatedEntites;
+		private Set<Update> updates;
 		
+		public Interceptions(SessionFactory sessionFactory) {
+			oldStateSession = SessionFactoryUtils.getNewSession(
+					sessionFactory, NoOpInterceptor.INSTANCE);
+		}
+		
+		public void closeOldStateSession() {
+			oldStateSession.close();
+		}
+
 		public void entitySaved(Object entity) {
 			if (savedEntites == null) {
 				savedEntites = Generics.newHashSet();
@@ -258,11 +247,12 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			savedEntites.add(entity);
 		}
 		
-		public void entityUpdated(Object entity) {
-			if (updatedEntites == null) {
-				updatedEntites = Generics.newHashSet();
+		public void entityUpdated(Object entity, Serializable id) {
+			if (updates == null) {
+				updates = Generics.newHashSet();
 			}
-			updatedEntites.add(entity);
+			Object oldState = oldStateSession.get(entity.getClass(), id);
+			updates.add(new Update(oldState, entity));
 		}
 		
 		public Set<Object> getSavedEntites() {
@@ -272,11 +262,32 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			return savedEntites;
 		}
 		
-		public Set<Object> getUpdatedEntites() {
-			if (updatedEntites == null) {
+		public Set<Update> getUpdates() {
+			if (updates == null) {
 				return Collections.emptySet();
 			}
-			return updatedEntites;
+			return updates;
+		}
+		
+	}
+	
+	private static class Update {
+		
+		private Object entity;
+		
+		private Object oldState;
+		
+		public Update(Object oldState, Object entity) {
+			this.oldState = oldState;
+			this.entity = entity;
+		}
+				
+		public Object getOldState() {
+			return oldState;
+		}
+		
+		public Object getEntity() {
+			return entity;
 		}
 		
 	}

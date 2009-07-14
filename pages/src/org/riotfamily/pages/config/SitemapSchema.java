@@ -143,8 +143,8 @@ public class SitemapSchema {
 	public boolean suffixMatches(Page page, String path) {
 		String suffix = null;
 		int i = path.lastIndexOf(page.getPathComponent()) + page.getPathComponent().length();
-		if (i > path.length()) {
-			suffix = path.substring(8);
+		if (i < path.length()) {
+			suffix = path.substring(i);
 		}
 		List<String> suffixes = getPageType(page).getSuffixes();
 		if (suffixes != null && !suffixes.isEmpty()) {

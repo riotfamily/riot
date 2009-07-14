@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,8 +42,6 @@ import javax.persistence.Transient;
 import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
@@ -196,8 +195,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 			return hostNameMatches(hostName) && prefixMatches(path);
 	}
 
-	@ManyToOne
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	@ManyToOne(cascade=CascadeType.MERGE)
 	public Site getMasterSite() {
 		return this.masterSite;
 	}
@@ -237,8 +235,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 		this.aliases = aliases;
 	}
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@Cascade(CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	public Content getProperties() {
 		if (properties == null) {
 			properties = new Content();

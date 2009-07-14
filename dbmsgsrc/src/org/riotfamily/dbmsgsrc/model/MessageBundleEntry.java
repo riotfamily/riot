@@ -3,6 +3,7 @@ package org.riotfamily.dbmsgsrc.model;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,8 +16,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
@@ -109,10 +108,9 @@ public class MessageBundleEntry {
 		messages.put(C_LOCALE, defaultMessage);
 	}
 
-	@OneToMany
+	@OneToMany(cascade=CascadeType.ALL)
     @JoinColumn(name="entry_id")
     @MapKey(columns={@Column(name="locale")})
-	@Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="messages")
 	public Map<Locale, Message> getMessages() {
 		return messages;

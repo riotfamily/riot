@@ -26,6 +26,7 @@ package org.riotfamily.components.model;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
@@ -38,8 +39,6 @@ import javax.persistence.Transient;
 import org.hibernate.FetchMode;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
@@ -70,9 +69,8 @@ public class ContentContainer extends ActiveRecordSupport {
 		this.cacheService = cacheService;
 	}
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="live_version")
-	@Cascade(CascadeType.ALL)
 	public Content getLiveVersion() {
 		return this.liveVersion;
 	}
@@ -81,9 +79,8 @@ public class ContentContainer extends ActiveRecordSupport {
 		this.liveVersion = liveVersion;
 	}
 
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="preview_version")
-	@Cascade(CascadeType.ALL)
 	public Content getPreviewVersion() {
 		if (previewVersion == null) {
 			previewVersion = new Content();

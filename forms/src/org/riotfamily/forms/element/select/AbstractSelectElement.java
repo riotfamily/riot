@@ -37,6 +37,7 @@ import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.OptionsModelUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Abstract superclass for elements that let the user choose from a set of
@@ -101,6 +102,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase
 
 	public void setOptions(Object options) {
 		this.options = options;
+		this.optionsModel = null;
 		reset();
 	}
 	
@@ -113,13 +115,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase
 	}
 	
 	protected boolean hasOptionValues() {
-		if (optionValues == null) {
-			if (optionsModel == null) {
-				optionsModel = OptionsModelUtils.createOptionsModel(options, this);
-			}
-			optionValues = optionsModel.getOptionValues(this);
-		}
-		return !optionValues.isEmpty();
+		return !CollectionUtils.isEmpty(getOptionValues());
 	}
 	
 	@Override
@@ -134,44 +130,70 @@ public abstract class AbstractSelectElement extends AbstractEditorBase
 	
 	public void reset() {
 		if (getFormContext() != null) {
-			optionItems = createOptionItems();
+			optionItems = null;
 			if (getFormListener() != null) {
 				getFormListener().elementChanged(this);
 			}
 		}
 	}
-			
-	protected final List<OptionItem> getOptionItems() {
+	
+	/**
+	 * Returns the list of OptionItems. If the list has not been populated yet,
+	 * {@link #createOptionItems()} is invoked. 
+	 */
+	protected List<OptionItem> getOptionItems() {
 		if (optionItems == null) {
-			optionItems = createOptionItems();
+			optionItems = createOptionItems(getOptionValues());
+			updateSelection(optionItems);
 		}
 		return optionItems;
 	}
 	
-	protected List<OptionItem> createOptionItems() {
-		if (optionsModel == null) {
-			optionsModel = OptionsModelUtils.createOptionsModel(options, this);
-		}
+	/**
+	 * Creates a list of OptionItems from the given values. The collection of
+	 * values is obtained using {@link #getOptionValues()}.
+	 */
+	protected List<OptionItem> createOptionItems(Collection<?> values) {
 		List<OptionItem> items = new ArrayList<OptionItem>();
-		optionValues = optionsModel.getOptionValues(this);
-		if (optionValues != null) {
-			for (Object item : optionValues) {
+		if (values != null) {
+			for (Object item : values) {
 				String label = getOptionLabel(item);
 				Object value = getOptionValue(item);
 				String styleClass = getOptionStyleClass(item);
 				items.add(new OptionItem(item, value, label, styleClass, this));
 			}
 		}
-		updateSelection(optionValues);
 		return items;
 	}
 	
-	protected abstract void updateSelection(Collection<?> optionValues);
+	/**
+	 * Returns a collection of objects that is used to create the OptionItems.
+	 * If the collection has not been populated yet, it is obtained from the
+	 * {@link #getOptionsModel() OptionsModel}.
+	 */
+	private Collection<?> getOptionValues() {
+		if (optionValues == null) {
+			optionValues = getOptionsModel().getOptionValues(this);
+		}
+		return optionValues;
+	}
 	
-	protected String getOptionLabel(Object item) {
-		Object obj = item;
+	/**
+	 * Returns the OptionsModel. If the model has not been created yet,
+	 * it is created based on the {@link #getOptions() options}.
+	 */
+	private OptionsModel getOptionsModel() {
+		if (optionsModel == null) {
+			optionsModel = OptionsModelUtils.adapt(options, this);
+		}
+		return optionsModel;
+	}
+	
+	protected abstract void updateSelection(List<OptionItem> items);
+	
+	private String getOptionLabel(Object obj) {
 		if (labelProperty != null) {
-			obj = PropertyUtils.getProperty(item, labelProperty);
+			obj = PropertyUtils.getProperty(obj, labelProperty);
 		}
 		String label = obj != null ? obj.toString() : null;
 		if (labelMessageKey != null) {
@@ -189,28 +211,28 @@ public abstract class AbstractSelectElement extends AbstractEditorBase
 		}
 	}
 	
-	protected Object getOptionValue(Object item) {
-		if (item == null) {
+	private Object getOptionValue(Object obj) {
+		if (obj == null) {
 			return null;
 		}
 		if (valueProperty != null) {
-			return PropertyUtils.getProperty(item, valueProperty);
+			return PropertyUtils.getProperty(obj, valueProperty);
 		}
 		else {
-			return item;
+			return obj;
 		}
 	}
 	
-	protected String getOptionStyleClass(Object item) {
+	private String getOptionStyleClass(Object obj) {
 		if (styleClassProperty != null) {
-			return PropertyUtils.getPropertyAsString(item, styleClassProperty);
+			return PropertyUtils.getPropertyAsString(obj, styleClassProperty);
 		}
 		return null;
 	}
 	
-	public int getOptionIndex(OptionItem option) {
+	public final int getOptionIndex(OptionItem item) {
 		Assert.notNull(optionItems);
-		return optionItems.indexOf(option);
+		return optionItems.indexOf(item);
 	}
 	
 	protected abstract boolean hasSelection();

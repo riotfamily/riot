@@ -23,14 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.hibernate;
 
+import org.hibernate.Session;
 
+public interface EntityListener {
 
-public interface EntityListener<T> {
-
-	public void onSave(T entity) throws Exception;
+	public boolean supports(Class<?> entityClass);
 	
-	public void onUpdate(T entity) throws Exception;
+	public void onSave(Object entity, Session session) throws Exception;
 	
-	public void onDelete(T entity) throws Exception;
+	public void onDelete(Object entity, Session session) throws Exception;
+	
+	public void onUpdate(Object entity, Object oldState, Session session) throws Exception;
 	
 }

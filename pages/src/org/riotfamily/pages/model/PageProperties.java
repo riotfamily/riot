@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -13,8 +14,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ContentContainer;
 
@@ -42,9 +41,8 @@ public class PageProperties extends ContentContainer {
 		}
 	}
 
-	@OneToMany(mappedBy="pageProperties") //, fetch=FetchType.EAGER
+	@OneToMany(mappedBy="pageProperties", cascade=CascadeType.MERGE) //, fetch=FetchType.EAGER
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public Set<Page> getPages() {
 		return pages;
 	}

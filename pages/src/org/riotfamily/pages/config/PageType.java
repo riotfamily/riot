@@ -31,6 +31,8 @@ public class PageType {
 
 	private String name;
 	
+	private String label;
+	
 	private List<PageType> childTypes;
 	
 	private Object handler;
@@ -52,6 +54,17 @@ public class PageType {
 		this.name = name;
 	}
 	
+	public String getLabel() {
+		if (label == null) {
+			label = FormatUtils.xmlToTitleCase(name);
+		}
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	public Object getHandler() {
 		return handler;
 	}

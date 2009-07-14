@@ -24,6 +24,7 @@
 package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 
 import org.riotfamily.common.markup.TagWriter;
@@ -68,8 +69,8 @@ public class SelectBox extends AbstractSingleSelectElement {
 		this.chooseLabelKey = chooseLabelKey;
 	}
 	
-	protected List<OptionItem> createOptionItems() {
-		List<OptionItem> optionItems = super.createOptionItems();
+	protected List<OptionItem> createOptionItems(Collection<?> values) {
+		List<OptionItem> optionItems = super.createOptionItems(values);
 		if (chooseLabelKey != null) {
 			chooseLabel = MessageUtils.getMessage(this, chooseLabelKey);
 		}
