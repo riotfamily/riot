@@ -54,16 +54,21 @@ public class Selection implements Iterable<SelectionItem> {
 		return items.size();
 	}
 	
-	public SelectionItem getSingleItem() {
+	public SelectionItem getFirstItem() {
 		if (items.isEmpty()) {
 			return null;
 		}
-		Assert.isTrue(items.size() == 1,
-				"Selection must not contain more than one item");
-		
 		return items.get(0);
 	}
 	
+	public SelectionItem getSingleItem() {
+		SelectionItem first = getFirstItem();
+		Assert.isTrue(first == null || items.size() == 1,
+				"Selection must not contain more than one item");
+		
+		return first;
+	}
+		
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
@@ -110,6 +115,10 @@ public class Selection implements Iterable<SelectionItem> {
 				object = dao.load(objectId);
 			}
 			return object;
+		}
+		
+		public void resetObject() {
+			object = null;
 		}
 		
 		public boolean equals(Object obj) {

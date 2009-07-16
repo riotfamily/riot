@@ -54,6 +54,8 @@ public interface CommandContext {
 	
 	public ListScreen getScreen();
 	
+	public ScreenContext createParentContext();
+	
 	public FormContext createFormContext(String formUrl);
 	
 	public ScreenContext createNewItemContext(Object parentTreeItem);

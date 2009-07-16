@@ -179,6 +179,10 @@ class CommandContextHandler extends ListServiceHandler
 		return commandId;
 	}
 	
+	public ScreenContext createParentContext() {
+		return screenContext.createParentContext();
+	}
+	
 	public ScreenContext createItemContext(Object item) {
 		return screenContext.createItemContext(item);
 	}

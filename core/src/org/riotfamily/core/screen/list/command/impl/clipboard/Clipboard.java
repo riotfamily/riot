@@ -47,22 +47,36 @@ public class Clipboard {
 		this.command = command;
 	}
 	
-	public boolean isAlreadySet(ClipboardCommand command, Selection selection) {
-		return command.equals(this.command) && selection.equals(this.selection); 
+	public boolean isEmpty() {
+		return source == null; 
 	}
 	
-	public boolean canPaste(ListScreen target, SelectionItem parent) {
+	public ListScreen getSource() {
+		return source;
+	}
+	
+	private void resetSelectionItems() {
+		if (selection != null) {
+			for (SelectionItem item : selection) {
+				item.resetObject();
+			}
+		}
+	}
+	
+	public boolean canPaste(CommandContext context, SelectionItem parent) {
 		if (command != null) {
-			return command.canPaste(source, selection, target, parent);
+			resetSelectionItems();
+			return command.canPaste(source, selection, context, parent);
 		}
 		return false;
 	}
 	
-	public void paste(ListScreen target, SelectionItem parent, 
+	public void paste(CommandContext context, SelectionItem parent, 
 			NotificationResult notification) {
 		
+		resetSelectionItems();
 		notification.setArgs(selection.size());
-		command.paste(source, selection, target, parent, notification);
+		command.paste(source, selection, context, parent, notification);
 		clear();
 	}
 	
