@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.riotfamily.core.dao.CopyAndPasteEnabledDao;
 import org.riotfamily.core.dao.CutAndPasteEnabledDao;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.ParentChildDao;
@@ -43,7 +44,7 @@ import org.springframework.dao.DataAccessException;
  * @since 6.5
  */
 public class PageRiotDao implements ParentChildDao, TreeDao, 
-		SwappableItemDao, CutAndPasteEnabledDao {
+		SwappableItemDao, CutAndPasteEnabledDao, CopyAndPasteEnabledDao {
 
 	private SitemapSchema sitemapSchema;
 	
@@ -171,4 +172,16 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		//PageCacheUtils.invalidateNode(cacheService, parentNode);
 		//PageCacheUtils.invalidateNode(cacheService, newParent);
 	}
+	
+	public boolean canCopy(Object entity) {
+		return false;
+	}
+	
+	public boolean canPasteCopy(Object entity, Object dest) {
+		return false;
+	}
+	
+	public void pasteCopy(Object entity, Object dest) {
+	}
+
 }

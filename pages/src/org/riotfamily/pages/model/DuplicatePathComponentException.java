@@ -21,10 +21,9 @@
  *   Carsten Woelk [cwoelk at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.dao;
+package org.riotfamily.pages.model;
 
 import org.riotfamily.core.dao.InvalidPropertyValueException;
-import org.riotfamily.pages.model.Page;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]

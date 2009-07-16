@@ -68,6 +68,9 @@ public abstract class AbstractChildCommand extends AbstractCommand {
 		public Object getObject() {
 			return null;
 		}
+		
+		public void resetObject() {
+		}
 
 		public int getRowIndex() {
 			return -1;

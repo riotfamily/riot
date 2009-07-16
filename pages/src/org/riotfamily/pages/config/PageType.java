@@ -101,4 +101,16 @@ public class PageType {
 			}
 		}
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof PageType) {
+			PageType other = (PageType) obj;
+			return name.equals(other.name);
+		}
+		return false;
+	}
 }
