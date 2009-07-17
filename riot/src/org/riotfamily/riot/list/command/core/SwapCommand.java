@@ -24,8 +24,6 @@
 package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.riot.dao.SwappableItemDao;
-import org.riotfamily.riot.editor.EditorDefinitionUtils;
-import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
@@ -59,11 +57,8 @@ public class SwapCommand extends AbstractCommand {
 	}
 
 	public CommandResult execute(CommandContext context) {
-		
 		SwappableItemDao dao = (SwappableItemDao) context.getDao();
-		ListDefinition listDef = context.getListDefinition();
-		String parentId = context.getParentId();
-		Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
+		Object parent = context.getParent();
 		
 		ListParamsImpl params = new ListParamsImpl(context.getParams());
 		
@@ -71,12 +66,10 @@ public class SwapCommand extends AbstractCommand {
 		int offset = params.getOffset(), pageSize = params.getPageSize();
     	
 		if(getAction(context).equals(ACTION_MOVE_UP)) {
-			
 			offset = (params.getOffset() > 0) ? 
 					params.getOffset() - 1 : params.getOffset();
 		
 		} else {
-			
 			pageSize = (size <= (params.getOffset() + params.getPageSize())) 
     			? params.getPageSize() : params.getPageSize() + 1;
 		}
