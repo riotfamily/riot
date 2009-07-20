@@ -42,7 +42,6 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 /**
@@ -55,11 +54,9 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
  */
 @SuppressWarnings("serial")
 public class EntityListenerInterceptor extends EmptyInterceptor
-		implements ApplicationContextAware {
+		implements ApplicationContextAware, SessionFactoryAwareInterceptor {
 
-	private ApplicationContext context;
-	
-	private String sessionFactoryName;
+	private SessionFactory sessionFactory;
 	
 	private ThreadBoundHibernateTemplate template;
 	
@@ -70,12 +67,14 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	private ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
 
 	
-	public void setSessionFactoryName(String sessionFactoryName) {
-		this.sessionFactoryName = sessionFactoryName;
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+		this.template = new ThreadBoundHibernateTemplate(sessionFactory);
+		this.template.setAlwaysUseNewSession(true);
+		this.template.setEntityInterceptor(NoOpInterceptor.INSTANCE);
 	}
 
 	public void setApplicationContext(ApplicationContext context) {
-		this.context = context;
 		this.listeners = SpringUtils.listBeansOfType(context, EntityListener.class);
 	}
 		
@@ -101,7 +100,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	private Interceptions getInterceptions() {
 		Interceptions i = interceptions.get(); 
 		if (i == null) {	
-			i = new Interceptions(getHibernateTemplate().getSessionFactory());
+			i = new Interceptions(sessionFactory);
 			interceptions.set(i);
 		}
 		return i;
@@ -146,7 +145,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			String[] propertyNames, Type[] types) {
 		
 		try {
-			Session session = getSessionFactory().getCurrentSession();
+			Session session = sessionFactory.getCurrentSession();
 			for (EntityListener listener : getListeners(entity)) {
 				listener.onDelete(entity, session);
 			}
@@ -161,7 +160,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	public void postFlush(Iterator entities) {
 		final Interceptions i = getInterceptions();
 		try {
-			getHibernateTemplate().execute(new HibernateCallbackWithoutResult() {
+			template.execute(new HibernateCallbackWithoutResult() {
 				public void doWithoutResult(Session session) throws Exception {
 					for (Object entity : i.getSavedEntites()) {
 						Object mergedEntity = session.merge(entity);
@@ -186,34 +185,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			interceptions.remove();			
 		}
 	}
-	
-	/**
-	 * Lazily retrieves the SessionFactory from the ApplicationContext. If a
-	 * sessionFactoryName {@link #setSessionFactoryName(String) is set}, the
-	 * method will try to look up a bean with the specified name. Otherwise
-	 * the ApplicationContext must contain exactly one bean that implements
-	 * the {@link SessionFactory} interface.
-	 * <p>
-	 * Note: The SessionFactory can't be injected directly as this would result
-	 * in an unresolvable cyclic dependency.
-	 * </p>  
-	 */
-	private SessionFactory getSessionFactory() {
-		if (sessionFactoryName != null) {
-			return SpringUtils.getBean(context,	sessionFactoryName, SessionFactory.class);
-		}
-		return SpringUtils.beanOfType(context, SessionFactory.class);
-	}
-	
-	private HibernateTemplate getHibernateTemplate() {
-		if (template == null) { 
-			template = new ThreadBoundHibernateTemplate(getSessionFactory());
-			template.setAlwaysUseNewSession(true);
-			template.setEntityInterceptor(NoOpInterceptor.INSTANCE);
-		}
-		return template;
-	}
-		
+			
 	/**
 	 * Interceptor that does nothing. This implementation is used with the
 	 * temporary session created in {@link #postFlush(Iterator)} to prevent

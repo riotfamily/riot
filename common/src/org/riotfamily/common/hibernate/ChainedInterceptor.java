@@ -31,6 +31,7 @@ import java.util.Set;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
 
@@ -42,7 +43,8 @@ import org.hibernate.type.Type;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public class ChainedInterceptor extends EmptyInterceptor {
+public class ChainedInterceptor extends EmptyInterceptor 
+		implements SessionFactoryAwareInterceptor {
 
 	private Set<Interceptor> interceptors = Collections.emptySet();
 
@@ -51,6 +53,14 @@ public class ChainedInterceptor extends EmptyInterceptor {
 			interceptors = Collections.emptySet();
 		}
 		this.interceptors = interceptors;
+	}
+	
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		for (Interceptor interceptor : interceptors) {
+			if (interceptor instanceof SessionFactoryAwareInterceptor) {
+				((SessionFactoryAwareInterceptor) interceptor).setSessionFactory(sessionFactory);
+			}
+		}
 	}
 	
 	public void onDelete(Object entity, Serializable id, Object[] state,

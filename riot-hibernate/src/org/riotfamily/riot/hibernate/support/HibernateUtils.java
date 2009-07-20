@@ -78,10 +78,14 @@ public final class HibernateUtils {
 		return PropertyUtils.convert(id, getIdentifierClass(beanClass, sessionFactory));
 	}
 
-	public static String getIdAsString(SessionFactory sessionFactory, Object bean) {
+	public static Serializable getId(SessionFactory sessionFactory, Object bean) {
 		Class<?> clazz = Hibernate.getClass(bean);
 		ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
-		return metadata.getIdentifier(bean, EntityMode.POJO).toString();
+		return metadata.getIdentifier(bean, EntityMode.POJO);
+	}
+	
+	public static String getIdAsString(SessionFactory sessionFactory, Object bean) {
+		return getId(sessionFactory, bean).toString();
 	}
 	
 	public static boolean isPersistentProperty(SessionFactory sessionFactory, 

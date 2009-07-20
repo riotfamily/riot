@@ -27,6 +27,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
@@ -51,20 +52,31 @@ public class RiotSessionFactoryBean extends AnnotationSessionFactoryBean {
 	
 	private boolean validate = false;
 	
-	@Override
-	protected void afterSessionFactoryCreation() throws Exception {
-		super.afterSessionFactoryCreation();
-		if (validate) {
-			validateSchema();
-		}
-	}
-	
+	private Interceptor interceptor;
+
 	/**
 	 * Default is <code>false</code> because of:
 	 * http://opensource.atlassian.com/projects/hibernate/browse/HHH-3532
 	 */
 	public void setValidate(boolean validate) {
 		this.validate = validate;
+	}
+	
+	@Override
+	public void setEntityInterceptor(Interceptor interceptor) {
+		super.setEntityInterceptor(interceptor);
+		this.interceptor = interceptor;
+	}
+	
+	@Override
+	protected void afterSessionFactoryCreation() throws Exception {
+		super.afterSessionFactoryCreation();
+		if (validate) {
+			validateSchema();
+		}
+		if (interceptor instanceof SessionFactoryAwareInterceptor) {
+			((SessionFactoryAwareInterceptor) interceptor).setSessionFactory(getSessionFactory());
+		}
 	}
 	
 	public void validateSchema() throws DataAccessException {

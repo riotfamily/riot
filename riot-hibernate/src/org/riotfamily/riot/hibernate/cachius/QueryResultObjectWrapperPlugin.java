@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.cachius;
 
-import org.hibernate.type.Type;
 import org.riotfamily.common.hibernate.QueryResult;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
@@ -59,17 +58,15 @@ public class QueryResultObjectWrapperPlugin
 	}
 	
 	public boolean supports(Object obj) {
-		return obj instanceof QueryResult;
+		return obj instanceof QueryResult<?>;
 	}
 
-	@SuppressWarnings("unchecked")
 	public TemplateModel wrapSupportedObject(Object obj,
 			PluginObjectWrapper wrapper) throws TemplateModelException {
 		
-		QueryResult result = (QueryResult) obj;
+		QueryResult<?> result = (QueryResult<?>) obj;
 		TaggingSequence seqence = new TaggingSequence(result, wrapper);
-		for (Type type : result.getReturnTypes()) {
-			Class clazz = type.getReturnedClass();
+		for (Class<?> clazz : result.getResultClasses()) {
 			if (clazz.isAnnotationPresent(TagCacheItems.class)) {
 				seqence.addTag(CacheTagUtils.getTag(clazz));
 			}

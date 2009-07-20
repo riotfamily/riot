@@ -167,8 +167,8 @@ public abstract class ActiveRecord extends ConfigurableBean {
 				query.setParameter(index ++, param);
 			}
 		}
-		
-		return query;
+
+		return new QueryWrapper(query);
 	}
 	
 	/**
@@ -180,8 +180,9 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 * @param params the values of the parameters
 	 * @return a {@link List} containing the results of the query execution
 	 */
+	@SuppressWarnings("unchecked")
 	protected static<T> List<T> find(String hql, Object... params) {
-		return new QueryResult<T>(createQuery(hql, params));
+		return createQuery(hql, params).list();
 	}
 
 	/**

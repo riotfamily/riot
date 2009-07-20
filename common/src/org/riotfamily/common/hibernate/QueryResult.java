@@ -30,6 +30,7 @@ import java.util.ListIterator;
 
 import org.hibernate.Query;
 import org.hibernate.type.Type;
+import org.riotfamily.common.util.Generics;
 
 /**
  * Implementation of the {@link List} interface that provides information
@@ -42,17 +43,40 @@ public class QueryResult<T> implements List<T> {
 
 	private List<T> result;
 	
-	private Type[] returnTypes;
+	private List<Class<?>> resultClasses;
 
 	@SuppressWarnings("unchecked")
 	public QueryResult(Query query) {
 		this.result = query.list();
-		returnTypes = query.getReturnTypes();
+		resultClasses = Generics.newArrayList();
+		for (Type type : query.getReturnTypes()) {
+			resultClasses.add(type.getReturnedClass());
+		}
+	}
+
+	public QueryResult(List<T> result, List<Class<?>> classes) {
+		this.result = result;
+		this.resultClasses = classes;
 	}
 	
-	public Type[] getReturnTypes() {
-		return returnTypes;
+	public QueryResult(List<T> result, Class<?> clazz, Class<?>... additionalClasses) {
+		this.result = result;
+		this.resultClasses = Generics.newArrayList();
+		this.resultClasses.add(clazz);
+		if (additionalClasses != null) {
+			for (Class<?> c : additionalClasses) {
+				this.resultClasses.add(c);
+			}
+		}
 	}
+	
+	public List<Class<?>> getResultClasses() {
+		return resultClasses;
+	}
+	
+	// -----------------------------------------------------------------------
+	// Implementation of the List interface
+	// -----------------------------------------------------------------------
 
 	public void add(int index, T element) {
 		result.add(index, element);
