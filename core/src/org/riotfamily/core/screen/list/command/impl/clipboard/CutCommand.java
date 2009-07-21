@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.TreeDao;
 import org.riotfamily.core.screen.ListScreen;
@@ -119,7 +120,7 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 			CommandContext context, SelectionItem parentItem) {
 		
 		CutAndPasteEnabledDao dao = getDao(context.getScreen());
-		Object parent = getParent(parentItem, context);
+		Object parent = getNewParent(parentItem, context);
 		
 		List<Object> ancestors = getAncestors(context, parentItem);
 		for (SelectionItem item : selection) {
@@ -138,12 +139,12 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 		
 		CutAndPasteEnabledDao sourceDao = getDao(source);
 		CutAndPasteEnabledDao targetDao = getDao(context.getScreen());
-		Object newParent = getParent(parentItem, context);
+		Object newParent = getNewParent(parentItem, context);
 		
 		int count = 0;
 		for (SelectionItem item : selection) {
 			Object obj = item.getObject();
-			Object oldParent = sourceDao.getParent(obj);
+			Object oldParent = getOldParent(obj, sourceDao);
 			if (!ObjectUtils.nullSafeEquals(oldParent, newParent)) {
 				if (cutBeforePaste) {
 					sourceDao.cut(obj, oldParent);
@@ -160,7 +161,17 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 				"{0,choice,0#No items have|1#Item has|1<{0} items have} been moved.");
 	}
 	
-	private Object getParent(SelectionItem parentItem, CommandContext context) {
+	private Object getOldParent(Object obj, ParentChildDao dao) {
+		 if (dao instanceof TreeDao) {
+			Object parentNode = ((TreeDao) dao).getParentNode(obj);
+			if (parentNode != null) {
+				return parentNode;
+			}
+		}
+		return dao.getParent(obj);
+	}
+	
+	private Object getNewParent(SelectionItem parentItem, CommandContext context) {
 		Object parent = parentItem.getObject();
 		if (parent == null) {
 			parent = context.getParent();

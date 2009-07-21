@@ -134,8 +134,7 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 			int swapWith) {
 
 		Page page = (Page) entity;
-	
-		List<Page> pages = new ArrayList<Page>(list(parent, params));
+		List<Page> pages = new ArrayList<Page>(page.getSiblings());
 		int i = pages.indexOf(page);
 		Page otherPage = pages.get(i + swapWith);
 		

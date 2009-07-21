@@ -73,7 +73,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 	
 	private long position;
 	
-	private Set<Page> childPages;
+	private List<Page> childPages;
 	
 	private Page masterPage;
 	
@@ -109,7 +109,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 
 	public Page(Page master) {
 		this.masterPage = master;
-		this.creationDate = new Date();
 		this.pageType = master.getPageType();
 		this.pathComponent = master.getPathComponent();
 		this.folder = master.isFolder();
@@ -150,15 +149,15 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 		this.site = site;
 	}
 
-	@OneToMany
-    @JoinColumn(name="parent_id")
+	@OneToMany(mappedBy="parentPage")
     @OrderBy("position")
-	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-	public Set<Page> getChildPages() {
+	//FIXME If cache is enabled, changes to position don't work
+    //@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
+	public List<Page> getChildPages() {
 		return childPages;
 	}
 
-	public void setChildPages(Set<Page> childPages) {
+	public void setChildPages(List<Page> childPages) {
 		this.childPages = childPages;
 	}
 	
@@ -175,7 +174,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 	}
 
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.MERGE)
-	@JoinColumn(name="parent_id", insertable=false, updatable=false)
+	@JoinColumn(name="parent_id")
 	public Page getParentPage() {
 		return parentPage;
 	}
@@ -403,15 +402,22 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 					"Page '{0}' did not validate", child.toString());
 		}
 		*/
-		getChildPages().add(child);
+		child.setParentPage(this);
 		child.setSite(getSite());
-		//child.setCreationDate(new Date());
+		child.setPosition(System.currentTimeMillis());
+		if (childPages == null) {
+			childPages = Generics.newArrayList();
+		}
+		childPages.add(child);
 		//deleteAlias(page);
 		getParent().invalidateCacheItems();
 	}
 	
 	public void removePage(Page child) {
-		getChildPages().remove(child);
+		childPages.remove(child);
+		if (this.equals(child.getParentPage())) {
+			child.setParentPage(null);
+		}
 	}
 	
 	public void publish() {
@@ -464,6 +470,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 	
 	public void onSave() {
 		updatePath();
+		setCreationDate(new Date());
 	}
 	
 	public void onUpdate(Object oldState) {

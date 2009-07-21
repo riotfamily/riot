@@ -360,6 +360,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	public void addPage(Page page) {
 		page.setSite(this);
 		page.setParentPage(null);
+		page.setPosition(System.currentTimeMillis());
 		page.save(); //REVISIT Should we really call save() here?
 	}
 	
