@@ -81,10 +81,6 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 		return wrappedInstance.load(id);
 	}
 
-	public boolean canAdd(Object parent) {
-		return wrappedInstance.canAdd(parent);
-	}
-	
 	public void save(Object entity, Object parent) throws DataAccessException {
 		wrappedInstance.save(entity, parent);		
 	}
@@ -93,10 +89,6 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 		RiotUser user = (RiotUser) wrappedInstance.update((RiotUser) entity);
 		UserHolder.updateUser(user.getUserId(), user);
 		return user;
-	}
-
-	public boolean canDelete(Object entity) {
-		return wrappedInstance.canDelete(entity);
 	}
 	 
 	public void delete(Object entity, Object parent) {

@@ -59,17 +59,7 @@ public interface RiotDao {
 	 * Saves the given entity.
 	 */
 	public void save(Object entity, Object parent) throws DataAccessException;
-	
-	/**
-	 * Returns whether a child can be added to the given parent.
-	 */
-	public boolean canAdd(Object parent);
-	
-	/**
-	 * Returns whether the given entity can be deleted.
-	 */
-	public boolean canDelete(Object entity);
-	
+		
 	/**
 	 * Deletes the given entity.
 	 */

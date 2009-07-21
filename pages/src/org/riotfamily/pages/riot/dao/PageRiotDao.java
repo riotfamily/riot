@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.riotfamily.core.dao.ConstrainedDao;
 import org.riotfamily.core.dao.CopyAndPasteEnabledDao;
 import org.riotfamily.core.dao.CutAndPasteEnabledDao;
 import org.riotfamily.core.dao.ListParams;
@@ -43,7 +44,7 @@ import org.springframework.dao.DataAccessException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRiotDao implements ParentChildDao, TreeDao, 
+public class PageRiotDao implements ParentChildDao, TreeDao, ConstrainedDao,
 		SwappableItemDao, CutAndPasteEnabledDao, CopyAndPasteEnabledDao {
 
 	private SitemapSchema sitemapSchema;
