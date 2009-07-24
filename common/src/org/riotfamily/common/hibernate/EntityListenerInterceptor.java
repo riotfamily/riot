@@ -36,6 +36,7 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.type.Type;
 import org.riotfamily.common.util.Generics;
@@ -58,20 +59,18 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 
 	private SessionFactory sessionFactory;
 	
-	private ThreadBoundHibernateTemplate template;
-	
 	private Collection<EntityListener> listeners;
 	
-	private Map<Class<?>, List<EntityListener>> mergedListeners = Generics.newHashMap();
+	private Map<Class<?>, List<EntityListener>> listenerMap = Generics.newHashMap();
 	
-	private ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
+	private static ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
 
+	private ThreadBoundHibernateTemplate template;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-		this.template = new ThreadBoundHibernateTemplate(sessionFactory);
-		this.template.setAlwaysUseNewSession(true);
-		this.template.setEntityInterceptor(NoOpInterceptor.INSTANCE);
+		template = new ThreadBoundHibernateTemplate(sessionFactory);
+		template.setAlwaysUseNewSession(true);
 	}
 
 	public void setApplicationContext(ApplicationContext context) {
@@ -84,10 +83,10 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	
 	private List<EntityListener> getListeners(Object entity) {
 		Class<?> entityClass = entity.getClass();
-		List<EntityListener> result = mergedListeners.get(entityClass);
+		List<EntityListener> result = listenerMap.get(entityClass);
 		if (result == null) {
 			result = Generics.newArrayList();
-			mergedListeners.put(entityClass, result);
+			listenerMap.put(entityClass, result);
 			for (EntityListener listener : listeners) {
 				if (listener.supports(entityClass)) {
 					result.add(listener);
@@ -144,14 +143,8 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	public void onDelete(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
 		
-		try {
-			Session session = sessionFactory.getCurrentSession();
-			for (EntityListener listener : getListeners(entity)) {
-				listener.onDelete(entity, session);
-			}
-		}
-		catch (Exception e) {
-			throw new CallbackException(e);
+		if (listenerExists(entity)) {
+			getInterceptions().entityDeleted(entity);
 		}
 	}
 		
@@ -159,31 +152,44 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	@SuppressWarnings("unchecked")
 	public void postFlush(Iterator entities) {
 		final Interceptions i = getInterceptions();
-		try {
-			template.execute(new HibernateCallbackWithoutResult() {
-				public void doWithoutResult(Session session) throws Exception {
-					for (Object entity : i.getSavedEntites()) {
-						Object mergedEntity = session.merge(entity);
-						for (EntityListener listener : getListeners(mergedEntity)) {
-							listener.onSave(mergedEntity, session);
-						}	
+		if (!i.isEmpty()) {
+			interceptions.set(i.nested());
+			try {
+				template.execute(new HibernateCallbackWithoutResult() {
+					public void doWithoutResult(Session session) throws Exception {
+						for (Object entity : i.getDeletedEntities()) {
+							for (EntityListener listener : getListeners(entity)) {
+								listener.onDelete(entity, session);
+							}	
+						}
+						for (Object entity : i.getSavedEntities()) {
+							for (EntityListener listener : getListeners(entity)) {
+								listener.onSave(entity, session);
+							}	
+						}
+						for (Update update : i.getUpdates()) {
+							Object newState = update.getEntity();
+							for (EntityListener listener : getListeners(newState)) {
+								listener.onUpdate(newState, update.getOldState(), session);
+							}	
+						}
+						session.flush();
 					}
-					for (Update update : i.getUpdates()) {
-						Object newState = session.merge(update.getEntity());
-						for (EntityListener listener : getListeners(newState)) {
-							listener.onUpdate(newState, update.getOldState(), session);
-						}	
-					}
-				}
-			});
+				});
+				sessionFactory.getCurrentSession().flush();
+			}
+			catch (Exception e) {
+				throw new CallbackException(e);
+			}
+			finally {
+				i.closeOldStateSession();
+			}
 		}
-		catch (Exception e) {
-			throw new CallbackException(e);
-		}
-		finally {
-			i.closeOldStateSession();
-			interceptions.remove();			
-		}
+	}
+	
+	@Override
+	public void afterTransactionCompletion(Transaction tx) {
+		interceptions.remove();
 	}
 			
 	/**
@@ -199,13 +205,21 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		
 		private Session oldStateSession;
 		
-		private Set<Object> savedEntites;
+		private List<Object> savedEntities;
 		
-		private Set<Update> updates;
+		private List<Update> updates;
+		
+		private List<Object> deletedEntities;
+		
+		private Set<Object> ignore;
 		
 		public Interceptions(SessionFactory sessionFactory) {
-			oldStateSession = SessionFactoryUtils.getNewSession(
-					sessionFactory, NoOpInterceptor.INSTANCE);
+			this(sessionFactory, Generics.newHashSet());
+		}
+		
+		public Interceptions(SessionFactory sessionFactory, Set<Object> ignore) {
+			oldStateSession = SessionFactoryUtils.getNewSession(sessionFactory, NoOpInterceptor.INSTANCE);
+			this.ignore = ignore;
 		}
 		
 		public void closeOldStateSession() {
@@ -213,34 +227,62 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 
 		public void entitySaved(Object entity) {
-			if (savedEntites == null) {
-				savedEntites = Generics.newHashSet();
+			if (!ignore.contains(entity)) {
+				if (savedEntities == null) {
+					savedEntities = Generics.newArrayList();
+				}
+				savedEntities.add(entity);
+				ignore.add(entity);
 			}
-			savedEntites.add(entity);
 		}
 		
 		public void entityUpdated(Object entity, Serializable id) {
-			if (updates == null) {
-				updates = Generics.newHashSet();
+			if (!ignore.contains(entity)) {
+				if (updates == null) {
+					updates = Generics.newArrayList();
+				}
+				Object oldState = oldStateSession.get(entity.getClass(), id);
+				updates.add(new Update(oldState, entity));
+				ignore.add(entity);
 			}
-			Object oldState = oldStateSession.get(entity.getClass(), id);
-			updates.add(new Update(oldState, entity));
 		}
 		
-		public Set<Object> getSavedEntites() {
-			if (savedEntites == null) {
-				return Collections.emptySet();
+		public void entityDeleted(Object entity) {
+			if (deletedEntities == null) {
+				deletedEntities = Generics.newArrayList();
 			}
-			return savedEntites;
+			deletedEntities.add(entity);
+			ignore.add(entity);
 		}
 		
-		public Set<Update> getUpdates() {
+		public List<Object> getSavedEntities() {
+			if (savedEntities == null) {
+				return Collections.emptyList();
+			}
+			return savedEntities;
+		}
+		
+		public List<Update> getUpdates() {
 			if (updates == null) {
-				return Collections.emptySet();
+				return Collections.emptyList();
 			}
 			return updates;
 		}
 		
+		public List<Object> getDeletedEntities() {
+			if (deletedEntities == null) {
+				return Collections.emptyList();
+			}
+			return deletedEntities;
+		}
+		
+		public boolean isEmpty() {
+			return savedEntities == null && updates == null;
+		}
+		
+		public Interceptions nested() {
+			return new Interceptions(oldStateSession.getSessionFactory(), ignore);
+		}
 	}
 	
 	private static class Update {
