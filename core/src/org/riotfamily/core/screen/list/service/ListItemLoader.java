@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.dao.RootNodeTreeDao;
 import org.riotfamily.core.dao.TreeDao;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListRenderContext;
@@ -46,26 +48,36 @@ import org.springframework.beans.NullValueInNestedPathException;
  */
 class ListItemLoader extends ChooserCommandHandler implements ListRenderContext {
 	
-	protected Object root;
+	protected RootNodeTreeDao rootNodeTreeDao;
 	
 	ListItemLoader(ListService service, String key, 
 			HttpServletRequest request) {
 		
 		super(service, key, request);
-		root = screenContext.getParent();
+		if (dao instanceof RootNodeTreeDao) {
+			rootNodeTreeDao = (RootNodeTreeDao) dao;
+		}
 	}
 	
 	public List<ListItem> getItems(String parentId) {
-		Object parent = null;
+		Object[] expanded;
 		if (parentId != null) {
-			parent = dao.load(parentId);
+			expanded = new Object[] {dao.load(parentId)};
 		}
-		return createItems(new Object[] {parent}, 0, parentId);
+		else {
+			expanded = loadExpanded(null);
+		}
+		return createItems(expanded, 0, parentId);
 	}
 	
-	
 	protected List<ListItem> createItems(Object[] expanded, int i, String parentNodeId) {
-		Collection<?> objects = dao.list(expanded[i], state.getParams());
+		Collection<?> objects;
+		if (i == 0 && rootNodeTreeDao != null && expanded.length == 2) {
+			objects = Collections.singletonList(expanded[1]);
+		}
+		else {
+			objects = dao.list(expanded[i], state.getParams());
+		}
 		ArrayList<ListItem> items = Generics.newArrayList(objects.size());
 		Object next = i + 1 < expanded.length ? expanded[i + 1] : null;
 		for (Object object : objects) {
@@ -74,7 +86,7 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 			item.setObjectId(objectId);
 			item.setParentNodeId(parentNodeId);
 			item.setColumns(getColumns(object));
-			item.setExpandable(isExpandable(object, root));
+			item.setExpandable(isExpandable(object));
 			if (object.equals(next)) {
 				item.setChildren(createItems(expanded, i + 1, objectId));
 			}
@@ -119,14 +131,16 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 				expanded = ((TreeDao) dao).getParentNode(expanded);
 			}
 		}
-		result.add(0, root);
+		else if (rootNodeTreeDao != null) {
+			result.add(0, rootNodeTreeDao.getRootNode(getParent()));
+		}
+		result.add(0, getParent());
 		return result.toArray();
 	}
 	
-	private boolean isExpandable(Object bean, Object root) {
+	private boolean isExpandable(Object node) {
 		if (dao instanceof TreeDao) {
-			return ((TreeDao) dao).hasChildren(
-					bean, root, state.getParams());
+			return ((TreeDao) dao).hasChildren(node, getParent(), state.getParams());
 		}
 		return false;
 	}

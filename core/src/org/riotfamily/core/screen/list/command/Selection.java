@@ -88,22 +88,15 @@ public class Selection implements Iterable<SelectionItem> {
 		
 		private Object object;
 		
-		private int rowIndex;
-		
 		private String parentNodeId;
 
 		public SelectionItemImpl(ObjectReference ref) {
 			this.objectId = ref.getObjectId();
-			this.rowIndex = ref.getRowIndex();
 			this.parentNodeId = ref.getParentNodeId();
 		}
 		
 		public String getObjectId() {
 			return objectId;
-		}
-		
-		public int getRowIndex() {
-			return rowIndex;
 		}
 		
 		public String getParentNodeId() {

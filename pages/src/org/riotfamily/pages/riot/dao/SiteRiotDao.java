@@ -76,6 +76,15 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao {
 		return Site.load(Long.valueOf(id));
 	}
 	
+	public boolean canSwap(Object entity, Object parent, ListParams params,
+			int swapWith) {
+		
+		Site site = (Site) entity;
+		List<Site> sites = Site.findAll();
+		int i = sites.indexOf(site) + swapWith;
+		return i >= 0 && i < sites.size();
+	}
+	
 	public void swapEntity(Object entity, Object parent, ListParams params, 
 			int swapWith) {
 		

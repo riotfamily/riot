@@ -37,9 +37,9 @@ public abstract class SwapCommand extends AbstractCommand {
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
 		if (selection.size() == 1 && context.getScreen().getDao() instanceof SwappableItemDao) {
-			int index = selection.getSingleItem().getRowIndex();
-			return index + getSwapWith() >= 0 &&
-					index + getSwapWith() < context.getItemsTotal();
+			SwappableItemDao dao = (SwappableItemDao) context.getScreen().getDao();
+			return dao.canSwap(selection.getSingleItem().getObject(), 
+					context.getParent(), context.getParams(), getSwapWith());
 		}
 		return false;
 	}

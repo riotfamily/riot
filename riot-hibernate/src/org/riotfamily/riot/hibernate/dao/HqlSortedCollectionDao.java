@@ -45,6 +45,14 @@ public class HqlSortedCollectionDao extends HqlCollectionDao
 		this.positionProperty = positionProperty;
 	}
 
+	public boolean canSwap(Object entity, Object parent, 
+			ListParams params, int swapWith) {
+		
+		List<?> items = listInternal(parent, new ListParamsImpl(params));
+		int i = items.indexOf(entity) + swapWith;
+		return i >= 0 && i < items.size();
+	}
+	
 	public void swapEntity(Object entity, Object parent, ListParams params, 
 			int swapWith) {
 		

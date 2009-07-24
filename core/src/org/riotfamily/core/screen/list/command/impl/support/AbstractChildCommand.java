@@ -72,10 +72,6 @@ public abstract class AbstractChildCommand extends AbstractCommand {
 		public void resetObject() {
 		}
 
-		public int getRowIndex() {
-			return -1;
-		}
-		
 		public String getParentNodeId() {
 			return null;
 		}
