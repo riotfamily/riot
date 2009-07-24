@@ -18,30 +18,33 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   flx
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.model;
+package org.riotfamily.pages.config;
 
-import java.util.Collection;
+import java.util.Locale;
 
-import javax.persistence.MappedSuperclass;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.riotfamily.common.hibernate.AbstractSetupBean;
+import org.riotfamily.pages.model.Site;
 
-@MappedSuperclass
-public interface SiteMapItem {
+public class DefaultSiteCreator extends AbstractSetupBean {
 
-	public Collection<Page> getChildPages();
-	
-	public Collection<Page> getChildPagesWithFallback();
-	
-	public void addPage(Page page);
-	
-	public void removePage(Page page);
-	
-	public Site getSite();
-	
-	public String getCacheTag();
-	
-	public void invalidateCacheItems();
+	public DefaultSiteCreator(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
+	@Override
+	protected void setup(Session session) throws Exception {
+		Site site  = Site.loadDefaultSite();
+		if (site == null) {
+			site = new Site();
+			site.setLocale(Locale.getDefault());
+			site.setName("default");
+			site.save();
+		}
+	}
 	
 }

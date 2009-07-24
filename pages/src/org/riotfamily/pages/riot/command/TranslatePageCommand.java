@@ -29,7 +29,6 @@ import org.riotfamily.core.screen.list.command.impl.support.AbstractBatchCommand
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.model.SiteMapItem;
 
 public class TranslatePageCommand extends AbstractBatchCommand<Page> {
 
@@ -51,7 +50,7 @@ public class TranslatePageCommand extends AbstractBatchCommand<Page> {
 	protected CommandResult execute(CommandContext context, Page page,
 			int index, int selectionSize) {
 
-		SiteMapItem parent = (SiteMapItem) context.getParent();
+		Page parent = (Page) context.getParent();
 		parent.addPage(new Page(page));
 		return new RefreshListResult();
 	}

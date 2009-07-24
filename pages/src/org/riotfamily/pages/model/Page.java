@@ -24,6 +24,7 @@
 package org.riotfamily.pages.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,13 +32,11 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -45,6 +44,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.IndexColumn;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.common.hibernate.Lifecycle;
@@ -53,6 +53,7 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -63,15 +64,13 @@ import org.springframework.beans.factory.annotation.Required;
 @Entity
 @Table(name="riot_pages", uniqueConstraints = {@UniqueConstraint(columnNames={"site_id", "path"})})
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle {
+public class Page extends ActiveRecordSupport implements Lifecycle {
 
 	public static final String TITLE_PROPERTY = "title";
 	
 	private String pageType;
 	
-	private Page parentPage;
-	
-	private long position;
+	private Page parent;
 	
 	private List<Page> childPages;
 	
@@ -84,8 +83,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 	private String pathComponent;
 
 	private boolean hidden;
-
-	private boolean folder;
 
 	private String path;
 	
@@ -111,7 +108,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 		this.masterPage = master;
 		this.pageType = master.getPageType();
 		this.pathComponent = master.getPathComponent();
-		this.folder = master.isFolder();
 		this.hidden = master.isHidden();
 	}
 	
@@ -149,10 +145,10 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 		this.site = site;
 	}
 
-	@OneToMany(mappedBy="parentPage")
-    @OrderBy("position")
-	//FIXME If cache is enabled, changes to position don't work
-    //@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
+	@OneToMany
+	@JoinColumn(name="parent_id")
+	@IndexColumn(name="pos")
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public List<Page> getChildPages() {
 		return childPages;
 	}
@@ -161,31 +157,14 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 		this.childPages = childPages;
 	}
 	
-	@Column(name="pos")
-	public long getPosition() {
-		if (position == 0) {
-			position = System.currentTimeMillis();
-		}
-		return position;
-	}
-
-	public void setPosition(long position) {
-		this.position = position;
-	}
-
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.MERGE)
-	@JoinColumn(name="parent_id")
-	public Page getParentPage() {
-		return parentPage;
+	@JoinColumn(name = "parent_id", updatable = false, insertable = false)
+	public Page getParent() {
+		return parent;
 	}
 
-	public void setParentPage(Page parentPage) {
-		this.parentPage = parentPage;
-	}
-
-	@Transient
-	public SiteMapItem getParent() {
-		return parentPage != null ? parentPage : site;
+	public void setParent(Page parent) {
+		this.parent = parent;
 	}
 	
 	@ManyToOne(cascade=CascadeType.MERGE)
@@ -236,26 +215,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 		this.hidden = hidden;
 	}
 	
-	/**
-	 * Returns whether the page only acts as container for other pages and
-	 * has no own content.
-	 */
-	public boolean isFolder() {
-		return this.folder;
-	}
-
-	public void setFolder(boolean folder) {
-		this.folder = folder;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-	
 	@Transient
 	public String getUrl() {
 		StringBuilder url = new StringBuilder();
@@ -280,7 +239,7 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 		Page page = this;
 		while (page != null) {
 			pages.addFirst(page);
-			page = page.getParentPage();
+			page = page.getParent();
 		}
 		return pages;
 	}
@@ -310,6 +269,9 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 		if (title != null) {
 			return title.toString();
 		}
+		if (!StringUtils.hasText(pathComponent)) {
+			return "/";
+		}
 		return FormatUtils.xmlToTitleCase(pathComponent);
 	}
 	
@@ -333,29 +295,20 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 	}
 
 	public boolean isVisible(boolean preview) {
-		return !isHidden() 
-				&& (published || preview)
-				&& (!folder || hasVisibleChildPage(preview));
+		return !isHidden() && (published || preview);
 	}
-	
-	private boolean hasVisibleChildPage(boolean preview) {
-		for (Page page : getChildPages()) {
-			if (page.isVisible(preview)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
+		
 	public String toString() {
 		return site + ":" + path;
 	}
 	
 	@Transient
-	public Collection<Page> getSiblings() {
-		return getParent().getChildPages();
+	public List<Page> getSiblings() {
+		if (parent == null) {
+			return Collections.singletonList(this);
+		}
+		return parent.getChildPages();
 	}
-	
 	
 	@Transient
 	public Collection<Page> getChildPagesWithFallback() {
@@ -402,21 +355,22 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 					"Page '{0}' did not validate", child.toString());
 		}
 		*/
-		child.setParentPage(this);
+		child.setParent(this);
 		child.setSite(getSite());
-		child.setPosition(System.currentTimeMillis());
 		if (childPages == null) {
 			childPages = Generics.newArrayList();
 		}
 		childPages.add(child);
 		//deleteAlias(page);
-		getParent().invalidateCacheItems();
+		if (parent != null) {
+			parent.invalidateCacheItems();
+		}
 	}
 	
 	public void removePage(Page child) {
 		childPages.remove(child);
-		if (this.equals(child.getParentPage())) {
-			child.setParentPage(null);
+		if (this.equals(child.getParent())) {
+			child.setParent(null);
 		}
 	}
 	
@@ -435,33 +389,55 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 		getParent().invalidateCacheItems();
 	}
 		
-	public void invalidateCacheItems() {
+	private void invalidateCacheItems() {
 		if (cacheService != null) {
 			cacheService.invalidateTaggedItems(getCacheTag());
 		}
 	}
 
-	private String buildPath() {
-		StringBuffer path = new StringBuffer();
-		Page page = this;
-		while (page != null) {
-			path.insert(0, page.getPathComponent());
-			path.insert(0, '/');
-			page = page.getParentPage();
+	// ----------------------------------------------------------------------
+	// Materialized path methods
+	// ----------------------------------------------------------------------
+	
+	public String getPath() {
+		if (path == null) {
+			materializePath();
 		}
-		return path.toString();
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 	
 	private void updatePath() {
+		if (materializePath()) {
+			updateChildPaths();
+		}
+	}
+	
+	private void updateChildPaths() {
+		if (childPages != null) {
+			for (Page child : childPages) {
+				child.updatePath();
+			}
+		}
+	}
+	
+	private boolean materializePath() {
 		String path = buildPath();
 		if (!path.equals(this.path)) {
 			this.path = path;
-			if (childPages != null) {
-				for (Page child : childPages) {
-					child.updatePath();
-				}
-			}
+			return true;
 		}
+		return false;
+	}
+	
+	private String buildPath() {
+		if (parent != null) {
+			return parent.getPath() + "/" + pathComponent;
+		}
+		return "";
 	}
 	
 	// ----------------------------------------------------------------------
@@ -469,12 +445,13 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 	// ----------------------------------------------------------------------
 	
 	public void onSave() {
-		updatePath();
 		setCreationDate(new Date());
+		updatePath();
 	}
 	
 	public void onUpdate(Object oldState) {
-		updatePath();
+		materializePath();
+		updateChildPaths();
 	}
 	
 	public void onDelete() {
@@ -501,10 +478,6 @@ public class Page extends ActiveRecordSupport implements SiteMapItem, Lifecycle 
 	
 	public static Page loadByTypeAndSite(String pageType, Site site) {
 		return load("from Page where pageType = ? and site = ?", pageType, site);
-	}
-		
-	public static List<Page> findRootPagesBySite(Site site) {
-		return find("from Page where parentPage is null and site = ? order by position", site);
 	}
 
 }

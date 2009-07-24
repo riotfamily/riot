@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.Page;
@@ -229,9 +228,6 @@ public class PageResolver {
 		String lookupPath = getLookupPath(path);
 		
 		Page page = Page.loadBySiteAndPath(site, lookupPath);
-		if (page == null) {
-			page = findWildcardPage(site, lookupPath);
-		}
 		if (page == null || !page.isRequestable() 
 				|| !sitemapSchema.suffixMatches(page, path)) {
 			
@@ -244,21 +240,6 @@ public class PageResolver {
 		return FormatUtils.stripExtension(path);
 	}
 	
-	private Page findWildcardPage(Site site, String urlPath) {
-		Page page = null; 
-		AttributePattern bestMatch = null;
-		for (String path : site.listWildcardPaths()) {
-			AttributePattern p = new AttributePattern(path);
-			if (p.matches(urlPath) && p.isMoreSpecific(bestMatch)) {
-				bestMatch = p;
-			}
-		}
-		if (bestMatch != null) {
-			page = Page.loadBySiteAndPath(site, bestMatch.toString());
-		}
-		return page;
-	}
-
 	private void expose(Object object, HttpServletRequest request,
 			String attributeName) {
 		

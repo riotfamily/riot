@@ -20,12 +20,9 @@
 						<tool:exports type="org.riotfamily.pages.config.SitemapSchema" />
 					</tool:annotation>
 				</xsd:appinfo>
-			</xsd:annotation>			
+			</xsd:annotation>
 			<xsd:sequence>
-				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="type" type="type" />
-					<xsd:element name="system-page" type="system-page" />
-				</xsd:choice>
+				<xsd:element name="root-page" type="root-page" />
 			</xsd:sequence>
 			<xsd:attribute name="default-suffix" type="xsd:string" />
 		</xsd:complexType>
@@ -65,23 +62,52 @@
 		<xsd:attribute name="name" type="xsd:string" />
 	</xsd:complexType>
 	
-	<xsd:complexType name="system-page">
-		<xsd:complexContent>
-			<xsd:annotation>
-				<xsd:appinfo>
-					<tool:annotation>
-						<tool:exports type="org.riotfamily.pages.config.SystemPage" />
-					</tool:annotation>
-				</xsd:appinfo>
-			</xsd:annotation>
-			<xsd:extension base="type">
-				<xsd:sequence minOccurs="0">
-					<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
-					<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
-				</xsd:sequence>
-				<xsd:attribute name="path-component" type="xsd:string" />
-				<xsd:attribute name="folder" type="xsd:boolean" default="false" />
-			</xsd:extension>
-		</xsd:complexContent>
+	<xsd:complexType name="root-page">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<tool:annotation>
+					<tool:exports type="org.riotfamily.pages.config.RootPage" />
+				</tool:annotation>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element ref="beans:bean" />
+				<xsd:element ref="beans:ref" />
+			</xsd:choice>
+			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="type" type="type" />
+				<xsd:element name="type-ref" type="type-ref" />
+				<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:choice>
+		</xsd:sequence>
 	</xsd:complexType>
+	
+	<xsd:complexType name="system-page">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<tool:annotation>
+					<tool:exports type="org.riotfamily.pages.config.SystemPage" />
+				</tool:annotation>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element ref="beans:bean" />
+				<xsd:element ref="beans:ref" />
+			</xsd:choice>
+			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="type" type="type" />
+				<xsd:element name="type-ref" type="type-ref" />
+				<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="suffix" type="xsd:string" />
+		<xsd:attribute name="label" type="xsd:string" />
+		<xsd:attribute name="path-component" type="xsd:string" />
+	</xsd:complexType>
+
 </xsd:schema>

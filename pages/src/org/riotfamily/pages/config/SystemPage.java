@@ -28,13 +28,10 @@ import java.util.Map;
 
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.model.SiteMapItem;
 
 public class SystemPage extends PageType {
 
 	private String pathComponent;
-	
-	private boolean folder;
 	
 	private List<SystemPage> childPages;
 	
@@ -49,14 +46,6 @@ public class SystemPage extends PageType {
 
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
-	}
-
-	public boolean isFolder() {
-		return folder;
-	}
-
-	public void setFolder(boolean folder) {
-		this.folder = folder;
 	}
 
 	public List<SystemPage> getChildPages() {
@@ -75,23 +64,25 @@ public class SystemPage extends PageType {
 		this.properties = properties;
 	}
 
-	public void sync(SiteMapItem parent) {
+	private void sync(Page parent) {
 		Page page = Page.loadByTypeAndSite(getName(), parent.getSite());
 		if (page == null) {
-			page = createPage(parent.getSite());
-			parent.addPage(page);
+			page = createPage(parent.getSite(), parent);
 		}
 		update(page);
 	}
 	
-	private Page createPage(Site site) {
+	protected Page createPage(Site site, Page parent) {
 		Page page = new Page(getPathComponent(), site);
-		page.setFolder(folder);
 		page.getPageProperties().getPreviewVersion().wrap(properties);
+		if (parent != null) {
+			parent.addPage(page);
+		}
+		page.save();
 		return page;
 	}
 
-	private void update(Page page) {
+	protected void update(Page page) {
 		page.setPageType(getName());
 		if (childPages != null) {
 			for (SystemPage child : childPages) {
@@ -103,7 +94,6 @@ public class SystemPage extends PageType {
 	@Override
 	void register(SitemapSchema schema) {
 		super.register(schema);
-		schema.addSystemPage(this);
 		if (childPages != null) {
 			for (SystemPage child : childPages) {
 				child.register(schema);

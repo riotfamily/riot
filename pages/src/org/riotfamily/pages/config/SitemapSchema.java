@@ -31,7 +31,6 @@ import java.util.Map;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.model.SiteMapItem;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -39,12 +38,10 @@ public class SitemapSchema {
 
 	private String defaultSuffix;
 	
+	private RootPage rootPage;
+	
 	private Map<String, PageType> typeMap = Generics.newHashMap();
 		
-	private List<SystemPage> systemPages = Generics.newArrayList();
-	
-	private List<PageType> rootTypes = Generics.newArrayList();
-
 	public String getDefaultSuffix() {
 		return defaultSuffix;
 	}
@@ -53,15 +50,9 @@ public class SitemapSchema {
 		this.defaultSuffix = defaultSuffix;
 	}
 
-	public void setTypes(List<PageType> types) {
-		if (types != null) {
-			for (PageType type : types) {
-				type.register(this);
-				if (!(type instanceof SystemPage)) {
-					rootTypes.add(type);
-				}
-			}
-		}
+	public void setRootPage(RootPage rootPage) {
+		this.rootPage = rootPage;
+		rootPage.register(this);
 	}
 	
 	void addType(PageType type) {
@@ -78,10 +69,6 @@ public class SitemapSchema {
 		return typeMap.get(name);
 	}
 	
-	void addSystemPage(SystemPage page) {
-		systemPages.add(page);
-	}
-
 	void syncSystemPages() {
 		List<Site> sites = Site.findAll();
 		if (sites.isEmpty()) {
@@ -99,20 +86,13 @@ public class SitemapSchema {
 	}
 	
 	void syncSystemPages(Site site) {
-		if (systemPages != null) {
-			for (SystemPage systemPage : systemPages) {
-				systemPage.sync(site);
-			}
-		}
+		rootPage.sync(site);
 	}
 
-	public List<PageType> getChildTypeOptions(SiteMapItem parent) {
+	public List<PageType> getChildTypeOptions(Page parent) {
 		List<PageType> options = null;
 		if (parent instanceof Page) {
 			options = getPageType((Page) parent).getChildTypes();
-		}
-		else {
-			options = rootTypes;
 		}
 		if (options == null) {
 			options = Collections.emptyList();
@@ -132,11 +112,11 @@ public class SitemapSchema {
 		return getPageType(page) instanceof SystemPage;
 	}
 
-	public boolean canHaveChildren(SiteMapItem parent) {
+	public boolean canHaveChildren(Page parent) {
 		return !getChildTypeOptions(parent).isEmpty();
 	}
 	
-	public boolean isValidChild(SiteMapItem parent, Page child) {
+	public boolean isValidChild(Page parent, Page child) {
 		return getChildTypeOptions(parent).contains(getPageType(child));
 	}
 	

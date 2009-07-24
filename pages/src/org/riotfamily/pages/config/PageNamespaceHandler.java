@@ -25,9 +25,9 @@ package org.riotfamily.pages.config;
 
 import org.riotfamily.common.beans.xml.ChildDecorator;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.ListDecorator;
 import org.riotfamily.common.beans.xml.ListItemDecorator;
 import org.riotfamily.common.beans.xml.MapEntryDecorator;
+import org.riotfamily.common.beans.xml.PropertyDecorator;
 import org.riotfamily.common.beans.xml.PropertyValueDecorator;
 
 /**
@@ -38,19 +38,19 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
 		register("schema", SitemapSchema.class).setDecorator(
-				new ListDecorator("types"));
+				new PropertyDecorator("rootPage"));
 		
 		ChildDecorator typeDecorator = new ChildDecorator()
 				.register("bean", new PropertyValueDecorator("handler"))
 				.register("ref", new PropertyValueDecorator("handler"))
 				.register("type", new ListItemDecorator("childTypes"))
-				.register("type-ref", new ListItemDecorator("childTypes"));
+				.register("type-ref", new ListItemDecorator("childTypes"))
+				.register("prop", new MapEntryDecorator("properties", "key"))
+				.register("system-page", new ListItemDecorator("childPages"));
 				
 		register("type", PageType.class).setDecorator(typeDecorator);
-		
-		register("system-page", SystemPage.class).setDecorator(typeDecorator.copy()
-				.register("prop", new MapEntryDecorator("properties", "key"))
-				.register("system-page", new ListItemDecorator("childPages")));
+		register("root-page", RootPage.class).setDecorator(typeDecorator);
+		register("system-page", SystemPage.class).setDecorator(typeDecorator);
 		
 		register("type-ref", PageTypeRef.class);
 	}

@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.mapping;
 
-import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -68,40 +66,15 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		}
 		
 		exposePathWithinMapping(path, request);
-		return getPageHandler(page, request);
-	}
-	
-	
-	/**
-	 * Returns the handler for the given page.
-	 */
-	protected Object getPageHandler(Page page, HttpServletRequest request) {
-		if (page.isFolder()) {
-			return getFolderHandler(page.getChildPages());
-		}
 		return page.getHandler();
 	}
-
-	
-	private Object getFolderHandler(Collection<Page> childPages) {
-		for (Page page : childPages) {
-			if (page.isRequestable()) {
-				String url = page.getUrl();
-				return new RedirectController(url, true, false);
-			}
-		}
-		return new HttpErrorController(HttpServletResponse.SC_NOT_FOUND);
-	}
-	
+		
 	/**
 	 * Checks if an alias is registered for the given site and path and returns 
 	 * a RedirectController, or <code>null</code> in case no alias can be found.
 	 */
 	protected Object getPageNotFoundHandler(Site site, String path) {
 		try {
-			if (path.length() == 0) {
-				return getFolderHandler(site.getChildPages());
-			}
 			PageAlias alias = PageAlias.loadBySiteAndPath(site, path);
 			if (alias != null) {
 				Page page = alias.getPage();

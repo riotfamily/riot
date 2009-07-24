@@ -23,24 +23,27 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.config;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.riotfamily.common.hibernate.AbstractSetupBean;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
-public class SystemPageSync extends AbstractSetupBean {
-
-	private SitemapSchema sitemapSchema;
-	
-	public SystemPageSync(SessionFactory sessionFactory,
-			SitemapSchema sitemapSchema) {
-		
-		super(sessionFactory);
-		this.sitemapSchema = sitemapSchema;
-	}
+public class RootPage extends SystemPage {
 
 	@Override
-	protected void setup(Session session) throws Exception {
-		sitemapSchema.syncSystemPages();
+	public String getName() {
+		return "root";
 	}
 	
+	@Override
+	public String getPathComponent() {
+		return "";
+	}
+	
+	public void sync(Site site) {
+		Page page = site.getRootPage();
+		if (page == null) {
+			page = createPage(site, null);
+			site.setRootPage(page);
+		}
+		update(page);
+	}
 }

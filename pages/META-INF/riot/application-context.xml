@@ -19,9 +19,8 @@
 		<constructor-arg ref="sitemapSchema" />
 	</bean>
 	
-	<bean class="org.riotfamily.pages.config.SystemPageSync">
+	<bean class="org.riotfamily.pages.config.DefaultSiteCreator">
 		<constructor-arg ref="sessionFactory" />
-		<constructor-arg ref="sitemapSchema" />
 	</bean>
 	
 	<bean class="org.riotfamily.pages.config.SystemPageSyncListener">
@@ -29,10 +28,6 @@
 	</bean>
 	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
-	
-	<bean class="org.riotfamily.pages.model.Site" scope="prototype">
-		<property name="cacheService" ref="cacheService" />
-	</bean>
 
 	<bean class="org.riotfamily.pages.model.Page" scope="prototype">
 		<property name="cacheService" ref="cacheService" />

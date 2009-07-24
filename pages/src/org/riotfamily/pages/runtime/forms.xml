@@ -30,7 +30,6 @@
 			initializer="pageFormInitializer">
 		<group label-key="page.preferences">
 			<textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,*@{}-]*)" />
-			<checkbox bind="folder" />
 		</group>
 	</form>
 

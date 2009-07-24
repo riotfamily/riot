@@ -25,6 +25,7 @@ package org.riotfamily.pages.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -41,7 +42,6 @@ import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.model.SiteMapItem;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -93,10 +93,6 @@ public class PageFacade {
 		return page.isHidden();
 	}
 	
-	public boolean isFolder() {
-		return page.isFolder();
-	}
-
 	public String getPath() {
 		return page.getPath();
 	}
@@ -130,7 +126,7 @@ public class PageFacade {
 	}
 
 	public Page getParent() {
-		return page.getParentPage();
+		return page.getParent();
 	}
 
 	public Collection<Page> getChildPages() {
@@ -139,7 +135,10 @@ public class PageFacade {
 	}
 
 	public List<Page> getSiblings() {
-		SiteMapItem parent = page.getParent();
+		Page parent = page.getParent();
+		if (parent == null) {
+			return Collections.singletonList(page);
+		}
 		TaggingContext.tag(parent.getCacheTag());
 		return getVisiblePages(parent.getChildPages());
 	}
@@ -174,7 +173,7 @@ public class PageFacade {
 			if (value != null) {
 				return value;
 			}
-			p = p.getParentPage();
+			p = p.getParent();
 		}
 		return null;
 	}
