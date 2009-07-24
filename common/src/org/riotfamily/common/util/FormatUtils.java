@@ -140,6 +140,9 @@ public final class FormatUtils {
 	 * </pre>
 	 */
 	public static String xmlToCamelCase(String s) {
+		if (s == null) {
+			return null;
+		}
 		StringBuilder sb = new StringBuilder(s);
 		int offset = 0;
 		int i;
