@@ -1,4 +1,4 @@
 <div class="box loginStatus">
 	<@c.message "label.status.hello">Hello</@c.message> <span class="userName">${sessionData.userName!}</span>.
-	<@c.message "label.status.lastLogin">Last login</@c.message>: ${sessionData.lastLoginDate!} [${sessionData.lastLoginIP!}]
+	<@c.message "label.status.lastLogin">Last login</@c.message>: ${(sessionData.lastLoginDate?datetime)!} [${sessionData.lastLoginIP!}]
 </div>
