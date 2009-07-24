@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
+import org.hibernate.EntityMode;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -43,8 +43,7 @@ import org.hibernate.type.Type;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public class ChainedInterceptor extends EmptyInterceptor 
-		implements SessionFactoryAwareInterceptor {
+public class ChainedInterceptor implements SessionFactoryAwareInterceptor {
 
 	private Set<Interceptor> interceptors = Collections.emptySet();
 
@@ -151,6 +150,77 @@ public class ChainedInterceptor extends EmptyInterceptor
 					previousState, propertyNames, types);
 		}
 		return result;
+	}
+
+	public int[] findDirty(Object entity, Serializable id,
+			Object[] currentState, Object[] previousState,
+			String[] propertyNames, Type[] types) {
+		
+		for (Interceptor interceptor : interceptors) {
+			int[] result = interceptor.findDirty(entity, id, currentState, previousState, propertyNames, types);
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
+	}
+
+	public Object getEntity(String entityName, Serializable id)
+			throws CallbackException {
+
+		for (Interceptor interceptor : interceptors) {
+			Object result = interceptor.getEntity(entityName, id);
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
+	}
+
+	public String getEntityName(Object object) throws CallbackException {
+		for (Interceptor interceptor : interceptors) {
+			String result = interceptor.getEntityName(object);
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
+	}
+
+	public Object instantiate(String entityName, EntityMode entityMode,
+			Serializable id) throws CallbackException {
+
+		for (Interceptor interceptor : interceptors) {
+			Object result = interceptor.instantiate(entityName, entityMode, id);
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
+	}
+
+	public void onCollectionRecreate(Object collection, Serializable key)
+			throws CallbackException {
+		
+		for (Interceptor interceptor : interceptors) {
+			interceptor.onCollectionRecreate(collection, key);
+		}
+	}
+
+	public void onCollectionRemove(Object collection, Serializable key)
+			throws CallbackException {
+		
+		for (Interceptor interceptor : interceptors) {
+			interceptor.onCollectionRemove(collection, key);
+		}
+	}
+
+	public void onCollectionUpdate(Object collection, Serializable key)
+			throws CallbackException {
+		
+		for (Interceptor interceptor : interceptors) {
+			interceptor.onCollectionUpdate(collection, key);
+		}
 	}
 
 }
