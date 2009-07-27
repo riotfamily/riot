@@ -31,11 +31,11 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Order;
-import org.riotfamily.core.dao.ParentChildDao;
-import org.riotfamily.core.dao.SortableDao;
+import org.riotfamily.core.dao.Hierarchy;
+import org.riotfamily.core.dao.Sortable;
 
 
 /**
@@ -43,7 +43,7 @@ import org.riotfamily.core.dao.SortableDao;
  * bean's properties as (filtered) collection.
  */
 public class HqlCollectionDao extends AbstractHibernateRiotDao 
-		implements SortableDao, ParentChildDao, CutAndPasteEnabledDao {
+		implements Sortable, Hierarchy, CutAndPaste {
 
 	private RiotLog log = RiotLog.get(HqlCollectionDao.class);
 	

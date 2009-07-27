@@ -24,15 +24,15 @@
 package org.riotfamily.core.dao;
 
 /**
- * In order to support copy and paste operations a RiotDao must be capable of
- * creating copies of entities. 
+ * RiotDao that allows to change the position of an entity using the 
+ * SwapCommand.
  */
-public interface CopyAndPasteEnabledDao extends RiotDao {
+public interface Swapping extends RiotDao {
 
-	public boolean canCopy(Object entity);
+	public boolean canSwap(Object entity, Object parent, 
+    		ListParams params, int swapWith);
 	
-	public boolean canPasteCopy(Object entity, Object dest);
-	
-	public void pasteCopy(Object entity, Object dest);
-	
+	public void swapEntity(Object entity, Object parent, 
+    		ListParams params, int swapWith);
+
 }

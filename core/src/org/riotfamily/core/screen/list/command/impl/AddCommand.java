@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.impl;
 
-import org.riotfamily.core.dao.ConstrainedDao;
+import org.riotfamily.core.dao.Constraints;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.CommandContext;
@@ -37,8 +37,8 @@ public class AddCommand extends AbstractChildCommand {
 	@Override
 	protected boolean isEnabled(CommandContext context, SelectionItem parent) {
 		RiotDao dao = context.getScreen().getDao();
-		if (dao instanceof ConstrainedDao) {
-			ConstrainedDao cd = (ConstrainedDao) dao;
+		if (dao instanceof Constraints) {
+			Constraints cd = (Constraints) dao;
 			return cd.canAdd(parent.getObject());
 		}
 		return true;

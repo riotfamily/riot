@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
-import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.ListParams;
-import org.riotfamily.core.dao.ParentChildDao;
+import org.riotfamily.core.dao.Hierarchy;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 
 
@@ -39,8 +39,8 @@ import org.riotfamily.riot.hibernate.support.HibernateUtils;
 /**
  * ParentChildDao implementation based on Hibernate.
  */
-public class HqlParentChildDao extends HqlDao implements ParentChildDao, 
-		CutAndPasteEnabledDao {
+public class HqlParentChildDao extends HqlDao implements Hierarchy, 
+		CutAndPaste {
 
     private String parentProperty;
     

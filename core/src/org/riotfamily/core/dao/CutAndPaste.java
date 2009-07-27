@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -24,11 +24,17 @@
 package org.riotfamily.core.dao;
 
 /**
- * Marker interface that indicates that a DAO supports sorting.
- * 
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * In order to support cut and paste operations a RiotDao must be capable of
+ * performing add and remove operations without saving or deleting. 
  */
-public interface SortableDao {
+public interface CutAndPaste extends Hierarchy {
 
+	public boolean canCut(Object entity);
+	
+	public void cut(Object entity, Object parent);
+	
+	public boolean canPasteCut(Object entity, Object target);
+
+	public void pasteCut(Object entity, Object parent);
+	
 }

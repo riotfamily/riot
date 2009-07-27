@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.RiotDaoAdapter;
-import org.riotfamily.core.dao.SwappableItemDao;
+import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.model.Site;
 import org.springframework.dao.DataAccessException;
@@ -38,7 +38,7 @@ import org.springframework.dao.DataAccessException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao {
+public class SiteRiotDao extends RiotDaoAdapter implements Swapping {
 
 	public Class<?> getEntityClass() {
 		return Site.class;

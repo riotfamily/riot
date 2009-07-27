@@ -27,13 +27,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.riotfamily.core.dao.ConstrainedDao;
-import org.riotfamily.core.dao.CopyAndPasteEnabledDao;
-import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.Constraints;
+import org.riotfamily.core.dao.CopyAndPaste;
+import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.ListParams;
-import org.riotfamily.core.dao.ParentChildDao;
-import org.riotfamily.core.dao.RootNodeTreeDao;
-import org.riotfamily.core.dao.SwappableItemDao;
+import org.riotfamily.core.dao.SingleRoot;
+import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
@@ -44,9 +43,8 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRiotDao implements ParentChildDao, RootNodeTreeDao, 
-		ConstrainedDao, SwappableItemDao, CutAndPasteEnabledDao, 
-		CopyAndPasteEnabledDao {
+public class PageRiotDao implements SingleRoot,	Constraints, Swapping, 
+		CutAndPaste, CopyAndPaste {
 
 	private SitemapSchema sitemapSchema;
 	
@@ -87,6 +85,10 @@ public class PageRiotDao implements ParentChildDao, RootNodeTreeDao,
 	public String getObjectId(Object entity) {
 		Page page = (Page) entity;
 		return page.getId().toString();
+	}
+	
+	public boolean isNode(Object entity) {
+		return entity instanceof Page;
 	}
 	
 	public Object getRootNode(Object parent) {

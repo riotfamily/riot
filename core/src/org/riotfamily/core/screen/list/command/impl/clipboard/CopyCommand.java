@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.impl.clipboard;
 
-import org.riotfamily.core.dao.CopyAndPasteEnabledDao;
+import org.riotfamily.core.dao.CopyAndPaste;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
@@ -44,7 +44,7 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 	
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		CopyAndPasteEnabledDao dao = getDao(context.getScreen());
+		CopyAndPaste dao = getDao(context.getScreen());
 		for (SelectionItem item : selection) {
 			if (!dao.canCopy(item.getObject())) {
 				return false;
@@ -53,9 +53,9 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 		return true;
 	}
 	
-	private CopyAndPasteEnabledDao getDao(ListScreen screen) {
-		Assert.isInstanceOf(CopyAndPasteEnabledDao.class, screen.getDao());
-		return (CopyAndPasteEnabledDao) screen.getDao();
+	private CopyAndPaste getDao(ListScreen screen) {
+		Assert.isInstanceOf(CopyAndPaste.class, screen.getDao());
+		return (CopyAndPaste) screen.getDao();
 	}
 	
 	public CommandResult execute(CommandContext context, Selection selection) {
@@ -70,7 +70,7 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 	public boolean canPaste(ListScreen source, Selection selection, 
 			CommandContext context, SelectionItem parentItem) {
 
-		CopyAndPasteEnabledDao dao = getDao(context.getScreen());
+		CopyAndPaste dao = getDao(context.getScreen());
 		Object parent = getParent(parentItem, context);
 		
 		for (SelectionItem item : selection) {
@@ -85,7 +85,7 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 			CommandContext context, SelectionItem parentItem, 
 			NotificationResult notification) {
 		
-		CopyAndPasteEnabledDao dao = getDao(context.getScreen());
+		CopyAndPaste dao = getDao(context.getScreen());
 		Object parent = getParent(parentItem, context);
 
 		for (SelectionItem item : selection) {

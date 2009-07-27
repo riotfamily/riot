@@ -35,8 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.core.dao.SortableDao;
-import org.riotfamily.core.dao.TreeDao;
+import org.riotfamily.core.dao.Sortable;
+import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListParamsImpl;
 import org.riotfamily.core.screen.list.dto.ListColumn;
@@ -74,7 +74,7 @@ public class ListModelBuilder extends ListItemLoader {
 		ListModel model = new ListModel(items, itemsTotal, params);
 		model.setColumns(createColumns());
 		model.setCommandButtons(createButtons());
-		model.setTree(dao instanceof TreeDao);
+		model.setTree(dao instanceof Tree);
 		
 		//model.setInstantAction(chooser || singleAction);
 		
@@ -118,7 +118,7 @@ public class ListModelBuilder extends ListItemLoader {
 			column.setProperty(config.getProperty());
 			column.setHeading(getHeading(config.getProperty(), config.getLookupLevel(), i++));
 
-			column.setSortable(dao instanceof SortableDao && config.isSortable());
+			column.setSortable(dao instanceof Sortable && config.isSortable());
 			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
 			if (params.hasOrder() && params.getPrimaryOrder()
 					.getProperty().equals(config.getProperty())) {

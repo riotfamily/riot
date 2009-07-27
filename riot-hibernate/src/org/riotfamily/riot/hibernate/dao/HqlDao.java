@@ -30,7 +30,7 @@ import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.ListParams;
-import org.riotfamily.core.dao.SwappableItemDao;
+import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.core.screen.list.ListParamsImpl;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.util.Assert;
@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
 /**
  * RiotDao implementation based on Hibernate.
  */
-public class HqlDao extends AbstractHqlDao implements SwappableItemDao {
+public class HqlDao extends AbstractHqlDao implements Swapping {
 
 	private RiotLog log = RiotLog.get(HqlDao.class);
 

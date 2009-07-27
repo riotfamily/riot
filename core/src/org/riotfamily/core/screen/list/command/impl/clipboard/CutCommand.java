@@ -26,10 +26,10 @@ package org.riotfamily.core.screen.list.command.impl.clipboard;
 import java.util.List;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.core.dao.CutAndPasteEnabledDao;
-import org.riotfamily.core.dao.ParentChildDao;
+import org.riotfamily.core.dao.CutAndPaste;
+import org.riotfamily.core.dao.Hierarchy;
 import org.riotfamily.core.dao.RiotDao;
-import org.riotfamily.core.dao.TreeDao;
+import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.CommandContext;
@@ -53,7 +53,7 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 	
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		CutAndPasteEnabledDao dao = getDao(context.getScreen());
+		CutAndPaste dao = getDao(context.getScreen());
 		if (selection.size() == 0) {
 			return false;
 		}
@@ -68,9 +68,9 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 		return true;
 	}
 
-	private CutAndPasteEnabledDao getDao(ListScreen screen) {
-		Assert.isInstanceOf(CutAndPasteEnabledDao.class, screen.getDao());
-		return (CutAndPasteEnabledDao) screen.getDao();
+	private CutAndPaste getDao(ListScreen screen) {
+		Assert.isInstanceOf(CutAndPaste.class, screen.getDao());
+		return (CutAndPaste) screen.getDao();
 	}
 	
 	private boolean allItemsHaveSameParent(Selection selection) {
@@ -87,11 +87,11 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 		List<Object> ancestors = Generics.newArrayList();
 		RiotDao dao = context.getScreen().getDao();
 		Object parent = item.getObject();
-		if (parent != null && dao instanceof TreeDao) {
-			TreeDao tree = (TreeDao) dao;
-			while (parent != null) {
+		if (parent != null && dao instanceof Tree) {
+			Tree tree = (Tree) dao;
+			while (parent != null && tree.isNode(parent)) {
 				ancestors.add(parent);
-				parent = tree.getParentNode(parent);
+				parent = tree.getParent(parent);
 			}
 		}
 		else {
@@ -119,7 +119,7 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 	public boolean canPaste(ListScreen source, Selection selection, 
 			CommandContext context, SelectionItem parentItem) {
 		
-		CutAndPasteEnabledDao dao = getDao(context.getScreen());
+		CutAndPaste dao = getDao(context.getScreen());
 		Object parent = getNewParent(parentItem, context);
 		
 		List<Object> ancestors = getAncestors(context, parentItem);
@@ -137,8 +137,8 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 			CommandContext context, SelectionItem parentItem, 
 			NotificationResult notification) {
 		
-		CutAndPasteEnabledDao sourceDao = getDao(source);
-		CutAndPasteEnabledDao targetDao = getDao(context.getScreen());
+		CutAndPaste sourceDao = getDao(source);
+		CutAndPaste targetDao = getDao(context.getScreen());
 		Object newParent = getNewParent(parentItem, context);
 		
 		int count = 0;
@@ -161,13 +161,7 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 				"{0,choice,0#No items have|1#Item has|1<{0} items have} been moved.");
 	}
 	
-	private Object getOldParent(Object obj, ParentChildDao dao) {
-		 if (dao instanceof TreeDao) {
-			Object parentNode = ((TreeDao) dao).getParentNode(obj);
-			if (parentNode != null) {
-				return parentNode;
-			}
-		}
+	private Object getOldParent(Object obj, Hierarchy dao) {
 		return dao.getParent(obj);
 	}
 	

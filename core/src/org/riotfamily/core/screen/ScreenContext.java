@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mapping.HandlerUrlUtils;
-import org.riotfamily.core.dao.ParentChildDao;
+import org.riotfamily.core.dao.Hierarchy;
 import org.riotfamily.core.dao.RiotDao;
 
 public class ScreenContext {
@@ -184,8 +184,8 @@ public class ScreenContext {
 				}
 			}
 			else if (getObject() != null) {
-				if (dao instanceof ParentChildDao) {
-					parent = ((ParentChildDao) dao).getParent(object);
+				if (dao instanceof Hierarchy) {
+					parent = ((Hierarchy) dao).getParent(object);
 				}
 			}
 		}

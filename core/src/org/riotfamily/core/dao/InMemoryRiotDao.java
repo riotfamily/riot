@@ -34,7 +34,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.RecoverableDataAccessException;
 
 public abstract class InMemoryRiotDao extends RiotDaoAdapter 
-		implements SortableDao {
+		implements Sortable {
 
 	@Override
 	public Collection<?> list(Object parent, ListParams params)

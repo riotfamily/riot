@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.impl.support;
 
-import org.riotfamily.core.dao.TreeDao;
+import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
@@ -51,7 +51,7 @@ public abstract class AbstractChildCommand extends AbstractCommand {
 
 	
 	private SelectionItem getParent(CommandContext context, Selection selection) {
-		if (context.getScreen().getDao() instanceof TreeDao) {
+		if (context.getScreen().getDao() instanceof Tree) {
 			if (selection.size() == 1) {
 				return selection.getSingleItem();
 			}

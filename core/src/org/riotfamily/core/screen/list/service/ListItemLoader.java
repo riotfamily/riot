@@ -35,8 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.core.dao.RootNodeTreeDao;
-import org.riotfamily.core.dao.TreeDao;
+import org.riotfamily.core.dao.SingleRoot;
+import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.core.screen.list.dto.ListItem;
@@ -48,14 +48,14 @@ import org.springframework.beans.NullValueInNestedPathException;
  */
 class ListItemLoader extends ChooserCommandHandler implements ListRenderContext {
 	
-	protected RootNodeTreeDao rootNodeTreeDao;
+	protected SingleRoot rootNodeTreeDao;
 	
 	ListItemLoader(ListService service, String key, 
 			HttpServletRequest request) {
 		
 		super(service, key, request);
-		if (dao instanceof RootNodeTreeDao) {
-			rootNodeTreeDao = (RootNodeTreeDao) dao;
+		if (dao instanceof SingleRoot) {
+			rootNodeTreeDao = (SingleRoot) dao;
 		}
 	}
 	
@@ -124,23 +124,26 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 	
 	protected Object[] loadExpanded(String expandedId) {
 		List<Object> result = Generics.newArrayList();
-		if (expandedId != null) {
-			Object expanded = dao.load(expandedId);
-			while (expanded != null) {
-				result.add(0, expanded);
-				expanded = ((TreeDao) dao).getParentNode(expanded);
+		if (dao instanceof Tree) {
+			if (expandedId != null) {
+				Object expanded = dao.load(expandedId);
+				Tree tree = (Tree) dao;
+				while (expanded != null && tree.isNode(expanded)) {
+					result.add(0, expanded);
+					expanded = tree.getParent(expanded);
+				}
 			}
-		}
-		else if (rootNodeTreeDao != null) {
-			result.add(0, rootNodeTreeDao.getRootNode(getParent()));
+			else if (rootNodeTreeDao != null) {
+				result.add(0, rootNodeTreeDao.getRootNode(getParent()));
+			}
 		}
 		result.add(0, getParent());
 		return result.toArray();
 	}
 	
 	private boolean isExpandable(Object node) {
-		if (dao instanceof TreeDao) {
-			return ((TreeDao) dao).hasChildren(node, getParent(), state.getParams());
+		if (dao instanceof Tree) {
+			return ((Tree) dao).hasChildren(node, getParent(), state.getParams());
 		}
 		return false;
 	}

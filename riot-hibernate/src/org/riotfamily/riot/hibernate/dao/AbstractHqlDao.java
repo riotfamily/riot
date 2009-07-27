@@ -32,14 +32,14 @@ import org.hibernate.SessionFactory;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Order;
-import org.riotfamily.core.dao.SortableDao;
+import org.riotfamily.core.dao.Sortable;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 
 /**
  * RiotDao implementation based on Hibernate.
  */
 public abstract class AbstractHqlDao extends AbstractHibernateRiotDao 
-		implements SortableDao {
+		implements Sortable {
 
 	private RiotLog log = RiotLog.get(AbstractHqlDao.class);
 

@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list.command.impl;
 
-import org.riotfamily.core.dao.SwappableItemDao;
+import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
@@ -36,8 +36,8 @@ public abstract class SwapCommand extends AbstractCommand {
 
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		if (selection.size() == 1 && context.getScreen().getDao() instanceof SwappableItemDao) {
-			SwappableItemDao dao = (SwappableItemDao) context.getScreen().getDao();
+		if (selection.size() == 1 && context.getScreen().getDao() instanceof Swapping) {
+			Swapping dao = (Swapping) context.getScreen().getDao();
 			return dao.canSwap(selection.getSingleItem().getObject(), 
 					context.getParent(), context.getParams(), getSwapWith());
 		}
@@ -45,7 +45,7 @@ public abstract class SwapCommand extends AbstractCommand {
 	}
 
 	public CommandResult execute(CommandContext context, Selection selection) {
-		SwappableItemDao dao = (SwappableItemDao) context.getScreen().getDao();
+		Swapping dao = (Swapping) context.getScreen().getDao();
 		dao.swapEntity(selection.getSingleItem().getObject(), context.getParent(), 
 				context.getParams(), getSwapWith());
 		

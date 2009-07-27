@@ -23,16 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.dao;
 
-public interface ConstrainedDao extends RiotDao {
+public interface SingleRoot extends Tree {
 
 	/**
-	 * Returns whether a child can be added to the given parent.
+	 * Returns the root node.
 	 */
-	public boolean canAdd(Object parent);
-	
-	/**
-	 * Returns whether the given entity can be deleted.
-	 */
-	public boolean canDelete(Object entity);
+	public Object getRootNode(Object parent);
 
 }

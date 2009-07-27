@@ -33,7 +33,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class RiotDaoAdapter implements ConstrainedDao {
+public class RiotDaoAdapter implements Constraints {
 
 	public Class<?> getEntityClass() {
 		return null;
