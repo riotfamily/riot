@@ -30,9 +30,6 @@ import org.riotfamily.components.model.Component;
 
 public interface ComponentRenderer {
 
-	public static final String PARENT_ATTRIBUTE = 
-			ComponentRenderer.class.getName() + ".parent";
-	
 	/**
 	 * Renders the given ComponentVersion.
 	 */

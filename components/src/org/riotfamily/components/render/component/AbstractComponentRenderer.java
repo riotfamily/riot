@@ -39,9 +39,6 @@ import org.riotfamily.components.model.Component;
  */
 public abstract class AbstractComponentRenderer implements ComponentRenderer {
 
-	public static final String CONTAINER = AbstractComponentRenderer.class.getName()
-			+ ".container";
-
 	public static final String COMPONENT_ID = "componentId";
 
 	public static final String THIS = "this";
@@ -58,8 +55,6 @@ public abstract class AbstractComponentRenderer implements ComponentRenderer {
 			HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
 
-		Object outerContainer = request.getAttribute(CONTAINER);
-		request.setAttribute(CONTAINER, component);
 		try {
 			renderInternal(component, position, listSize, 
 					request, response);
@@ -78,7 +73,6 @@ public abstract class AbstractComponentRenderer implements ComponentRenderer {
 
 			pre.end();
 		}
-		request.setAttribute(CONTAINER, outerContainer);
 	}
 
 	protected abstract void renderInternal(Component component,

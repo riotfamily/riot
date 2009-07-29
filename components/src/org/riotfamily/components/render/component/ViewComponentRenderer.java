@@ -83,7 +83,6 @@ public class ViewComponentRenderer extends AbstractComponentRenderer {
 		model.put(THIS, component);
 		model.put(POSITION, new Integer(position));
 		model.put(LIST_SIZE, new Integer(listSize));
-		model.put(PARENT, request.getAttribute(PARENT_ATTRIBUTE));
 		
 		try {
 			String viewName = viewNamePrefix + component.getType() + viewNameSuffix;

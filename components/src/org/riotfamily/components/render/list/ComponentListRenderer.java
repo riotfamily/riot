@@ -35,7 +35,6 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
-import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.core.security.AccessController;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -135,7 +134,6 @@ public class ComponentListRenderer {
 
 		ComponentList list;
 		RenderStrategy strategy = liveModeRenderStrategy;
-		request.setAttribute(ComponentRenderer.PARENT_ATTRIBUTE, component);
 		list = (ComponentList) component.getValue(key);
 		if (EditModeUtils.isEditMode(request)) {
 			if (list == null) {
@@ -151,7 +149,6 @@ public class ComponentListRenderer {
 		if (list != null) {
 			strategy.render(list, config, request, new CapturingResponseWrapper(response, sw));
 		}
-		request.removeAttribute(ComponentRenderer.PARENT_ATTRIBUTE);
 		return sw.toString();
 	}
 
