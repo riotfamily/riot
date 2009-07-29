@@ -214,8 +214,6 @@
 		</property>
 	</bean>
 	
-	<bean id="quickjumpController" name="/riot-utils/quickjump.html" class="org.riotfamily.common.web.controller.QuickjumpController" />
-	
 	<bean id="txt2imgButtonController" name="/riot-utils/imagebtn/@{style}.*" class="org.riotfamily.website.txt2img.ButtonController">
 		<constructor-arg ref="buttonService" />
 	</bean>
