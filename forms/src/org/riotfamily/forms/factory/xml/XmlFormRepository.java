@@ -211,6 +211,13 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		return new DefaultFormFactory(initializer, validator, beanClass);
 	}
 	
+	@Override
+	public boolean containsForm(String id) {
+		configWatcher.checkForModifications();
+		return super.containsForm(id);
+	}
+	
+	@Override
 	public FormFactory getFormFactory(String id) {
 		configWatcher.checkForModifications();
 		return super.getFormFactory(id);
