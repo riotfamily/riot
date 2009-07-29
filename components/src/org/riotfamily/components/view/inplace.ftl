@@ -59,31 +59,6 @@
 	</#if>
 </#macro>
 
-<#---
-  - <p>
-  - Macro that enables the Riot JavaScript edit-callbacks. The callback 
-  - functions are invoked when a controller is re-rendered via AJAX. 
-  - To register a custom callback, add the following code as nested content:
-  - </p>
-  - <pre>
-  - addRiotEditCallback(function(el) {
-  -     alert('ComponentList updated: ' + el.componentList.id);
-  - });
-  - </pre>
-  -->
-<#macro callbacks>
-	<#if editMode>
-		<!-- Riot edit callbacks -->
-		<script type="text/javascript" language="JavaScript">
-		var riotEditCallbacks = [];
-		function addRiotEditCallback(callback) {
-			riotEditCallbacks.push(callback);
-		}
-		<#nested />
-		</script>
-	</#if>
-</#macro>
-
 <#macro componentList key min=0 max=1000 initial=[] valid=[]>
 	<#if !currentContainer??>
 		<#stop "Use inplace.use to select a container">

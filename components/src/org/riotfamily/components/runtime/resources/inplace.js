@@ -144,7 +144,7 @@ riot.InplaceEditor = Class.create({
 		}
 		this.save();
 		this.hide();
-		if (this.element.onedit) this.element.onedit();
+		this.element.fire('inplace:edited');
 	}
 
 });

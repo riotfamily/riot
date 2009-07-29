@@ -488,11 +488,7 @@ riot.components = (function() {
 			html.evalScripts.bind(html).defer();
 			this.element = el;
 			riot.toolbar.selectedButton.applyHandler(false);
-			if (window.riotEditCallbacks) {
-				riotEditCallbacks.each(function(callback) {
-					callback(el);
-				});
-			}
+			el.fire('component:updated');
 			riot.toolbar.selectedButton.applyHandler(true);
 		}
 	});
@@ -596,11 +592,7 @@ riot.components = (function() {
 			this.componentList.findComponentElements();
 			this.componentList.updatePositionClasses();
 			this.id = el.readAttribute('riot:contentId');
-			if (window.riotEditCallbacks) {
-				riotEditCallbacks.each(function(callback) {
-					callback(el);
-				});
-			}
+			el.fire('component:updated');
 			findContainer(el).markAsDirty();
 			new Effect.BlindDown(el, {
 				duration: 0.5, 
@@ -825,6 +817,10 @@ riot.components = (function() {
 			$$('body > *:not(#riotPreviewFrame)').invoke('show');
 			riot.outline.hide();
 			riot.toolbar.buttons.get('browse').click();
+		},
+		
+		propertiesChanged: function() {
+			activeComponent.propertiesChanged();
 		},
 		
 		editProperties: function(e) {

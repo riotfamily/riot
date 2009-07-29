@@ -34,10 +34,8 @@ var Txt2ImgConfig = Class.create({
 		this.pixelImage.src = pixelUrl;
 		this.selectors = selectors;
 		this.createHoverRules();
-		document.observe("dom:loaded", this.insertImages.bind(this));
-		if (window.riotEditCallbacks) {
-			addRiotEditCallback(this.insertImages.bind(this));
-		}
+		document.observe('dom:loaded', this.insertImages.bind(this));
+		document.observe('component:updated', this.insertImages.bind(this));
 	},
 
 	createHoverRules: function() {
@@ -95,7 +93,7 @@ var Txt2ImgReplacement = Class.create({
 		this.config = config;
 		this.el = $(el);
 		this.sel = sel;
-		el.onedit = this.updateText.bind(this);
+		el.observe('inplace:edited', this.updateText.bind(this));
 	},
 	
 	// Whether to use the alphaImageLoader or not (detects IE 6):
@@ -363,7 +361,7 @@ var CssMatcher = Class.create({
 		}
 		
 		if (this.el) {
-			// Yield execution the back to browser's renderer after 50 elements
+			// Yield execution back to the browser's renderer after 50 elements
 			// in order to prevent a complete UI freeze in IE.
 			if (this.counter % 50 == 0)	{
 				setTimeout(this.callback, 1);
