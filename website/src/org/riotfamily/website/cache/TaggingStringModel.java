@@ -25,7 +25,7 @@ package org.riotfamily.website.cache;
 
 import java.util.List;
 
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.CachiusContext;
 import org.riotfamily.common.util.Generics;
 
 import freemarker.ext.beans.BeansWrapper;
@@ -54,7 +54,7 @@ public class TaggingStringModel extends StringModel {
 	@Override
 	public TemplateModel get(String key) throws TemplateModelException {
 		for (String tag : tags) {
-			TaggingContext.tag(tag);
+			CachiusContext.tag(tag);
 		}
 		return super.get(key);
 	}

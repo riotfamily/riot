@@ -21,7 +21,7 @@ public class SiteFacade {
 	public SiteFacade(Site site, HttpServletRequest request) {
 		this.site = site;
 		this.request = request;
-		CacheTagUtils.tag(Site.class, site.getId());
+		CacheTagUtils.tag(site);
 	}
 		
 	public String getAbsoluteUrl() {

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheHandler;
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.CachiusContext;
 import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.cachius.servlet.ServletWriterHandler;
 import org.riotfamily.common.util.FormatUtils;
@@ -46,11 +46,11 @@ public class CacheMacroHelper {
 	}
 	
 	public void tag(String name) {
-		TaggingContext.tag(name);
+		CachiusContext.tag(name);
 	}
 
 	public void preventCaching() {
-		TaggingContext.preventCaching();
+		CachiusContext.preventCaching();
 	}
 	
 	public class BlockDirective implements TemplateDirectiveModel {

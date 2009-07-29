@@ -26,7 +26,7 @@ package org.riotfamily.components.cache;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.CachiusContext;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.support.EditModeUtils;
 
@@ -54,7 +54,7 @@ public final class ComponentCacheUtils {
 	}
 	
 	public static void addContainerTags(ContentContainer container, boolean preview) {
-		TaggingContext.tag(getContainerTag(container, preview));
+		CachiusContext.tag(getContainerTag(container, preview));
 	}
 	
 	/**

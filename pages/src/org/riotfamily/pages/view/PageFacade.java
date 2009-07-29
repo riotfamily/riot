@@ -33,7 +33,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.CachiusContext;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
@@ -63,7 +63,7 @@ public class PageFacade {
 		this.page = page;
 		this.request = request;
 		this.preview = isPreview(page);
-		TaggingContext.tag(page.getCacheTag());
+		CachiusContext.tag(page.getCacheTag());
 	}
 		
 	private boolean isPreview(Page page) {
@@ -89,10 +89,6 @@ public class PageFacade {
 		return page.getPathComponent();
 	}
 
-	public boolean isHidden() {
-		return page.isHidden();
-	}
-	
 	public String getPath() {
 		return page.getPath();
 	}
@@ -130,8 +126,8 @@ public class PageFacade {
 	}
 
 	public Collection<Page> getChildPages() {
-		TaggingContext.tag(page.getCacheTag());
-		return getVisiblePages(page.getChildPages());
+		CachiusContext.tag(page.getCacheTag());
+		return getPublishedPages(page.getChildPages());
 	}
 
 	public List<Page> getSiblings() {
@@ -139,8 +135,8 @@ public class PageFacade {
 		if (parent == null) {
 			return Collections.singletonList(page);
 		}
-		TaggingContext.tag(parent.getCacheTag());
-		return getVisiblePages(parent.getChildPages());
+		CachiusContext.tag(parent.getCacheTag());
+		return getPublishedPages(parent.getChildPages());
 	}
 	
 	public Page getPreviousSibling() {
@@ -228,14 +224,10 @@ public class PageFacade {
 		return page.isPublished();
 	}
 
-	public boolean isVisible() {
-		return page.isVisible(preview);
-	}
-
-	private List<Page> getVisiblePages(Collection<Page> pages) {
+	private List<Page> getPublishedPages(Collection<Page> pages) {
 		ArrayList<Page> result = new ArrayList<Page>();
 		for (Page page : pages) {
-			if (page.isVisible(isPreview(page))) {
+			if (page.isPublished() || isPreview(page)) {
 				result.add(page);
 			}
 		}
