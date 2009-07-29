@@ -34,7 +34,7 @@ import org.springframework.web.servlet.mvc.ParameterizableViewController;
 
 /**
  * {@link ParameterizableViewController} that uses the request parameters as
- * model. Don't use this controller if you need to access multivalued 
+ * model. Don't use this controller if you need to access multi-valued 
  * parameters since in this case only the first value is exposed to the model.
  */
 public class ParameterViewController extends ParameterizableViewController {
