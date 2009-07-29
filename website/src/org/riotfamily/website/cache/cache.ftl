@@ -1,5 +1,6 @@
 <#---
   - @param key
+  - @param name
   - @param bypass
   - @param ttl
   -->

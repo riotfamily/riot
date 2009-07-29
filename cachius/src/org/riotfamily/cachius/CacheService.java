@@ -241,7 +241,7 @@ public class CacheService {
 		}
 		else {
 			// The item should be discarded
-			CachiusContext.populate(newItem);
+			CachiusContext.bubbleUp(newItem);
 			handler.writeCacheItem(newItem);
 			newItem.delete();
 		}
@@ -326,7 +326,7 @@ public class CacheService {
         		entry.getLock().writeLock().unlock();
         	}
         	CacheItem item = entry.getItem();
-        	CachiusContext.populate(item);
+        	CachiusContext.bubbleUp(item);
         	handler.writeCacheItem(item);
         }
         finally {

@@ -59,12 +59,18 @@ public class CacheMacroHelper {
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
-			boolean bypass = getBooleanParam(params, "bypass", true);
+			boolean bypass = getBooleanParam(params, "bypass", false);
 			String cacheKey = null;
 			long ttl = CacheHandler.CACHE_ETERNALLY;
 			
 			if (!bypass) {
-				cacheKey = getRequiredStringParam(params, "key", env);
+				cacheKey = getStringParam(params, "key", null);
+				if (cacheKey == null) {
+					cacheKey = request.getRequestURL()
+							.append('#')
+							.append(getRequiredStringParam(params, "key", env))
+							.toString();
+				}
 				String s = getStringParam(params, "ttl", null);
 				if (s != null) {
 					ttl = FormatUtils.parseMillis(s);

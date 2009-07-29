@@ -199,7 +199,7 @@ public class CachiusContext {
 		return currentContext.get();
 	}
 
-	static void populate(CacheItem cacheItem) {
+	static void bubbleUp(CacheItem cacheItem) {
 		if (cacheItem != null) {
 			CachiusContext context = getContext();
 			if (context != null) {
