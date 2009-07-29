@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface ModelPostProcessor {
 
 	public void postProcess(Map<String, Object> model, 
-			HttpServletRequest request, HttpServletResponse response);
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception;
 	
 }
