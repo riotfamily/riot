@@ -29,9 +29,8 @@ import org.riotfamily.common.util.ColorUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
  */
-public class ColorTool {
+public final class ColorTool {
 
 	/**
 	 * Returns a shade of the given color with a brightness adjusted by the 
