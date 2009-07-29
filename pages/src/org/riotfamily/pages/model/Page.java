@@ -82,8 +82,6 @@ public class Page extends ActiveRecordSupport implements Lifecycle {
 
 	private String pathComponent;
 
-	private boolean hidden;
-
 	private String path;
 	
 	private boolean published;
@@ -108,7 +106,6 @@ public class Page extends ActiveRecordSupport implements Lifecycle {
 		this.masterPage = master;
 		this.pageType = master.getPageType();
 		this.pathComponent = master.getPathComponent();
-		this.hidden = master.isHidden();
 	}
 	
 	@Required	
@@ -207,14 +204,6 @@ public class Page extends ActiveRecordSupport implements Lifecycle {
 		this.pathComponent = pathComponent;
 	}
 	
-	public boolean isHidden() {
-		return this.hidden;
-	}
-	
-	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
-	}
-	
 	@Transient
 	public String getUrl() {
 		StringBuilder url = new StringBuilder();
@@ -292,10 +281,6 @@ public class Page extends ActiveRecordSupport implements Lifecycle {
 	public boolean isRequestable() {
 		return (published && site.isEnabled())
 			|| AccessController.isAuthenticatedUser();
-	}
-
-	public boolean isVisible(boolean preview) {
-		return !isHidden() && (published || preview);
 	}
 		
 	public String toString() {
@@ -380,13 +365,17 @@ public class Page extends ActiveRecordSupport implements Lifecycle {
 			getPageProperties().publish();
 		}
 		invalidateCacheItems();
-		getParent().invalidateCacheItems();
+		if (getParent() != null) {
+			getParent().invalidateCacheItems();
+		}
 	}
 	
 	public void unpublish() {
 		setPublished(false);
 		invalidateCacheItems();
-		getParent().invalidateCacheItems();
+		if (getParent() != null) {
+			getParent().invalidateCacheItems();
+		}
 	}
 		
 	private void invalidateCacheItems() {
