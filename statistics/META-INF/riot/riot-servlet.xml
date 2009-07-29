@@ -93,6 +93,7 @@
 									</property>
 									<property name="columns" ref="statsColumns" />
 					        	</bean>
+					        	<!-- 
 					        	<bean id="applicationProperties" class="org.riotfamily.core.screen.list.TreeListScreen">
 					        		<property name="icon" value="cog" />
 					        		<property name="dao">
@@ -102,6 +103,7 @@
         							</property>
         							<property name="columns" ref="statsColumns" />
 					        	</bean>
+					        	-->
 					        </list>
 				       </property>
 					</bean>
