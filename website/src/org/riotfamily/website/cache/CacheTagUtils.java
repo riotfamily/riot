@@ -26,7 +26,10 @@ package org.riotfamily.website.cache;
 import java.io.Serializable;
 
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.CachiusContext;
+import org.riotfamily.common.hibernate.ActiveRecord;
+import org.riotfamily.common.hibernate.ActiveRecordUtils;
+import org.springframework.util.ClassUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -38,19 +41,24 @@ public final class CacheTagUtils {
 	}
 	
 	public static String getTag(Class<?> clazz) {
-		return clazz.getName();	
+		return ClassUtils.getUserClass(clazz).getName();	
 	}
 	
 	public static String getTag(Class<?> clazz, Serializable id) {
-		return new StringBuilder(clazz.getName()).append('#').append(id.toString()).toString(); 
+		return getTag(clazz) + '#' + id; 
+	}
+		
+	public static void tag(Class<?> clazz, Serializable id) {
+		CachiusContext.tag(getTag(clazz, id));
 	}
 	
-	public static void tag(Class<?> clazz, Serializable id) {
-		TaggingContext.tag(getTag(clazz, id));
+	public static void tag(ActiveRecord record) {
+		Serializable id = ActiveRecordUtils.getId(record);
+		CachiusContext.tag(getTag(record.getClass(), id));
 	}
 	
 	public static void tag(Class<?> clazz) {
-		TaggingContext.tag(getTag(clazz));
+		CachiusContext.tag(getTag(clazz));
 	}
 	
 	public static void tag(String className) throws ClassNotFoundException {
@@ -69,6 +77,10 @@ public final class CacheTagUtils {
 		    cacheService.invalidateTaggedItems(getTag(clazz));
 		    cacheService.invalidateTaggedItems(getTag(clazz, objectId));
 		}
+	}
+	
+	public static void invalidate(CacheService cacheService, ActiveRecord record) {
+		invalidate(cacheService, record.getClass(), ActiveRecordUtils.getId(record));
 	}
 		
 }

@@ -26,7 +26,7 @@ package org.riotfamily.core.view;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.CachiusContext;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.core.security.AccessController;
 
@@ -56,6 +56,6 @@ public class RiotTemplateExceptionHandler implements TemplateExceptionHandler {
 	        catch (IOException e) {
 	        }
 		}
-		TaggingContext.preventCaching();
+		CachiusContext.preventCaching();
 	}
 }

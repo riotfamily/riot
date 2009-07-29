@@ -26,12 +26,12 @@ package org.riotfamily.website.freemarker;
 import java.io.File;
 import java.io.IOException;
 
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.CachiusContext;
 
 import freemarker.cache.FileTemplateLoader;
 
 /**
- * TemplateLoader that invokes {@link TaggingContext#addInvolvedFile(File)}
+ * TemplateLoader that invokes {@link CachiusContext#addInvolvedFile(File)}
  * to track files involved in the generation of cached content.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -47,7 +47,7 @@ public class RiotFileTemplateLoader extends FileTemplateLoader {
 	public Object findTemplateSource(String name) throws IOException {
 		File file = (File) super.findTemplateSource(name);
 		if (file != null) {
-			TaggingContext.addFile(file);
+			CachiusContext.addFile(file);
 		}
 		return file;
 	}
