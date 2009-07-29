@@ -125,6 +125,7 @@
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/core/runtime/view/error.ftl" />
 	</bean>
 
+	<!--
     <bean id="cacheKeyAugmentor" class="org.riotfamily.core.resource.CodeRevelationCacheKeyAugmentor">
 		<constructor-arg ref="messageSource" />
 	</bean>
@@ -136,6 +137,7 @@
 		<constructor-arg ref="cacheService" />
 		<property name="cacheKeyAugmentor" ref="cacheKeyAugmentor" />
 	</bean>
+	-->
 	
 	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter">
 		<description>
