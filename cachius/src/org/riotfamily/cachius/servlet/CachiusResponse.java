@@ -26,11 +26,11 @@ package org.riotfamily.cachius.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.cachius.support.Cookies;
@@ -40,12 +40,12 @@ import org.riotfamily.common.web.util.DelegatingServletOutputStream;
 
 
 /**
- * A HttpServletResponseWrapper that captures the response and updates
- * the associated CacheItem.
+ * Implementation of the HttpServletResponse interface that captures the 
+ * response and updates the associated CacheItem.
  *
  * @author Felix Gnass
  */
-public class CachiusResponseWrapper extends HttpServletResponseWrapper {
+public class CachiusResponse implements HttpServletResponse {
 
     private CacheItem cacheItem;
     
@@ -64,23 +64,42 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     private Cookies cookies = new Cookies();
 
 	private boolean contentLengthSet;
+
+	private String characterEncoding;
+
+	private Locale locale;
     
         	
-    public CachiusResponseWrapper(HttpServletResponse response, 
-    		CacheItem cacheItem, SessionIdEncoder sessionIdEncoder) {
+    public CachiusResponse(CacheItem cacheItem, 
+    		SessionIdEncoder sessionIdEncoder) {
     	
-        super(response);
         this.cacheItem = cacheItem;
         this.sessionIdEncoder = sessionIdEncoder;
     }
-	    
+	
+    public int getStatus() {
+		return status;
+	}
+    
     public void setStatus(int status) {
-        super.setStatus(status);
         this.status = status;
     }
     
-    public boolean isOk() {
-    	return status == 0 || status == HttpServletResponse.SC_OK;
+    public void setStatus(int status, String msg) {
+    	this.status = status;
+	}
+    
+    public void sendError(int status) throws IOException {
+    	this.status = status;
+    }
+    
+    public void sendError(int status, String msg) throws IOException {
+    	this.status = status;
+    }
+    
+    public void sendRedirect(String location) throws IOException {
+    	headers.add("Location", location);
+    	status = 302;
     }
     
     public String getContentType() {
@@ -95,6 +114,10 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
 		contentLengthSet = true;
     }
     
+	public boolean containsHeader(String name) {
+		return headers.contain(name);
+	}
+
     public void addDateHeader(String name, long date) {
     	headers.addDate(name, date);
     }
@@ -175,23 +198,14 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     
     public void stopCapturing() throws IOException {
     	flushBuffer();
-    	if (writer != null) {
-    		writer.close();
-    	}
-    	else if (outputStream != null) {
-    		outputStream.close();
-    	}
-    	else {
-        	// If never getWriter() nor getOutputStream() have been called, the
-        	// content is empty and the cacheItem will be emptied.
-    		cacheItem.clear();
-    	}
+    	resetBuffer();
     }
     
     /**
      * Sets the captured headers on the CacheItem.
      */
     public void updateHeaders() {
+    	cacheItem.setStatus(status);
     	cacheItem.setContentType(contentType);
     	cacheItem.setHeaders(headers);
     	cacheItem.setCookies(cookies);
@@ -228,5 +242,76 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
         return encodeURL(url);
     }
 
-    
+	public void setCharacterEncoding(String characterEncoding) {
+		this.characterEncoding = characterEncoding;
+	}
+
+	public String getCharacterEncoding() {
+		return characterEncoding;
+	}
+	
+	public void setLocale(Locale locale) {
+		if (locale == null) {
+            return;
+        }
+        this.locale = locale;
+        String language = locale.getLanguage();
+        if ((language != null) && (language.length() > 0)) {
+            String country = locale.getCountry();
+            StringBuilder sb = new StringBuilder(language);
+            if (country != null && country.length() > 0) {
+                sb.append('-');
+                sb.append(country);
+            }
+            language = sb.toString();
+        }
+        setHeader("Content-Language", language);
+	}
+	
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public boolean isCommitted() {
+		return false;
+	}
+
+	public int getBufferSize() {
+		return 0;
+	}
+	
+	public void setBufferSize(int size) {
+	}
+
+	public void reset() {
+		resetBuffer();
+		headers.clear();
+		cookies.clear();
+		status = 0;
+		contentType = null;
+		contentLengthSet = false;
+		characterEncoding = null;
+		locale = null;
+	}
+
+	public void resetBuffer() {
+		try {
+			if (writer != null) {
+	    		writer.close();
+	    	}
+	    	else if (outputStream != null) {
+	    		outputStream.close();
+	    	}
+	    	else {
+	        	// If never getWriter() nor getOutputStream() have been called, the
+	        	// content is empty and the cacheItem will be emptied.
+	    		cacheItem.clear();
+	    	}
+		}
+		catch (IOException e) {
+		}
+		writer = null;
+		outputStream = null;
+	}
+
 }

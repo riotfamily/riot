@@ -84,6 +84,9 @@ public class CacheItem implements Serializable {
     /** Set of files involved in the creation of the cached data */
     private Set<File> involvedFiles;
     
+    /** The HTTP Status code */
+    private int status;
+    
     /** The Content-Type of the cached data */
     private String contentType;
     
@@ -201,8 +204,12 @@ public class CacheItem implements Serializable {
 		return invalidated;
 	}
 	
-	public void setTimeToLive(long ttl) {
-		this.expires = ttl == -1 ? -1 : System.currentTimeMillis() + ttl;
+	public void setExpires(long expires) {
+		this.expires = expires;
+	}
+	
+	public long getExpires() {
+		return expires;
 	}
 	
     public boolean isExpired() {
@@ -211,6 +218,17 @@ public class CacheItem implements Serializable {
     		|| !exists(); 
     }
 
+    public void setTimeToLive(long ttl) {
+		setExpires(ttl == -1 ? -1 : (System.currentTimeMillis() + ttl));
+	}
+    
+    public long getTimeToLive() {
+    	if (expires == -1) {
+    		return -1;
+    	}
+    	return expires - System.currentTimeMillis();
+	}
+    
 	/**
      * Checks whether the cache file exists, is a regular file and any
      * data has been ever written into it.
@@ -230,6 +248,15 @@ public class CacheItem implements Serializable {
 		return file.getParentFile();
 	}
 	
+	
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
 	/**
 	 * Sets the Content-Type.
 	 */
@@ -299,7 +326,9 @@ public class CacheItem implements Serializable {
     }
     
     public void writeTo(HttpServletResponse response) throws IOException {
-            
+        if (status > 0) {    
+        	response.setStatus(status);
+        }
     	if (contentType != null) {
     		response.setContentType(contentType);
     	}

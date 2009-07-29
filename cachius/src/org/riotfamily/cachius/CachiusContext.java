@@ -33,22 +33,24 @@ import org.springframework.util.Assert;
 /**
  * Provides static methods to tag cache items.
  */
-public class TaggingContext {
+public class CachiusContext {
 	
-	private static ThreadLocal<TaggingContext> currentContext = new ThreadLocal<TaggingContext>();
+	private static ThreadLocal<CachiusContext> currentContext = new ThreadLocal<CachiusContext>();
 
-	private TaggingContext parent;
+	private CachiusContext parent;
 
 	private HashSet<String> tags;
 	
 	private HashSet<File> involvedFiles;
+	
+	private long timeToLive = -1;
 	
 	private boolean preventCaching;
 
 	/**
 	 * Private constructor that creates a nested context.
 	 */
-	private TaggingContext(TaggingContext parent) {
+	private CachiusContext(CachiusContext parent) {
 		this.parent = parent;
 	}
 
@@ -56,14 +58,12 @@ public class TaggingContext {
 	 * Returns the parent context, or <code>null</code> if it is the root
 	 * context.
 	 */
-	public TaggingContext getParent() {
+	public CachiusContext getParent() {
 		return this.parent;
 	}
 
 	/**
-	 * Adds the given tag. If the context is a nested context, the ancestors are
-	 * also tagged.
-	 * 
+	 * Adds the given tag.
 	 * @throws IllegalArgumentException if the tag is <code>null</code>
 	 */
 	public void addTag(String tag) {
@@ -73,9 +73,6 @@ public class TaggingContext {
 		}
 		tag = tag.intern();
 		tags.add(tag);
-		if (parent != null) {
-			parent.addTag(tag);
-		}
 	}
 	
 	public void addTags(Collection<String> tags) {
@@ -100,9 +97,6 @@ public class TaggingContext {
 			involvedFiles = new HashSet<File>();
 		}
 		involvedFiles.add(file);
-		if (parent != null) {
-			parent.addInvolvedFile(file);
-		}
 	}
 	
 	public void addInvolvedFiles(Collection<File> files) {
@@ -120,9 +114,6 @@ public class TaggingContext {
 	public void setPreventCaching(boolean preventCaching) {
 		if (preventCaching) {
 			this.preventCaching = true;
-			if (parent != null) {
-				parent.setPreventCaching(true);
-			}
 		}
 	}
 	
@@ -141,6 +132,16 @@ public class TaggingContext {
 		return involvedFiles;
 	}
 	
+	public long getTimeToLive() {
+		return timeToLive;
+	}
+
+	public void setTimeToLive(long ttl) {
+		if (timeToLive == -1 || ttl < timeToLive) {
+			timeToLive = ttl;
+		}
+	}
+	
 	/**
 	 * Closes the context making its parent the new current context. 
 	 */
@@ -153,32 +154,39 @@ public class TaggingContext {
 
 	
 	public static void tag(String tag) {
-		TaggingContext context = getContext();
+		CachiusContext context = getContext();
 		if (context != null) {
 			context.addTag(tag);
 		}
 	}
 	
 	public static void addFile(File file) {
-		TaggingContext context = getContext();
+		CachiusContext context = getContext();
 		if (context != null) {
 			context.addInvolvedFile(file);
 		}
 	}
 	
 	public static void preventCaching() {
-		TaggingContext context = getContext();
+		CachiusContext context = getContext();
 		if (context != null) {
 			context.setPreventCaching(true);
 		}
 	}
-
+	
+	public static void expireIn(long millis) {
+		CachiusContext context = getContext();
+		if (context != null) {
+			context.setTimeToLive(millis);
+		}
+	}
+	
 	/**
 	 * Opens a nested context.
 	 */
-	public static TaggingContext openNestedContext() {
-		TaggingContext parent = currentContext.get();
-		TaggingContext context = new TaggingContext(parent);
+	public static CachiusContext openNestedContext() {
+		CachiusContext parent = currentContext.get();
+		CachiusContext context = new CachiusContext(parent);
 		currentContext.set(context);
 		return context;
 	}
@@ -187,29 +195,19 @@ public class TaggingContext {
 	 * Retrieves the context for the current thread. The method will 
 	 * return <code>null</code> if no open context exists.
 	 */
-	public static TaggingContext getContext() {
+	public static CachiusContext getContext() {
 		return currentContext.get();
 	}
 
-	public static void inheritFrom(CacheItem cacheItem) {
+	static void populate(CacheItem cacheItem) {
 		if (cacheItem != null) {
-			TaggingContext context = getContext();
+			CachiusContext context = getContext();
 			if (context != null) {
 				context.addTags(cacheItem.getTags());
 				context.addInvolvedFiles(cacheItem.getInvolvedFiles());
-				//REVISIT Old code was: context.setPreventCaching(cacheItem.isNew());
+				context.setTimeToLive(cacheItem.getTimeToLive());
 			}
 		}
 	}
 	
-	public static void inheritFrom(TaggingContext other) {
-		if (other != null) {
-			TaggingContext context = getContext();
-			if (context != null) {
-				context.addTags(other.getTags());
-				context.addInvolvedFiles(other.getInvolvedFiles());
-				context.setPreventCaching(other.isPreventCaching());
-			}
-		}
-	}
 }

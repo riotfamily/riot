@@ -72,11 +72,35 @@ public class Headers implements Serializable {
 		set(name, format.format(new Date(date)));
 	}
 
+	public void clear() {
+		headers.clear();
+	}
+	
+	public boolean contain(String name) {
+		for (Header header : headers) {
+			if (header.getName().equalsIgnoreCase(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private Header getHeader(String name) {
+		for (Header header : headers) {
+			if (header.getName().equalsIgnoreCase(name)) {
+				return header;
+			}
+		}
+		Header header = new Header(name);
+		headers.add(header);
+		return header;
+	}
+	
 	public void remove(String name) {
 		Iterator<Header> it = headers.iterator();
 		while (it.hasNext()) {
 			Header header = it.next();
-			if (header.getName().equals(name)) {
+			if (header.getName().equalsIgnoreCase(name)) {
 				it.remove();
 			}
 		}
@@ -86,17 +110,6 @@ public class Headers implements Serializable {
 		for (Header header : headers) {
 			header.addToResponse(response);
 		}
-	}
-	
-	private Header getHeader(String name) {
-		for (Header header : headers) {
-			if (header.getName().equals(name)) {
-				return header;
-			}
-		}
-		Header header = new Header(name);
-		headers.add(header);
-		return header;
 	}
 	
 	private static class Header implements Serializable {

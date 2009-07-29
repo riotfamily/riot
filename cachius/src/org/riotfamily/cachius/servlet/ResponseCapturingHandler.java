@@ -47,14 +47,14 @@ public abstract class ResponseCapturingHandler extends SessionIdCacheHandler {
 	}
 
 	protected boolean updateCacheItemInternal(CacheItem cacheItem) throws Exception {
-		CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
-				response, cacheItem, getSessionIdEncoder());
+		CachiusResponse cachiusResponse = new CachiusResponse(
+				cacheItem, getSessionIdEncoder());
 		
-		handleInternal(wrapper);
+		handleInternal(cachiusResponse);
 		
-		wrapper.stopCapturing();
-		wrapper.updateHeaders();
-		return wrapper.isOk();
+		cachiusResponse.stopCapturing();
+		cachiusResponse.updateHeaders();
+		return cachiusResponse.getStatus() < 500;
 	}
 	
 	public void handleUncached() throws Exception {

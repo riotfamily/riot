@@ -131,13 +131,10 @@ public class CacheService {
         	}
         	else {
         		stats.addHit();
-        		if (!serveCacheEntry(handler, entry)) {
-        			// The rare case, that the item was deleted due to a cleanup
-       				capture(entry, mtime, handler);        			
-        		}
-        		else {
-        			TaggingContext.inheritFrom(item);
-        		}
+        		if (log.isDebugEnabled()) {
+            		log.debug("Serving cached content: " + entry.getKey());
+            	}
+        		serveCacheEntry(handler, entry);        			
         	}
         }
 	}
@@ -197,13 +194,14 @@ public class CacheService {
     		CacheHandler handler) throws Exception {
     	
     	CacheItem oldItem;
+    	// Acquire a write-lock to set the lastModified time, so that
+    	// the item looks up-to-date for other threads. 
     	WriteLock writeLock = entry.getLock().writeLock();
 		writeLock.lock();
 		try {
 			oldItem = entry.getItem();
 			if (oldItem.getLastModified() > mtime) {
 				log.debug("Item has already been updated by another thread");
-				TaggingContext.inheritFrom(oldItem);
 				serveCacheEntry(handler, entry);
 				return;
 			}
@@ -213,32 +211,37 @@ public class CacheService {
 			}
 		}
 		finally {
+			// Release the write-lock unless it was already released by serveCacheEntry()
 			if (entry.getLock().isWriteLockedByCurrentThread()) {
 				writeLock.unlock();
 			}
 		}
 		
 		log.debug("Performing non-blocking update ...");
-		CacheItem newItem = entry.newItem();
-		boolean update = updateCacheItem(handler, oldItem, newItem);
 		
+		// Create a new CacheItem and capture the content ...
+		CacheItem newItem = entry.newItem();
+		
+		boolean update = updateCacheItem(handler, mtime, oldItem, newItem);
 		if (update) {
+			// Acquire a write-lock again to swap the CacheItems
 			writeLock = entry.getLock().writeLock();
 			writeLock.lock();
 			try {
-				newItem.setLastModified(mtime);
-				newItem.setTimeToLive(handler.getTimeToLive());
 				entry.replaceItem(newItem);
 				serveCacheEntry(handler, entry);
 			}
 			finally {
+				// The lock should have already been released by serveCacheEntry(),
+				// but in case an exception was thrown before, make sure the entry is unlocked.
 				if (entry.getLock().isWriteLockedByCurrentThread()) {
 					writeLock.unlock();
 				}
 			}	
 		}
 		else {
-			TaggingContext.inheritFrom(newItem);
+			// The item should be discarded
+			CachiusContext.populate(newItem);
 			handler.writeCacheItem(newItem);
 			newItem.delete();
 		}
@@ -251,32 +254,35 @@ public class CacheService {
 		writeLock.lock();
 		try {
 			CacheItem item = entry.getItem();
-			if (item.getLastModified() >= mtime) {
-				TaggingContext.inheritFrom(item);
+			if (item.getLastModified() < mtime) {
+				// Item is stale and must be revalidated
+				updateCacheItem(handler, mtime, item, item);
 			}
-			else {
-				if (updateCacheItem(handler, item, item)) {
-					item.setLastModified(mtime);
-					item.setTimeToLive(handler.getTimeToLive());
-				}
-			}
+			// Serve the cached content (either old or newly created)
 			serveCacheEntry(handler, entry);
 		}
 		finally {
+			// The lock should have already been released by serveCacheEntry(),
+			// but in case an exception was thrown before, make sure the entry is unlocked.
 			if (entry.getLock().isWriteLockedByCurrentThread()) {
 				writeLock.unlock();
 			}
 		}
     }
     
-    private boolean updateCacheItem(CacheHandler handler,
+    private boolean updateCacheItem(CacheHandler handler, long mtime,
     		CacheItem oldItem, CacheItem newItem) throws Exception {
     	
-    	TaggingContext ctx = TaggingContext.openNestedContext();
+    	CachiusContext ctx = CachiusContext.openNestedContext();
 		boolean update = handler.updateCacheItem(newItem);
 		ctx.close();
 		if (update && !ctx.isPreventCaching()) {
 			cache.removeFromIndex(oldItem);
+			
+			newItem.setLastModified(mtime);
+			newItem.setTimeToLive(getSmallestPositiveValue(
+					handler.getTimeToLive(),
+					ctx.getTimeToLive()));
 			
 			newItem.setTags(ctx.getTags());
 			cache.addToIndex(newItem);
@@ -295,12 +301,24 @@ public class CacheService {
 		}
     }
     
-    private boolean serveCacheEntry(CacheHandler handler, CacheEntry entry) 
+    private long getSmallestPositiveValue(long a, long b) {
+    	if (a < 0) {
+    		return b;
+    	}
+    	if (b < 0) {
+    		return a;
+    	}
+    	return Math.min(a, b);
+    }
+    
+    /**
+     * Serves the cached content. Acquires a read-lock for the given entry.
+     * if the current thread already has a write-lock, the lock is down-graded.
+     * When the method returns, all locks will be released.
+     */
+    private void serveCacheEntry(CacheHandler handler, CacheEntry entry) 
     		throws IOException {
     	
-    	if (log.isDebugEnabled()) {
-    		log.debug("Serving cached content: " + entry.getKey());
-    	}
 		ReadLock readLock = entry.getLock().readLock();
         readLock.lock();
         try {
@@ -308,12 +326,12 @@ public class CacheService {
         		entry.getLock().writeLock().unlock();
         	}
         	CacheItem item = entry.getItem();
-			handler.writeCacheItem(item);
+        	CachiusContext.populate(item);
+        	handler.writeCacheItem(item);
         }
         finally {
         	readLock.unlock();	
         }
-        return true;
     }
         
 }

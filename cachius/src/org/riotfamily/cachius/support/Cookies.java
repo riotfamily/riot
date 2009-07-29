@@ -44,6 +44,10 @@ public class Cookies implements Serializable {
 		cookies.add(new SerializableCookie(cookie));
 	}
 	
+	public void clear() {
+		cookies = null;
+	}
+	
 	public void addToResponse(HttpServletResponse response) {
 		if (cookies != null) {
 			for (SerializableCookie cookie : cookies) {
