@@ -23,6 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.config;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
@@ -36,6 +39,11 @@ public class RootPage extends SystemPage {
 	@Override
 	public String getPathComponent() {
 		return "";
+	}
+	
+	@Override
+	public List<String> getSuffixes() {
+		return Collections.singletonList("");
 	}
 	
 	public void sync(Site site) {
