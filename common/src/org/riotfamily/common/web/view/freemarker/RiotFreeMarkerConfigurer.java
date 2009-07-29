@@ -68,6 +68,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	
 	private boolean exposeStaticModels = true;
 	
+	private boolean exposeBeanFactoryModel = true;
+	
 	private int templateUpdateDelay = 5;
 	
 	private String urlEscapingCharset = "UTF-8";
@@ -139,6 +141,14 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	}
 	
 	/**
+	 * Whether a {@link BeanFactoryTemplateModel} should be exposed as
+	 * <tt>beans</tt>.
+	 */
+	public void setExposeBeanFactoryModel(boolean exposeBeanFactoryModel) {
+		this.exposeBeanFactoryModel = exposeBeanFactoryModel;
+	}
+	
+	/**
 	 * Sets whether the FreeMarker template cache should be used 
 	 * (default is <code>true</code>).
 	 */
@@ -189,6 +199,11 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		
 		if (exposeStaticModels) {
 			config.setSharedVariable("statics", objectWrapper.getStaticModels());
+		}
+
+		if (exposeBeanFactoryModel) {
+			config.setSharedVariable("beans", new BeanFactoryTemplateModel(
+					applicationContext, objectWrapper));
 		}
 		
 		if (useTemplateCache) {
