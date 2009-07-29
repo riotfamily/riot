@@ -42,6 +42,7 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.compressor.YUICssCompressor;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.website.freemarker.RiotFileTemplateLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -160,8 +161,8 @@ public class CssTemplateController extends AbstractCacheableController
 		if (freeMarkerConfig == null) {
 			freeMarkerConfig = new Configuration();
 		}
-		freeMarkerConfig.setDirectoryForTemplateLoading(
-				new File(servletContext.getRealPath("/")));
+		freeMarkerConfig.setTemplateLoader(new RiotFileTemplateLoader(
+				new File(servletContext.getRealPath("/"))));
 	}
 
 	public boolean gzipResponse(HttpServletRequest request) {
