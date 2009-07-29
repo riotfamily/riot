@@ -34,19 +34,19 @@ import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
-import org.riotfamily.components.render.component.EditModeComponentDecorator;
+import org.riotfamily.components.render.component.EditModeComponentRenderer;
 import org.riotfamily.forms.factory.FormRepository;
 
 public class EditModeRenderStrategy extends DefaultRenderStrategy {
 
-	private EditModeComponentDecorator editModeRenderer;
+	private EditModeComponentRenderer editModeRenderer;
 	
 	public EditModeRenderStrategy(ComponentRenderer renderer,
 			ComponentMetaDataProvider metaDataProvider,
 			FormRepository formRepository, ComponentListRenderer listRenderer) {
 		
 		super(renderer);
-		editModeRenderer = new EditModeComponentDecorator(
+		editModeRenderer = new EditModeComponentRenderer(
 				renderer, metaDataProvider, formRepository);
 		
 		listRenderer.setEditModeRenderStrategy(this);

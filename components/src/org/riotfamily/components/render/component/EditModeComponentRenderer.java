@@ -9,7 +9,7 @@ import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.forms.factory.FormRepository;
 
-public class EditModeComponentDecorator implements ComponentRenderer {
+public class EditModeComponentRenderer implements ComponentRenderer {
 
 	private RiotLog log = RiotLog.get(this);
 	
@@ -19,7 +19,7 @@ public class EditModeComponentDecorator implements ComponentRenderer {
 	
 	private ComponentMetaDataProvider metaDataProvider;
 	
-	public EditModeComponentDecorator(ComponentRenderer renderer, 
+	public EditModeComponentRenderer(ComponentRenderer renderer, 
 			ComponentMetaDataProvider metaDataProvider,
 			FormRepository formRepository) {
 		

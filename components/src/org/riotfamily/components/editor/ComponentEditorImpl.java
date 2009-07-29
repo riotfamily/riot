@@ -53,7 +53,7 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.component.ComponentRenderer;
-import org.riotfamily.components.render.component.EditModeComponentDecorator;
+import org.riotfamily.components.render.component.EditModeComponentRenderer;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.session.LoginManager;
@@ -90,7 +90,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 			ContentFormRepository formRepository) {
 		
 		this.cacheService = cacheService;
-		this.renderer = new EditModeComponentDecorator(renderer, metaDataProvider, formRepository);
+		this.renderer = new EditModeComponentRenderer(renderer, metaDataProvider, formRepository);
 		this.metaDataProvider = metaDataProvider;
 	}
 
