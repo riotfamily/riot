@@ -47,10 +47,6 @@ public final class Resources {
 			new ScriptResource("scriptaculous/slider.js", "Control.Slider", 
 			PROTOTYPE);
 		
-	public static final ScriptResource RIOT_WINDOW_CALLBACK = 
-			new ScriptResource("riot-js/window-callback.js", "WindowCallback", 
-			PROTOTYPE);
-	
 	public static final ScriptResource RIOT_DIALOG = 
 			new ScriptResource("riot-js/window/dialog.js", "riot.window.Dialog", 
 			PROTOTYPE);

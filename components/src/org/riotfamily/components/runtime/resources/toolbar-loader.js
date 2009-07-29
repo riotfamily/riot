@@ -24,7 +24,6 @@ function loadToolbarScripts() {
 		{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
 		{src: 'toolbar.js'},
 		{src: 'riot-js/effects.js'},
-		{src: 'riot-js/window-callback.js'},
 		{src: 'riot-js/window/dialog.js'},
 		{src: 'inplace.js'},
 		{src: 'components.js'}
