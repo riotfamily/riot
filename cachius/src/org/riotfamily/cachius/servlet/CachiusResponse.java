@@ -63,18 +63,17 @@ public class CachiusResponse implements HttpServletResponse {
     
     private Cookies cookies = new Cookies();
 
-	private boolean contentLengthSet;
-
 	private String characterEncoding = "UTF-8";
 
 	private Locale locale;
     
         	
     public CachiusResponse(CacheItem cacheItem, 
-    		SessionIdEncoder sessionIdEncoder) {
+    		SessionIdEncoder sessionIdEncoder, String characterEncoding) {
     	
         this.cacheItem = cacheItem;
         this.sessionIdEncoder = sessionIdEncoder;
+        this.characterEncoding = characterEncoding;
     }
 	
     public int getStatus() {
@@ -111,7 +110,6 @@ public class CachiusResponse implements HttpServletResponse {
 	}
 
 	public void setContentLength(int len) {
-		contentLengthSet = true;
     }
     
 	public boolean containsHeader(String name) {
@@ -209,7 +207,6 @@ public class CachiusResponse implements HttpServletResponse {
     	cacheItem.setContentType(contentType);
     	cacheItem.setHeaders(headers);
     	cacheItem.setCookies(cookies);
-    	cacheItem.setSetContentLength(contentLengthSet);
     }
     
     /**
@@ -289,7 +286,6 @@ public class CachiusResponse implements HttpServletResponse {
 		cookies.clear();
 		status = 0;
 		contentType = null;
-		contentLengthSet = false;
 		characterEncoding = null;
 		locale = null;
 	}

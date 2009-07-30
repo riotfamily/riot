@@ -48,7 +48,8 @@ public abstract class ResponseCapturingHandler extends SessionIdCacheHandler {
 
 	protected boolean updateCacheItemInternal(CacheItem cacheItem) throws Exception {
 		CachiusResponse cachiusResponse = new CachiusResponse(
-				cacheItem, getSessionIdEncoder());
+				cacheItem, getSessionIdEncoder(), 
+				response.getCharacterEncoding());
 		
 		handleInternal(cachiusResponse);
 		

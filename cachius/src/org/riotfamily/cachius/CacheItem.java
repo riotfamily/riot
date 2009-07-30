@@ -111,10 +111,6 @@ public class CacheItem implements Serializable {
     /** Whether the item has been invalidated */
     private boolean invalidated;
     
-    /** Whether to set Content-Length header or not */
-	private boolean setContentLength;
-    
-    
     /**
      * Creates a new CacheItem in the specified directory.
      */
@@ -265,13 +261,6 @@ public class CacheItem implements Serializable {
 	}
 	
 	/**
-	 * Sets whether a Content-Length header should be set.
-	 */
-	public void setSetContentLength(boolean setContentLength) {
-		this.setContentLength = setContentLength;
-	}
-	
-	/**
 	 * Sets HTTP headers. 
 	 */
 	public void setHeaders(Headers headers) {
@@ -340,9 +329,7 @@ public class CacheItem implements Serializable {
         }
         int contentLength = getSize();
         if (contentLength > 0) {
-        	if (setContentLength) {
-        		response.setContentLength(contentLength);
-        	}
+       		response.setContentLength(contentLength);
             if (binary) {
                 writeTo(response.getOutputStream());
             }
