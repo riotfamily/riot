@@ -40,6 +40,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.image.ImageUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.xml.DocumentReader;
 import org.springframework.util.Assert;
@@ -724,6 +725,17 @@ public final class ServletUtils {
 		Assert.notNull(attr, "Missing request attribute: " + name);
 		Assert.isInstanceOf(Long.class, attr, "Request attribute " + name + " must be a Longg");
 		return (Long) attr;
+	}
+	
+	public static void serveTransparentPixelGif(HttpServletResponse response) {
+		response.setContentType("image/gif");
+		response.setContentLength(ImageUtils.PIXEL_GIF.length);
+		setFarFutureExpiresHeader(response);
+		try {
+			ImageUtils.serveTransparentPixelGif(response.getOutputStream());
+		}
+		catch (IOException e) {
+		}
 	}
 
 }

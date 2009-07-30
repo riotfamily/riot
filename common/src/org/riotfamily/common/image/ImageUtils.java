@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.Iterator;
 import java.util.Locale;
@@ -40,6 +41,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -58,7 +60,17 @@ public final class ImageUtils {
     
     public static final String FORMAT_PNG = "png";
     
+    public static byte[] PIXEL_GIF = FormatUtils.hexStringToByteArray(
+    		"4749463839610100010091ff00ffffff" +
+    		"000000c0c0c000000021f90401000002" +
+    		"002c0000000001000100000202540100" +
+    		"3b");
+    
     private ImageUtils() {
+    }
+    
+    public static void serveTransparentPixelGif(OutputStream out) throws IOException {
+    	IOUtils.serve(PIXEL_GIF, out);
     }
     
     public static BufferedImage readImage(File f) throws IOException {

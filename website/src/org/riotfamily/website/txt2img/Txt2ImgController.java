@@ -68,11 +68,8 @@ public class Txt2ImgController extends AbstractCacheableController
 	private static final Resource SCRIPT_RESOURCE = new ClassPathResource(
 			"txt2img.js", Txt2ImgController.class);
 
-	private static final Resource PIXEL_RESOURCE = new ClassPathResource(
-			"pixel.gif", Txt2ImgController.class);
 
 	private long lastModified = System.currentTimeMillis();
-
 	
 	private Map<String, ReplacementRule> rules = new HashMap<String, ReplacementRule>();
 	
@@ -280,8 +277,6 @@ public class Txt2ImgController extends AbstractCacheableController
 	 * to work around the PNG loading in IE &lt; 7.
 	 */
 	protected void servePixelGif(HttpServletResponse response) throws IOException {
-		response.setContentType("image/gif");
-		ServletUtils.setFarFutureExpiresHeader(response);
-		IOUtils.copy(PIXEL_RESOURCE.getInputStream(), response.getOutputStream());
+		ServletUtils.serveTransparentPixelGif(response);
 	}
 }

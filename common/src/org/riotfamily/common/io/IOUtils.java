@@ -247,6 +247,23 @@ public class IOUtils {
 		return -1;
 	}
 	
+	/**
+	 * Writes the content of the given buffer to an OutputStream,
+	 * swallowing exceptions caused by a ClientAbortException.
+	 */
+	public static void serve(byte[] buffer, OutputStream out) throws IOException {
+		try {
+			out.write(buffer);
+		}
+		catch (SocketException e) {
+		}
+		catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
+	}
+	
 	public static void closeStream(InputStream in) {
 		if (in != null) {
 			try {
