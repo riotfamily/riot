@@ -415,16 +415,14 @@
 						<property name="enabled" value="${riot.resources.compress=true}" />
 					</bean>
 				</entry>
-				<entry key="text/javascript">
-					<bean class="org.riotfamily.website.performance.YUIJavaScriptCompressor">
-						<property name="enabled" value="${riot.resources.compress=true}" />
-					</bean>					
-				</entry>
+				<entry key="text/javascript" value-ref="javaScriptCompressor" />
 			</map>
 		</property>
 	</bean>
 	
-	<bean name="/resources/*/joined.js" class="org.riotfamily.website.performance.MinifyScriptController" />
+	<bean name="/resources/*/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
+		<constructor-arg ref="javaScriptCompressor" />
+	</bean>
 	
 	<!-- Misc (TODO) -->
 

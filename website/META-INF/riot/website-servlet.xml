@@ -116,6 +116,13 @@
 		<description>
 			Controller to compress (minify) JavaScript files.
 		</description>
+		<constructor-arg ref="javaScriptCompressor" />
+	</bean>
+	
+	<bean id="clientErrorLogController" name="/riot-utils/error.*" class="org.riotfamily.website.controller.ClientErrorLogController">
+		<description>
+			Controller to log client-side JavaScript errors.
+		</description>
 	</bean>
 		
 	<bean id="freemarkerConfig" class="org.riotfamily.website.freemarker.WebsiteFreeMarkerConfigurer">

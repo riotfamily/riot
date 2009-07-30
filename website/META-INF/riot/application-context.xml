@@ -19,7 +19,7 @@
 		<property name="enabled" value="${riot.websiteCache.enabled=true}" />
     </bean>
 	
-	 <bean id="cacheService" class="org.riotfamily.cachius.CacheService">
+	<bean id="cacheService" class="org.riotfamily.cachius.CacheService">
 	 	<description>
 			A Cachius CacheService instance to cache and serve content.		
 		</description>
@@ -30,6 +30,11 @@
     </bean>
     
     <bean id="resourceStamper" class="org.riotfamily.website.performance.ResourceStamper" />
+    
+    <bean id="javaScriptCompressor" class="org.riotfamily.website.performance.YUIJavaScriptCompressor">
+    	<property name="enabled" value="${riot.resources.compress=true}" />
+    	<property name="linebreak" value="1000" />
+    </bean>
     
     <override:add ref="hibernateInterceptors">
 	    <bean class="org.riotfamily.riot.hibernate.cachius.CacheTagInterceptor">

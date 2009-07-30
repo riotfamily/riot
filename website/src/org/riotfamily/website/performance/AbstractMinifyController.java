@@ -74,7 +74,7 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 	 * Adds the query-string to the cache-key. 
 	 */
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
-		key.append(request.getQueryString());
+		key.append('?').append(request.getQueryString());
 	}
 	
 	/**

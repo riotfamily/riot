@@ -44,7 +44,7 @@ public class YUIJavaScriptCompressor implements Compressor {
 
 	private RiotLog log = RiotLog.get(YUIJavaScriptCompressor.class);
 	
-	private ErrorReporter defaultErrorReporter = new RiotLogErrorReporter(log);
+	private ErrorReporter defaultErrorReporter = new RiotLogErrorReporter();
 	
 	private int linebreak = -1;
 	
@@ -139,7 +139,7 @@ public class YUIJavaScriptCompressor implements Compressor {
 	 * error messages.  
 	 */
 	public void compress(Reader in, Writer out, String fileName) throws IOException {
-		RiotLogErrorReporter errorReporter = new RiotLogErrorReporter(log);
+		RiotLogErrorReporter errorReporter = new RiotLogErrorReporter();
 		errorReporter.setSourceName(fileName);
 		compress(in, out, errorReporter);
 	}
@@ -193,4 +193,52 @@ public class YUIJavaScriptCompressor implements Compressor {
 		compressor.compress(out, linebreak, munge, warn, 
 				preserveAllSemiColons, !mergeStringLiterals);
 	}
+	
+	private class RiotLogErrorReporter implements ErrorReporter {
+
+		private String defaultSourceName = "[unknown]";
+		
+		public void setSourceName(String sourceName) {
+			this.defaultSourceName = sourceName;
+		}
+		
+		public void warning(String message, String sourceName,
+	            int line, String lineSource, int lineOffset) {
+			
+	       	log.warn(formatMessage(message, sourceName, line, lineSource, lineOffset));
+	    }
+
+	    public void error(String message, String sourceName,
+	            int line, String lineSource, int lineOffset) {
+	    	
+	       	log.error(formatMessage(message, sourceName, line, lineSource, lineOffset));
+	    }
+	    
+	    protected String formatMessage(String message, String sourceName, int line, String lineSource, int lineOffset) {
+	    	StringBuffer sb = new StringBuffer();
+	    	sb.append(message);
+	    	if (sourceName == null) {
+	    		sourceName = defaultSourceName;
+	    	}
+	    	if (sourceName != null) {
+	    		sb.append(" in ").append(sourceName);
+	    	}
+	    	if (lineOffset > 0) {
+	    		sb.append(" (line ")
+	    				.append(line)
+	    				.append(", column ")
+	    				.append(lineOffset)
+	    				.append(")");
+	    	}
+	    	return sb.toString();	
+	    }
+
+	    public EvaluatorException runtimeError(String message, String sourceName,
+	            int line, String lineSource, int lineOffset) {
+	        
+	    	error(message, sourceName, line, lineSource, lineOffset);
+	        return new EvaluatorException(message);
+	    }
+	}
+
 }

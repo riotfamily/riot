@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.website.performance.Compressor;
 import org.springframework.core.io.Resource;
 
@@ -49,7 +50,7 @@ public class ResourceController extends AbstractResourceController {
 			HttpServletRequest request) throws IOException {
 		
 		Reader in = super.getReader(res, path, contentType, request);
-		if (compressors != null) {
+		if (compressors != null && ServletUtils.isDirectRequest(request)) {
 			Compressor compressor = compressors.get(contentType);
 			if (compressor != null) {
 				StringWriter buffer = new StringWriter();
