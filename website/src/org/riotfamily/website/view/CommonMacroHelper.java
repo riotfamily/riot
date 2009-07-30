@@ -47,15 +47,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
+import org.riotfamily.common.mapping.HandlerUrlResolver;
+import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.servlet.StringCapturingResponseWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.filter.ResourceStamper;
-import org.riotfamily.common.web.mapping.HandlerUrlResolver;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.common.web.util.StringCapturingResponseWrapper;
 import org.riotfamily.website.hyphenate.RiotHyphenator;
+import org.riotfamily.website.performance.ResourceStamper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.util.MethodInvoker;

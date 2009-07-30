@@ -25,7 +25,7 @@ package org.riotfamily.cachius.spring;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.springframework.beans.factory.BeanNameAware;
 
 

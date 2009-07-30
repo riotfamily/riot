@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.DHTMLElement;

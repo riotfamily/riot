@@ -28,9 +28,8 @@ function loadToolbarScripts() {
 		{src: 'inplace.js'},
 		{src: 'components.js'}
 	]);
-	Resources.loadScript(riot.path + 
-			'/joined/${riotVersion}/joined-script.js?files=' 
-			+ scripts.join(',') + '&lang=' + riot.language, 'riot.toolbar', toolbarScriptsLoaded);
+	var src = riot.resourcePath + 'joined.js?files=' + scripts.join(',') + '&lang=' + riot.language;
+	Resources.loadScript(src, 'riot.toolbar', toolbarScriptsLoaded);
 }
 
 function toolbarScriptsLoaded() {

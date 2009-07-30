@@ -34,9 +34,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.FormContext;

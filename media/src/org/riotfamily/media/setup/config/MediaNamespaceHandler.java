@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.setup.config;
 
-import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
 import org.riotfamily.media.setup.RiotFileFactoryBean;
 import org.riotfamily.media.setup.RiotImageFactoryBean;
 import org.riotfamily.media.setup.RiotSwfFactoryBean;

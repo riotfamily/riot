@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.list;
 
-import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.common.ui.RenderContext;
 
 public interface ListRenderContext extends RenderContext {
 

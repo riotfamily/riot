@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.crawler;
 
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

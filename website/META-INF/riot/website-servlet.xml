@@ -31,14 +31,14 @@
 		<property name="contextOverride" value="true" />
 	</bean>
 	
-	<bean id="expiresHeaderFilterPlugin" class="org.riotfamily.common.web.filter.ExpiresHeaderFilterPlugin">
+	<bean id="expiresHeaderFilterPlugin" class="org.riotfamily.website.performance.ExpiresHeaderFilterPlugin">
 		<description>
 			FilterPlugin that sets a far-future expires header for all stamped URLs.
 		</description>
 		<property name="filterName" value="website-filter" />
 	</bean>
 
-	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.common.web.filter.OpenSessionInViewFilterPlugin">
+	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.common.filter.OpenSessionInViewFilterPlugin">
 		<description>
 			FilterPlugin that binds a Hibernate Session to the thread for the 
 			entire processing of the request just like Spring's OpenSessionInViewFilter.
@@ -53,7 +53,7 @@
 		</description>
 	</bean>
 	
-	<bean class="org.riotfamily.common.web.servlet.ReloadableDispatcherServletConfig">
+	<bean class="org.riotfamily.common.servlet.ReloadableDispatcherServletConfig">
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
 	</bean>
 	
@@ -77,7 +77,7 @@
 		</description>
 	</bean>
 	
-	<bean id="riotInterceptors" class="org.riotfamily.common.web.interceptor.ChainedHandlerInterceptor">
+	<bean id="riotInterceptors" class="org.riotfamily.common.interceptor.ChainedHandlerInterceptor">
 		<description>
 			ChainedHandlerInterceptor that combines all interceptors that are required
 	  		by Riot or one of its modules. Modules should use the override:add tag and
@@ -86,7 +86,7 @@
 		<property name="interceptors">
 			<list>
 				<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
-				<bean class="org.riotfamily.common.web.view.FlashScopeInterceptor" />
+				<bean class="org.riotfamily.common.view.FlashScopeInterceptor" />
 			</list>
 		</property>
 	</bean>
@@ -100,24 +100,22 @@
 		<property name="addContextPathToUrls" value="true" />
 		<property name="stamper" ref="resourceStamper" />
 		<property name="compressor">
-			<bean class="org.riotfamily.common.web.compressor.YUICssCompressor">
+			<bean class="org.riotfamily.website.performance.YUICssCompressor">
 				<property name="enabled" value="${riot.resources.compress=true}" />
 			</bean>			
 		</property>
 	</bean>
 	
-	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.website.minify.MinifyCssController">
+	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.website.performance.MinifyCssController">
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
-		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	
-	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.website.minify.MinifyScriptController">
+	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
 		<description>
 			Controller to compress (minify) JavaScript files.
 		</description>
-		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 		
 	<bean id="freemarkerConfig" class="org.riotfamily.website.freemarker.WebsiteFreeMarkerConfigurer">
@@ -160,7 +158,7 @@
 		</description>
 	</bean>
 	
-	<bean id="localizedObjectWrapperPlugin" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapperPlugin" />
+	<bean id="localizedObjectWrapperPlugin" class="org.riotfamily.common.freemarker.LocalizedObjectWrapperPlugin" />
     
     <bean class="org.riotfamily.common.hibernate.ActiveRecordClassExposer">
     	<description>
@@ -170,11 +168,11 @@
     	<constructor-arg ref="sessionFactory" />
     </bean>
     
-	<bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
+	<bean id="viewResolver" class="org.riotfamily.common.freemarker.RiotFreeMarkerViewResolver">
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
 	
-	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver" />
+	<bean id="handlerUrlResolver" class="org.riotfamily.common.mapping.HandlerUrlResolver" />
 	
 	<bean id="commonMacroHelper" class="org.riotfamily.website.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
@@ -208,7 +206,7 @@
 	
 	<bean id="txt2ImgController" name="/riot-utils/txt2img.@{type}" class="org.riotfamily.website.txt2img.Txt2ImgController">
 		<property name="compressor">
-			<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
+			<bean class="org.riotfamily.website.performance.YUIJavaScriptCompressor">
 				<property name="enabled" value="${riot.resources.compress=true}" />
 			</bean>			
 		</property>
@@ -222,7 +220,7 @@
 		<constructor-arg ref="buttonService" />
 	</bean>
 		
-	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.common.web.controller.CountryFlagController">
+	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.website.controller.CountryFlagController">
 		<constructor-arg ref="fileTypeMap" />
 		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/icons/flags/" />
 		<property name="defaultFlag" value="europeanunion" />

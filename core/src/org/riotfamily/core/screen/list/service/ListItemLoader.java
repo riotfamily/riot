@@ -32,7 +32,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.beans.ProtectedBeanWrapper;
+import org.riotfamily.common.beans.property.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.SingleRoot;

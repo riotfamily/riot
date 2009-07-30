@@ -28,11 +28,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.common.ui.ObjectRenderer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.forms.ContainerElement;

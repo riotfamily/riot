@@ -28,7 +28,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.event.JavaScriptEvent;

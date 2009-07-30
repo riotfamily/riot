@@ -43,7 +43,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.springframework.util.ObjectUtils;

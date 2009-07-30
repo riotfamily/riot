@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
-import org.riotfamily.common.web.view.ViewResolverHelper;
+import org.riotfamily.common.view.ViewResolverHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.Ordered;

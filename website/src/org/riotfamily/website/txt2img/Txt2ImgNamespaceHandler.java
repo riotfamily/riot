@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.txt2img;
 
-import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
 
 /**
  * NamespceHandler that handles the txt2img namespace.

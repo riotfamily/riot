@@ -30,13 +30,13 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.freemarker.ResourceTemplateLoader;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.i18n.RiotMessageCodesResolver;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.OptionsModelAdapter;
 import org.riotfamily.forms.TemplateRenderer;

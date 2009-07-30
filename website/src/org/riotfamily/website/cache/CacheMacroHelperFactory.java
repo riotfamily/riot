@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
-import org.riotfamily.common.web.view.MacroHelperFactory;
+import org.riotfamily.common.view.MacroHelperFactory;
 
 public class CacheMacroHelperFactory implements MacroHelperFactory {
 

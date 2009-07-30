@@ -36,7 +36,7 @@ import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.cachius.support.Cookies;
 import org.riotfamily.cachius.support.Headers;
 import org.riotfamily.cachius.support.SessionIdEncoder;
-import org.riotfamily.common.web.util.DelegatingServletOutputStream;
+import org.riotfamily.common.servlet.DelegatingServletOutputStream;
 
 
 /**
@@ -65,7 +65,7 @@ public class CachiusResponse implements HttpServletResponse {
 
 	private boolean contentLengthSet;
 
-	private String characterEncoding;
+	private String characterEncoding = "UTF-8";
 
 	private Locale locale;
     

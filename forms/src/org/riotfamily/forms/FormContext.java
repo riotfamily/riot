@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.common.ui.RenderContext;
 import org.springframework.beans.PropertyEditorRegistrar;
 
 public interface FormContext extends RenderContext {

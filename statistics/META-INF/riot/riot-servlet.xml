@@ -31,7 +31,7 @@
         <property name="faultStatusCodes" value="${riot.statistics.request.faultStatusCodes=404,500}" />
     </bean>
 
-	<bean id="requestTimestampRenderer" class="org.riotfamily.common.web.ui.DateRenderer">
+	<bean id="requestTimestampRenderer" class="org.riotfamily.common.ui.DateRenderer">
 		<property name="pattern" value="dd.MM.yy HH:mm:ss" />
 	</bean>
 	

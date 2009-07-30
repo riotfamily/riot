@@ -38,7 +38,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.security.AccessController;
 import org.springframework.beans.PropertyAccessorUtils;

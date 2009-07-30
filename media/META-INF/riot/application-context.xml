@@ -31,7 +31,7 @@
 		<constructor-arg ref="ffmpeg" />
 	</bean>
 	
-	<bean id="fileDataInitializer" class="org.riotfamily.common.beans.MethodInvokingBean">
+	<bean id="fileDataInitializer" class="org.riotfamily.common.beans.factory.MethodInvokingBean">
 		<property name="staticMethod" value="org.riotfamily.media.model.RiotFile.setMediaService" />
 		<property name="argument" ref="mediaService"/>
 	</bean>

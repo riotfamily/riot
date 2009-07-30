@@ -23,12 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen.config;
 
-import org.riotfamily.common.beans.xml.ChildDecorator;
-import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.ListDecorator;
-import org.riotfamily.common.beans.xml.ListItemDecorator;
-import org.riotfamily.common.beans.xml.PropertyDecorator;
-import org.riotfamily.common.beans.xml.PropertyValueDecorator;
+import org.riotfamily.common.beans.namespace.ChildDecorator;
+import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.namespace.ListDecorator;
+import org.riotfamily.common.beans.namespace.ListItemDecorator;
+import org.riotfamily.common.beans.namespace.PropertyDecorator;
+import org.riotfamily.common.beans.namespace.PropertyValueDecorator;
 import org.riotfamily.core.screen.GroupScreen;
 import org.riotfamily.core.screen.form.FormScreen;
 import org.riotfamily.core.screen.list.ColumnConfig;

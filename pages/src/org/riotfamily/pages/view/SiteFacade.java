@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.website.cache.CacheTagUtils;
 

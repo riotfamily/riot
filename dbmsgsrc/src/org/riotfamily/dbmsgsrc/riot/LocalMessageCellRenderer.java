@@ -25,8 +25,8 @@ package org.riotfamily.dbmsgsrc.riot;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.web.ui.RenderContext;
-import org.riotfamily.common.web.ui.StringRenderer;
+import org.riotfamily.common.ui.RenderContext;
+import org.riotfamily.common.ui.StringRenderer;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 

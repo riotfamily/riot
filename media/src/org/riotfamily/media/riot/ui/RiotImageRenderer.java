@@ -25,8 +25,8 @@ package org.riotfamily.media.riot.ui;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.web.ui.ObjectRenderer;
-import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.common.ui.ObjectRenderer;
+import org.riotfamily.common.ui.RenderContext;
 import org.riotfamily.media.model.RiotImage;
 
 public class RiotImageRenderer implements ObjectRenderer {

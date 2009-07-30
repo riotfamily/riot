@@ -29,7 +29,7 @@
         <property name="staleUnlessExpired" value="${riot.websiteCache.staleUnlessExpired=false}" />
     </bean>
     
-    <bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
+    <bean id="resourceStamper" class="org.riotfamily.website.performance.ResourceStamper" />
     
     <override:add ref="hibernateInterceptors">
 	    <bean class="org.riotfamily.riot.hibernate.cachius.CacheTagInterceptor">

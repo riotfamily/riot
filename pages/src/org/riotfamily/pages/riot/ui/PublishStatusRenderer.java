@@ -25,8 +25,8 @@ package org.riotfamily.pages.riot.ui;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.web.ui.ObjectRenderer;
-import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.common.ui.ObjectRenderer;
+import org.riotfamily.common.ui.RenderContext;
 import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;

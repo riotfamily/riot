@@ -23,12 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.config;
 
-import org.riotfamily.common.beans.xml.ChildDecorator;
-import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.ListItemDecorator;
-import org.riotfamily.common.beans.xml.MapEntryDecorator;
-import org.riotfamily.common.beans.xml.PropertyDecorator;
-import org.riotfamily.common.beans.xml.PropertyValueDecorator;
+import org.riotfamily.common.beans.namespace.ChildDecorator;
+import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.namespace.ListItemDecorator;
+import org.riotfamily.common.beans.namespace.MapEntryDecorator;
+import org.riotfamily.common.beans.namespace.PropertyDecorator;
+import org.riotfamily.common.beans.namespace.PropertyValueDecorator;
 
 /**
  * NamespaceHandler that handles the <code>page</code> namespace as

@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.ListParams;

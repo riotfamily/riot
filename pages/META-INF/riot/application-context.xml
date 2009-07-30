@@ -11,7 +11,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 		
-	<bean id="sitemapSchema" class="org.riotfamily.common.beans.config.SingletonLookupFactoryBean">
+	<bean id="sitemapSchema" class="org.riotfamily.common.beans.factory.SingletonLookupFactoryBean">
 		<constructor-arg value="org.riotfamily.pages.config.SitemapSchema" />
 	</bean>
 	

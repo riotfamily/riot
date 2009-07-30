@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

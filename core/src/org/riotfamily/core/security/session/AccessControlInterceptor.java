@@ -27,7 +27,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.interceptor.OncePerRequestInterceptor;
+import org.riotfamily.common.interceptor.OncePerRequestInterceptor;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.springframework.web.context.ServletContextAware;
 

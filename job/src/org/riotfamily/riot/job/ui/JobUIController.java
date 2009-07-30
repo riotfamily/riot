@@ -3,8 +3,8 @@ package org.riotfamily.riot.job.ui;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.job.JobManager;
 import org.riotfamily.riot.job.model.JobDetail;
 import org.springframework.web.servlet.ModelAndView;

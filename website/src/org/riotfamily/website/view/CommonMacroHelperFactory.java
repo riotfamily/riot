@@ -29,10 +29,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.filter.ResourceStamper;
-import org.riotfamily.common.web.mapping.HandlerUrlResolver;
-import org.riotfamily.common.web.view.MacroHelperFactory;
+import org.riotfamily.common.mapping.HandlerUrlResolver;
+import org.riotfamily.common.view.MacroHelperFactory;
 import org.riotfamily.website.hyphenate.RiotHyphenator;
+import org.riotfamily.website.performance.ResourceStamper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.ServletContextAware;

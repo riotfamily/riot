@@ -27,10 +27,10 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Locale;
 
-import org.riotfamily.common.web.ui.DateRenderer;
-import org.riotfamily.common.web.ui.ObjectRenderer;
-import org.riotfamily.common.web.ui.RenderContext;
-import org.riotfamily.common.web.ui.StringRenderer;
+import org.riotfamily.common.ui.DateRenderer;
+import org.riotfamily.common.ui.ObjectRenderer;
+import org.riotfamily.common.ui.RenderContext;
+import org.riotfamily.common.ui.StringRenderer;
 
 /**
  * Default ObjectRenderer with special handling for Boolean, Date, and 

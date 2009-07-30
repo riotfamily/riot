@@ -30,16 +30,18 @@
 	<link rel="${rel}" type="${type}" href="${c.resolve(resource(href))?xml}"${c.joinAttributes(attributes)} />
 </#macro>
 
+<#macro stylesheets hrefs rel="stylesheet" type="text/css" attributes...>
+	<#list hrefs as href>
+		<link rel="${rel}" type="${type}" href="${c.resolve(resource(href))?xml}"${c.joinAttributes(attributes)} />
+	</#list>
+</#macro>
+
 <#macro script src type="text/javascript" attributes...>
 	<script src="${c.resolve(resource(src))?xml}" type="${type}"${c.joinAttributes(attributes)}></script>
 </#macro>
 
-<#macro stylesheets hrefs compress=commonMacroHelper.compressResources rel="stylesheet" type="text/css" attributes...>
-	<@c.stylesheets resources(hrefs) compress rel type c.unwrapAttributes(attributes) />
-</#macro>
-
 <#macro scripts srcs compress=commonMacroHelper.compressResources type="text/javascript" attributes...>
-	<@c.scripts resources(srcs) compress type c.unwrapAttributes(attributes) /> 
+	<@c.scripts resources(srcs) compress type c.unwrapAttributes(attributes) />
 </#macro>
 
 <#function iconStyle icon="">

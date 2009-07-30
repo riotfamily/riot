@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.view.MacroHelperFactory;
+import org.riotfamily.common.view.MacroHelperFactory;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.model.Site;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;

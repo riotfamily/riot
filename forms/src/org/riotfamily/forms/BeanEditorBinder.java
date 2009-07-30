@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
-import org.riotfamily.common.beans.ProtectedBeanWrapper;
+import org.riotfamily.common.beans.property.ProtectedBeanWrapper;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.util.Assert;
 

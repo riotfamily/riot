@@ -29,7 +29,7 @@
 		<property name="contextOverride" value="true" />
 	</bean>
 	
-	<bean class="org.riotfamily.common.web.servlet.ReloadableDispatcherServletConfig">
+	<bean class="org.riotfamily.common.servlet.ReloadableDispatcherServletConfig">
 		<property name="reloadable" value="${riot-servlet.reloadable=true}" />
 	</bean>
 
@@ -70,15 +70,15 @@
     
     <util:list id="handlerInterceptors">
 		<ref bean="loginInterceptor" />
-		<bean class="org.riotfamily.common.web.view.FlashScopeInterceptor" />
-		<bean class="org.riotfamily.common.web.interceptor.RequestHolderInterceptor" />
+		<bean class="org.riotfamily.common.view.FlashScopeInterceptor" />
+		<bean class="org.riotfamily.common.interceptor.RequestHolderInterceptor" />
 	</util:list>
 			
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">
 		<constructor-arg ref="screenRepository" />
 		<property name="order" value="1" />
 		<property name="interceptors">
-			<bean class="org.riotfamily.common.beans.config.JoinedListFactoryBean">
+			<bean class="org.riotfamily.common.beans.factory.JoinedListFactoryBean">
 				<property name="lists">
 					<list>
 						<ref bean="handlerInterceptors" />
@@ -91,7 +91,7 @@
 		</property>
 	</bean>
 	
-	<bean id="handlerMapping" class="org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping">
+	<bean id="handlerMapping" class="org.riotfamily.common.mapping.AdvancedBeanNameHandlerMapping">
 		<property name="order" value="2" />
 		<property name="interceptors" ref="handlerInterceptors" />
 	</bean>
@@ -100,9 +100,9 @@
 		<property name="interceptors" ref="handlerInterceptors" />
 	</bean>
     
-    <bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver">
+    <bean id="handlerUrlResolver" class="org.riotfamily.common.mapping.HandlerUrlResolver">
 		<property name="parent">
-			<bean class="org.riotfamily.common.beans.config.WebApplicationContextBeanImporter">
+			<bean class="org.riotfamily.common.beans.factory.WebApplicationContextBeanImporter">
 				<property name="servletName" value="website" />
 				<property name="beanName" value="handlerUrlResolver" />
 			</bean>	
@@ -118,7 +118,7 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="exceptionResolver" class="org.riotfamily.common.web.util.AdvancedMappingExceptionResolver">
+	<bean id="exceptionResolver" class="org.riotfamily.common.servlet.AdvancedMappingExceptionResolver">
 		<description>
 			Exception resolver that outputs a nicely formatted error message.		
 		</description>
@@ -152,7 +152,7 @@
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="templateLoaders">
 			<list>
-				<bean class="org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader" />
+				<bean class="org.riotfamily.common.freemarker.ResourceTemplateLoader" />
 			</list>
 		</property>
 		<property name="freemarkerVariables">
@@ -174,7 +174,7 @@
 		</property>
 	</bean>
 	
-    <bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
+    <bean id="viewResolver" class="org.riotfamily.common.freemarker.RiotFreeMarkerViewResolver">
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
 
@@ -411,12 +411,12 @@
 		<property name="compressors">
 			<map>
 				<entry key="text/css">
-					<bean class="org.riotfamily.common.web.compressor.YUICssCompressor">
+					<bean class="org.riotfamily.website.performance.YUICssCompressor">
 						<property name="enabled" value="${riot.resources.compress=true}" />
 					</bean>
 				</entry>
 				<entry key="text/javascript">
-					<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
+					<bean class="org.riotfamily.website.performance.YUIJavaScriptCompressor">
 						<property name="enabled" value="${riot.resources.compress=true}" />
 					</bean>					
 				</entry>
@@ -424,34 +424,7 @@
 		</property>
 	</bean>
 	
-	<bean name="/joined/*/joined-script.js" class="org.riotfamily.core.resource.JoiningResourceController">
-		<property name="pathParameter" value="files" />
-		<property name="fileTypeMap" ref="fileTypeMap" />
-		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
-		<property name="filters" ref="resourceFilters" />
-		<property name="mappings" ref="resourceMappings" />
-		<property name="contentType" value="text/javascript" />
-		<property name="compressor">
-			<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
-				<property name="enabled" value="${riot.resources.compress=true}" />
-				<property name="linebreak" value="1000" />
-			</bean>
-		</property>
-	</bean>
-	
-	<bean name="/joined/*/joined-style.js" class="org.riotfamily.core.resource.JoiningResourceController">
-		<property name="pathParameter" value="files" />
-		<property name="fileTypeMap" ref="fileTypeMap" />
-		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
-		<property name="filters" ref="resourceFilters" />
-		<property name="mappings" ref="resourceMappings" />
-		<property name="contentType" value="text/css" />
-		<property name="compressor">
-			<bean class="org.riotfamily.common.web.compressor.YUICssCompressor">
-				<property name="enabled" value="${riot.resources.compress=true}" />
-			</bean>			
-		</property>
-	</bean>
+	<bean name="/resources/*/joined.js" class="org.riotfamily.website.performance.MinifyScriptController" />
 	
 	<!-- Misc (TODO) -->
 

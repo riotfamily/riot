@@ -27,8 +27,8 @@ package org.riotfamily.crawler;
 import java.util.List;
 
 import org.htmlparser.util.ParserException;
+import org.riotfamily.common.event.ContentChangedEvent;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.event.ContentChangedEvent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;

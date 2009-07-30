@@ -29,8 +29,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.bind.MapServletRequestDataBinder;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.bind.MapServletRequestDataBinder;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;

@@ -28,7 +28,7 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.CapturingResponseWrapper;
+import org.riotfamily.common.servlet.CapturingResponseWrapper;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;

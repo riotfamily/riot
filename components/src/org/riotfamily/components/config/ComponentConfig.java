@@ -25,7 +25,7 @@ package org.riotfamily.components.config;
 
 import java.util.Map;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 
 public class ComponentConfig {
 

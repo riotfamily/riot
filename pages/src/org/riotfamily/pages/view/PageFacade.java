@@ -34,8 +34,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CachiusContext;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.support.EditModeUtils;

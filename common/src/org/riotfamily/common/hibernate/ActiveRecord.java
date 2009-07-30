@@ -32,7 +32,7 @@ import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.riotfamily.common.beans.config.ConfigurableBean;
+import org.riotfamily.common.beans.injection.ConfigurableBean;
 
 /**
  * Use as base class for persistent entity beans if you prefer the

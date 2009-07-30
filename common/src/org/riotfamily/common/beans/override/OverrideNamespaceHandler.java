@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
-import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.namespace.GenericBeanDefinitionParser;
+import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;

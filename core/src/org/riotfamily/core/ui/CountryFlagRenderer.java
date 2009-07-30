@@ -26,8 +26,8 @@ package org.riotfamily.core.ui;
 import java.io.PrintWriter;
 import java.util.Locale;
 
-import org.riotfamily.common.web.ui.ObjectRenderer;
-import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.common.ui.ObjectRenderer;
+import org.riotfamily.common.ui.RenderContext;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

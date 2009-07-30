@@ -31,10 +31,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
+import org.riotfamily.common.ui.ObjectRenderer;
+import org.riotfamily.common.ui.StringRenderer;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.ui.ObjectRenderer;
-import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;

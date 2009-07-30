@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.website.view.CacheableViewController;
+import org.riotfamily.website.controller.CacheableViewController;
 import org.springframework.ui.Model;
 
 public class CacheablePageController extends CacheableViewController {

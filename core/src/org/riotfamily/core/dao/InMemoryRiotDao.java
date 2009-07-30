@@ -26,8 +26,8 @@ package org.riotfamily.core.dao;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.riotfamily.common.beans.ObjectWrapper;
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.ObjectWrapper;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.dao.DataAccessException;

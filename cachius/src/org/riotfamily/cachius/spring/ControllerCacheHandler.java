@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.cachius.servlet.ZippedResponseHandler;
-import org.riotfamily.common.web.view.ViewResolverHelper;
+import org.riotfamily.common.view.ViewResolverHelper;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 

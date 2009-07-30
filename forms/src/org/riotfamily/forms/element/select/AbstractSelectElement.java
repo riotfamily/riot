@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;

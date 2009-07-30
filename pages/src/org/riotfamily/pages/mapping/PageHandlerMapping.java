@@ -26,11 +26,11 @@ package org.riotfamily.pages.mapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.controller.HttpErrorController;
-import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.website.controller.HttpErrorController;
+import org.riotfamily.website.controller.RedirectController;
 import org.springframework.orm.hibernate3.HibernateSystemException;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;

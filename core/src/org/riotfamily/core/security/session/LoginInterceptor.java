@@ -26,7 +26,7 @@ package org.riotfamily.core.security.session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.mapping.HandlerUrlUtils;
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.core.security.auth.RiotUser;
 
 /**

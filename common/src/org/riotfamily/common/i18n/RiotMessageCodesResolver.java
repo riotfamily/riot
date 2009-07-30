@@ -25,7 +25,7 @@ package org.riotfamily.common.i18n;
 
 import java.util.ArrayList;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.springframework.util.StringUtils;
 
 /**

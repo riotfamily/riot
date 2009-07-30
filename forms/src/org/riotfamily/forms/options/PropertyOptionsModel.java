@@ -25,7 +25,7 @@ package org.riotfamily.forms.options;
 
 import java.util.Collection;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.springframework.util.Assert;

@@ -25,8 +25,8 @@ package org.riotfamily.core.screen;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.mapping.ReverseHandlerMapping;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
@@ -94,7 +94,7 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 					path.append('/').append(handlerName);	
 				}
 			}
-			return ServletUtils.addServletMapping(path.toString(), request);
+			return path.toString();
 		}
 		return null;
 	}

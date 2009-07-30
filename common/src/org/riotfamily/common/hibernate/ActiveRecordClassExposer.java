@@ -29,8 +29,8 @@ import java.util.Collection;
 import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
+import org.riotfamily.common.freemarker.ConfigurationPostProcessor;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.view.freemarker.ConfigurationPostProcessor;
 import org.springframework.util.ClassUtils;
 
 import freemarker.ext.beans.BeansWrapper;

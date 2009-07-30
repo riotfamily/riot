@@ -40,7 +40,7 @@ import org.riotfamily.common.image.ImageUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.web.filter.ResourceStamper;
+import org.riotfamily.website.performance.ResourceStamper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.support.RequestContextUtils;

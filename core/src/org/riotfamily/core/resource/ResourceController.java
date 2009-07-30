@@ -31,7 +31,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.compressor.Compressor;
+import org.riotfamily.website.performance.Compressor;
 import org.springframework.core.io.Resource;
 
 /**

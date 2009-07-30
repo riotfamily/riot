@@ -26,8 +26,8 @@ package org.riotfamily.dbmsgsrc.support;
 import java.util.Set;
 
 import org.riotfamily.common.i18n.CodeRevealingMessageSource;
+import org.riotfamily.common.mapping.HandlerUrlResolver;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;

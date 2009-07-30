@@ -26,7 +26,7 @@ package org.riotfamily.forms.factory;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.riotfamily.common.beans.propertyeditors.IntArrayPropertyEditor;
+import org.riotfamily.common.beans.property.IntArrayPropertyEditor;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.ContainerElement;

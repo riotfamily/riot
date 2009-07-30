@@ -26,9 +26,9 @@ package org.riotfamily.core.ui;
 import java.io.PrintWriter;
 
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.ui.RenderContext;
+import org.riotfamily.common.ui.StringRenderer;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.ui.RenderContext;
-import org.riotfamily.common.web.ui.StringRenderer;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 

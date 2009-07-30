@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 
+import org.riotfamily.common.freemarker.RiotFreeMarkerView;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView;
 import org.riotfamily.components.meta.ComponentMetaData;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.meta.FreeMarkerMetaDataExtractor;

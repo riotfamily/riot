@@ -17,7 +17,7 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
-	<bean id="valueWrapperService" class="org.riotfamily.common.beans.MethodInvokingBean">
+	<bean id="valueWrapperService" class="org.riotfamily.common.beans.factory.MethodInvokingBean">
 		<property name="staticMethod" value="org.riotfamily.components.model.wrapper.ValueWrapperService.setWrapperFactory" />
 		<property name="argument" ref="valueWrapperFactory" />
 	</bean>

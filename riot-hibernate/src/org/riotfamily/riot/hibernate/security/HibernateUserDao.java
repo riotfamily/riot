@@ -26,7 +26,7 @@ package org.riotfamily.riot.hibernate.security;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.core.screen.list.ListParamsImpl;
 import org.riotfamily.core.security.auth.RiotUser;

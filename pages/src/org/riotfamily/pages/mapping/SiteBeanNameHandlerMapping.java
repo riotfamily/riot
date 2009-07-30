@@ -4,8 +4,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.mapping.AdvancedBeanNameHandlerMapping;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping;
 import org.riotfamily.pages.model.Site;
 
 /**

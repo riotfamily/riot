@@ -38,11 +38,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressible;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.compressor.YUICssCompressor;
-import org.riotfamily.common.web.filter.ResourceStamper;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.website.freemarker.RiotFileTemplateLoader;
+import org.riotfamily.website.performance.ResourceStamper;
+import org.riotfamily.website.performance.YUICssCompressor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;

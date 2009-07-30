@@ -1,6 +1,6 @@
 package org.riotfamily.linkcheck;
 
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.crawler.DefaultLinkExtractor;
 
 public class LinkCheckLinkExtractor extends DefaultLinkExtractor {

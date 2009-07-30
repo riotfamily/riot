@@ -24,8 +24,8 @@
 package org.riotfamily.riot.hibernate.cachius;
 
 import org.hibernate.SessionFactory;
-import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
-import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
+import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
+import org.riotfamily.common.freemarker.PluginObjectWrapper;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.riotfamily.website.cache.CacheTagUtils;
 import org.riotfamily.website.cache.TagCacheItems;

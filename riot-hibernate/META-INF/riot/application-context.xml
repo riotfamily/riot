@@ -88,6 +88,6 @@
 
 	<bean class="org.riotfamily.common.hibernate.LifecycleListener" />
 	
-	<bean class="org.riotfamily.common.beans.config.SpringBeanConfigurer" />
+	<bean class="org.riotfamily.common.beans.injection.SpringBeanConfigurer" />
 
 </beans>

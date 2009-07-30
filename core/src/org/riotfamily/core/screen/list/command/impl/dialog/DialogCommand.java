@@ -26,9 +26,9 @@ package org.riotfamily.core.screen.list.command.impl.dialog;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.HashUtils;
-import org.riotfamily.common.web.mapping.HandlerUrlUtils;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;

@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.website.view.ConfigurableViewController;
+import org.riotfamily.website.controller.ConfigurableViewController;
 import org.springframework.ui.Model;
 
 public class PageController extends ConfigurableViewController {
