@@ -46,6 +46,7 @@ import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.ScreenUtils;
 import org.riotfamily.core.screen.list.command.Command;
+import org.riotfamily.core.security.AccessController;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.factory.FormRepository;
@@ -249,7 +250,9 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 			ScreenContext ctx = screenContext;
 			while (ctx != null) {
 				if (ctx.getScreen() instanceof ListScreen) {
-					path.add(0, chooserSettings.appendTo(ctx.getLink()));
+					if (AccessController.isGranted("use-screen", ctx.getScreen())) {
+						path.add(0, chooserSettings.appendTo(ctx.getLink()));
+					}
 				}
 				if (ctx.getScreen().getId().equals(chooserSettings.getStartScreenId())) {
 					break;

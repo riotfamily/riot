@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.core.security.AccessController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -68,19 +69,21 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 		ModelAndView mv = new ModelAndView(viewName);
 		List<ScreenLink> links = Generics.newArrayList();
 		for (RiotScreen screen : childScreens) {
-			GroupScreenLink link = new GroupScreenLink(screen.getTitle(context),
-					HandlerUrlUtils.getContextRelativeUrl(request, screen.getId(), context),
-					screen.getIcon());
-			
-			if (screen instanceof GroupScreen) {
-				for (RiotScreen nested : screen.getChildScreens()) {
-					link.addChildLink(new GroupScreenLink(nested.getTitle(context),
-							HandlerUrlUtils.getContextRelativeUrl(request, nested.getId(), context),
-							nested.getIcon()));
-				}
+			if (AccessController.isGranted("use-screen", screen)) {
+				GroupScreenLink link = new GroupScreenLink(screen.getTitle(context),
+						HandlerUrlUtils.getContextRelativeUrl(request, screen.getId(), context),
+						screen.getIcon());
 				
+				if (screen instanceof GroupScreen) {
+					for (RiotScreen nested : screen.getChildScreens()) {
+						link.addChildLink(new GroupScreenLink(nested.getTitle(context),
+								HandlerUrlUtils.getContextRelativeUrl(request, nested.getId(), context),
+								nested.getIcon()));
+					}
+					
+				}
+				links.add(link);
 			}
-			links.add(link);
 		}
 		mv.addObject("links", links);
 		return mv;
