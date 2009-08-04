@@ -44,6 +44,24 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 public abstract class AbstractReverseHandlerMapping 
 		extends AbstractHandlerMapping implements ReverseHandlerMapping {
 	
+	private String servletPrefix = "";
+	
+	private String servletSufix = "";
+
+	public void setServletPrefix(String servletPrefix) {
+		if (servletPrefix == null) {
+			servletPrefix = "";
+		}
+		this.servletPrefix = servletPrefix;
+	}
+	
+	public void setServletSufix(String servletSufix) {
+		if (servletSufix == null) {
+			servletSufix = "";
+		}
+		this.servletSufix = servletSufix;
+	}
+	
 	/**
 	 * Returns the URL of a mapped handler.
 	 * @param handlerName The name of the handler
@@ -83,9 +101,13 @@ public abstract class AbstractReverseHandlerMapping
 				url = getUrlForHandlerWithBean(handlerName, attributes, defaults);				
 			}
 		}
-		return url;
+		return addServletMapping(url);
 	}
 	
+	protected String addServletMapping(String url) {
+		return servletPrefix + url + servletSufix;
+	}
+
 	/**
 	 * Returns a Map of default values that are used to build URLs. The default
 	 * implementation return <code>null</code>.

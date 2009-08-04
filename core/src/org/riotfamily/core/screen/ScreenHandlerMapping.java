@@ -35,8 +35,14 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 	
 	private ScreenRepository repository;
 	
+	private String servletPrefix = "";
+	
 	public ScreenHandlerMapping(ScreenRepository repository) {
 		this.repository = repository;
+	}
+	
+	public void setServletPrefix(String servletPrefix) {
+		this.servletPrefix = servletPrefix;
 	}
 
 	@Override
@@ -94,7 +100,7 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 					path.append('/').append(handlerName);	
 				}
 			}
-			return path.toString();
+			return servletPrefix + path.toString();
 		}
 		return null;
 	}

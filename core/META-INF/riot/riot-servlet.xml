@@ -77,6 +77,7 @@
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">
 		<constructor-arg ref="screenRepository" />
 		<property name="order" value="1" />
+		<property name="servletPrefix" ref="riotServletPrefix" />
 		<property name="interceptors">
 			<bean class="org.riotfamily.common.beans.factory.JoinedListFactoryBean">
 				<property name="lists">
@@ -93,6 +94,7 @@
 	
 	<bean id="handlerMapping" class="org.riotfamily.common.mapping.AdvancedBeanNameHandlerMapping">
 		<property name="order" value="2" />
+		<property name="servletPrefix" ref="riotServletPrefix" />
 		<property name="interceptors" ref="handlerInterceptors" />
 	</bean>
 	

@@ -73,10 +73,8 @@ public final class HandlerUrlUtils {
 	public static String getContextRelativeUrl(HttpServletRequest request, 
 			String handlerName, Object... attributes) {
 		
-		String url = getUrlResolver(request).getUrlForHandler(
+		return getUrlResolver(request).getUrlForHandler(
 				request, handlerName, attributes);
-		
-		return ServletUtils.addServletMapping(url, request);
 	}
 	
 	/**
