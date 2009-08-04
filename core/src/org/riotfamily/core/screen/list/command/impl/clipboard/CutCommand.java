@@ -89,9 +89,9 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 		Object parent = item.getObject();
 		if (parent != null && dao instanceof Tree) {
 			Tree tree = (Tree) dao;
-			while (parent != null && tree.isNode(parent)) {
+			while (parent != null) {
 				ancestors.add(parent);
-				parent = tree.getParent(parent);
+				parent = tree.getParentNode(parent);
 			}
 		}
 		else {

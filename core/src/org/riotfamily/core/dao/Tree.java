@@ -1,15 +1,13 @@
 package org.riotfamily.core.dao;
 
-public interface Tree extends Hierarchy {
+public interface Tree extends RiotDao {
 
 	/**
 	 * Returns the parent node of the given object. The method must return
 	 * <code>null</code> for the root node(s).
 	 */
-	//public Object getParentNode(Object node);
+	public Object getParentNode(Object node);
 
-	public boolean isNode(Object entity);
-	
 	/**
 	 * Returns whether the given node has any children, i.e. can be expanded.
 	 * Note that the <code>parent</code> argument is <em>not</em> the parent 

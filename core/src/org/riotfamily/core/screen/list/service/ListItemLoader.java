@@ -128,9 +128,9 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 			if (expandedId != null) {
 				Object expanded = dao.load(expandedId);
 				Tree tree = (Tree) dao;
-				while (expanded != null && tree.isNode(expanded)) {
+				while (expanded != null) {
 					result.add(0, expanded);
-					expanded = tree.getParent(expanded);
+					expanded = tree.getParentNode(expanded);
 				}
 			}
 			else if (rootNodeTreeDao != null) {

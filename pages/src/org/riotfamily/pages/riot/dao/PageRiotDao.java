@@ -86,11 +86,7 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 		Page page = (Page) entity;
 		return page.getId().toString();
 	}
-	
-	public boolean isNode(Object entity) {
-		return entity instanceof Page;
-	}
-	
+		
 	public Object getRootNode(Object parent) {
 		if (parent == null) {
 			parent = Site.loadDefaultSite();
