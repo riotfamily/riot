@@ -56,7 +56,9 @@ public class ObjectChooser extends AbstractChooser {
 	@Override
 	protected void afterFormSet() {
 		targetList = screenRepository.getScreen(targetId, ListScreen.class);
-		rootList = screenRepository.getScreen(rootId, ListScreen.class);
+		if (rootId != null) {
+			rootList = screenRepository.getScreen(rootId, ListScreen.class);
+		}
 	}
 	
 	@Override
