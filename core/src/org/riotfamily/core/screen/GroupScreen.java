@@ -69,7 +69,7 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 		ModelAndView mv = new ModelAndView(viewName);
 		List<ScreenLink> links = Generics.newArrayList();
 		for (RiotScreen screen : childScreens) {
-			if (AccessController.isGranted("use-screen", screen)) {
+			if (AccessController.isGranted("view", screen)) {
 				GroupScreenLink link = new GroupScreenLink(screen.getTitle(context),
 						HandlerUrlUtils.getContextRelativeUrl(request, screen.getId(), context),
 						screen.getIcon());
