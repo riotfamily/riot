@@ -40,6 +40,7 @@ import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.core.screen.list.dto.ListItem;
+import org.riotfamily.core.security.AccessController;
 import org.springframework.beans.NullValueInNestedPathException;
 
 /**
@@ -81,17 +82,19 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		ArrayList<ListItem> items = Generics.newArrayList(objects.size());
 		Object next = i + 1 < expanded.length ? expanded[i + 1] : null;
 		for (Object object : objects) {
-			ListItem item = new ListItem();
-			String objectId = dao.getObjectId(object);
-			item.setObjectId(objectId);
-			item.setParentNodeId(parentNodeId);
-			item.setColumns(getColumns(object));
-			item.setExpandable(isExpandable(object));
-			if (object.equals(next)) {
-				item.setChildren(createItems(expanded, i + 1, objectId));
+			if (AccessController.isGranted("viewItem", screen, object)) {
+				ListItem item = new ListItem();
+				String objectId = dao.getObjectId(object);
+				item.setObjectId(objectId);
+				item.setParentNodeId(parentNodeId);
+				item.setColumns(getColumns(object));
+				item.setExpandable(isExpandable(object));
+				if (object.equals(next)) {
+					item.setChildren(createItems(expanded, i + 1, objectId));
+				}
+				item.setRowIndex(items.size());
+				items.add(item);
 			}
-			item.setRowIndex(items.size());
-			items.add(item);
 		}
 		return items;
 	}
@@ -103,6 +106,10 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		ArrayList<String> result = Generics.newArrayList();
 		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(object);
 		for (ColumnConfig col : screen.getColumns()) {
+			if (!AccessController.isGranted("viewColumn", screen, col, object)) {
+				continue;
+			}
+			
 			String propertyName = col.getProperty();
 			Object value = null;
 			if (propertyName != null) {
