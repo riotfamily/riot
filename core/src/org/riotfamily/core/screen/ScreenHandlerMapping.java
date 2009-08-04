@@ -23,6 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.mapping.ReverseHandlerMapping;
@@ -36,8 +39,12 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 	
 	private ScreenRepository repository;
 	
+	private Set<String> publicScreens;
+	
 	public ScreenHandlerMapping(ScreenRepository repository) {
 		this.repository = repository;
+		publicScreens = new HashSet<String>();
+		publicScreens.add("home");
 	}
 
 	@Override
@@ -62,7 +69,7 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 			}
 			
 			RiotScreen screen = repository.getScreen(screenId);
-			if (AccessController.isGranted("view", screen)) {
+			if ((screen != null && publicScreens.contains(screen.getId())) || AccessController.isGranted("view", screen)) {
 				ScreenContext context = new ScreenContext(
 						screen, request, objectId, parentId, parentIsNode);
 				context.expose();
@@ -101,5 +108,13 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 			return path.toString();
 		}
 		return null;
+	}
+
+	public Set<String> getPublicScreens() {
+		return publicScreens;
+	}
+
+	public void setPublicScreens(Set<String> publicScreens) {
+		this.publicScreens = publicScreens;
 	}
 }
