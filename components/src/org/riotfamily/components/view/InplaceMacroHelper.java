@@ -120,12 +120,12 @@ public class InplaceMacroHelper {
 	public String renderComponentList(ContentContainer container, 
 			String key, Integer minComponents, Integer maxComponents,
 			List<String> initalComponentTypes, 
-			List<?> validComponentTypes)
+			List<?> validComponentTypes, String insertAt)
 			throws Exception {
 		
 		ComponentListConfig config = new ComponentListConfig(
 				minComponents, maxComponents, 
-				initalComponentTypes, validComponentTypes);
+				initalComponentTypes, validComponentTypes, insertAt);
 		
 		return componentListRenderer.renderComponentList(container, key, config, 
 				request, response);
@@ -134,12 +134,12 @@ public class InplaceMacroHelper {
 	public String renderNestedComponentList(Component parent, 
 			String key, Integer minComponents, Integer maxComponents,
 			List<String> initalComponentTypes, 
-			List<?> validComponentTypes)
+			List<?> validComponentTypes, String insertAt)
 			throws Exception {
 		
 		ComponentListConfig config = new ComponentListConfig(
 				minComponents, maxComponents, 
-				initalComponentTypes, validComponentTypes);
+				initalComponentTypes, validComponentTypes, insertAt);
 		
 		return componentListRenderer.renderNestedComponentList(parent, key, 
 				config, request, response);
