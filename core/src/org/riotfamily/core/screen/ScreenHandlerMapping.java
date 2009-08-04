@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.core.security.AccessController;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
@@ -61,10 +62,13 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 			}
 			
 			RiotScreen screen = repository.getScreen(screenId);
-			ScreenContext context = new ScreenContext(
-					screen, request, objectId, parentId, parentIsNode);
-			
-			context.expose();
+			if (AccessController.isGranted("view", screen)) {
+				ScreenContext context = new ScreenContext(
+						screen, request, objectId, parentId, parentIsNode);
+				context.expose();
+			} else {
+				screen = null;
+			}
 			return screen;
 		}
 		
