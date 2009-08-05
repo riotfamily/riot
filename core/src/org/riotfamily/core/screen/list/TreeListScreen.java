@@ -115,10 +115,19 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 		return null;
 	}
 
-	public void setCommands(List<Command> commands) {
-		for (Command command : commands) {
-			String id = ObjectUtils.getIdentityHexString(command);
-			this.commands.put(id, command);
+	public void setCommands(Collection<?> commands) {
+		for (Object command : commands) {
+			if (command instanceof Command) {
+				String id = ObjectUtils.getIdentityHexString(command);
+				this.commands.put(id, (Command) command);
+			}
+			else if (command instanceof Collection<?>) {
+				setCommands((Collection<?>) command);
+			}
+			else {
+				throw new IllegalArgumentException(
+						"Expected command or Collection but found " + command);
+			}
 		}
 	}
 
