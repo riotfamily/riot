@@ -31,7 +31,6 @@ import org.riotfamily.core.security.policy.AuthorizationPolicy;
 import org.riotfamily.core.security.policy.PermissionDeniedException;
 import org.riotfamily.core.security.policy.AuthorizationPolicy.Permission;
 import org.riotfamily.core.security.session.AccessControlFilterPlugin;
-import org.riotfamily.core.security.session.AccessControlInterceptor;
 import org.riotfamily.core.security.session.SecurityContext;
 
 

@@ -49,11 +49,7 @@
 	<bean id="riotServletPrefix" factory-bean="riotRuntime" factory-method="getServletPrefix" />
 	<bean id="resourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />
 	<bean id="riotVersion" factory-bean="riotRuntime" factory-method="getRiotVersion" />
-	
-	<!--  Security -->
-
-	<bean id="riotAccessControlInterceptor" class="org.riotfamily.core.security.session.AccessControlInterceptor" />
-	
+		
 	<!-- ImageMagick -->
 	
 	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick" />

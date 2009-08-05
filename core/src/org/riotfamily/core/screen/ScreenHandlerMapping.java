@@ -23,14 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.core.screen;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.servlet.ServletUtils;
-import org.riotfamily.core.security.AccessController;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
@@ -39,12 +35,14 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 	
 	private ScreenRepository repository;
 	
-	private Set<String> publicScreens;
+	private String servletPrefix = "";
 	
 	public ScreenHandlerMapping(ScreenRepository repository) {
 		this.repository = repository;
-		publicScreens = new HashSet<String>();
-		publicScreens.add("home");
+	}
+	
+	public void setServletPrefix(String servletPrefix) {
+		this.servletPrefix = servletPrefix;
 	}
 
 	@Override
@@ -69,13 +67,10 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 			}
 			
 			RiotScreen screen = repository.getScreen(screenId);
-			if ((screen != null && publicScreens.contains(screen.getId())) || AccessController.isGranted("view", screen)) {
-				ScreenContext context = new ScreenContext(
-						screen, request, objectId, parentId, parentIsNode);
-				context.expose();
-			} else {
-				screen = null;
-			}
+			ScreenContext context = new ScreenContext(
+					screen, request, objectId, parentId, parentIsNode);
+			
+			context.expose();
 			return screen;
 		}
 		
@@ -105,16 +100,8 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 					path.append('/').append(handlerName);	
 				}
 			}
-			return path.toString();
+			return servletPrefix + path.toString();
 		}
 		return null;
-	}
-
-	public Set<String> getPublicScreens() {
-		return publicScreens;
-	}
-
-	public void setPublicScreens(Set<String> publicScreens) {
-		this.publicScreens = publicScreens;
 	}
 }

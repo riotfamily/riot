@@ -26,6 +26,7 @@ package org.riotfamily.core.security.session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.interceptor.OncePerRequestInterceptor;
 import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.core.security.auth.RiotUser;
 
@@ -35,7 +36,7 @@ import org.riotfamily.core.security.auth.RiotUser;
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class LoginInterceptor extends AccessControlInterceptor {
+public class LoginInterceptor extends OncePerRequestInterceptor {
 	
 	private static final String INTERCEPTED_URL_ATTR = LoginInterceptor.class 
 			+ ".interceptedUrl";
@@ -44,6 +45,14 @@ public class LoginInterceptor extends AccessControlInterceptor {
 	
 	public void setLoginHandlerName(String loginHandlerName) {
 		this.loginHandlerName = loginHandlerName;
+	}
+	
+	@Override
+	protected boolean preHandleOnce(HttpServletRequest request,
+			HttpServletResponse response, Object handler) throws Exception {
+		
+		RiotUser user = SecurityContext.getCurrentUser();
+		return isAuthorized(request, response, user);
 	}
 	
 	/**
