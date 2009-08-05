@@ -27,29 +27,30 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.SpringUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 
-public class ScreenRepository implements ApplicationContextAware {
+public class ScreenRepository {
 
 	private Map<String, RiotScreen> screenMap = Generics.newHashMap();
 	
 	private RiotScreen rootScreen;
 	
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		registerScreens(SpringUtils.listBeansOfType(
-				applicationContext, RiotScreen.class));
+	public void setRootScreen(RiotScreen screen) {
+		this.rootScreen = screen;
+		screenMap.clear();
+		screenMap.put(screen.getId(), screen);
+		registerScreens(screen.getChildScreens());
 	}
 	
 	private void registerScreens(Collection<RiotScreen> screens) {
 		if (screens != null) {
 			for (RiotScreen screen : screens) {
-				screenMap.put(screen.getId(), screen);
-				if (screen.getParentScreen() == null && rootScreen == null) {
-					rootScreen = screen;
+				if (screenMap.containsKey(screen.getId())) {
+					throw new IllegalArgumentException(
+							"A screen with the same id already exists: "
+							+ screen.getId());
 				}
+				screenMap.put(screen.getId(), screen);
 				registerScreens(screen.getChildScreens());
 			}
 		}

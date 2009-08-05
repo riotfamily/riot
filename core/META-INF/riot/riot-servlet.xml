@@ -285,9 +285,9 @@
 	<util:list id="systemScreens">
 	</util:list>
 		
-	<!-- List screens -->
-	
-	<bean id="screenRepository" class="org.riotfamily.core.screen.ScreenRepository" />
+	<bean id="screenRepository" class="org.riotfamily.core.screen.ScreenRepository">
+		<property name="rootScreen" ref="home" />
+	</bean>
 	
 	<bean id="listService" class="org.riotfamily.core.screen.list.service.ListService">
 		<constructor-arg ref="transactionManager" />
