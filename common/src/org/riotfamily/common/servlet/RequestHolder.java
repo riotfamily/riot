@@ -59,22 +59,19 @@ public final class RequestHolder {
 		holder.level++;
 	}
 	
-	private static RequestHolder get() {
-		RequestHolder holder = threadLocal.get();
-		Assert.notNull(holder, "No RequestHolder bound to Thread.");
-		return holder;
-	}
-	
 	public static HttpServletRequest getRequest() {
-		return get().request;
+		RequestHolder holder = threadLocal.get(); 
+		return holder != null ? holder.request : null;
 	}
 	
 	public static HttpServletResponse getResponse() {
-		return get().response;
+		RequestHolder holder = threadLocal.get(); 
+		return holder != null ? holder.response: null;
 	}
 	
 	public static void unset() {
-		RequestHolder holder = get();
+		RequestHolder holder = threadLocal.get();
+		Assert.notNull(holder, "Expected to find a thread-local RequestHolder");
 		if (--holder.level == 0) {
 			threadLocal.set(null);
 		}

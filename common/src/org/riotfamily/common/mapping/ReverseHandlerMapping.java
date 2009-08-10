@@ -54,7 +54,6 @@ public interface ReverseHandlerMapping {
 	 * @param request Optional request that is used as context to look up 
 	 *        default wildcard values.
 	 */
-	public String getUrlForHandler(String handlerName, Object attributes, 
-			HttpServletRequest request);
-
+	public String getUrlForHandler(String handlerName, Object attributes);
+	
 }

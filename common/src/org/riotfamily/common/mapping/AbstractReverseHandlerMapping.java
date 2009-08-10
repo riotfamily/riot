@@ -67,14 +67,11 @@ public abstract class AbstractReverseHandlerMapping
 	 * @param handlerName The name of the handler
 	 * @param attributes Optional attributes to fill out wildcards. Can either 
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
-	 * @param request Optional request that is used as context to look up 
-	 *        default wildcard values.
 	 */
 	@SuppressWarnings("unchecked")
-	public String getUrlForHandler(String handlerName, Object attributes, 
-			HttpServletRequest request) {
+	public String getUrlForHandler(String handlerName, Object attributes) {
 		
-		Map<String, Object> defaults = getDefaults(request);
+		Map<String, Object> defaults = getDefaults();
 		String url = null;
 		if (attributes == null) {
 			url = getUrlForHandlerWithoutAttributes(handlerName, defaults);
@@ -110,9 +107,9 @@ public abstract class AbstractReverseHandlerMapping
 
 	/**
 	 * Returns a Map of default values that are used to build URLs. The default
-	 * implementation return <code>null</code>.
+	 * implementation returns <code>null</code>.
 	 */
-	protected Map<String, Object> getDefaults(HttpServletRequest request) {
+	protected Map<String, Object> getDefaults() {
 		return null;
 	}
 

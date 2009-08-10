@@ -84,9 +84,7 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 		return null;
 	}
 
-	public String getUrlForHandler(String handlerName, Object attributes, 
-			HttpServletRequest request) {
-
+	public String getUrlForHandler(String handlerName, Object attributes) {
 		if (attributes instanceof ScreenContext) {
 			ScreenContext context = (ScreenContext) attributes;
 			StringBuilder path = new StringBuilder("/screen/");

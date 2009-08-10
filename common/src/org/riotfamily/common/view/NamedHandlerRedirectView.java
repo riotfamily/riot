@@ -67,7 +67,7 @@ public class NamedHandlerRedirectView extends RedirectView {
 			WebApplicationContext context = RequestContextUtils.getWebApplicationContext(request);
 			handlerUrlResolver = (HandlerUrlResolver) context.getBean("handlerUrlResolver");
 		}
-		String handlerUrl = handlerUrlResolver.getUrlForHandler(request, handlerName, model, null);
+		String handlerUrl = handlerUrlResolver.getUrlForHandler(handlerName, model, null);
 		Assert.notNull(handlerUrl, "Can't resolve URL for handler " + handlerName);
 		setUrl(handlerUrl);
 		setContextRelative(true);

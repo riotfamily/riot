@@ -70,10 +70,8 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 	 * @param handlerName The name of the handler
 	 * @param attributes Optional attributes to fill out wildcards. Can either 
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
-	 * @param request The current request
 	 */
-	public String getUrlForHandler(HttpServletRequest request, 
-			String handlerName, Object... attributes) {
+	public String getUrlForHandler(String handlerName, Object... attributes) {
 		
 		Object attr;
 		if (attributes.length == 0) {
@@ -86,13 +84,13 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 			attr = attributes;
 		}
 		for (ReverseHandlerMapping mapping : getMappings()) {
-			String url = mapping.getUrlForHandler(handlerName, attr, request);
+			String url = mapping.getUrlForHandler(handlerName, attr);
 			if (url != null) {
 				return url;
 			}
 		}
 		if (parent != null) {
-			return parent.getUrlForHandler(request, handlerName, attributes);
+			return parent.getUrlForHandler(handlerName, attributes);
 		}
 		return null;
 	}

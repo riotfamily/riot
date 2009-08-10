@@ -236,7 +236,7 @@ public class CommonMacroHelper {
 	}
 
 	public String getUrlForHandler(String handlerName, Object attributes) {
-		return handlerUrlResolver.getUrlForHandler(request, handlerName, attributes);
+		return handlerUrlResolver.getUrlForHandler(handlerName, attributes);
 	}
 
 	public String getOriginatingRequestUri() {

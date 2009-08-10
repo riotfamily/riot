@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.mapping.AdvancedBeanNameHandlerMapping;
+import org.riotfamily.common.servlet.RequestHolder;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.Site;
 
@@ -43,18 +44,23 @@ public class SiteBeanNameHandlerMapping extends AdvancedBeanNameHandlerMapping {
 		return handler;
 	}
 
-	protected Map<String, Object> getDefaults(HttpServletRequest request) {
-		Map<String, Object> defaults = Generics.newHashMap();
-		Site site = PageResolver.getResolvedSite(request);
-		defaults.put("site", site);
-		String sitePrefix = null;
-		if (site != null) {
-			sitePrefix = site.getPathPrefix();
+	@Override
+	protected Map<String, Object> getDefaults() {
+		HttpServletRequest request = RequestHolder.getRequest();
+		if (request != null) {
+			Map<String, Object> defaults = Generics.newHashMap();
+			Site site = PageResolver.getResolvedSite(request);
+			defaults.put("site", site);
+			String sitePrefix = null;
+			if (site != null) {
+				sitePrefix = site.getPathPrefix();
+			}
+			if (sitePrefix == null) {
+				sitePrefix = "";
+			}
+			defaults.put("sitePrefix", sitePrefix);
+			return defaults;
 		}
-		if (sitePrefix == null) {
-			sitePrefix = "";
-		}
-		defaults.put("sitePrefix", sitePrefix);
-		return defaults;
+		return null;
 	}
 }
