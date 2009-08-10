@@ -54,6 +54,15 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	}
 	
 	/**
+	 * Returns the Hibernate {@link Session} to use for persistence operations.
+	 * 
+	 * @return the Hibernate {@link Session}
+	 */
+	protected final static Session getSession() {
+		return getSessionFactory().getCurrentSession();
+	}
+	
+	/**
 	 * Persists this transient instance, first assigning a generated
 	 * identifier.
 	 * <p>
@@ -88,6 +97,7 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 * identifier, an exception is thrown.
 	 *
 	 * @see Session#update(Object)
+	 * @deprecated Please use {@link #merge()} instead to ensure JPA compatibility.
 	 */
 	public final void update() {
 		getSession().update(this);
@@ -106,27 +116,6 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	}
 	
 	/**
-	 * Returns the persistent instance of the given entity class with the given
-	 * identifier, or null if there is no such persistent instance.
-	 * <p>
-	 * Under the hood {@link Session#get(Class, java.io.Serializable)} is used,
-	 * not {@link Session#load(Class, java.io.Serializable)} as one might
-	 * expect because of this method's name. See Hibernate documentation for
-	 * a detailed discussion of the difference. 
-	 * 
-	 * @param clazz a persistent class
-	 * @param id an identifier
-	 * @return a persistent instance or null
-	 * 
-	 * @see Session#get(Class, java.io.Serializable)
-	 * @see Session#load(Class, java.io.Serializable)
-	 */
-	@SuppressWarnings("unchecked")
-	protected static<T> T load(Class<T> clazz, Serializable id) {
-		return (T) getSession().get(clazz, id);
-	}
-	
-	/**
 	 * Obtains the specified lock level upon this persistent instance.
 	 * <p>
 	 * Why is this method <code>final</code>? Changing the implementation of
@@ -138,15 +127,6 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 */
 	public final void lock(LockMode lockMode) {
 		getSession().lock(this, lockMode);
-	}
-
-	/**
-	 * Returns the Hibernate {@link Session} to use for persistence operations.
-	 * 
-	 * @return the Hibernate {@link Session}
-	 */
-	protected final static Session getSession() {
-		return getSessionFactory().getCurrentSession();
 	}
 	
 	/**
@@ -186,6 +166,27 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	}
 
 	/**
+	 * Returns the persistent instance of the given entity class with the given
+	 * identifier, or null if there is no such persistent instance.
+	 * <p>
+	 * Under the hood {@link Session#get(Class, java.io.Serializable)} is used,
+	 * not {@link Session#load(Class, java.io.Serializable)} as one might
+	 * expect because of this method's name. See Hibernate documentation for
+	 * a detailed discussion of the difference. 
+	 * 
+	 * @param clazz a persistent class
+	 * @param id an identifier
+	 * @return a persistent instance or null
+	 * 
+	 * @see Session#get(Class, java.io.Serializable)
+	 * @see Session#load(Class, java.io.Serializable)
+	 */
+	@SuppressWarnings("unchecked")
+	protected static<T> T load(Class<T> clazz, Serializable id) {
+		return (T) getSession().get(clazz, id);
+	}
+	
+	/**
 	 * Convenience method to return a single instance that matches the query,
 	 * or null if the query returns no results.
 	 * 
@@ -193,14 +194,31 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 *        contain one or more '?' parameter placeholders
 	 * @param params the values of the parameters 
 	 * @return the single result or <code>null</code>
-	 * @throws NonUniqueResultException if there is more than one matching
-	 *                                  result
+	 * @throws NonUniqueResultException if there is more than one matching result
 	 */
 	@SuppressWarnings("unchecked")
 	protected static<T> T load(String hql, Object... params)
 		throws NonUniqueResultException {
 		
 		return (T) createQuery(hql, params).uniqueResult();
+	}
+	
+	/**
+	 * Convenience method to return a single instance with the given property
+	 * value or null if the query returns no results.
+	 * 
+	 * @param clazz a persistent class 
+	 * @param property the property name
+	 * @param value the property value
+	 * @return the single result or <code>null</code>
+	 * @throws NonUniqueResultException if there is more than one matching result
+	 */
+	@SuppressWarnings("unchecked")
+	protected static<T> T loadByProperty(Class<T> clazz, String property, 
+			Object value) throws NonUniqueResultException {
+		
+		return (T) createQuery("from " + clazz.getName() 
+				+ " where " + property + " = ?", value).uniqueResult();
 	}
 
 	/**
