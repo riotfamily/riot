@@ -38,4 +38,19 @@ public final class ActiveRecordUtils {
 				.getClassMetadata(Hibernate.getClass(record))
 				.getIdentifier(record, EntityMode.POJO);
 	}
+	
+	public static Serializable getIdAndSaveIfNecessary(ActiveRecord record) {
+		Serializable id = getId(record);
+		if (id == null) {
+			record.save();
+		}
+		return getId(record);
+	}
+	
+	public static ActiveRecord load(Class<? extends ActiveRecord> type, 
+			Serializable id) {
+		
+		return ActiveRecord.load(type, id);
+	}
+	
 }
