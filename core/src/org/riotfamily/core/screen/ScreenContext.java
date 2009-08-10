@@ -79,10 +79,6 @@ public class ScreenContext {
 		request.setAttribute(REQUEST_ATTR, this);
 	}
 	
-	public static ScreenContext get(HttpServletRequest request) {
-		return (ScreenContext) request.getAttribute(REQUEST_ATTR);
-	}
-	
 	public String getObjectId() {
 		if (objectId == null && object != null) {
 			objectId = dao.getObjectId(object);
@@ -213,6 +209,10 @@ public class ScreenContext {
 			ctx = ctx.createParentContext();
 		}
 		return path;
+	}
+	
+	public static ScreenContext get(HttpServletRequest request) {
+		return (ScreenContext) request.getAttribute(REQUEST_ATTR);
 	}
 
 }
