@@ -33,8 +33,7 @@ public interface ComponentRenderer {
 	/**
 	 * Renders the given ComponentVersion.
 	 */
-	public void render(Component component, int position, int listSize, 
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception;
+	public void render(Component component, HttpServletRequest request, 
+			HttpServletResponse response) throws Exception;
 
 }

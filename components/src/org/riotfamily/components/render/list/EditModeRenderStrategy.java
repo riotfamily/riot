@@ -57,6 +57,7 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 	 * actual list. The DIV has attributes that are required for the
 	 * Riot toolbar JavaScript.
 	 */
+	@Override
 	public void render(ComponentList list, 
 			ComponentListConfig config,
 			HttpServletRequest request, HttpServletResponse response) 
@@ -66,7 +67,7 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 		
 		doc.start("div")
 			.attribute("class", "riot-component-list")
-			.attribute("riot:listId", list.getId().toString());
+			.attribute("riot:listId", list.getId());
 		
 		doc.body();
 		super.render(list, config, request, response);
@@ -84,12 +85,12 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 	 * Riot toolbar JavaScript.
 	 * @throws IOException
 	 */
+	@Override
 	protected void renderComponent(Component component, 
-			int position, int listSize, ComponentListConfig config, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws Exception {
+			ComponentListConfig config, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
-		editModeRenderer.render(component, position, listSize, request, response);
+		editModeRenderer.render(component, request, response);
 	}
 
 }

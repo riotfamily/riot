@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
-import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.pages.model.Page;
 
@@ -46,9 +45,8 @@ public class PagePropertyElement extends AbstractLocalizedElement {
 		return masterPage != null;
 	}
 	
-	protected ValueWrapper<?> getMasterValue(String property) {
-		return masterPage.getPageProperties().getPreviewVersion()
-				.getWrappers().get(property);
+	protected Object getMasterValue(String property) {
+		return masterPage.getPageProperties().getPreviewVersion().get(property);
 	}
 	
 }

@@ -25,7 +25,6 @@ package org.riotfamily.pages.riot.form;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.EditorBinding;
 import org.riotfamily.forms.ElementFactory;
@@ -58,7 +57,7 @@ public abstract class AbstractLocalizedElement extends TemplateElement {
 
 	private ToggleButton toggleButton;
 	
-	private ValueWrapper<?> masterValue; 
+	private Object masterValue; 
 	
 	public AbstractLocalizedElement(ElementFactory elementFactory, 
 			LocalizedEditorBinder binder) {
@@ -72,7 +71,7 @@ public abstract class AbstractLocalizedElement extends TemplateElement {
 	
 	protected abstract boolean isLocalized();
 	
-	protected abstract ValueWrapper<?> getMasterValue(String property);
+	protected abstract Object getMasterValue(String property);
 	
 	protected void initCompositeElement() {
 		editor = (Editor) elementFactory.createElement(this, getForm(), true);
@@ -86,7 +85,7 @@ public abstract class AbstractLocalizedElement extends TemplateElement {
 			addComponent("display", display);
 			masterValue = getMasterValue(binding.getProperty());
 			if (masterValue != null) {
-				display.setValue(masterValue.getValue());
+				display.setValue(masterValue);
 			}
 		}
 	}
@@ -113,7 +112,7 @@ public abstract class AbstractLocalizedElement extends TemplateElement {
 		if (!initialized) {
 			overwrite = display == null || editor.getEditorBinding().getValue() != null;
 			if (!overwrite && masterValue != null) {
-				editor.setValue(masterValue.deepCopy().getValue());
+				editor.setValue(masterValue);
 			}
 			initialized = true;
 		}

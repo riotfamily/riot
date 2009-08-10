@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.render.list;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,8 +33,6 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
 
 public class DefaultRenderStrategy implements RenderStrategy {
-	
-	public static final String INHERTING_COMPONENT = "inherit";
 	
 	protected RiotLog log = RiotLog.get(getClass());
 	
@@ -51,16 +47,12 @@ public class DefaultRenderStrategy implements RenderStrategy {
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		List<Component> components = list.getComponents();
-		if (components == null || components.isEmpty()) {
+		if (list == null || list.isEmpty()) {
 			onEmptyComponentList(config, request, response);
 			return;
 		}
-		
-		int i = 0;
-		for (Component component : components) {
-			renderComponent(component, i++, components.size(), config, 
-					request, response);
+		for (Component component : list) {
+			renderComponent(component, config, request, response);
 		}
 	}
 	
@@ -71,11 +63,10 @@ public class DefaultRenderStrategy implements RenderStrategy {
 	}
 	
 	protected void renderComponent(Component component, 
-			int position, int listSize, ComponentListConfig config, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws Exception {
+			ComponentListConfig config, HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
 		
-		renderer.render(component, position, listSize, request, response);
+		renderer.render(component, request, response);
 	}
 
 }

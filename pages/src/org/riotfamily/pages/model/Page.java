@@ -254,7 +254,7 @@ public class Page extends ActiveRecordSupport implements Lifecycle {
 	}
 	
 	public String getTitle(boolean preview) {
-		Object title = getPageProperties().unwrap(preview).get(TITLE_PROPERTY);
+		Object title = getPageProperties().getContent(preview).get(TITLE_PROPERTY);
 		if (title != null) {
 			return title.toString();
 		}

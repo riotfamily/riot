@@ -23,27 +23,31 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import java.util.ListIterator;
 
-@Entity
-@DiscriminatorValue("Component")
-public class Component extends Content {
+import org.springframework.util.Assert;
 
+
+public class Component extends ContentMap {
+
+	private ComponentList list;
+	
 	private String type;
 	
-	private ComponentList list;
-
-	public Component() {
-	}
-
-	public Component(String type) {
-		this.type = type;
+	public Component(ComponentList list) {
+		super(list.getOwner());
+		this.list = list;
 	}
 	
+	public Component(ComponentList list, String id) {
+		super(list.getOwner(), id);
+		this.list = list;
+	}
+
+	public ComponentList getList() {
+		return list;
+	}
+
 	public String getType() {
 		return this.type;
 	}
@@ -52,24 +56,32 @@ public class Component extends Content {
 		this.type = type;
 	}
 
-	@ManyToOne(cascade=CascadeType.MERGE)
-	@JoinColumn(name="list", insertable=false, updatable=false)
-	public ComponentList getList() {
-		return list;
-	}
-
-	public void setList(ComponentList list) {
-		this.list = list;
-	}
-
-	public Content createCopy() {
-		Component copy = new Component(type);
-		copyValues(copy);
-		return copy;
-	}
-
-	public static Component load(Long id) {
-		return load(Component.class, id);
+	public void delete() {
+		Assert.isTrue(list.remove(this));
 	}
 	
+	public void move(String before) {
+		delete();
+		if (before != null) {
+			ListIterator<Component> it = list.listIterator();
+			while (it.hasNext()) {
+				if (it.next().getId().equals(before)) {
+					it.add(this);
+					break;
+				}
+			}
+		}
+		else {
+			list.add(this);
+		}
+	}
+	
+	public static Component load(String id) {
+		return (Component) Content.loadPart(id);
+	}
+
+	public int getPosition() {
+		return list.indexOf(this);
+	}
+
 }

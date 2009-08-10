@@ -160,19 +160,6 @@ public class PageFacade {
 	public Collection<Page> getAncestors() {
 		return page.getAncestors();
 	}
-
-	public Object findPropertyInAncestors(String key) {
-		Page p = page;
-		while (p != null) {
-			Map<String, Object> props = p.getPageProperties().unwrap(preview);
-			Object value = props.get(key);
-			if (value != null) {
-				return value;
-			}
-			p = p.getParent();
-		}
-		return null;
-	}
 	
 	public String getPageType() {
 		return page.getPageType();
@@ -195,7 +182,7 @@ public class PageFacade {
 
 	public Map<String, Object> getProperties() {
 		if (properties == null) {
-			properties = getPageProperties().unwrap(preview);
+			properties = getPageProperties().getContent(preview);
 		}
 		return properties;
 	}
@@ -206,10 +193,12 @@ public class PageFacade {
 	public Object get(String key) {
 		return getProperties().get(key);
 	}
-	
+
+	/*
 	public Map<String, Object> getLocal() {
 		return getPageProperties().unwrapLocal(preview);
 	}
+	*/
 
 	public String getTitle() {
 		Object title = getProperties().get(TITLE_PROPERTY);

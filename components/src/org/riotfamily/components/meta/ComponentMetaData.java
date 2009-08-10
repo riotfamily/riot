@@ -51,7 +51,10 @@ public class ComponentMetaData {
 			this.name = data.get("name");
 			this.icon = data.get("icon");
 			this.form = data.get("form");
-			this.defaults = JSONObject.fromObject(data.get("defaults"));
+			JSONObject json = JSONObject.fromObject(data.get("defaults"));
+			if (!json.isNullObject()) {
+				this.defaults = json;
+			}
 		}
 		if (this.name == null) {
 			this.name = FormatUtils.xmlToTitleCase(type);

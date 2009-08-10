@@ -23,11 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
+import org.riotfamily.components.model.Content;
 import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
+import org.riotfamily.forms.MapEditorBinder;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
@@ -57,7 +59,7 @@ public class PagePropertiesEditor extends CompositeElement
 		
 		this.repository = repository;
 		this.masterPage = getMasterPage(form);
-		this.binder = new LocalizedEditorBinder(new PagePropertiesEditorBinder((Page) form.getBackingObject()));
+		this.binder = new LocalizedEditorBinder(new MapEditorBinder(Content.class));
 		this.currentForm = new PropertiesForm(pageType);
 		addComponent(currentForm);
 	}

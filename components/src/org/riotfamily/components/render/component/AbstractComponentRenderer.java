@@ -51,13 +51,11 @@ public abstract class AbstractComponentRenderer implements ComponentRenderer {
 
 	protected RiotLog log = RiotLog.get(AbstractComponentRenderer.class);
 
-	public final void render(Component component, int position, int listSize, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
+	public final void render(Component component, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
 
 		try {
-			renderInternal(component, position, listSize, 
-					request, response);
+			renderInternal(component, request, response);
 		}
 		catch (Exception e) {
 			log.error("Error rendering component", e);
@@ -76,7 +74,7 @@ public abstract class AbstractComponentRenderer implements ComponentRenderer {
 	}
 
 	protected abstract void renderInternal(Component component,
-			int position, int listSize, HttpServletRequest request,
-			HttpServletResponse response) throws Exception;
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception;
 	
 }

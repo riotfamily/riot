@@ -45,7 +45,6 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.components.model.Content;
-import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -248,22 +247,13 @@ public class Site extends ActiveRecordSupport {
 	}
 
 	public Object getProperty(String key) {
-		Object value = null;
-		ValueWrapper<?> wrapper = getProperties().getWrapper(key);
-		if (wrapper != null) {
-			value = wrapper.unwrap();
-		}
+		Object value = getProperties().get(key);
 		if (value == null && masterSite != null) {
 			value = masterSite.getProperty(key);
 		}
 		return value;
 	}
-	
-	@Transient
-	public Map<String, Object> getLocalPropertiesMap() {
-		return getProperties().unwrap();
-	}
-	
+		
 	@Transient
 	public Map<String, Object> getPropertiesMap() {
 		Map<String, Object> mergedProperties;
@@ -273,7 +263,7 @@ public class Site extends ActiveRecordSupport {
 		else {
 			mergedProperties = new HashMap<String, Object>();
 		}
-		mergedProperties.putAll(getLocalPropertiesMap());
+		mergedProperties.putAll(getProperties());
 		return mergedProperties;
 	}
 	

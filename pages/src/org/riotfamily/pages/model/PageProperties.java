@@ -31,13 +31,15 @@ public class PageProperties extends ContentContainer {
 		pages = Collections.singleton(page);
 		Page master = page.getMasterPage();
 		if (master != null) {
-			Map<String, Object> masterProps = master.getPageProperties().unwrap(true);
+			/*
+			Map<String, Object> masterProps = master.getPageProperties().getContent(true).getMap();
 			for (Entry<String, Object> entry : masterProps.entrySet()) {
 				if (entry.getValue() instanceof ComponentList) {
 					ComponentList list = (ComponentList) entry.getValue();
 					getPreviewVersion().setValue(entry.getKey(), list.createCopy());
 				}
 			}
+			*/
 		}
 	}
 
@@ -60,28 +62,7 @@ public class PageProperties extends ContentContainer {
 	public Page getPage() {
 		return pages.iterator().next();
 	}
-	
-	public Map<String, Object> unwrap() {
-		return unwrap(false);
-	}
-	
-	public Map<String, Object> unwrap(boolean preview) {
-		Map<String, Object> mergedProperties;
-		Page masterPage = getPage().getMasterPage();
-		if (masterPage != null) {
-			mergedProperties = masterPage.getPageProperties().unwrap(preview);
-		}
-		else {
-			mergedProperties = new HashMap<String, Object>();
-		}
-		mergedProperties.putAll(unwrapLocal(preview));
-		return mergedProperties;
-	}
-	
-	public Map<String, Object> unwrapLocal(boolean preview) {
-		return super.unwrap(preview);
-	}
-	
+		
 	@Override
 	public void publish() {
 		super.publish();

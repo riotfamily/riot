@@ -23,10 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
-import org.riotfamily.components.riot.form.ContentEditorBinder;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
+import org.riotfamily.forms.MapEditorBinder;
 import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.factory.FormFactory;
@@ -51,7 +52,7 @@ public class SitePropertiesEditor extends CompositeElement
 	public SitePropertiesEditor(FormRepository repository, Site masterSite) {
 		this.repository = repository;
 		this.masterSite = masterSite;
-		this.binder = new LocalizedEditorBinder(new ContentEditorBinder());
+		this.binder = new LocalizedEditorBinder(new MapEditorBinder(Content.class));
 		
 		propertiesForm = new PropertiesForm();
 		addComponent(propertiesForm);
@@ -86,13 +87,13 @@ public class SitePropertiesEditor extends CompositeElement
 			setEditorBinder(binder);
 			setStyleClass(id);
 			
-			addPagePropertyElements("all-sites");
+			addSitePropertyElements("all-sites");
 			if (masterSite == null) {
-				addPagePropertyElements("master-sites");
+				addSitePropertyElements("master-sites");
 			}
 		}
 		
-		private void addPagePropertyElements(String id) {
+		private void addSitePropertyElements(String id) {
 			if (repository.containsForm(id)) {
 				FormFactory factory = repository.getFormFactory(id);
 				for (ElementFactory ef : factory.getChildFactories()) {

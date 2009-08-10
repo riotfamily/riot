@@ -23,9 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import java.util.Collections;
-import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,15 +33,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.FetchMode;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.criterion.Restrictions;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.components.cache.ComponentCacheUtils;
-import org.riotfamily.components.model.wrapper.ComponentListWrapper;
-import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.core.security.AccessController;
 
 @Entity
@@ -97,17 +90,9 @@ public class ContentContainer extends ActiveRecordSupport {
 		if (!preview && liveVersion != null) {
 			return liveVersion;
 		}
-		return previewVersion;
+		return getPreviewVersion();
 	}
-	
-	public Map<String, Object> unwrap(boolean preview) {
-		Content content = getContent(preview);
-		if (content != null) { 
-			return content.unwrap();
-		}
-		return Collections.emptyMap();
-	}
-	
+		
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -156,41 +141,10 @@ public class ContentContainer extends ActiveRecordSupport {
 		return load(ContentContainer.class, id);
 	}
 	
-	public static ContentContainer findByComponent(Component component) {
-		ComponentListWrapper wrapper = (ComponentListWrapper)
-				getSession().createCriteria(ComponentListWrapper.class)
-				.add(Restrictions.eq("value", component.getList()))
-				.setFetchMode("value", FetchMode.SELECT)
-				.uniqueResult();
+	public static ContentContainer loadByContent(Content content) {
+		return load("from " + ContentContainer.class.getName()
+				+ " where previewVersion = ? or liveVersion = ?", 
+				content, content);
+	}
 
-		return findByWrapper(wrapper);
-	}
-	
-	public static ContentContainer findByWrapper(ValueWrapper<?> wrapper) {
-		if (wrapper == null) {
-			return null;
-		}
-		Content content = load("select c from Content c join c.wrappers w " 
-				+ "where w = ?", wrapper);
-		
-		if (content != null) {
-			return load("from ContentContainer contentContainer" 
-					+ " where contentContainer.liveVersion = ?"
-					+ " or contentContainer.previewVersion = ?",
-					content, content);
-		}
-		else {
-			ValueWrapper<?> parent = load("select l from ListWrapper l " 
-					+ "join l.wrapperList w where w = ?", wrapper);
-			
-			if (parent == null) {			
-				parent = load("select m from MapWrapper m " 
-						+ "join m.wrapperMap w where w = ?", wrapper);
-			}
-			if (parent != null) {
-				return findByWrapper(parent);
-			}
-		}
-		return null;
-	}
 }

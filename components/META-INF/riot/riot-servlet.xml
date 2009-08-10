@@ -34,13 +34,6 @@
 	
 	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.components.meta" />
 	
-	<override:put ref="customFormElements">
-		<entry key="{http://www.riotfamily.org/schema/components/form-elements}map"
-				value="org.riotfamily.components.riot.form.ContentMapEditor" />
-		<entry key="{http://www.riotfamily.org/schema/components/form-elements}list"
-				value="org.riotfamily.components.riot.form.ContentListEditor" />
-	</override:put>
-
 	<!--
 	  - FormRepository providing component property forms.
 	  -->

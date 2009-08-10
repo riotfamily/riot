@@ -23,32 +23,27 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Type;
 import org.riotfamily.common.hibernate.ActiveRecordSupport;
-import org.riotfamily.components.model.wrapper.ValueCallback;
-import org.riotfamily.components.model.wrapper.ValueWrapper;
-import org.riotfamily.components.model.wrapper.ValueWrapperService;
+import org.riotfamily.common.util.Generics;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.Assert;
 
 @Entity
 @Table(name="riot_contents")
@@ -59,28 +54,34 @@ import org.riotfamily.components.model.wrapper.ValueWrapperService;
 )
 @DiscriminatorValue("Content")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-public class Content extends ActiveRecordSupport {
+public class Content extends ActiveRecordSupport 
+		implements Map<String, Object> {
 
+	private ContentMapMarshaller marshaller;
+	
 	private int version;
 
-	private Map<String, ValueWrapper<?>> wrappers;
-
+	private ContentMap map;
+	
+	private String xml;
+	
+	private boolean dirty;
+		
+	private Map<String, ContentPart> parts = Generics.newHashMap();
+	
 	public Content() {
 	}
-
-	public Content createCopy() {
-		Content copy = new Content();
-		copyValues(copy);
-		return copy;
+	
+	public Content(Content other) {
+		setXml(other.getXml());
 	}
 	
-	protected final void copyValues(Content dest) {
-		for (Entry<String, ValueWrapper<?>> entry : getWrappers().entrySet()) {
-			ValueWrapper<?> copy = entry.getValue().deepCopy();
-			dest.getWrappers().put(entry.getKey(), copy);
-		}
+	@Transient
+	@Required
+	public void setMarshaller(ContentMapMarshaller marshaller) {
+		this.marshaller = marshaller;
 	}
-
+	
 	@Version
 	public int getVersion() {
 		return version;
@@ -90,93 +91,135 @@ public class Content extends ActiveRecordSupport {
 		this.version = version;
 	}
 
-	public ValueWrapper<?> getWrapper(String key) {
-		return getWrappers().get(key);
+	public Content createCopy() {
+		return new Content(this);
 	}
-	
-	public void setWrapper(String key, ValueWrapper<?> wrapper) {
-		getWrappers().put(key, wrapper);
-	}
-	
-	public Object getValue(String key) {
-		if (wrappers == null) {
-			return null;
+		
+	@Type(type="text")
+	public String getXml() {
+		if (xml == null || dirty) {
+			xml = marshaller.marshal(map);
+			dirty = false;
 		}
-		ValueWrapper<?> wrapper = getWrapper(key);
-		return wrapper != null ? wrapper.getValue() : null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void setValue(String key, Object value) {
-		if (value == null) {
-			getWrappers().remove(key);
-		}
-		else if (value instanceof ValueWrapper) {
-			setWrapper(key, (ValueWrapper<?>) value);
-		}
-		else {
-			ValueWrapper<Object> wrapper = (ValueWrapper<Object>) getWrapper(key);
-			setWrapper(key, ValueWrapperService.createOrUpdate(wrapper, value));
-		}
+		return xml;
 	}
 
-	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinColumn(name="content")
-	@MapKey(columns={@Column(name="property")})
-	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-	public Map<String, ValueWrapper<?>> getWrappers() {
-		if (wrappers == null) {
-			wrappers = new HashMap<String, ValueWrapper<?>>();
-		}
-		return wrappers;
+	public void setXml(String xml) {
+		parts.clear();
+		map = marshaller.unmarshal(this, xml);
 	}
 
-	public void setWrappers(Map<String, ValueWrapper<?>> wrappers) {
-		this.wrappers = wrappers;
+	/**
+	 * ContentParts invoke this method on their owner when they are modified.
+	 */
+	void dirty() {
+		dirty = true;
 	}
 	
-	public Map<String, Object> unwrap() {
-		HashMap<String, Object> result = new HashMap<String, Object>();
-		if (wrappers != null) {
-			for (Entry<String, ValueWrapper<?>> entry : wrappers.entrySet()) {
-				ValueWrapper<?> wrapper = entry.getValue();
-				if (wrapper != null) {
-					result.put(entry.getKey(), wrapper.unwrap());
-				}
-				else {
-					result.put(entry.getKey(), null);
-				}
-			}
+	@Transient
+	ContentMap getMap() {
+		if (map == null) {
+			map = new ContentMap(this);
 		}
-		return result;
+		return map;
+	}
+
+	// -----------------------------------------------------------------------
+	// Implementation of the Map interface (delegate methods)
+	// -----------------------------------------------------------------------
+	
+	public void clear() {
+		getMap().clear();
+	}
+
+	public boolean containsKey(Object key) {
+		return getMap().containsKey(key);
+	}
+
+	public boolean containsValue(Object value) {
+		return getMap().containsValue(value);
+	}
+
+	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+		return getMap().entrySet();
+	}
+
+	public Object get(Object key) {
+		return getMap().get(key);
+	}
+
+	@Transient
+	public boolean isEmpty() {
+		return getMap().isEmpty();
+	}
+
+	public Set<String> keySet() {
+		return getMap().keySet();
+	}
+
+	public Object put(String key, Object value) {
+		return getMap().put(key, value);
+	}
+
+	public void putAll(Map<? extends String, ? extends Object> m) {
+		getMap().putAll(m);
+	}
+
+	public Object remove(Object key) {
+		return getMap().remove(key);
+	}
+
+	public int size() {
+		return getMap().size();
+	}
+
+	public Collection<Object> values() {
+		return getMap().values();
 	}
 	
-	public void wrap(Map<String, ?> values) {
-		if (values != null) {
-			for (Entry<String, ?> entry : values.entrySet()) {
-				setValue(entry.getKey(), entry.getValue());
-			}
-			Iterator<String> it = getWrappers().keySet().iterator();
-			while (it.hasNext()) {
-				String key = it.next();
-				if (!values.containsKey(key)) {
-					it.remove();
-				}
-			}
-		}
-		else {
-			getWrappers().clear();
-		}
+	// -----------------------------------------------------------------------
+	
+	String nextPartId() {
+		return version + "_" + parts.size();
+	}
+
+	String getPublicId(ContentPart part) {
+		return getId() + "_" + part.getPartId();
 	}
 	
-	public void each(ValueCallback callback) {
-		for (ValueWrapper<?> wrapper : getWrappers().values()) {
-			wrapper.each(callback);
-		}
+	void registerPart(ContentPart part) {
+		String id = part.getPartId();
+		Assert.notNull(id);
+		Assert.isTrue(!parts.containsKey(id));
+		parts.put(id, part); 
 	}
+	
+	private ContentPart getPart(String id) {
+		int i = id.indexOf('_');
+		String partId = id.substring(i + 1);
+		ContentPart part = parts.get(partId);
+		Assert.notNull(part, "ContentPart " + partId 
+				+ " does not exist in Content " + getId());
+		
+		return part;
+	}
+
+	// -----------------------------------------------------------------------
 	
 	public static Content load(Long id) {
 		return load(Content.class, id);
 	}
 	
+	public static ContentPart loadPart(String id) {
+		Content content = loadByPartId(id);
+		return content.getPart(id);
+	}
+
+	public static Content loadByPartId(String id) {
+		int i = id.indexOf('_');
+		Content content = Content.load(Long.valueOf(id.substring(0, i)));
+		Assert.notNull(content, "Could not load content for part: " + id);
+		return content;
+	}
+
 }

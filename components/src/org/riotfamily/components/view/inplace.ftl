@@ -217,14 +217,14 @@
 	<#local attributes = c.unwrapAttributes(attributes) />
 	<#local previousModel = currentModel />
 	<#assign currentContainer = container />
-	<#assign currentModel = container.unwrap(editMode) />
+	<#assign currentModel = container.getContent(editMode) />
 	<#if editMode>
 		<#if !tag?has_content>
 			<#local tag = "span" />
 		</#if>
 		<#local attributes = attributes + {
-				"riot:containerId": container.id?c,
-				"riot:contentId": container.getContent(editMode).id?c,
+				"riot:containerId": container.id!"null",
+				"riot:contentId": container.getContent(editMode).id!"null",
 				"class": ("riot-container riot-content " + attributes.class!)?trim
 		} />
 		<#if form?has_content>

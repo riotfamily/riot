@@ -31,6 +31,7 @@ import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentPart;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.factory.FormRepository;
@@ -66,19 +67,14 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 	}
 	
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		Long id = new Long((String) request.getAttribute("contentId"));
-		return Content.load(id);
-	}
-
-	protected ContentContainer getContainer(HttpServletRequest request) {
-		Long id = new Long((String) request.getAttribute("containerId"));
-		return ContentContainer.load(id);
+		return Content.loadPart((String) request.getAttribute("contentId"));
 	}
 	
 	protected Object update(Object object, HttpServletRequest request) {
-		Content content = (Content) object;
-		ComponentCacheUtils.invalidatePreviewVersion(cacheService, getContainer(request));
-		return content.merge();
+		ContentPart part = (ContentPart) object;
+		ContentContainer container = ContentContainer.loadByContent(part.getOwner());
+		ComponentCacheUtils.invalidatePreviewVersion(cacheService, container);
+		return part.getOwner().merge();
 	}
 
 }

@@ -55,5 +55,6 @@
 	<classpathentry kind="lib" path="lib/persistence.jar"/>
 	<classpathentry kind="lib" path="lib/poi.jar"/>
 	<classpathentry kind="lib" path="lib/javamail.jar"/>
+	<classpathentry kind="lib" path="lib/xstream.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -70,19 +70,17 @@ public class ViewComponentRenderer extends AbstractComponentRenderer {
 		}
 	}
 	
+	@Override
 	protected void renderInternal(Component component, 
-			int position, int listSize, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		Map<String, Object> props = component.unwrap();
-		if (props != null) {
-			model.putAll(props);
-		}
+		model.putAll(component);
 		
 		model.put(THIS, component);
-		model.put(POSITION, new Integer(position));
-		model.put(LIST_SIZE, new Integer(listSize));
+		model.put(POSITION, component.getPosition());
+		model.put(LIST_SIZE, component.getList().size());
 		
 		try {
 			String viewName = viewNamePrefix + component.getType() + viewNameSuffix;

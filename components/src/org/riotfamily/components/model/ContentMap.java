@@ -14,33 +14,33 @@
  *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   flx
+ *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.riotfamily.common.collection.DirtyCheckList;
+import org.riotfamily.common.collection.DirtyCheckMap;
 import org.springframework.util.Assert;
 
-public class ComponentList extends DirtyCheckList<Component> 
+public class ContentMap extends DirtyCheckMap<String, Object> 
 		implements ContentPart {
-	
+
 	private String partId;
 	
 	private Content owner;
 
-	public ComponentList(Content owner) {
+	public ContentMap(Content owner) {
 		this(owner, owner.nextPartId());
 	}
 	
-	public ComponentList(Content owner, String partId) {
-		super(new ArrayList<Component>());
+	public ContentMap(Content owner, String partId) {
+		super(new HashMap<String, Object>());
 		Assert.notNull(owner, "owner must not be null");
 		Assert.notNull(partId, "partId must not be null");
 		this.owner = owner;
@@ -48,6 +48,9 @@ public class ComponentList extends DirtyCheckList<Component>
 		owner.registerPart(this);
 	}
 
+	/**
+	 * Notifies the owner that the content has been modified.
+	 */
 	@Override
 	protected void dirty() {
 		owner.dirty();
@@ -56,15 +59,19 @@ public class ComponentList extends DirtyCheckList<Component>
 	public String getPartId() {
 		return partId;
 	}
-	
+
 	public String getId() {
 		return owner.getPublicId(this);
 	}
-
+	
 	public Content getOwner() {
 		return owner;
 	}
-
+	
+	public static ContentMap load(String id) {
+		return (ContentMap) Content.loadPart(id);
+	}
+	
 	@Override
 	public int hashCode() {
 		return partId.hashCode();
@@ -75,15 +82,11 @@ public class ComponentList extends DirtyCheckList<Component>
 		if (o == this) {
 			return true;
 		}
-		ComponentList other = (ComponentList) o;
-		if (o instanceof ComponentList) {
+		ContentMap other = (ContentMap) o;
+		if (o instanceof ContentMap) {
 			return getId().equals(other.getId());
 		}
 		return false;
 	}
-	
-	public static ComponentList load(String listId) {
-		return (ComponentList) Content.loadPart(listId);
-	}
-	
+
 }

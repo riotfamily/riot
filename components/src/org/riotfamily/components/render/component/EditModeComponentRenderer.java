@@ -28,9 +28,8 @@ public class EditModeComponentRenderer implements ComponentRenderer {
 		this.formRepository = formRepository;
 	}
 
-	public void render(Component component, int position, int listSize,
-			HttpServletRequest request, HttpServletResponse response) 
-			throws Exception {
+	public void render(Component component, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		String type = component.getType();
 		
@@ -55,12 +54,12 @@ public class EditModeComponentRenderer implements ComponentRenderer {
 		TagWriter wrapper = new TagWriter(response.getWriter());
 		wrapper.start("div")
 				.attribute("class", className)
-				.attribute("riot:contentId", component.getId().toString())
+				.attribute("riot:contentId", component.getId())
 				.attribute("riot:componentType", type)
 				.attribute("riot:form", formId)
 				.body();
 
-		renderer.render(component, position, listSize, request, response);
+		renderer.render(component, request, response);
 		
 		wrapper.end();
 	}

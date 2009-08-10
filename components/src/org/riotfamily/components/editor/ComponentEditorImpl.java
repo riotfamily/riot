@@ -41,7 +41,6 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.servlet.CapturingResponseWrapper;
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.components.cache.ComponentCacheUtils;
@@ -50,8 +49,8 @@ import org.riotfamily.components.meta.ComponentMetaData;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentRenderer;
 import org.riotfamily.core.security.AccessController;
@@ -111,9 +110,9 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * Returns the value of the given property.
 	 */
 	@RemoteMethod
-	public String getText(Long contentId, String property) {
-		Content content = Content.load(contentId);
-		Object value = content.getValue(property);
+	public String getText(String contentId, String property) {
+		ContentMap content = ContentMap.load(contentId);
+		Object value = content.get(property);
 		return value != null ? value.toString() : null;
 	}
 
@@ -121,21 +120,21 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * Sets the given property to a new value.
 	 */
 	@RemoteMethod
-	public void updateText(Long contentId, String property, String text) {
-		Content content = Content.load(contentId);
-		content.setValue(property, text);
+	public void updateText(String contentId, String property, String text) {
+		ContentMap content = ContentMap.load(contentId);
+		content.put(property, text);
 	}
 
 	/**
 	 *
 	 */
 	@RemoteMethod
-	public String[] updateTextChunks(Long componentId, String property,
+	public String[] updateTextChunks(String componentId, String property,
 			String[] chunks) {
 
 		String[] html = new String[chunks.length];
 		Component component = Component.load(componentId);
-		component.setValue(property, chunks[0]);
+		component.put(property, chunks[0]);
 		html[0] = renderComponent(component);
 		
 		String type = component.getType();
@@ -143,23 +142,12 @@ public class ComponentEditorImpl implements ComponentEditor,
 		int offset = list.indexOf(component);
 		
 		for (int i = 1; i < chunks.length; i++) {
-			component = createComponent(type);
-			list.insertComponent(component, offset + i);
-			component.setValue(property, chunks[i]);
+			component = createComponent(list, type);
+			list.add(offset + i, component);
+			component.put(property, chunks[i]);
 			html[i] = renderComponent(component);
 		}
 		return html;
-	}
-
-	@RemoteMethod
-	public String[] getComponentLabels(String[] types, HttpServletRequest request) {
-		Locale locale = RequestContextUtils.getLocale(request);
-		String[] labels = new String[types.length];
-		for (int i = 0; i < types.length; i++) {
-			labels[i]= messageSource.getMessage("component." + types[i], null, 
-					FormatUtils.xmlToTitleCase(types[i]), locale);
-		}
-		return labels;
 	}
 	
 	@RemoteMethod
@@ -176,12 +164,12 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * by the given id.
 	 */
 	@RemoteMethod
-	public String insertComponent(Long listId, int position, String type) {
+	public String insertComponent(String listId, int position, String type) {
 		Assert.notNull(listId, "listId must not be null");
 		Assert.notNull(type, "type must not be null");
 		ComponentList componentList = ComponentList.load(listId);
-		Component component = createComponent(type);
-		componentList.insertComponent(component, position);
+		Component component = createComponent(componentList, type);
+		componentList.add(position, component);
 		return renderComponent(component);
 	}
 
@@ -191,15 +179,18 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * @param type The type of the version to create
 	 * @return The newly created component
 	 */
-	private Component createComponent(String type) {
-		Component component = new Component(type);
-		component.wrap(metaDataProvider.getMetaData(type).getDefaults());
-		component.save();
+	private Component createComponent(ComponentList list, String type) {
+		Component component = new Component(list);
+		component.setType(type);
+		Map<String, Object> defaults = metaDataProvider.getMetaData(type).getDefaults();
+		if (defaults != null) {
+			component.putAll(defaults);
+		}
 		return component;
 	}
 	
 	@RemoteMethod
-	public String setType(Long componentId, String type) {
+	public String setType(String componentId, String type) {
 		Assert.notNull(componentId, "componentId must not be null");
 		Assert.notNull(type, "type must not be null");
 		Component component = Component.load(componentId);
@@ -208,18 +199,16 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 	
 	@RemoteMethod
-	public String renderComponent(Long componentId) {
-		Component component = Component.load(componentId);
-		return renderComponent(component);
+	public String renderComponent(String componentId) {
+		return renderComponent(Component.load(componentId));
 	}
 
 	private String renderComponent(Component component) {
 		try {
-			ComponentList list = component.getList();
 			StringWriter sw = new StringWriter();
 			HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
 			HttpServletResponse response = getCapturingResponse(sw);
-			renderer.render(component, list.indexOf(component), list.getSize(), request, response);
+			renderer.render(component, request, response);
 			return sw.toString();
 		}
 		catch (Exception e) {
@@ -229,30 +218,13 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 
 	@RemoteMethod
-	public void moveComponent(Long componentId, Long nextComponentId) {
-		Component component = Component.load(componentId);
-		ComponentList componentList = component.getList();
-		List<Component> components = componentList.getComponents();
-		components.remove(component);
-		if (nextComponentId != null) {
-			for (int i = 0; i < components.size(); i++) {
-				if (components.get(i).getId().equals(nextComponentId)) {
-					components.add(i, component);
-					break;
-				}
-			}
-		}
-		else {
-			components.add(component);
-		}
+	public void moveComponent(String componentId, String nextComponentId) {
+		Component.load(componentId).move(nextComponentId);
 	}
 
 	@RemoteMethod
-	public void deleteComponent(Long componentId) {
-		Component component = Component.load(componentId);
-		ComponentList componentList = component.getList();
-		List<Component> components = componentList.getComponents();
-		components.remove(component);
+	public void deleteComponent(String componentId) {
+		Component.load(componentId).delete();
 	}
 	
 	@RemoteMethod

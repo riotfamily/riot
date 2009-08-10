@@ -85,7 +85,7 @@ public class SiteFacade {
 	}
 	
 	public Map<String, Object> getLocal() {
-		return site.getLocalPropertiesMap();
+		return site.getProperties();
 	}
 
 	public String toString() {

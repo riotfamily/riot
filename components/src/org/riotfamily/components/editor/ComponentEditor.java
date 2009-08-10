@@ -26,8 +26,6 @@ package org.riotfamily.components.editor;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.components.meta.ComponentMetaData;
 
 /**
@@ -38,26 +36,24 @@ import org.riotfamily.components.meta.ComponentMetaData;
  */
 public interface ComponentEditor {
 
-	public String getText(Long contentId, String property);
+	public String getText(String contentId, String property);
 
-	public void updateText(Long contentId, String property, String text);
+	public void updateText(String contentId, String property, String text);
 	
-	public String[] updateTextChunks(Long componentId, String property,
+	public String[] updateTextChunks(String componentId, String property,
 			String[] chunks);
 
-	public String[] getComponentLabels(String[] types, HttpServletRequest request);
-	
 	public List<ComponentMetaData> getComponentMetaData(String[] types);
 	
-	public String insertComponent(Long listId, int position, String type);
+	public String insertComponent(String listId, int position, String type);
 
-	public String setType(Long componentId, String type);
+	public String setType(String componentId, String type);
 	
-	public String renderComponent(Long componentId);
+	public String renderComponent(String componentId);
 
-	public void moveComponent(Long componentId, Long nextComponentId);
+	public void moveComponent(String componentId, String nextComponentId);
 
-	public void deleteComponent(Long componentId);
+	public void deleteComponent(String componentId);
 	
 	public void markAsDirty(Long containerId);
 

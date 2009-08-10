@@ -24,6 +24,7 @@
 package org.riotfamily.components.render.list;
 
 import java.io.StringWriter;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,21 +70,25 @@ public class ComponentListRenderer {
 		this.metaDataProvider = metaDataProvider;
 	}
 	
-	private ComponentList createList(Content content, String key, 
+	private ComponentList createList(final Content content, String key, 
 			ComponentListConfig config) {
 		
-		final ComponentList list = new ComponentList();
-		content.setValue(key, list);
+		final ComponentList list = new ComponentList(content);
+		content.put(key, list);
 		if (config.getInitialTypes() != null) {
 			for (String type : config.getInitialTypes()) {
-				Component component = new Component(type);
-				component.wrap(metaDataProvider.getMetaData(type).getDefaults());
-				list.appendComponent(component);
+				Component component = new Component(list);
+				component.setType(type);
+				Map<String, Object> defaults = metaDataProvider.getMetaData(type).getDefaults();
+				if (defaults != null) {
+					component.putAll(defaults);
+				}
+				list.add(component);
 			}
 		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				list.save();
+				content.save();
 			}
 		});
 		return list;
@@ -98,15 +103,15 @@ public class ComponentListRenderer {
 		ComponentList list = null;
 		RenderStrategy strategy = liveModeRenderStrategy;
 		if (EditModeUtils.isPreview(request, container)) {
-			list = (ComponentList) container.getPreviewVersion().getValue(key);
+			list = (ComponentList) container.getPreviewVersion().get(key);
 			if (EditModeUtils.isEditMode(request)) {
 				if (list == null) {
 					list = createList(container.getPreviewVersion(), key, config);
 					
 					// If the new list is not empty, we have to store it and mark
 					// the container as dirty.
-					if (list.getSize() > 0) {
-						container.getPreviewVersion().setValue(key, list);
+					if (list.size() > 0) {
+						container.getPreviewVersion().put(key, list);
 						container.setDirty(true);
 					}
 				}
@@ -116,7 +121,7 @@ public class ComponentListRenderer {
 			}
 		}
 		else if (container.getLiveVersion() != null) {
-			list = (ComponentList) container.getLiveVersion().getValue(key);
+			list = (ComponentList) container.getLiveVersion().get(key);
 		}
 		
 		StringWriter sw = new StringWriter();
@@ -134,10 +139,10 @@ public class ComponentListRenderer {
 
 		ComponentList list;
 		RenderStrategy strategy = liveModeRenderStrategy;
-		list = (ComponentList) component.getValue(key);
+		list = (ComponentList) component.get(key);
 		if (EditModeUtils.isEditMode(request)) {
 			if (list == null) {
-				list = createList(component, key, config);
+				list = createList(component.getOwner(), key, config);
 			}
 			//TODO Pass the root container instead ...
 			if (AccessController.isGranted("edit", list)) {

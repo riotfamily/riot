@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.riotfamily.common.util.SpringUtils;
@@ -39,12 +38,16 @@ public class MapEditorBinder extends AbstractEditorBinder {
 	private Map<Object,Object> map;
 	
 	@SuppressWarnings("unchecked")
-	private Class<? extends Map> mapClass = HashMap.class;
+	private Class<? extends Map> mapClass;
 	
 	private Class<?> valueClass = null;
 
 	private boolean editingExisitingMap;
 	
+	public MapEditorBinder() {
+		mapClass = Map.class;
+	}
+			
 	public MapEditorBinder(Map<Object, Object> map) {
 		Assert.notNull(map);
 		this.map = map;
@@ -55,7 +58,6 @@ public class MapEditorBinder extends AbstractEditorBinder {
 	
 	@SuppressWarnings("unchecked")
 	public MapEditorBinder(Class<? extends Map> mapClass) {
-		Assert.isAssignable(Map.class, mapClass);
 		this.mapClass = mapClass; 
 		this.valueClass = GenericCollectionTypeResolver.getMapValueType(mapClass);
 		this.map = SpringUtils.newInstance(mapClass);
@@ -98,7 +100,7 @@ public class MapEditorBinder extends AbstractEditorBinder {
 	}
 	
 	public Object getPropertyValue(String propertyName) {
-		return map.get(propertyName);
+		return map != null ? map.get(propertyName) : null;
 	}
 
 	public void setPropertyValue(String propertyName, Object value) {
