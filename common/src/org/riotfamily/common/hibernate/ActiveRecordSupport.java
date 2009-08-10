@@ -45,6 +45,8 @@ import org.hibernate.Hibernate;
 public abstract class ActiveRecordSupport extends ActiveRecord 
 		implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	
 	/**
