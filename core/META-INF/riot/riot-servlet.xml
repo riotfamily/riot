@@ -426,8 +426,17 @@
 		</property>
 	</bean>
 	
-	<bean name="/resources/*/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
+	<bean id="minifyScriptController" name="/resources/*/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
+		<description>
+			Controller to compress (minify) JavaScript files.
+		</description>
 		<constructor-arg ref="javaScriptCompressor" />
+	</bean>
+	
+	<bean id="minifyCssController" name="/resources/*/joined.css" class="org.riotfamily.website.performance.MinifyCssController">
+		<description>
+			Controller to compress (minify) CSS files.
+		</description>
 	</bean>
 	
 	<!-- Misc (TODO) -->
