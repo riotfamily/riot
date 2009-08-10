@@ -95,7 +95,7 @@ public class ThumbnailCreator extends AbstractFileProcessor
 		thumbnailer.renderThumbnail(original.getFile(), dest, width, height,
 				fixedSize, backgroundColor);
 		
-		thumbnail.update();
+		thumbnail.updateMetaData();
 		if (!thumbnail.isValid()) {
 			throw new IOException("Thumbnail creation failed");
 		}

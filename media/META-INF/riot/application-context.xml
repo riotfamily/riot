@@ -10,10 +10,6 @@
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
-
-	<bean id="mediaDao" class="org.riotfamily.media.dao.HibernateMediaDao">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
 	
 	<bean id="fileStore" class="org.riotfamily.media.store.DefaultFileStore">
 		<property name="uriPrefix" value="${riot.media.uriPrefix=/media}" />
@@ -31,9 +27,8 @@
 		<constructor-arg ref="ffmpeg" />
 	</bean>
 	
-	<bean id="fileDataInitializer" class="org.riotfamily.common.beans.factory.MethodInvokingBean">
-		<property name="staticMethod" value="org.riotfamily.media.model.RiotFile.setMediaService" />
-		<property name="argument" ref="mediaService"/>
+	<bean class="org.riotfamily.media.model.RiotFile" scope="prototype">
+		<property name="mediaService" ref="mediaService" />
 	</bean>
-
+	
 </beans>

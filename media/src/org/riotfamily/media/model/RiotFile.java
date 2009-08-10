@@ -37,9 +37,6 @@ import java.util.Map.Entry;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
@@ -47,12 +44,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.media.service.MediaService;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,16 +69,10 @@ import org.springframework.web.multipart.MultipartFile;
 )
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorValue("file")
-public class RiotFile {
+public class RiotFile extends ActiveRecordSupport {
 	
-	protected static MediaService mediaService;
+	protected MediaService mediaService;
 
-	public static void setMediaService(MediaService mediaService) {
-		RiotFile.mediaService = mediaService;
-	}
-	
-	private Long id;
-	
 	private String uri;
 	
 	private String fileName;
@@ -143,11 +136,16 @@ public class RiotFile {
 			}
 		}
 	}
+
+	@Required
+	public void setMediaService(MediaService mediaService) {
+		this.mediaService = mediaService;
+	}
 	
 	public RiotFile copy(boolean copyVariants) throws IOException {
 		return new RiotFile(this, copyVariants);
-	}	
-
+	}
+	
 	@Transient
 	public void setMultipartFile(MultipartFile multipartFile) throws IOException {
 		fileName = multipartFile.getOriginalFilename();
@@ -175,7 +173,7 @@ public class RiotFile {
 		File f = createEmptyFile(fileName);
 		FileCopyUtils.copy(in, new FileOutputStream(f));
 		contentType = mediaService.getContentType(f);		
-		update();
+		updateMetaData();
 	}
 	
 	@Transient
@@ -183,7 +181,7 @@ public class RiotFile {
 		File f = createEmptyFile(fileName);
 		FileCopyUtils.copy(bytes, f);
 		contentType = mediaService.getContentType(f);		
-		update();
+		updateMetaData();
 	}
 	
 	public File createEmptyFile(String name) throws IOException {
@@ -194,9 +192,9 @@ public class RiotFile {
 		return getFile();
 	}
 	
-	public void update() throws IOException {
-		Assert.state(emptyFileCreated == true, "update() must only be called " +
-				"after createEmptyFile() has been invoked!");
+	public void updateMetaData() throws IOException {
+		Assert.state(emptyFileCreated == true, "updateMetaData() must only be "
+				+ "called after createEmptyFile() has been invoked");
 		
 		size = getFile().length();
 		md5 = HashUtils.md5(getInputStream());
@@ -214,15 +212,6 @@ public class RiotFile {
 	protected void inspect(File file) throws IOException {
 	}
 	
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getUri() {
 		return this.uri;
 	}
@@ -336,6 +325,18 @@ public class RiotFile {
 			return uri.equals(other.uri);
 		}
 		return super.equals(obj);
+	}
+	
+	// ----------------------------------------------------------------------
+	// Active record methods
+	// ----------------------------------------------------------------------
+	
+	public static RiotFile loadByUri(String uri) {
+		return loadByProperty(RiotFile.class, "uri", uri);
+	}
+	
+	public static RiotFile loadByMd5(String md5) {
+		return loadByProperty(RiotFile.class, "md5", md5);
 	}
 	
 }
