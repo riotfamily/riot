@@ -106,6 +106,14 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	}
 	
 	@Override
+	public String getEntityName(Object object) {
+		if (object instanceof ActiveRecord) {
+			return object.getClass().getName();
+		}
+		return null;
+	}
+	
+	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
 
