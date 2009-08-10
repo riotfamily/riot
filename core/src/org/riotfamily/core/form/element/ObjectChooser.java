@@ -25,11 +25,17 @@ package org.riotfamily.core.form.element;
 
 import java.io.PrintWriter;
 
+import org.riotfamily.common.mapping.HandlerUrlUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.core.screen.ListScreen;
+import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenRepository;
 import org.riotfamily.forms.element.select.AbstractChooser;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class ObjectChooser extends AbstractChooser {
+public class ObjectChooser extends AbstractChooser 
+		implements ApplicationContextAware {
 
 	private String rootId;
 	
@@ -41,8 +47,14 @@ public class ObjectChooser extends AbstractChooser {
 	
 	private ListScreen targetList;
 
+	private ApplicationContext applicationContext;
+	
 	public ObjectChooser(ScreenRepository screenRepository) {
 		this.screenRepository = screenRepository;
+	}
+	
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
 	}
 
 	public void setTargetId(String targetId) {
@@ -63,9 +75,11 @@ public class ObjectChooser extends AbstractChooser {
 	
 	@Override
 	protected String getChooserUrl() {
-		// TODO Auto-generated method stub
-		//new ScreenContext(rootList, null, objectId, null, false);
-		return "/riot-skeleton/riot/screen/sitemap?choose=sitemap";
+		return ServletUtils.addParameter(
+				HandlerUrlUtils.getUrlResolver(applicationContext)
+				.getUrlForHandler(rootList.getId(),
+				new ScreenContext(null, null, null, null, false)),
+				"choose", targetId);
 	}
 
 	@Override

@@ -111,7 +111,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	
 	public String getInitScript() {
 		return String.format("riot.chooser.register('%s', '%s')", 
-				getId(), getChooserUrl());
+				getId(), getFormContext().getContextPath() + getChooserUrl());
 	}
 		
 	protected abstract Object loadBean(String objectId);
