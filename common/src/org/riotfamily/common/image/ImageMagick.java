@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.riotfamily.common.io.RuntimeCommand;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -81,8 +81,8 @@ public class ImageMagick implements InitializingBean {
 			if (command == null) {
 				command = getDefaultCommand();
 			}
-			log.info("Looking for ImageMagick binary: " + command);
-			String version = new RuntimeCommand(command, "-version").exec().getOutput();
+			log.info("Looking for ImageMagick binary '%s'", command);
+			String version = IOUtils.exec(command, "-version");
 			log.info(version);
 			
 			Matcher matcher = majorMinorMicroPattern.matcher(version);
@@ -98,9 +98,7 @@ public class ImageMagick implements InitializingBean {
 					minorVersion = Integer.parseInt(matcher.group(2));
 				}
 			}
-			log.info(String.format("Major version: %d minor version: %d " 
-						+ "micro version %d",majorVersion, minorVersion, 
-						microVersion));
+			log.info("Version: %d.%d.%d", majorVersion, minorVersion, microVersion);
 		}
 		catch (NumberFormatException e) {
 			log.warn("Could not determine ImageMagick version");
@@ -135,25 +133,14 @@ public class ImageMagick implements InitializingBean {
 		Assert.state(isAvailable(), "ImageMagick binary '" 
 				+ command + "' not found in path.");
 		
-		String[] cmd = new String[args.length + 1];
-		int i = 0;
-		cmd[i++] = command;
-		for (String arg : args) {
-			cmd[i++] = arg;
-		}
-		return new RuntimeCommand(cmd).exec().getResult();
+		return IOUtils.exec(command, args);
 	}
 	
 	public String invoke(List<String> args) throws IOException {
 		Assert.state(isAvailable(), "ImageMagick binary '" 
 				+ command + "' not found in path.");
 		
-		String[] cmd = new String[args.size() + 1];
-		cmd[0] = command;
-		for (int i = 0; i < args.size(); i++) {
-			cmd[i + 1] = (String) args.get(i);
-		}
-		return new RuntimeCommand(cmd).exec().getResult();
+		return IOUtils.exec(command, args);
 	}	
 	
 }

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.riotfamily.common.io.RuntimeCommand;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -62,9 +62,7 @@ public class FFmpeg implements InitializingBean {
 				command = getDefaultCommand();
 			}
 			log.info("Looking for FFmpeg binary: " + command);
-			
-			RuntimeCommand cmd = new RuntimeCommand(command, "-version");
-			version = cmd.exec().getErrors();
+			version = IOUtils.exec(command, "-version");
 			log.info(version);
 		}
 		catch (IOException e) {
@@ -84,19 +82,11 @@ public class FFmpeg implements InitializingBean {
 		Assert.state(isAvailable(), "FFmpeg binary '" 
 				+ command + "' not found in path.");
 		
-		String[] cmd = new String[args.size() + 1];
-		cmd[0] = command;
-		for (int i = 0; i < args.size(); i++) {
-			cmd[i + 1] = (String) args.get(i);
-		}
-		return new RuntimeCommand(cmd).exec().getResult();
+		return IOUtils.exec(command, args);
 	}
 	
 	public VideoMetaData identify(File file) throws IOException {
-		RuntimeCommand cmd = new RuntimeCommand(new String[] {command, "-i", 
-				file.getAbsolutePath()});
-
-		String out = cmd.exec().getErrors();
+		String out = IOUtils.exec(command, "-i", file.getAbsolutePath());
 		VideoMetaData meta = new VideoMetaData(); 
 		Matcher m = DURATION_PATTERN.matcher(out);
 		if (m.find()) {

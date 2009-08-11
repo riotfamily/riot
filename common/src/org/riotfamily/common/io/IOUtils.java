@@ -13,6 +13,7 @@
 package org.riotfamily.common.io;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,10 +22,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.SocketException;
+import java.util.List;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
 import org.springframework.util.FileCopyUtils;
 
@@ -337,4 +341,28 @@ public class IOUtils {
         }
         f.delete();
     }
+	
+	public static String exec(String command, String... args) throws IOException {
+		List<String> argList = null;
+		if (args != null) {
+			argList = Generics.newArrayList();
+			for (String arg : args) {
+				argList.add(arg);
+			}
+		}
+		return exec(command, argList);
+	}
+	
+	public static String exec(String command, List<String> args) throws IOException {
+		List<String> commandLine = Generics.newArrayList();
+		commandLine.add(command);
+		if (args != null) {
+			commandLine.addAll(args);
+		}
+		Process p = new ProcessBuilder(commandLine).redirectErrorStream(true).start();
+		Reader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		StringWriter sw = new StringWriter(); 
+		copy(reader, sw);
+		return sw.toString();
+	}
 }
