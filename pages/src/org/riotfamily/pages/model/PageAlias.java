@@ -30,7 +30,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.criterion.Restrictions;
-import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 
 
 
@@ -45,7 +45,7 @@ import org.riotfamily.common.hibernate.ActiveRecordSupport;
 @Entity
 @Table(name="riot_page_aliases")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class PageAlias extends ActiveRecordSupport {
+public class PageAlias extends ActiveRecordBeanSupport {
 
 
 	private Page page;

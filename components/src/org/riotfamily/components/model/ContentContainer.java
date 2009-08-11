@@ -36,7 +36,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.core.security.AccessController;
 
@@ -44,7 +44,7 @@ import org.riotfamily.core.security.AccessController;
 @Table(name="riot_content_containers")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-public class ContentContainer extends ActiveRecordSupport {
+public class ContentContainer extends ActiveRecordBeanSupport {
 
 	private Content liveVersion;
 

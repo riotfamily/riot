@@ -40,7 +40,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
-import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
@@ -54,7 +54,7 @@ import org.springframework.util.Assert;
 )
 @DiscriminatorValue("Content")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-public class Content extends ActiveRecordSupport 
+public class Content extends ActiveRecordBeanSupport 
 		implements Map<String, Object> {
 
 	private ContentMapMarshaller marshaller;

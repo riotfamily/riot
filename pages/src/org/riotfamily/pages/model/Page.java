@@ -46,7 +46,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.IndexColumn;
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.hibernate.Lifecycle;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
@@ -64,7 +64,7 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name="riot_pages", uniqueConstraints = {@UniqueConstraint(columnNames={"site_id", "path"})})
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class Page extends ActiveRecordSupport implements Lifecycle {
+public class Page extends ActiveRecordBeanSupport implements Lifecycle {
 
 	public static final String TITLE_PROPERTY = "title";
 	

@@ -39,12 +39,13 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.HashUtils;
@@ -69,7 +70,7 @@ import org.springframework.web.multipart.MultipartFile;
 )
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorValue("file")
-public class RiotFile extends ActiveRecordSupport {
+public class RiotFile extends ActiveRecordBeanSupport {
 	
 	protected MediaService mediaService;
 

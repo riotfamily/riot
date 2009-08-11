@@ -42,7 +42,7 @@ import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
-import org.riotfamily.common.hibernate.ActiveRecordSupport;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.springframework.util.ObjectUtils;
@@ -55,7 +55,7 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name="riot_sites")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class Site extends ActiveRecordSupport {
+public class Site extends ActiveRecordBeanSupport {
 
 	private String name;
 	

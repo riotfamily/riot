@@ -263,4 +263,50 @@ public abstract class ActiveRecord extends ConfigurableBean {
 		public void execute(T t);
 	}
 	
+	/**
+	 * Default implementation that always returns <code>0</code>. This 
+	 * implementation is very inefficient for large collections as all instances
+	 * will end up in the same hash bucket. Yet this is the only safe 
+	 * generic implementation, as it guarantees that the hashCode does not 
+	 * change while the object is contained in a collection.
+	 * <p>
+	 * If you plan to put your entities into large HashSets or HashMaps, you 
+	 * should consider to overwrite this method and implement it based 
+	 * on an immutable business key.
+	 * <p>
+	 * If your entities don't have such an immutable key you can use the id 
+	 * property instead, but keep in mind that collections won't be intact if 
+	 * you save a transient object after adding it to a set or map.
+	 * 
+	 * @see http://www.hibernate.org/109.html
+	 */
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+	
+	/**
+	 * Generic implementation that uses the Hibernate meta-data API to
+	 * compare the identifiers.
+	 * 
+	 * @see ActiveRecordUtils#equals(ActiveRecord, Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return ActiveRecordUtils.equals(this, obj);
+	}
+	
+	/**
+	 * Generic implementation that returns a String with the pattern 
+	 * <code>&lt;className&gt;#&lt;id&gt;</code> for persistent objects, or 
+	 * <code>&lt;className&gt;@&lt;identityHashCode&gt;</code> if the instance
+	 * is unsaved.
+	 * 
+	 * @see ActiveRecordUtils#toString(ActiveRecord)
+	 */
+	@Override
+	public String toString() {
+		return ActiveRecordUtils.toString(this);
+	}
+	
 }
