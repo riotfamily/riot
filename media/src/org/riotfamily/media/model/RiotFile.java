@@ -289,6 +289,7 @@ public class RiotFile extends ActiveRecordBeanSupport {
 	}
 
 	@OneToMany(cascade=CascadeType.ALL)
+	@JoinTable(name="riot_file_variants")
 	public Map<String, RiotFile> getVariants() {
 		return this.variants;
 	}
