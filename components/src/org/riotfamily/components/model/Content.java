@@ -68,6 +68,8 @@ public class Content extends ActiveRecordBeanSupport
 	private boolean dirty;
 		
 	private Map<String, ContentPart> parts = Generics.newHashMap();
+
+	private Set<Object> references = Generics.newHashSet();
 	
 	public Content() {
 	}
@@ -98,7 +100,7 @@ public class Content extends ActiveRecordBeanSupport
 	@Type(type="text")
 	public String getXml() {
 		if (xml == null || dirty) {
-			xml = marshaller.marshal(map);
+			xml = marshaller.marshal(getMap());
 			dirty = false;
 		}
 		return xml;
@@ -107,6 +109,11 @@ public class Content extends ActiveRecordBeanSupport
 	public void setXml(String xml) {
 		parts.clear();
 		map = marshaller.unmarshal(this, xml);
+	}
+	
+	@Transient
+	public Set<Object> getReferences() {
+		return references;
 	}
 
 	/**

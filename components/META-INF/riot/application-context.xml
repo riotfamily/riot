@@ -30,6 +30,20 @@
 		</property>
 	</bean>
 	
+	<bean class="org.riotfamily.components.index.ContentListener">
+		<description>
+			EntityListern that notifies ContentIndexer beans when a Content
+			object is modified.
+		</description>
+	</bean>
+	
+	<bean class="org.riotfamily.components.index.FileReferenceUpdater">
+		<description>
+			Extracts references to RiotFile objects from (XML-) Content to
+			prevent the MediaCleanUpTask from deleting these files.
+		</description>
+	</bean>
+	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
 
 	<bean class="org.riotfamily.components.model.ContentContainer" scope="prototype">
@@ -38,7 +52,7 @@
 	
 	<bean class="org.riotfamily.components.model.Content" scope="prototype">
 		<property name="marshaller">
-			<bean class="org.riotfamily.components.xstream.XStreamContentMapMarshaller">
+			<bean class="org.riotfamily.components.xstream.XStreamMarshaller">
 				<property name="driver">
 					<bean class="com.thoughtworks.xstream.io.xml.Dom4JDriver">
 						<property name="outputFormat">

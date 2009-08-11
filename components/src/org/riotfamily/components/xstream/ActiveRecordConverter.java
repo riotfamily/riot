@@ -54,6 +54,7 @@ public class ActiveRecordConverter implements Converter {
 			MarshallingContext context) {
 		
 		ActiveRecord record = (ActiveRecord) source;
+		XStreamMarshaller.addReference(context, record);
 		Serializable id = ActiveRecordUtils.getIdAndSaveIfNecessary(record);
 		if (id instanceof Long) {
 			writer.addAttribute("id", id.toString());
@@ -84,7 +85,9 @@ public class ActiveRecordConverter implements Converter {
 	        id = (Serializable) context.convertAnother(null, idType);
 	        reader.moveUp();
 		}
-		return ActiveRecordUtils.load(recordType, id);
+		ActiveRecord record = ActiveRecordUtils.load(recordType, id);
+		XStreamMarshaller.addReference(context, record);
+		return record;
 	}
 
 }

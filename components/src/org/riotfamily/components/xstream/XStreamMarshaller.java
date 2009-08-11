@@ -24,6 +24,7 @@
 package org.riotfamily.components.xstream;
 
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -36,10 +37,11 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.DataHolder;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.mapper.Mapper;
 
-public class XStreamContentMapMarshaller implements ContentMapMarshaller, 
+public class XStreamMarshaller implements ContentMapMarshaller, 
 		InitializingBean {
 
 	private XStream xstream;
@@ -68,14 +70,29 @@ public class XStreamContentMapMarshaller implements ContentMapMarshaller,
 		xstream.registerConverter(new ContentMapConverter(mapper), 1);
 	}
 	
-	public ContentMap unmarshal(Content owner, String xml) {
+	private DataHolder createDataHolder(Content content) {
 		DataHolder dataHolder = xstream.newDataHolder();
-		dataHolder.put("content", owner);
+		dataHolder.put("content", content);
+		return dataHolder;
+	}
+	
+	public ContentMap unmarshal(Content owner, String xml) {
+		owner.getReferences().clear();
 		HierarchicalStreamReader reader = driver.createReader(new StringReader(xml));
-		return (ContentMap) xstream.unmarshal(reader, null, dataHolder);	
+		return (ContentMap) xstream.unmarshal(reader, null, createDataHolder(owner));	
 	}
 	
 	public String marshal(ContentMap contentMap) {
-		return xstream.toXML(contentMap);
+		Content owner = contentMap.getOwner();
+		owner.getReferences().clear();
+		StringWriter sw = new StringWriter();
+		HierarchicalStreamWriter writer = driver.createWriter(sw);
+		xstream.marshal(contentMap, writer, createDataHolder(owner));
+		return sw.toString();
+	}
+	
+	public static void addReference(DataHolder dataHolder, Object ref) {
+		Content content = (Content) dataHolder.get("content");
+		content.getReferences().add(ref);
 	}
 }
