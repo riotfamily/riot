@@ -66,7 +66,7 @@ public class EditModeComponentRenderer implements ComponentRenderer {
 		TagWriter wrapper = new TagWriter(response.getWriter());
 		wrapper.start("div")
 				.attribute("class", className)
-				.attribute("riot:contentId", component.getId())
+				.attribute("riot:contentId", component.getCompositeId())
 				.attribute("riot:componentType", type)
 				.attribute("riot:form", formId)
 				.body();

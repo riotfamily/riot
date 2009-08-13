@@ -39,8 +39,12 @@ import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.hibernate.Lifecycle;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.config.SitemapSchema;
+import org.riotfamily.website.cache.CacheTagUtils;
+import org.riotfamily.website.cache.TagCacheItems;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 
@@ -53,7 +57,8 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name="riot_pages", uniqueConstraints = {@UniqueConstraint(columnNames={"site_id", "path"})})
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class Page extends ActiveRecordBeanSupport implements Lifecycle {
+@TagCacheItems
+public class Page extends ActiveRecordBeanSupport implements ContentContainerOwner, Lifecycle {
 
 	public static final String TITLE_PROPERTY = "title";
 	
@@ -77,7 +82,7 @@ public class Page extends ActiveRecordBeanSupport implements Lifecycle {
 
 	private Date creationDate;
 
-	private PageProperties pageProperties;
+	private ContentContainer contentContainer;
 	
 	private CacheService cacheService;
 	
@@ -108,12 +113,7 @@ public class Page extends ActiveRecordBeanSupport implements Lifecycle {
 	public void setSchema(SitemapSchema schema) {
 		this.schema = schema;
 	}
-	
-	@Transient
-	public String getCacheTag() {
-		return Page.class.getName() + "#" + getId();
-	}
-	
+		
 	public String getPageType() {
 		return pageType;
 	}
@@ -225,15 +225,15 @@ public class Page extends ActiveRecordBeanSupport implements Lifecycle {
 		
 
 	@ManyToOne(cascade=CascadeType.ALL)
-	public PageProperties getPageProperties() {
-		if (pageProperties == null) {
-			pageProperties = new PageProperties(this);
+	public ContentContainer getContentContainer() {
+		if (contentContainer == null) {
+			contentContainer = new ContentContainer(this);
 		}
-		return pageProperties;
+		return contentContainer;
 	}
 
-	public void setPageProperties(PageProperties pageProperties) {
-		this.pageProperties = pageProperties;
+	public void setContentContainer(ContentContainer contentContainer) {
+		this.contentContainer = contentContainer;
 	}
 	
 	
@@ -243,7 +243,7 @@ public class Page extends ActiveRecordBeanSupport implements Lifecycle {
 	}
 	
 	public String getTitle(boolean preview) {
-		Object title = getPageProperties().getContent(preview).get(TITLE_PROPERTY);
+		Object title = getContentContainer().getContent(preview).get(TITLE_PROPERTY);
 		if (title != null) {
 			return title.toString();
 		}
@@ -253,11 +253,6 @@ public class Page extends ActiveRecordBeanSupport implements Lifecycle {
 		return FormatUtils.xmlToTitleCase(pathComponent);
 	}
 	
-	@Transient
-	public boolean isDirty() {
-		return getPageProperties().isDirty();
-	}
-
 	public boolean isPublished() {
 		return this.published;
 	}
@@ -336,9 +331,7 @@ public class Page extends ActiveRecordBeanSupport implements Lifecycle {
 		}
 		childPages.add(child);
 		//deleteAlias(page);
-		if (parent != null) {
-			parent.invalidateCacheItems();
-		}
+		invalidateCacheItems();
 	}
 	
 	public void removePage(Page child) {
@@ -350,26 +343,23 @@ public class Page extends ActiveRecordBeanSupport implements Lifecycle {
 	
 	public void publish() {
 		setPublished(true);
-		if (getPageProperties().isDirty()) {
-			getPageProperties().publish();
+		if (getContentContainer().isDirty()) {
+			getContentContainer().publish();
 		}
 		invalidateCacheItems();
-		if (getParent() != null) {
-			getParent().invalidateCacheItems();
-		}
 	}
 	
 	public void unpublish() {
 		setPublished(false);
 		invalidateCacheItems();
-		if (getParent() != null) {
-			getParent().invalidateCacheItems();
-		}
 	}
-		
+			
 	private void invalidateCacheItems() {
 		if (cacheService != null) {
-			cacheService.invalidateTaggedItems(getCacheTag());
+			CacheTagUtils.invalidate(cacheService, this);
+			if (getParent() != null) {
+				CacheTagUtils.invalidate(cacheService, getParent());
+			}
 		}
 	}
 

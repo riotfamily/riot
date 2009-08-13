@@ -13,10 +13,9 @@
 package org.riotfamily.components.model;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -24,33 +23,48 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.riotfamily.cachius.CacheService;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.core.security.AccessController;
+import org.riotfamily.website.cache.TagCacheItems;
 
+/**
+ * Entity that holds references to multiple Content versions.
+ */
 @Entity
 @Table(name="riot_content_containers")
-@Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
+@TagCacheItems
 public class ContentContainer extends ActiveRecordBeanSupport {
 
+	private ContentContainerOwner owner;
+	
 	private Content liveVersion;
 
 	private Content previewVersion;
-	
-	private boolean dirty;
 
-	private CacheService cacheService;
 	
-	public ContentContainer() {
-	}
-
-	@Transient
-	public void setCacheService(CacheService cacheService) {
-		this.cacheService = cacheService;
+	protected ContentContainer() {
 	}
 	
+	public ContentContainer(ContentContainerOwner owner) {
+		this.owner = owner;
+	}
+
+	@Type(type="org.riotfamily.common.hibernate.AnyIdAnyType")
+	@Columns(columns = {
+	    @Column(name="owner_class"),
+	    @Column(name="owner_id")
+	})
+	public ContentContainerOwner getOwner() {
+		return owner;
+	}
+	
+	protected void setOwner(ContentContainerOwner owner) {
+		this.owner = owner;
+	}
+
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="live_version")
 	public Content getLiveVersion() {
@@ -60,71 +74,61 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	public void setLiveVersion(Content liveVersion) {
 		this.liveVersion = liveVersion;
 	}
-
+	
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="preview_version")
 	public Content getPreviewVersion() {
 		if (previewVersion == null) {
-			previewVersion = new Content();
+			previewVersion = new Content(this);
 		}
 		return previewVersion;
 	}
-
+	
 	public void setPreviewVersion(Content previewVersion) {
 		this.previewVersion = previewVersion;
 	}
-
-	@Transient
+	
 	public Content getContent(boolean preview) {
 		if (!preview && liveVersion != null) {
 			return liveVersion;
 		}
 		return getPreviewVersion();
 	}
-		
-	public boolean isDirty() {
-		return dirty;
-	}
-	
-	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
-	}
 	
 	@Transient
-	public boolean isPublished() {
-		return liveVersion != null;
+	public boolean isDirty() {
+		return liveVersion == null || getPreviewVersion().isDirty();
 	}
-
+		
 	// -----------------------------------------------------------------------
 	
 	public void publish() {
 		if (isDirty()) {
 			Content preview = getPreviewVersion();
-			if (preview != null) {
-				AccessController.assertIsGranted("publish", this);
-				Content liveVersion = getLiveVersion();
-				setLiveVersion(preview.createCopy());
-				if (liveVersion != null) {
-					liveVersion.delete();
-				}
-				setDirty(false);
-				ComponentCacheUtils.invalidateContainer(cacheService, this);
+			AccessController.assertIsGranted("publish", this);
+			Content oldLiveVersion = liveVersion;
+			liveVersion = preview.createCopy();
+			if (oldLiveVersion != null) {
+				oldLiveVersion.delete();
 			}
+		}
+		if (owner != null && !owner.isPublished()) {
+			owner.publish();
 		}
 	}
 	
 	public void discard() {		
 		Content live = getLiveVersion();
 		if (live != null) {
-			Content preview = getPreviewVersion();
-			setPreviewVersion(live.createCopy());
-			if (preview != null) {
-				preview.delete();
+			Content oldPreviewVersion = previewVersion;
+			previewVersion = live.createCopy();
+			if (oldPreviewVersion != null) {
+				oldPreviewVersion.delete();
 			}
-			setDirty(false);
-			ComponentCacheUtils.invalidateContainer(cacheService, this);
 		}
 	}
+	
+	// -----------------------------------------------------------------------
 	
 	public static ContentContainer load(Long id) {
 		return load(ContentContainer.class, id);

@@ -64,7 +64,7 @@ public class SystemPage extends PageType {
 	protected Page createPage(Site site, Page parent) {
 		Page page = new Page(getPathComponent(), site);
 		if (properties != null) {
-			page.getPageProperties().getPreviewVersion().putAll(properties);
+			page.getContentContainer().getPreviewVersion().putAll(properties);
 		}
 		if (parent != null) {
 			parent.addPage(page);

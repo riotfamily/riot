@@ -28,16 +28,15 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
-import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.servlet.CapturingResponseWrapper;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ContentFormRepository;
 import org.riotfamily.components.meta.ComponentMetaData;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.render.component.ComponentRenderer;
@@ -61,8 +60,6 @@ public class ComponentEditorImpl implements ComponentEditor,
 
 	private RiotLog log = RiotLog.get(ComponentEditorImpl.class);
 
-	private CacheService cacheService;
-	
 	private ComponentRenderer renderer;
 
 	private ComponentMetaDataProvider metaDataProvider;
@@ -72,12 +69,10 @@ public class ComponentEditorImpl implements ComponentEditor,
 	private MessageSource messageSource;
 	
 	
-	public ComponentEditorImpl(CacheService cacheService, 
-			ComponentRenderer renderer, 
+	public ComponentEditorImpl(ComponentRenderer renderer, 
 			ComponentMetaDataProvider metaDataProvider,
 			ContentFormRepository formRepository) {
 		
-		this.cacheService = cacheService;
 		this.renderer = new EditModeComponentRenderer(renderer, metaDataProvider, formRepository);
 		this.metaDataProvider = metaDataProvider;
 	}
@@ -100,7 +95,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 */
 	@RemoteMethod
 	public String getText(String contentId, String property) {
-		ContentMap content = ContentMap.load(contentId);
+		ContentMap content = Content.loadFragment(contentId);
 		Object value = content.get(property);
 		return value != null ? value.toString() : null;
 	}
@@ -110,8 +105,9 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 */
 	@RemoteMethod
 	public void updateText(String contentId, String property, String text) {
-		ContentMap content = ContentMap.load(contentId);
+		ContentMap content = Content.loadFragment(contentId);
 		content.put(property, text);
+		nofifyUsers();
 	}
 
 	/**
@@ -136,6 +132,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 			component.put(property, chunks[i]);
 			html[i] = renderComponent(component);
 		}
+		nofifyUsers();
 		return html;
 	}
 	
@@ -159,6 +156,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		ComponentList componentList = ComponentList.load(listId);
 		Component component = createComponent(componentList, type);
 		componentList.add(position, component);
+		nofifyUsers();
 		return renderComponent(component);
 	}
 
@@ -209,18 +207,12 @@ public class ComponentEditorImpl implements ComponentEditor,
 	@RemoteMethod
 	public void moveComponent(String componentId, String nextComponentId) {
 		Component.load(componentId).move(nextComponentId);
+		nofifyUsers();
 	}
 
 	@RemoteMethod
 	public void deleteComponent(String componentId) {
 		Component.load(componentId).delete();
-	}
-	
-	@RemoteMethod
-	public void markAsDirty(Long containerId) {
-		ContentContainer container = ContentContainer.load(containerId);
-		container.setDirty(true);
-		ComponentCacheUtils.invalidatePreviewVersion(cacheService, container);
 		nofifyUsers();
 	}
 	

@@ -35,7 +35,7 @@ public class PagePropertyElement extends AbstractLocalizedElement {
 	}
 	
 	protected Object getMasterValue(String property) {
-		return masterPage.getPageProperties().getPreviewVersion().get(property);
+		return masterPage.getContentContainer().getPreviewVersion().get(property);
 	}
 	
 }

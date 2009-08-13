@@ -12,11 +12,12 @@
  */
 package org.riotfamily.components.model;
 
-import java.util.Map;
+public interface ContentContainerOwner {
 
-/**
- * Interface for {@link ContentFragment}s that are also Maps.
- */
-public interface ContentMap extends ContentFragment, Map<String, Object> {
+	public ContentContainer getContentContainer();
+	
+	public boolean isPublished();
+	
+	public void publish();
 
 }

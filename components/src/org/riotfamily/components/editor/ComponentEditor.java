@@ -44,8 +44,6 @@ public interface ComponentEditor {
 
 	public void deleteComponent(String componentId);
 	
-	public void markAsDirty(Long containerId);
-
 	public void publish(Long[] containerIds);
 
 	public void discard(Long[] containerIds);

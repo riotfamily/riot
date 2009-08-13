@@ -165,7 +165,12 @@
 		</description>
 	</bean>
 	
-	<bean id="localizedObjectWrapperPlugin" class="org.riotfamily.common.freemarker.LocalizedObjectWrapperPlugin" />
+	<bean class="org.riotfamily.common.freemarker.MapEntityObjectWrapperPlugin">
+		<description>
+			ObjectWrapperPlugin that wraps Entities that implement the 
+			java.util.Map interface with a MapModel (instead of a SimpleHash).
+		</description>
+	</bean>
     
     <bean class="org.riotfamily.common.hibernate.ActiveRecordClassExposer">
     	<description>

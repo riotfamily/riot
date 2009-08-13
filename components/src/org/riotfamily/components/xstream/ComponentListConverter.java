@@ -39,7 +39,7 @@ public class ComponentListConverter extends CollectionConverter {
 			MarshallingContext context) {
 		
 		ComponentList list = (ComponentList) source;
-		writer.addAttribute("id", list.getPartId());
+		writer.addAttribute("id", list.getFragmentId());
 		super.marshal(list, writer, context);
 	}
 	

@@ -19,6 +19,7 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentMap;
+import org.riotfamily.components.model.ContentMapImpl;
 import org.riotfamily.components.model.ContentMapMarshaller;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -49,7 +50,7 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 
 		xstream.alias("component", Component.class);
 		xstream.alias("component-list", ComponentList.class);
-		xstream.alias("content-map", ContentMap.class);
+		xstream.alias("content-map", ContentMapImpl.class);
 		
 		Mapper mapper = xstream.getMapper();
 		
@@ -72,7 +73,7 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 	}
 	
 	public String marshal(ContentMap contentMap) {
-		Content owner = contentMap.getOwner();
+		Content owner = contentMap.getContent();
 		owner.getReferences().clear();
 		StringWriter sw = new StringWriter();
 		HierarchicalStreamWriter writer = driver.createWriter(sw);

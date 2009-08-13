@@ -67,6 +67,7 @@ public class ViewComponentRenderer extends AbstractComponentRenderer {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.putAll(component);
 		
+		model.put("contentMap", component);
 		model.put(THIS, component);
 		model.put(POSITION, component.getPosition());
 		model.put(LIST_SIZE, component.getList().size());

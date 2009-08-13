@@ -12,13 +12,10 @@ var liveUrl;
 var leftShown = true;
 var rightShown = false;
 
-var containerIds;
-
 /**
  * Loads the live and preview version of the page into the content frames.
  */
 function init(ids) {
-	containerIds = ids;
 	var params = $H(parent.location.search.parseQuery());
 	params.set('riotMode', 'live');
 	liveUrl = parent.location.pathname + '?' + params.toQueryString();
@@ -89,12 +86,12 @@ function hide() {
 }
 
 function publish() {
-	parent.riot.components.publish(containerIds);
+	parent.riot.components.publish();
 	hide();
 }
 
 function discard() {
-	parent.riot.components.discard(containerIds);
+	parent.riot.components.discard();
 	hide();
 }
 </script>

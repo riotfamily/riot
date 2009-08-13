@@ -12,27 +12,24 @@
  */
 package org.riotfamily.components.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.riotfamily.common.collection.DirtyCheckList;
+import org.riotfamily.common.collection.DirtyCheckMap;
 import org.springframework.util.Assert;
 
-/**
- * List of {@link Component}s that is identified by an id.
- */
-public class ComponentList extends DirtyCheckList<Component> 
-		implements ContentFragment {
-	
+public class ContentMapImpl extends DirtyCheckMap<String, Object> 
+		implements ContentMap {
+
 	private String fragmentId;
 	
 	private Content owner;
 
-	public ComponentList(Content owner) {
+	public ContentMapImpl(Content owner) {
 		this(owner, owner.nextFragmentId());
 	}
 	
-	public ComponentList(Content owner, String fragmentId) {
-		super(new ArrayList<Component>());
+	public ContentMapImpl(Content owner, String fragmentId) {
+		super(new HashMap<String, Object>());
 		Assert.notNull(owner, "owner must not be null");
 		Assert.notNull(fragmentId, "fragmentId must not be null");
 		this.owner = owner;
@@ -40,6 +37,9 @@ public class ComponentList extends DirtyCheckList<Component>
 		owner.registerfragment(this);
 	}
 
+	/**
+	 * Notifies the owner that the content has been modified.
+	 */
 	@Override
 	protected void dirty() {
 		owner.fragmentModified();
@@ -48,15 +48,15 @@ public class ComponentList extends DirtyCheckList<Component>
 	public String getFragmentId() {
 		return fragmentId;
 	}
-	
+
 	public String getCompositeId() {
 		return owner.getCompositeId(this);
 	}
-
+	
 	public Content getContent() {
 		return owner;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		return fragmentId.hashCode();
@@ -67,15 +67,11 @@ public class ComponentList extends DirtyCheckList<Component>
 		if (o == this) {
 			return true;
 		}
-		ComponentList other = (ComponentList) o;
-		if (o instanceof ComponentList) {
+		ContentMapImpl other = (ContentMapImpl) o;
+		if (o instanceof ContentMapImpl) {
 			return getCompositeId().equals(other.getCompositeId());
 		}
 		return false;
 	}
-	
-	public static ComponentList load(String listId) {
-		return (ComponentList) Content.loadFragment(listId);
-	}
-	
+
 }

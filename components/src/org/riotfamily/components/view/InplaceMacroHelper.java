@@ -18,8 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.model.Component;
-import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.render.list.ComponentListRenderer;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.core.security.AccessController;
@@ -89,7 +88,7 @@ public class InplaceMacroHelper {
 		return sb.toString();
 	}
 		
-	public String renderComponentList(ContentContainer container, 
+	public String renderComponentList(ContentMap contentMap, 
 			String key, Integer minComponents, Integer maxComponents,
 			List<String> initalComponentTypes, 
 			List<?> validComponentTypes)
@@ -99,21 +98,8 @@ public class InplaceMacroHelper {
 				minComponents, maxComponents, 
 				initalComponentTypes, validComponentTypes);
 		
-		return componentListRenderer.renderComponentList(container, key, config, 
+		return componentListRenderer.renderComponentList(contentMap, key, config, 
 				request, response);
 	}
 	
-	public String renderNestedComponentList(Component parent, 
-			String key, Integer minComponents, Integer maxComponents,
-			List<String> initalComponentTypes, 
-			List<?> validComponentTypes)
-			throws Exception {
-		
-		ComponentListConfig config = new ComponentListConfig(
-				minComponents, maxComponents, 
-				initalComponentTypes, validComponentTypes);
-		
-		return componentListRenderer.renderNestedComponentList(parent, key, 
-				config, request, response);
-	}
 }

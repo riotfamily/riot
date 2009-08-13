@@ -12,12 +12,15 @@
  */
 package org.riotfamily.components.model;
 
-public interface ContentPart {
+/**
+ * Fragment of a Content object that is identified by an id.
+ */
+public interface ContentFragment {
 
-	public String getPartId();
+	public String getFragmentId();
 	
-	public String getId();
+	public String getCompositeId();
 	
-	public Content getOwner();
+	public Content getContent();
 		
 }

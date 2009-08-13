@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentMap;
+import org.riotfamily.components.model.ContentMapImpl;
 
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -41,7 +42,7 @@ public class ContentMapConverter extends AbstractCollectionConverter {
 			MarshallingContext context) {
 		
 		ContentMap map = (ContentMap) source;
-		writer.addAttribute("id", map.getPartId());
+		writer.addAttribute("id", map.getFragmentId());
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             writer.startNode("entry");
             writer.addAttribute("key", entry.getKey());
@@ -56,7 +57,7 @@ public class ContentMapConverter extends AbstractCollectionConverter {
 		
 		Content owner = (Content) context.get("content");
 		String id = reader.getAttribute("id");
-		ContentMap map = new ContentMap(owner, id);
+		ContentMap map = new ContentMapImpl(owner, id);
 		populateMap(reader, context, map);
         return map;
     }

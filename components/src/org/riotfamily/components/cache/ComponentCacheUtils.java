@@ -28,9 +28,7 @@ public final class ComponentCacheUtils {
 	private ComponentCacheUtils() {
 	}
 	
-	/**
-	 * Returns the tag for the given container id.
-	 */
+	/*
 	private static String getContainerTag(ContentContainer container, 
 			boolean preview) {
 		
@@ -46,19 +44,13 @@ public final class ComponentCacheUtils {
 		CachiusContext.tag(getContainerTag(container, preview));
 	}
 	
-	/**
-	 * Invalidates the live and preview version of the container.
-	 */
 	public static void invalidateContainer(CacheService cacheService, ContentContainer container) {
 		cacheService.invalidateTaggedItems(getContainerTag(container, false));
 		cacheService.invalidateTaggedItems(getContainerTag(container, true));
 	}
 	
-	/**
-	 * Invalidates the preview version of the container.
-	 */
 	public static void invalidatePreviewVersion(CacheService cacheService, ContentContainer container) {
 		cacheService.invalidateTaggedItems(getContainerTag(container, true));
 	}
-
+	*/
 }

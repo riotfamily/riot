@@ -22,13 +22,6 @@
 	</bean>
 
 	<!-- Overrides -->
-
-	<override:bean ref="componentFormController" class="org.riotfamily.pages.riot.form.PagePropertiesFormController">
-		<constructor-arg ref="formContextFactory" />
-		<constructor-arg ref="contentFormRepository" />
-		<constructor-arg ref="transactionManager" />
-		<constructor-arg ref="cacheService" />
-	</override:bean>
 	
 	<override:add ref="messageBasenames" append="true">
 		<value>classpath:/org/riotfamily/pages/runtime/i18n/messages</value>
@@ -89,7 +82,7 @@
 				</bean>
 				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
 					<property name="renderer">
-						<bean class="org.riotfamily.pages.riot.ui.PublishStatusRenderer" />
+						<bean class="org.riotfamily.pages.riot.ui.PagePublishStatusRenderer" />
 					</property>
 				</bean>
 			</list>
@@ -99,7 +92,7 @@
 				<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
 				<bean class="org.riotfamily.pages.riot.command.GotoPageCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
-					<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.CutCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.CopyCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.PasteCommand" />

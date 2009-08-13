@@ -16,12 +16,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -31,40 +28,51 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.website.cache.TagCacheItems;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
+/**
+ * Entity that stores objects of any kind in a map. The map is serialized using
+ * a ContentMapMarshaller. 
+ */
 @Entity
 @Table(name="riot_contents")
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(
-    name="content_type",
-    discriminatorType=DiscriminatorType.STRING
-)
-@DiscriminatorValue("Content")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-public class Content extends ActiveRecordBeanSupport 
-		implements Map<String, Object> {
+@TagCacheItems
+public class Content extends ActiveRecordBeanSupport implements ContentMap {
 
 	private ContentMapMarshaller marshaller;
 	
 	private int version;
 
-	private ContentMap map;
+	private ContentContainer container;
+
+	private boolean dirty;
 	
 	private String xml;
-	
-	private boolean dirty;
-		
-	private Map<String, ContentPart> parts = Generics.newHashMap();
 
-	private Set<Object> references = Generics.newHashSet();
+	private boolean xmlRequiresUpdate;
+	
+	private transient boolean unmarshalling;
+	
+	private transient ContentMap map;
+	
+	private transient Map<String, ContentFragment> fragments;
+
+	private transient Set<Object> references;
 	
 	public Content() {
 	}
 	
+	public Content(ContentContainer container) {
+		this.container = container;
+	}
+	
 	public Content(Content other) {
+		setContainer(other.getContainer());
 		setXml(other.getXml());
+		dirty = false;
 	}
 	
 	@Transient
@@ -82,44 +90,100 @@ public class Content extends ActiveRecordBeanSupport
 		this.version = version;
 	}
 
-	public Content createCopy() {
+	Content createCopy() {
+		dirty = false;
 		return new Content(this);
 	}
-		
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	public ContentContainer getContainer() {
+		return container;
+	}
+
+	private void setContainer(ContentContainer container) {
+		this.container = container;
+	}
+	
 	@Type(type="text")
 	public String getXml() {
-		if (xml == null || dirty) {
+		if (xml == null || xmlRequiresUpdate) {
 			xml = marshaller.marshal(getMap());
-			dirty = false;
+			xmlRequiresUpdate = false;
 		}
 		return xml;
 	}
 
 	public void setXml(String xml) {
-		parts.clear();
+		unmarshalling = true;
+		if (fragments != null) {
+			fragments.clear();
+		}
 		map = marshaller.unmarshal(this, xml);
+		xmlRequiresUpdate = false;
+		unmarshalling = false;
+	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	protected void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+	
+	/**
+	 * ContentFragments invoke this method when they are modified.
+	 */
+	void fragmentModified() {
+		if (!unmarshalling) {
+			xmlRequiresUpdate = true;
+			setDirty(true);
+		}
+	}
+	
+	@Transient
+	private ContentMap getMap() {
+		if (map == null) {
+			map = new ContentMapImpl(this);
+		}
+		return map;
 	}
 	
 	@Transient
 	public Set<Object> getReferences() {
+		if (references == null) {
+			references = Generics.newHashSet();
+		}
 		return references;
-	}
-
-	/**
-	 * ContentParts invoke this method on their owner when they are modified.
-	 */
-	void dirty() {
-		dirty = true;
 	}
 	
 	@Transient
-	ContentMap getMap() {
-		if (map == null) {
-			map = new ContentMap(this);
+	private Map<String, ContentFragment> getFragments() {
+		if (fragments == null) {
+			fragments = Generics.newHashMap();
 		}
-		return map;
+		return fragments;
+	}
+	
+	// -----------------------------------------------------------------------
+	// Implementation of the ContentFragment interface
+	// -----------------------------------------------------------------------
+	
+	@Transient
+	public String getCompositeId() {
+		return getFragmentId();
 	}
 
+	@Transient
+	public String getFragmentId() {
+		return String.valueOf(getId());
+	}
+
+	@Transient
+	public Content getContent() {
+		return this;
+	}
+	
 	// -----------------------------------------------------------------------
 	// Implementation of the Map interface (delegate methods)
 	// -----------------------------------------------------------------------
@@ -175,29 +239,32 @@ public class Content extends ActiveRecordBeanSupport
 	
 	// -----------------------------------------------------------------------
 	
-	String nextPartId() {
-		return version + "_" + parts.size();
+	String nextFragmentId() {
+		return version + "_" + getFragments().size();
 	}
 
-	String getPublicId(ContentPart part) {
-		return getId() + "_" + part.getPartId();
+	String getCompositeId(ContentFragment part) {
+		return getId() + "_" + part.getFragmentId();
 	}
 	
-	void registerPart(ContentPart part) {
-		String id = part.getPartId();
+	void registerfragment(ContentFragment fragment) {
+		String id = fragment.getFragmentId();
 		Assert.notNull(id);
-		Assert.isTrue(!parts.containsKey(id));
-		parts.put(id, part); 
+		Assert.isTrue(!getFragments().containsKey(id));
+		getFragments().put(id, fragment); 
 	}
 	
-	private ContentPart getPart(String id) {
+	private ContentFragment getFragment(String id) {
 		int i = id.indexOf('_');
-		String partId = id.substring(i + 1);
-		ContentPart part = parts.get(partId);
-		Assert.notNull(part, "ContentPart " + partId 
+		if (i == -1) {
+			return this;
+		}
+		String fragmentId = id.substring(i + 1);
+		ContentFragment fragment = getFragments().get(fragmentId);
+		Assert.notNull(fragment, "Fragment " + fragmentId 
 				+ " does not exist in Content " + getId());
 		
-		return part;
+		return fragment;
 	}
 
 	// -----------------------------------------------------------------------
@@ -206,14 +273,16 @@ public class Content extends ActiveRecordBeanSupport
 		return load(Content.class, id);
 	}
 	
-	public static ContentPart loadPart(String id) {
-		Content content = loadByPartId(id);
-		return content.getPart(id);
+	@SuppressWarnings("unchecked")
+	public static<T extends ContentFragment> T loadFragment(String id) {
+		Content content = loadByFragmentId(id);
+		return (T) content.getFragment(id);
 	}
 
-	public static Content loadByPartId(String id) {
+	public static Content loadByFragmentId(String id) {
 		int i = id.indexOf('_');
-		Content content = Content.load(Long.valueOf(id.substring(0, i)));
+		String contentId = (i != -1) ? id.substring(0, i) : id;
+		Content content = Content.load(Long.valueOf(contentId));
 		Assert.notNull(content, "Could not load content for part: " + id);
 		return content;
 	}

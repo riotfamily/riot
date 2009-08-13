@@ -12,33 +12,38 @@
  */
 package org.riotfamily.pages.riot.ui;
 
-import java.io.PrintWriter;
-
-import org.riotfamily.common.ui.ObjectRenderer;
-import org.riotfamily.common.ui.RenderContext;
 import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.core.screen.list.ListRenderContext;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PublishStatusRenderer implements ObjectRenderer {
+public class PagePublishStatusRenderer extends PublishStatusRenderer {
 
-	public void render(Object obj, RenderContext context, PrintWriter writer) {
-		writer.print("<div class=\"publish-status publish-status-");
-		writer.print(getStyleClass((ContentContainerOwner) obj, (ListRenderContext) context));
-		writer.print("\"></div>");
+	protected String getStyleClass(ContentContainerOwner owner, ListRenderContext context) {
+		if (isTranslated((Page) owner, context)) {
+			return super.getStyleClass(owner, context);
+		}
+		return "translatable";
+	}
+
+	private boolean isTranslated(Page page, ListRenderContext context) {
+		Site parentSite = getParentSite(context);
+		return parentSite == null || parentSite.equals(page.getSite());
 	}
 	
-	protected String getStyleClass(ContentContainerOwner owner, ListRenderContext context) {
-		if (!owner.isPublished()) {
-			return "new";
+	private Site getParentSite(ListRenderContext context) {
+		Object parent = context.getParent();
+		if (parent instanceof Page) {
+			return ((Page) parent).getSite();
 		}
-		if (owner.getContentContainer().getPreviewVersion().isDirty()) {
-			return "dirty";
+		else if (parent instanceof Site) {
+			return (Site) parent;
 		}
-		return "published";
+		return null;
 	}
 
 }

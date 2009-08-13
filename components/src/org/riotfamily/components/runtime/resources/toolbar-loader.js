@@ -34,7 +34,7 @@ function loadToolbarScripts() {
 
 function toolbarScriptsLoaded() {
     if (window.onToolbarLoaded) {
-    	onToolbarLoaded()
+    	onToolbarLoaded(riot.toolbar);
     }
     riot.toolbar.activate();
 }

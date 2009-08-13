@@ -18,19 +18,17 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.CachiusContext;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.website.cache.CacheTagUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -46,17 +44,15 @@ public class PageFacade {
 	
 	private boolean preview;
 	
-	private Map<String, Object> properties = null;
-
 	public PageFacade(Page page, HttpServletRequest request) {
 		this.page = page;
 		this.request = request;
 		this.preview = isPreview(page);
-		CachiusContext.tag(page.getCacheTag());
+		CacheTagUtils.tag(page);
 	}
 		
 	private boolean isPreview(Page page) {
-		return EditModeUtils.isPreview(request, page.getPageProperties());
+		return EditModeUtils.isPreview(request, page.getContentContainer());
 	}
 	public Long getId() {
 		return page.getId();
@@ -115,7 +111,7 @@ public class PageFacade {
 	}
 
 	public Collection<Page> getChildPages() {
-		CachiusContext.tag(page.getCacheTag());
+		CacheTagUtils.tag(page);
 		return getPublishedPages(page.getChildPages());
 	}
 
@@ -124,7 +120,7 @@ public class PageFacade {
 		if (parent == null) {
 			return Collections.singletonList(page);
 		}
-		CachiusContext.tag(parent.getCacheTag());
+		CacheTagUtils.tag(parent);
 		return getPublishedPages(parent.getChildPages());
 	}
 	
@@ -155,42 +151,37 @@ public class PageFacade {
 	}
 
 	public Long getContentId() {
-		Content content = getPageProperties().getContent(preview);
-		return content != null ? content.getId() : null;
+		return getContent().getId();
 	}
 		
-	public PageProperties getPageProperties() {
-		PageProperties pageProperties = page.getPageProperties(); 
-		ComponentCacheUtils.addContainerTags(pageProperties, preview);
+	public ContentContainer getContentContainer() {
+		ContentContainer container = page.getContentContainer();
+		CacheTagUtils.tag(container);
+		/*
+		ComponentCacheUtils.addContainerTags(container, preview);
 		Page master = page.getMasterPage();
 		if (master != null) {
-			ComponentCacheUtils.addContainerTags(master.getPageProperties(), preview);
+			ComponentCacheUtils.addContainerTags(master.getContentContainer(), preview);
 		}
-		return pageProperties;
+		*/
+		return container;
 	}
 
-	public Map<String, Object> getProperties() {
-		if (properties == null) {
-			properties = getPageProperties().getContent(preview);
-		}
-		return properties;
+	public Content getContent() {
+		Content content = getContentContainer().getContent(preview);
+		CacheTagUtils.tag(content);
+		return content;
 	}
 	
 	/**
 	 * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
 	 */
 	public Object get(String key) {
-		return getProperties().get(key);
+		return getContent().get(key);
 	}
-
-	/*
-	public Map<String, Object> getLocal() {
-		return getPageProperties().unwrapLocal(preview);
-	}
-	*/
 
 	public String getTitle() {
-		Object title = getProperties().get(TITLE_PROPERTY);
+		Object title = get(TITLE_PROPERTY);
 		if (title != null) {
 			return title.toString();
 		}

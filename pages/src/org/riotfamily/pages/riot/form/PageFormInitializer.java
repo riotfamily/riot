@@ -80,7 +80,7 @@ public class PageFormInitializer implements FormInitializer {
 		if (sb != null) {
 			sb.addChangeListener(ppe);
 		}
-		form.addElement(ppe, "pageProperties.previewVersion");
+		form.addElement(ppe, "contentContainer.previewVersion");
 	}
 	
 	private SelectBox createPageTypeBox(Form form, List<PageType> pageTypes) {

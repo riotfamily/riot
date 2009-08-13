@@ -16,20 +16,24 @@ import java.util.ListIterator;
 
 import org.springframework.util.Assert;
 
-
-public class Component extends ContentMap {
+/**
+ * A ContentMap that is contained in a {@link ComponentList}. In addition to a
+ * reference to their list, components also have a type. This type is used to 
+ * select a rendering view and a form to edit the component's properties.   
+ */
+public class Component extends ContentMapImpl {
 
 	private ComponentList list;
 	
 	private String type;
 	
 	public Component(ComponentList list) {
-		super(list.getOwner());
+		super(list.getContent());
 		this.list = list;
 	}
 	
 	public Component(ComponentList list, String id) {
-		super(list.getOwner(), id);
+		super(list.getContent(), id);
 		this.list = list;
 	}
 
@@ -54,7 +58,7 @@ public class Component extends ContentMap {
 		if (before != null) {
 			ListIterator<Component> it = list.listIterator();
 			while (it.hasNext()) {
-				if (it.next().getId().equals(before)) {
+				if (it.next().getCompositeId().equals(before)) {
 					it.add(this);
 					break;
 				}
@@ -66,7 +70,7 @@ public class Component extends ContentMap {
 	}
 	
 	public static Component load(String id) {
-		return (Component) Content.loadPart(id);
+		return (Component) Content.loadFragment(id);
 	}
 
 	public int getPosition() {

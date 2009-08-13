@@ -34,7 +34,7 @@ public class PublishPageCommand extends AbstractBatchCommand<Page> {
 	protected boolean isEnabled(CommandContext context, Page page, int index,
 			int selectionSize) {
 		
-		return !page.isPublished();
+		return !page.isPublished() || page.getContentContainer().isDirty();
 	}
 	
 	@Override

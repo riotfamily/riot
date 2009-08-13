@@ -45,10 +45,6 @@
 	</bean>
 	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
-
-	<bean class="org.riotfamily.components.model.ContentContainer" scope="prototype">
-		<property name="cacheService" ref="cacheService" />
-	</bean>
 	
 	<bean class="org.riotfamily.components.model.Content" scope="prototype">
 		<property name="marshaller">
