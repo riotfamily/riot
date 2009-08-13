@@ -29,7 +29,7 @@ public abstract class AbstractStatsItemDao extends InMemoryRiotDao {
 	}
 
 	@Override
-	protected final Collection<?> listInternal(Object parent) throws Exception {
+	public final Collection<?> listInternal(Object parent) throws Exception {
 		return getStats();
 	}
 
