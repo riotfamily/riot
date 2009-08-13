@@ -15,10 +15,11 @@ package org.riotfamily.core.form.element;
 import java.io.PrintWriter;
 
 import org.riotfamily.common.mapping.HandlerUrlUtils;
-import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenRepository;
+import org.riotfamily.core.screen.ScreenUtils;
+import org.riotfamily.core.screen.list.ChooserSettings;
 import org.riotfamily.forms.element.select.AbstractChooser;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -60,15 +61,18 @@ public class ObjectChooser extends AbstractChooser
 		if (rootId != null) {
 			rootList = screenRepository.getScreen(rootId, ListScreen.class);
 		}
+		else {
+			rootList = ScreenUtils.getRootListScreen(targetList);
+		}
 	}
 	
 	@Override
 	protected String getChooserUrl() {
-		return ServletUtils.addParameter(
-				HandlerUrlUtils.getUrlResolver(applicationContext)
+		ChooserSettings settings = new ChooserSettings(targetId, rootId, null);
+		String url = HandlerUrlUtils.getUrlResolver(applicationContext)
 				.getUrlForHandler(rootList.getId(),
-				new ScreenContext(null, null, null, null, false)),
-				"choose", targetId);
+				new ScreenContext(null, null, null, null, false));
+		return settings.appendTo(url);
 	}
 
 	@Override
@@ -78,7 +82,9 @@ public class ObjectChooser extends AbstractChooser
 
 	@Override
 	protected void renderLabel(Object object, PrintWriter writer) {
-		writer.print(targetList.getItemLabel(object));
+		if (object != null) {
+			writer.print(targetList.getItemLabel(object));
+		}
 	}
 
 }
