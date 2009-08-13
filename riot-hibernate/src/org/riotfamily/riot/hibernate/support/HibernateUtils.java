@@ -74,7 +74,8 @@ public final class HibernateUtils {
 	}
 	
 	public static String getIdAsString(SessionFactory sessionFactory, Object bean) {
-		return getId(sessionFactory, bean).toString();
+		Serializable id = getId(sessionFactory, bean);
+		return (id != null) ? id.toString() : null;
 	}
 	
 	public static boolean isPersistentProperty(SessionFactory sessionFactory, 
