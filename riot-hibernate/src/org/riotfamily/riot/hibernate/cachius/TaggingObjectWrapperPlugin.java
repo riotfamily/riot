@@ -59,7 +59,11 @@ public class TaggingObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered 
 			PluginObjectWrapper wrapper) throws TemplateModelException {
 
 		TaggingStringModel model = new TaggingStringModel(obj, wrapper);
-		model.addTag(CacheTagUtils.getTag(obj.getClass(), HibernateUtils.getIdAsString(sessionFactory, obj)));
+		String id = HibernateUtils.getIdAsString(sessionFactory, obj);
+		if (id == null) {
+			throw new TemplateModelException("Model contains unsaved entity:" + obj);
+		}
+		model.addTag(CacheTagUtils.getTag(obj.getClass(), id));
 		return model;
 	}
 	
