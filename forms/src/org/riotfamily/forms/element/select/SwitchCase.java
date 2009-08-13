@@ -108,6 +108,10 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 			return delegate;
 		}
 		
+		public void setBackingObject(Object backingObject) {
+			getDelegate().setBackingObject(backingObject);
+		}
+		
 		@Override
 		public Class<?> getPropertyType(String path) {
 			return getDelegate().getPropertyType(path);

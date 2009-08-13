@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.beans.property.MapWrapper;
+import org.riotfamily.common.beans.property.MapPropertyAccessor;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.PropertyAccessor;
@@ -235,7 +235,7 @@ public class AttributePattern {
 	}
 	
 	public String fillInAttributes(Map<String, ?> attributes, Map<String, ?> defaults) {
-		return fillInAttributes(new MapWrapper(attributes), defaults);
+		return fillInAttributes(new MapPropertyAccessor(attributes), defaults);
 	}
 	
 	public String fillInAttributes(PropertyAccessor attributes, Map<String, ?> defaults) {

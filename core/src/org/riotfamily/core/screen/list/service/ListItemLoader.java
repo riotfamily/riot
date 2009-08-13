@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.beans.property.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.SingleRoot;
@@ -30,6 +29,8 @@ import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.core.security.AccessController;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
 
 /**
@@ -93,7 +94,7 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 	 */
 	private List<String> getColumns(Object object) {
 		ArrayList<String> result = Generics.newArrayList();
-		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(object);
+		BeanWrapper wrapper = new BeanWrapperImpl(object);
 		for (ColumnConfig col : screen.getColumns()) {
 			if (!AccessController.isGranted("viewColumn", screen, col, object)) {
 				continue;

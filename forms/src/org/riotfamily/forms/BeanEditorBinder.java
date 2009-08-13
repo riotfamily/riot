@@ -12,9 +12,10 @@
  */
 package org.riotfamily.forms;
 
-import org.riotfamily.common.beans.property.ProtectedBeanWrapper;
 import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -28,12 +29,12 @@ public class BeanEditorBinder extends AbstractEditorBinder {
 	
 	public BeanEditorBinder(Object backingObject) {
 		Assert.notNull(backingObject);
-		beanWrapper = new ProtectedBeanWrapper(backingObject);
+		beanWrapper = new BeanWrapperImpl(backingObject);
 		editingExistingBean = true;
 	}
 	
 	public BeanEditorBinder(Class<?> beanClass) {
-		beanWrapper = new ProtectedBeanWrapper(beanClass);
+		beanWrapper = new BeanWrapperImpl(beanClass);
 	}
 
 	public Object getBackingObject() {
@@ -41,12 +42,13 @@ public class BeanEditorBinder extends AbstractEditorBinder {
 	}
 
 	public void setBackingObject(Object backingObject) {
-		editingExistingBean = backingObject != null;
-		if (backingObject != null) {
-			beanWrapper = new ProtectedBeanWrapper(backingObject);
+		if (backingObject == null) {
+			editingExistingBean = false;
+			beanWrapper = new BeanWrapperImpl(getBeanClass());
 		}
 		else {
-			beanWrapper = new ProtectedBeanWrapper(getBeanClass());
+			editingExistingBean = true;
+			beanWrapper = new BeanWrapperImpl(backingObject);
 		}
 	}
 	

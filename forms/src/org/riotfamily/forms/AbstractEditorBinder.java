@@ -127,13 +127,6 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 			}
 		}
 	}
-
-	public void setBackingObject(Object backingObject) {
-		setBackingObjectInternal(backingObject);
-	}
-	
-	protected final void setBackingObjectInternal(Object backingObject) {
-	}
 	
 	public void initEditors() {
 		for (EditorBinding binding : bindings.values()) {

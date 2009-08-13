@@ -14,7 +14,7 @@ package org.riotfamily.common.bind;
 
 import java.util.Map;
 
-import org.riotfamily.common.beans.property.MapWrapper;
+import org.riotfamily.common.beans.property.MapPropertyAccessor;
 import org.springframework.beans.ConfigurablePropertyAccessor;
 import org.springframework.validation.AbstractPropertyBindingResult;
 
@@ -27,7 +27,7 @@ public class MapPropertyBindingResult extends AbstractPropertyBindingResult {
     public MapPropertyBindingResult(Map<?, ?> target, String objectName) {
         super(objectName);
         this.target = target;
-        propertyAccessor = new MapWrapper(target);
+        propertyAccessor = new MapPropertyAccessor(target);
     }
     
     public ConfigurablePropertyAccessor getPropertyAccessor() {

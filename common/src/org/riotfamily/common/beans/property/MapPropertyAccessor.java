@@ -27,8 +27,7 @@ import org.springframework.util.Assert;
 /**
  * PropertyAccessor implementation that works on maps.
  */
-public class MapWrapper extends AbstractPropertyAccessor 
-		implements ObjectWrapper {
+public class MapPropertyAccessor extends AbstractPropertyAccessor {
 
 	private Map<?, ?> map;
 
@@ -36,11 +35,11 @@ public class MapWrapper extends AbstractPropertyAccessor
 
 	private Class<?> mapClass = HashMap.class;
 
-	public MapWrapper(Map<?, ?> map) {
+	public MapPropertyAccessor(Map<?, ?> map) {
 		this.map = map;
 	}
 
-	public MapWrapper(Class<?> mapClass) {
+	public MapPropertyAccessor(Class<?> mapClass) {
 		this.mapClass = mapClass;
 	}
 

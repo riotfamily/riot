@@ -25,6 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.NullValueInNestedPathException;
+import org.springframework.beans.PropertyAccessor;
 import org.springframework.beans.PropertyAccessorUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -46,19 +47,19 @@ public final class PropertyUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ObjectWrapper createWrapper(Object obj) {
+	public static PropertyAccessor createAccessor(Object obj) {
 		Assert.notNull(obj);
 		if (obj instanceof Map) {
-			return new MapWrapper((Map) obj);
+			return new MapPropertyAccessor((Map) obj);
 		}
-		return new ProtectedBeanWrapper(obj);
+		return new BeanWrapperImpl(obj);
 	}
 	
 	public static Object getProperty(Object bean, String name) {
 		if (bean == null) {
 			return null;
 		}
-		ObjectWrapper wrapper = createWrapper(bean);
+		PropertyAccessor wrapper = createAccessor(bean);
 		try {
 			return wrapper.getPropertyValue(name);	
 		}
@@ -83,7 +84,7 @@ public final class PropertyUtils {
 	}
 
 	public static void setProperty(Object bean, String name, Object value) {
-		ObjectWrapper wrapper = createWrapper(bean);
+		PropertyAccessor wrapper = createAccessor(bean);
 		wrapper.setPropertyValue(name, value);
 	}
 

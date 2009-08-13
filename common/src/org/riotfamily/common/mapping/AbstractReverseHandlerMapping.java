@@ -19,7 +19,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.beans.property.MapWrapper;
+import org.riotfamily.common.beans.property.MapPropertyAccessor;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
@@ -150,7 +150,7 @@ public abstract class AbstractReverseHandlerMapping
 		}
 		for (AttributePattern p : patterns) {
 			if (p.canFillIn(attributes, defaults, 0)) {
-				return p.fillInAttributes(new MapWrapper(attributes), defaults);
+				return p.fillInAttributes(new MapPropertyAccessor(attributes), defaults);
 			}
 		}
 		return null;
