@@ -27,21 +27,40 @@ public class ChooserSettings implements Serializable {
 	
 	private String rootObjectId;
 
+	
+	
+	public ChooserSettings(String targetScreenId, String startScreenId,
+			String rootObjectId) {
+		
+		this.targetScreenId = targetScreenId;
+		this.startScreenId = startScreenId;
+		this.rootObjectId = rootObjectId;
+	}
+
 	public ChooserSettings(HttpServletRequest request) {
-		targetScreenId = request.getParameter("choose");
-		startScreenId = request.getParameter("start");
-		rootObjectId = request.getParameter("rootId");
+		this(request.getParameter("choose"),request.getParameter("start"), 
+					request.getParameter("rootId"));
 	}
 
 	public ScreenLink appendTo(ScreenLink link) {
-		if (targetScreenId != null) {
-			StringBuffer url = new StringBuffer(link.getUrl());
-			ServletUtils.appendParameter(url, "choose", targetScreenId);
-			ServletUtils.appendParameter(url, "start", startScreenId);
-			ServletUtils.appendParameter(url, "rootId", rootObjectId);
-			link.setUrl(url.toString());
-		}
+		StringBuffer url = new StringBuffer(link.getUrl());
+		appendTo(url);
+		link.setUrl(url.toString());
 		return link;
+	}
+	
+	public String appendTo(String url) {
+		StringBuffer sb = new StringBuffer(url);
+		appendTo(sb);
+		return sb.toString();
+	}
+	
+	private void appendTo(StringBuffer sb) {
+		if (targetScreenId != null) {
+			ServletUtils.appendParameter(sb, "choose", targetScreenId);
+			ServletUtils.appendParameter(sb, "start", startScreenId);
+			ServletUtils.appendParameter(sb, "rootId", rootObjectId);
+		}
 	}
 	
 	public String getTargetScreenId() {

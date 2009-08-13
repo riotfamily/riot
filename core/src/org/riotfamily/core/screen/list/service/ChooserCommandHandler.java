@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.ScreenUtils;
+import org.riotfamily.core.screen.list.ChooserSettings;
 import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
@@ -27,6 +29,8 @@ import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 import org.riotfamily.core.screen.list.command.result.ScriptResult;
+
+import com.sun.tools.javac.jvm.Target;
 
 /**
  * List service handler that handles object-chooser related tasks. 
@@ -81,9 +85,11 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		
 		public CommandResult execute(CommandContext context, Selection selection) {
 			ScreenContext nextContext = new ScreenContext(nextList, 
-					selection.getSingleItem().getObject(), null, false, screenContext);
+					null, selection.getSingleItem().getObject(), false, screenContext);
 			
-			return new GotoUrlResult(context.getRequest(), nextContext.getUrl());
+			ChooserSettings settings = new ChooserSettings(chooserTarget.getId(), null, null);
+			ScreenLink link = settings.appendTo(nextContext.getLink());
+			return new GotoUrlResult(context.getRequest(), link.getUrl());
 		}
 	}
 	

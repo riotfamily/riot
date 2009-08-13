@@ -54,6 +54,14 @@ public final class ScreenUtils {
 		return getParentListScreen(screen);
 	}
 	
+	public static ListScreen getRootListScreen(RiotScreen screen) {
+		ListScreen list = getListScreen(screen);
+		while (getParentListScreen(list) != null) {
+			list = getParentListScreen(list);
+		} 
+		return list;
+	}
+	
 	public static String getLabel(Object object, RiotScreen screen) {
 		return getListScreen(screen).getItemLabel(object);
 	}
