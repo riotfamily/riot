@@ -93,7 +93,7 @@ var Txt2ImgReplacement = Class.create({
 		this.config = config;
 		this.el = $(el);
 		this.sel = sel;
-		el.observe('inplace:edited', this.updateText.bind(this));
+		this.el.observe('inplace:edited', this.replace.bind(this));
 	},
 	
 	// Whether to use the alphaImageLoader or not (detects IE 6):
