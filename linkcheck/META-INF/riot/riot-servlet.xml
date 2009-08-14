@@ -52,7 +52,7 @@
 	
 	<override:add ref="crawler" property="pageHandlers">
 		<ref bean="linkChecker"/>
-	</override:add>	
+	</override:add>
 	
 	<bean class="org.riotfamily.linkcheck.BrokenLinkStatusMonitor">
 		<property name="link" value="/list/brokenLinks" />
