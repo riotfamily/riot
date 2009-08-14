@@ -22,6 +22,7 @@ function loadToolbarScripts() {
 		{src: 'riot-js/util.js', test: 'RElement'},
 		{src: 'scriptaculous/effects.js', test: 'Effect'},
 		{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
+		{src: 'riot-js/cookiejar.js', test: 'CookieJar'},
 		{src: 'toolbar.js'},
 		{src: 'riot-js/effects.js'},
 		{src: 'riot-js/window/dialog.js'},

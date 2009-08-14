@@ -12,7 +12,7 @@ riot.Toolbar = Class.create({
 			preview: new riot.ToolbarButton('preview', '${toolbarButton.preview}'),
 			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}')
 		});
-
+		
 		this.buttons.get('logout').applyHandler = this.logout;
 		this.disablePreviewButton();
 		
@@ -25,11 +25,21 @@ riot.Toolbar = Class.create({
 			.insert(new Element('div', {id: 'riot-toolbar-title'}))
 			.insert(buttonsDiv));
 
+		var cookie = new CookieJar({expires: 604800});
+		var pos = cookie.get('toolbarPos');
+		if (pos) {
+			this.element.setStyle(pos);
+		}
+		
 		new Draggable('riot-toolbar', {
 			handle: 'riot-toolbar-title', 
 			starteffect: null, 
-			endeffect: null 
+			endeffect: null,
 			//scroll: this.element.getStyle('position') == 'absolute' ? 'window' : null
+			onEnd: function(d, ev) {
+				var s = d.element.style;
+				cookie.put('toolbarPos', {top: s.top, left: s.left});
+			}
 		});
 		
 		document.body.appendChild(this.inspectorPanel = new Element('div', {id: 'riot-inspector'}));
