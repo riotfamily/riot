@@ -37,7 +37,7 @@ public class ComponentListConfig {
 	
 	private Integer max;
 	
-	private Map<String, ComponentConfig> validTypes  = Generics.newHashMap();
+	private Map<String, ComponentConfig> validTypes  = Generics.newLinkedHashMap();
 	
 	private List<String> initialTypes = Generics.newArrayList();
 	
