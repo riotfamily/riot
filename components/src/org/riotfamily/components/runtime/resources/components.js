@@ -256,7 +256,8 @@ riot.ComponentList = Class.create({
 			var list = this;
 			var handler = list.removeComponent.bind(list);
 			this.componentElements.map(riot.getContent).each(function(c) {
-				var min = this.getComponentConfig(c.type).min;
+				var config = this.getComponentConfig(c.type);
+				var min = config ? config.min : 0;
 				if (min == 0 || this.countComponents(c.type) > min) {
 					c.setClickHandler(handler);
 				}
