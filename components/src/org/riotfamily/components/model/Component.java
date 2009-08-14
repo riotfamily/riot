@@ -53,19 +53,19 @@ public class Component extends ContentMapImpl {
 		Assert.isTrue(list.remove(this));
 	}
 	
-	public void move(String before) {
+	public void move(String after) {
 		delete();
-		if (before != null) {
+		if (after != null) {
 			ListIterator<Component> it = list.listIterator();
 			while (it.hasNext()) {
-				if (it.next().getCompositeId().equals(before)) {
+				if (it.next().getCompositeId().equals(after)) {
 					it.add(this);
 					break;
 				}
 			}
 		}
 		else {
-			list.add(this);
+			list.add(0, this);
 		}
 	}
 	

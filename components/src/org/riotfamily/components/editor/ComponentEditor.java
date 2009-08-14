@@ -40,7 +40,7 @@ public interface ComponentEditor {
 	
 	public String renderComponent(String componentId);
 
-	public void moveComponent(String componentId, String nextComponentId);
+	public void moveComponent(String componentId, String prevComponentId);
 
 	public void deleteComponent(String componentId);
 	

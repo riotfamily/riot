@@ -647,26 +647,26 @@ riot.components = (function() {
 			if (el.getStyle('float') != 'none') {
 				draggable.options.constraint = false;
 			}
-			this.nextEl = draggable.element.next('.riot-component');
+			this.prevEl = draggable.element.previous('.riot-component');
 		},
 		
 		onEnd: function(eventName, draggable, event) {
 			var el = draggable.element;
 			el.removeClassName('riot-drag');
-			var nextEl = el.next('.riot-component');
-			if(el.parentNode == this.element && nextEl != this.nextEl) {
+			var prevEl = el.previous('.riot-component');
+			if(el.parentNode == this.element && prevEl != this.prevEl) {
 				this.componentList.findComponentElements();
-				var nextId = null;
-				if (nextEl) {
-					nextId = getContent(nextEl).id;
-					nextEl.forceRerendering();
+				var prevId = null;
+				if (prevEl) {
+					prevId = getContent(prevEl).id;
+					prevEl.forceRerendering();
 				}
 				var component = getContent(el);
-				ComponentEditor.moveComponent(component.id, nextId);
+				ComponentEditor.moveComponent(component.id, prevId);
 				riot.toolbar.enablePreviewButton();
 			}
 			this.componentList.updatePositionClasses();
-			this.nextEl = null;
+			this.prevEl = null;
 		}
 	});
 	

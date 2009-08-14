@@ -205,8 +205,8 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 
 	@RemoteMethod
-	public void moveComponent(String componentId, String nextComponentId) {
-		Component.load(componentId).move(nextComponentId);
+	public void moveComponent(String componentId, String prevComponentId) {
+		Component.load(componentId).move(prevComponentId);
 		nofifyUsers();
 	}
 
