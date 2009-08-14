@@ -65,8 +65,7 @@ public class QueryResultObjectWrapperPlugin
 		
 		QueryResult result = (QueryResult) obj;
 		TaggingSequence seqence = new TaggingSequence(result, wrapper);
-		for (Type type : result.getReturnTypes()) {
-			Class clazz = type.getReturnedClass();
+		for (Class clazz : result.getReturnClasses()) {
 			if (clazz.isAnnotationPresent(TagCacheItems.class)) {
 				seqence.addTag(CacheTagUtils.getTag(clazz));
 			}

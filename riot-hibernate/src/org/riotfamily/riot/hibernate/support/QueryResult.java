@@ -42,16 +42,25 @@ public class QueryResult<T> implements List<T> {
 
 	private List<T> result;
 	
-	private Type[] returnTypes;
+	private Class<?>[] returnClasses;
 
 	@SuppressWarnings("unchecked")
 	public QueryResult(Query query) {
 		this.result = query.list();
-		returnTypes = query.getReturnTypes();
+		Type[] types = query.getReturnTypes();
+		returnClasses = new Class<?>[types.length];
+		for (int i = 0; i < types.length; i++) {
+			returnClasses[i] = types[i].getReturnedClass();
+		}
 	}
 	
-	public Type[] getReturnTypes() {
-		return returnTypes;
+	public QueryResult(List<T> result, Class<?>... returnClasses) {
+		this.result = result;
+		this.returnClasses = returnClasses;
+	}
+	
+	public Class<?>[] getReturnClasses() {
+		return returnClasses;
 	}
 
 	public void add(int index, T element) {

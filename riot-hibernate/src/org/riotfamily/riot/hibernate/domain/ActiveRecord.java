@@ -33,7 +33,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.config.ConfigurableBean;
-import org.riotfamily.riot.hibernate.support.QueryResult;
+import org.riotfamily.riot.hibernate.support.QueryWrapper;
 
 /**
  * Use as base class for persistent entity beans if you prefer the
@@ -160,7 +160,7 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 * @return a newly created {@link Query}
 	 */
 	protected static Query createQuery(String hql, Object... params) {
-		Query query = getSession().createQuery(hql);
+		Query query = new QueryWrapper(getSession().createQuery(hql));
 		
 		if (params != null) {
 			int index = 0;
@@ -181,8 +181,9 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 * @param params the values of the parameters
 	 * @return a {@link List} containing the results of the query execution
 	 */
+	@SuppressWarnings("unchecked")
 	protected static<T> List<T> find(String hql, Object... params) {
-		return new QueryResult<T>(createQuery(hql, params));
+		return createQuery(hql, params).list();
 	}
 
 	/**
