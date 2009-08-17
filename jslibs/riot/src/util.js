@@ -92,12 +92,6 @@ var RElement = {
 		return el;
 	},
 
-	appendTo: function(el, parent) {
-		el = $(el);
-		$(parent).appendChild(el);
-		return el;
-	},
-
 	replaceBy: function(el, replacement) {
 		el = $(el);
 		replacement = $(replacement);
