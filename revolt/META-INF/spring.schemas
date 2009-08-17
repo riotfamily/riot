@@ -1,4 +1,2 @@
 http\://www.riotfamily.org/schema/revolt/revolt.xsd=/org/riotfamily/revolt/config/revolt.xsd
-http\://www.riotfamily.org/schema/revolt/revolt-6.5.xsd=/org/riotfamily/revolt/config/revolt.xsd
-http\://www.riotfamily.org/schema/revolt/revolt-7.0.xsd=/org/riotfamily/revolt/config/revolt.xsd
-http\://www.riotfamily.org/schema/revolt/revolt-8.0.xsd=/org/riotfamily/revolt/config/revolt.xsd
+http\://www.riotfamily.org/schema/revolt/revolt-9.0.xsd=/org/riotfamily/revolt/config/revolt.xsd

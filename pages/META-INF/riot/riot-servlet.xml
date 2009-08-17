@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
 	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
 		<constructor-arg ref="sitemapSchema" />
