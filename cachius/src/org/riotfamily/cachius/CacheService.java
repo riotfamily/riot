@@ -24,6 +24,9 @@
 package org.riotfamily.cachius;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
@@ -31,6 +34,7 @@ import org.riotfamily.common.log.RiotLog;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Alf Werder [alf dot werder at artundweise dot de]
  * @since 6.5
  */
 public class CacheService {
@@ -46,10 +50,18 @@ public class CacheService {
 	private boolean staleWhileRevalidate;
 	
 	private CachiusStatistics stats;
+
+	private ThreadLocal<DeferredCacheInvalidator> deferredCacheInvalidators;
+	
+	private CacheInvalidator defaultCacheInvalidator; 
 	
 	public CacheService(Cache cache) {
 		this.cache = cache;
 		this.stats = new CachiusStatistics(this);
+
+		this.deferredCacheInvalidators =
+			new ThreadLocal<DeferredCacheInvalidator>();
+		this.defaultCacheInvalidator = new ImmediateCacheInvalidator();
 	}
 	
 	public CachiusStatistics getStatistics() {
@@ -83,9 +95,9 @@ public class CacheService {
 	}
 
 	/**
-     * Invalidates all items tagged with the given String.
+     * Immediately invalidates all items tagged with the given String.
      */
-    public void invalidateTaggedItems(String tag) {
+	protected void immediatelyInvalidateTaggedItems(String tag) {
         cache.invalidateTaggedItems(tag);
     }
 
@@ -315,4 +327,127 @@ public class CacheService {
         return true;
     }
         
+	protected CacheInvalidator getCacheInvalidator() {
+		CacheInvalidator cacheInvalidator = deferredCacheInvalidators.get();
+		if (cacheInvalidator == null) {
+			cacheInvalidator = defaultCacheInvalidator;
+		}
+		return cacheInvalidator;
+	}
+
+	/**
+	 * Enables locally deferred cache invalidation for the current thread.
+	 * After a call to this method, all calls to
+	 * {@see #invalidateTaggedItems(String)} will no longer
+	 * immediately invalidate any cache item. Instead the tag will get stored
+	 * until {@see #commitLocallyDeferredInvalidation()} is called.
+	 * 
+	 *  It's save to call this method more then once in a single thread, as long
+	 *  as you have a balanced number of begin and commit calls. In other words:
+	 *  Nested bocks auf deferred cache invalidation are supported.
+	 *  
+	 *  @see #invalidateTaggedItems(String)
+	 *  @see #commitLocallyDeferredInvalidation()
+	 *  @since 8.0.1  
+	 */
+	public void beginLocallyDeferredInvalidation() {
+		if (log.isDebugEnabled()) {
+			log.info("Begin locally deferred cache invalidation.");
+		}
+		deferredCacheInvalidators.set(
+			new DeferredCacheInvalidator(deferredCacheInvalidators.get()));
+	}
+	
+	/**
+	 * Ends locally deferred cache invalidation for the current thread. All tags
+	 * stores since the last call to {@see #invalidateTaggedItems(String)} get
+	 * invalidated in a bulk operation and this {@CacheService} is put to
+	 * immediate cache invalidation mode again.
+	 * 
+	 * If you called {@see #beginLocallyDeferredInvalidation()} more than once
+	 * for the current thread, you have to make sure that a balanced number of
+	 * begins and commits will occur. Only the last commit will invalidate any
+	 * cache item.  
+	 * 
+	 *  @see #invalidateTaggedItems(String)
+	 *  @see #beginLocallyDeferredInvalidation()
+	 *  @since 8.0.1  
+	 */
+	public void commitLocallyDeferredInvalidation() {
+		DeferredCacheInvalidator deferredCacheInvalidator =
+			deferredCacheInvalidators.get();
+		
+		if (deferredCacheInvalidator != null) {
+			log.info("Commit locally deferred cache invalidation.");
+
+			deferredCacheInvalidator.commit();
+			deferredCacheInvalidators.set(deferredCacheInvalidator.getParent());
+		} else {
+			log.warn("Unbalanced commit of locally deferred cache " +
+				"invalidation is ignored.");
+		}
+	}
+
+	public void invalidateTaggedItems(String tag) {
+		getCacheInvalidator().invalidateTaggedItems(tag);
+	}
+	
+	private interface CacheInvalidator {
+		public void invalidateTaggedItems(String tag);
+	}
+	
+	private class ImmediateCacheInvalidator implements CacheInvalidator {
+		public void invalidateTaggedItems(String tag) {
+			if (log.isDebugEnabled()) {
+				log.debug(MessageFormat.format(
+					"Immediately invalidating items tagged as {0}.", tag));
+			}
+			
+			CacheService.this.immediatelyInvalidateTaggedItems(tag);
+		}
+	}
+	
+	private class DeferredCacheInvalidator implements CacheInvalidator {
+		private Set<String> tags;
+		private DeferredCacheInvalidator parent;
+		
+		protected CacheInvalidator getDownstreamInvalidator() {
+			if (parent != null) {
+				return parent;
+			}
+			
+			return CacheService.this.defaultCacheInvalidator;
+		}
+		
+		public DeferredCacheInvalidator(DeferredCacheInvalidator parent) {
+			tags = new HashSet<String>();
+			this.parent = parent;
+		}
+		
+		public DeferredCacheInvalidator getParent() {
+			return parent;
+		}
+
+		public void invalidateTaggedItems(String tag) {
+			if (log.isDebugEnabled()) {
+				log.debug(MessageFormat.format(
+					"Storing tag {0} for later invalidation of items tagged " +
+					"with it.", tag));
+			}
+			tags.add(tag);
+		}
+		
+		public void commit() {
+			if (log.isDebugEnabled()) {
+				log.info(MessageFormat.format(
+					"Performing invalidation of items tagged with one out of " +
+					"{0} stored tags.", tags.size()));
+			}
+
+			CacheInvalidator invalidator = getDownstreamInvalidator();
+			for (String tag : tags) {
+				invalidator.invalidateTaggedItems(tag);
+			}
+		}
+	}
 }
