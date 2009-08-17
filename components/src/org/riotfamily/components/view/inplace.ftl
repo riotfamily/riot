@@ -80,18 +80,41 @@
 	</#if>
 </#macro>
 
-<#macro componentList key min=0 max=1000 initial=[] valid=[]>
+<#---
+  - Macro that renders a component list. Must be used inside of an
+  - <code>&lt;@inplace.use ... &gt;</code> macro.
+  -
+  - @param key The model key that contains the component list.
+  - @param min Minimal number of components, that must be present in this list.
+  - @param max Maximal number of components that can be added to this list.
+  - @param initial List of component types initially placed in this list. 
+  - @param valid List of component types that may get inserted into this list.
+  - @param insertAt Position where the user can insert components into this list.
+  -        Use "top", "bottom" or "mouse". 
+  -->
+<#macro componentList key min=0 max=1000 initial=[] valid=[] insertAt="bottom">
 	<#if !currentContainer??>
 		<#stop "Use inplace.use to select a container">
 	</#if>
-	${inplaceMacroHelper.renderComponentList(currentContainer, key, min, max, initial, valid)!}
+	${inplaceMacroHelper.renderComponentList(currentContainer, key, min, max, initial, valid, insertAt)!}
 </#macro>
 
-<#macro nestedComponentList key min=0 max=1000 initial=[] valid=[]>
+<#---
+  - Macro that renders a nested component list. Must be used inside of a component.
+  -
+  - @param key The model key that contains the component list.
+  - @param min Minimal number of components, that must be present in this list.
+  - @param max Maximal number of components that can be added to this list.
+  - @param initial List of component types initially placed in this list. 
+  - @param valid List of component types that may placed in this list.
+  - @param insertAt Position where the user can insert components into this list.
+  -        Use "top", "bottom" or "mouse". 
+  -->
+<#macro nestedComponentList key min=0 max=1000 initial=[] valid=[] insertAt="bottom">
 	<#if !this??>
 		<#stop "Nested lists can only be used inside a component view">
 	</#if>
-	${inplaceMacroHelper.renderNestedComponentList(this, key, min, max, initial, valid)!}
+	${inplaceMacroHelper.renderNestedComponentList(this, key, min, max, initial, valid, insertAt)!}
 </#macro>
 
 <#---
@@ -270,6 +293,13 @@
 	</#if>
 	<#assign currentModel = previousModel />
 </#macro>
+
+<#---
+  - Returns the parent component or null if component is not in a nested list 
+  -->
+<#function getParentComponent component=this>
+	<#return inplaceMacroHelper.getParentComponent(component) />
+</#function>
 
 <#---
   - Returns either <code>"even"</code> or <code>"odd"</code>, depending on

@@ -96,8 +96,10 @@ public interface ComponentDao {
 	
 	public boolean discardContainer(ContentContainer container);
 	
-	public ContentContainer findContainerForComponent(Component component);
+	public ContentContainer findContainerForComponent(Component component);	
 	
 	public ContentContainer findContainerForWrapper(ValueWrapper<?> wrapper);
+	
+	public Component findParentComponent(Component component);
 	
 }

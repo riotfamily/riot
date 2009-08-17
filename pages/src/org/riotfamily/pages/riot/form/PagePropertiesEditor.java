@@ -146,6 +146,7 @@ public class PagePropertiesEditor extends CompositeElement
 			addPagePropertyElements(id);
 			
 			if (masterPage == null) {
+				addPagePropertyElements("master-pages");
 				addPagePropertyElements("master-" + id);
 			}
 		}

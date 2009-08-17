@@ -8,6 +8,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
@@ -17,6 +18,13 @@ public class HttpStatusChecker {
 	private RiotLog log = RiotLog.get(this);
 	
 	private HttpClient client = new HttpClient();
+	
+	public HttpStatusChecker() {
+		HttpConnectionManagerParams connectionParams = client.getHttpConnectionManager().getParams();
+		connectionParams.setConnectionTimeout((int) FormatUtils.parseMillis("2s"));
+		connectionParams.setSoTimeout((int) FormatUtils.parseMillis("5s"));
+		connectionParams.setStaleCheckingEnabled(true);
+	}
 	
 	private HttpMethod createMethod(String url) {
 		try {

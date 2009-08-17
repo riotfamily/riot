@@ -44,6 +44,7 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.form.ui.FormUtils;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
+import org.riotfamily.riot.runtime.RiotRuntime;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -78,7 +79,13 @@ public class ObjectChooser extends AbstractChooser
 	private EditorDefinition targetEditorDefinition;
 	
 	private ListConfig targetListConfig;
-		
+	
+	private String riotServletPrefix;
+	
+	public ObjectChooser(RiotRuntime runtime) {
+		riotServletPrefix = runtime.getServletPrefix();
+	}
+	
 	/**
 	 * Sets the id of an editor that will be used to list the target objects.
 	 * If the specified editor is nested within another list, Riot will display
@@ -256,8 +263,7 @@ public class ObjectChooser extends AbstractChooser
 	protected String getPathUrl() {
 		initRootId();
 		StringBuffer sb = new StringBuffer();
-		//FIXME /riot is hard-coded here ...
-		sb.append("/riot");
+		sb.append(riotServletPrefix);
 		sb.append("/chooser-path/");
 		sb.append(targetEditorDefinition.getId());
 		if (rootEditorId != null) {

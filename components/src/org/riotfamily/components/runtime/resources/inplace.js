@@ -184,8 +184,12 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 		
 		var styles = ['font-size', 'font-weight', 'font-family', 'font-style',
 			'color', 'background-color', 'background-image', 
-			'background-repeat', 'text-align', 'text-decoration',
+			'background-repeat', 'text-decoration',
 			'letter-spacing', 'line-height', 'padding-left', 'padding-top'];
+		
+		if (this.element.getStyle('display') == 'block') {
+			styles.push('text-align');
+		}
 		
 		if (Prototype.Browser.IE) {
 			styles.push('background-position-x');

@@ -89,6 +89,7 @@ riot.Toolbar = Class.create({
 	removeInspector: function() {
 		if (this.inspector) {
 			Element.remove(this.inspector);
+			this.inspector.onclose();
 			this.inspector = null;
 			this.hideInspector();
 		}

@@ -81,6 +81,8 @@ public class AutocompleteTextField extends AbstractTextElement
 			HttpServletResponse response) throws IOException {
 
 		String search = request.getParameter(getParamName());
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
 		DocumentWriter doc = new DocumentWriter(response.getWriter());
 		doc.start("ul");
 		for (String value : model.getSuggestions(search, this)) {

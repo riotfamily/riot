@@ -37,12 +37,14 @@ public class ComponentListConfig {
 	
 	private Integer max;
 	
-	private Map<String, ComponentConfig> validTypes  = Generics.newHashMap();
+	private Map<String, ComponentConfig> validTypes  = Generics.newLinkedHashMap();
 	
 	private List<String> initialTypes = Generics.newArrayList();
+	
+	private String insertAt;
 
 	public ComponentListConfig(Integer min, Integer max, 
-			List<String> initial, List<?> valid) {
+			List<String> initial, List<?> valid, String insertAt) {
 		
 		this.min = min;
 		this.max = max;
@@ -73,6 +75,8 @@ public class ComponentListConfig {
 				}
 			}
 		}
+		
+		this.insertAt = insertAt;
 	}
 
 	public Integer getMin() {
@@ -89,6 +93,10 @@ public class ComponentListConfig {
 
 	public List<String> getInitialTypes() {
 		return initialTypes;
+	}
+
+	public String getInsertAt() {
+		return insertAt;
 	}
 	
 	public ComponentConfig getConfig(String type) {
