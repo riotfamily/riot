@@ -62,8 +62,6 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     private Headers headers = new Headers();
     
     private Cookies cookies = new Cookies();
-
-	private boolean contentLengthSet;
     
         	
     public CachiusResponseWrapper(HttpServletResponse response, 
@@ -91,10 +89,6 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
 		this.contentType = contentType;
 	}
 
-	public void setContentLength(int len) {
-		contentLengthSet = true;
-    }
-    
     public void addDateHeader(String name, long date) {
     	headers.addDate(name, date);
     }
@@ -195,7 +189,6 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     	cacheItem.setContentType(contentType);
     	cacheItem.setHeaders(headers);
     	cacheItem.setCookies(cookies);
-    	cacheItem.setSetContentLength(contentLengthSet);
     }
     
     /**

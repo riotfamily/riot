@@ -152,7 +152,6 @@ public class ButtonService implements ApplicationContextAware {
 			Map<String, String> properties = Generics.newHashMap();
 			properties.put("inlineStyle", getInlineStyle(image));
 			cacheItem.setContentType("image/png");
-			cacheItem.setSetContentLength(true);
 			cacheItem.setProperties(properties);
 			return true;
 		}
