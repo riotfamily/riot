@@ -27,9 +27,7 @@ import java.beans.PropertyEditor;
 import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.AbstractEditorBase;
-import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.event.JavaScriptEvent;
