@@ -23,9 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.servlet;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.springframework.beans.BeansException;
@@ -97,5 +101,16 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 
 	public void configure() {
 		refresh();
+	}
+	
+	@Override
+	protected void doHead(HttpServletRequest request,
+		HttpServletResponse response) throws ServletException, IOException {
+		
+		if (ServletUtils.isDirectRequest(request)) {
+			super.doHead(request, response);
+		} else {
+			doGet(request, response);
+		}
 	}
 }
