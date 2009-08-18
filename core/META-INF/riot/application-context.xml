@@ -52,7 +52,32 @@
 		
 	<!-- ImageMagick -->
 	
-	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick" />
+	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick">
+		<description>
+			ImageMagick 'convert' command which is used to crop images.
+			
+			SETUP NOTE:
+			===========
+			
+			If the 'convert' binary is in your PATH you don't have to configure
+			anything. If not, you have to specify the location of your 
+			ImageMagick installation.
+			
+			If you used an installer, chances are good that the MAGICK_HOME
+			environment variable is set (in this case you also don't need to 
+			configure anything).
+			
+			If not, please set the location via the imageMagick.home property
+			in your application.properties file.
+			
+			For backwards compatibility you may also set the 
+			imageMagick.convertCommand property, but remember that you also have
+			to specify imageMagick.identifyCommand (which is used to extract
+			meta data).
+		</description>
+		<property name="magickHome" value="${imageMagick.home=}" />
+		<property name="command" value="${imageMagick.convertCommand=}" />
+	</bean>
 	
 	<!--  Scheduling -->
 	

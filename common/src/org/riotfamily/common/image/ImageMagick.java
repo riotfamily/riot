@@ -35,6 +35,8 @@ public class ImageMagick implements InitializingBean {
 	
 	private static Pattern majorMinorMicroPattern = Pattern.compile("ImageMagick ([0-9]).([0-9]).([0-9])");
 	
+	private String magickHome;
+	
 	private String commandName;
 	
 	private String command;
@@ -53,24 +55,35 @@ public class ImageMagick implements InitializingBean {
 		this.commandName = commandName;
 	}
 
+	public void setMagickHome(String magickHome) {
+		this.magickHome = magickHome;
+	}
+	
 	public void setCommand(String command) {
 		this.command = command;
 	}
 	
+	protected boolean isWindows() {
+		String os = System.getProperty("os.name");
+		return os.startsWith("Windows");
+	}
+	
 	private String getDefaultCommand() {
 		StringBuilder cmd = new StringBuilder();
-		String os = System.getProperty("os.name");
-		boolean windows = os.startsWith("Windows");
-		String magickHome = System.getenv("MAGICK_HOME");
-		if (magickHome != null) {
-			cmd.append(magickHome).append(File.separatorChar);
-			if (!windows) {
+		
+		String dir = (magickHome != null) 
+				? magickHome 
+				: System.getenv("MAGICK_HOME");
+		
+		if (dir != null) {
+			cmd.append(dir).append(File.separatorChar);
+			if (!isWindows()) {
 				cmd.append("bin");
 				cmd.append(File.separatorChar);
 			}
 		}
 		cmd.append(commandName);
-		if (windows) {
+		if (isWindows()) {
 			cmd.append(".exe");
 		}
 		return cmd.toString();
