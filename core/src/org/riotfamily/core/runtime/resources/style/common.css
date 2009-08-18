@@ -73,8 +73,8 @@ td {
 	display: none;
 }
 .main {
-	padding: 0 300px 50px 0;
-
+	padding: 0 300px 25px 0;
+	margin-bottom: 50px;
 }
 .extra {
 	width: 280px;
