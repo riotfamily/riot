@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +41,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class FormScreen extends AjaxFormController
 		implements ItemScreen, BeanNameAware {
@@ -220,7 +222,8 @@ public class FormScreen extends AjaxFormController
 		
 		mv.addObject("notification", new FormNotification(form)
 				.setIcon("save")
-				.setMessage("Your changes have been saved."));
+				.setMessageKey("label.form.saved")
+				.setDefaultMessage("Your changes have been saved."));
 		
 		return mv;
 	}
@@ -263,7 +266,8 @@ public class FormScreen extends AjaxFormController
 		if (context.getObject() != null) {
 			return ScreenUtils.getLabel(context.getObject(), this);
 		}
-		return "New";
+		Locale locale = RequestContextUtils.getLocale(context.getRequest());
+		return getMessageSource().getMessage("label.form.new", null, "New", locale);
 	}
 
 	public List<Screenlet> getScreenlets() {

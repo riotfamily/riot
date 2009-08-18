@@ -12,7 +12,7 @@
  */
 package org.riotfamily.forms;
 
-
+import org.riotfamily.common.i18n.MessageResolver;
 
 
 public class MessageUtils {
@@ -47,5 +47,20 @@ public class MessageUtils {
 		FormContext context = form.getFormContext();
 		return context.getMessageResolver().getPropertyHint(
 				form.getId(), beanClass, null);
+	}
+	
+	public static String getUILabel(Editor editor, String elementName, 
+			String code, String defaultLabel) {
+		
+		FormContext context = editor.getForm().getFormContext();
+		EditorBinding binding = editor.getEditorBinding();
+		MessageResolver resolver = context.getMessageResolver();
+		String[] codes = resolver.getMessageCodesResolver().resolveUICodes(
+				editor.getForm().getId(),
+				binding.getBeanClass(),
+				binding.getProperty(),
+				elementName, code);
+		
+		return resolver.getMessage(codes, defaultLabel);
 	}
 }

@@ -12,9 +12,10 @@
  */
 package org.riotfamily.common.i18n;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.riotfamily.common.beans.property.PropertyUtils;
+import org.riotfamily.common.util.Generics;
 import org.springframework.util.StringUtils;
 
 /**
@@ -24,46 +25,53 @@ import org.springframework.util.StringUtils;
  */
 public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 
-	private static final char SEPARATOR = '.';
-
-	private static final String ERROR_PREFIX = "error.";
-	
-	private static final String HINT_SUFFIX = ".hint";
-	
+	/**
+	 * error.<objectName>.<code>
+	 * error.<code>
+	 */
 	public String[] resolveMessageCodes(String errorCode, String objectName) {
-		if (errorCode.startsWith(ERROR_PREFIX)) {
+		if (errorCode.startsWith("error.")) {
 			return new String[] {
 					errorCode
 			};
 		} 
 		else {
 			return new String[] {
-				ERROR_PREFIX + objectName + SEPARATOR + errorCode,
-				ERROR_PREFIX + errorCode
+				"error." + objectName + '.' + errorCode,
+				"error." + errorCode
 			};
 		}
 	}
 
+	/**
+	 * error.<objectName>.<field>.<code>
+	 * error.<field>.<code>
+	 * error.<code>
+	 */
 	@SuppressWarnings("unchecked")
 	public String[] resolveMessageCodes(String errorCode, String objectName, 
 			String field, Class fieldType) {
 		
-		if (errorCode.startsWith(ERROR_PREFIX)) {
+		if (errorCode.startsWith("error.")) {
 			return new String[] {
 					errorCode
 			};
 		} 
 		else {
 			return new String[] {
-				ERROR_PREFIX + objectName + SEPARATOR + field + SEPARATOR + errorCode,
-				ERROR_PREFIX + field + SEPARATOR + errorCode,
-				ERROR_PREFIX + errorCode
+				"error." + objectName + '.' + field + '.' + errorCode,
+				"error." + field + '.' + errorCode,
+				"error." + errorCode
 			};
 		}
 	}
 	
-	public String[] resolveLabel(String objectName, Class<?> objectClass) {
-		ArrayList<String> codes = new ArrayList<String>(2);
+	/**
+	 * <objectName>
+	 * <objectClass>
+	 */
+	public String[] resolveLabelCodes(String objectName, Class<?> objectClass) {
+		List<String> codes = Generics.newArrayList(2);
 		if (objectName != null) {
 			codes.add(objectName);
 		}
@@ -73,10 +81,14 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 		return StringUtils.toStringArray(codes);
 	}
 
-	public String[] resolveLabel(String objectName, Class<?> objectClass, 
+	/**
+	 * <objectName>.<field>
+	 * <declaringClass>.<field>
+	 */
+	public String[] resolveLabelCodes(String objectName, Class<?> objectClass, 
 			String field) {
 		
-		ArrayList<String> codes = new ArrayList<String>(2);
+		List<String> codes = Generics.newArrayList(2);
 		if (objectName != null) {
 			codes.add(objectName + '.' + field);
 		}
@@ -87,27 +99,46 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 		return StringUtils.toStringArray(codes);
 	}
 	
-	public String[] resolveHint(String objectName, Class<?> objectClass, 
-			String field) {
+	/**
+	 * <objectName>.<code>
+	 * <objectClass>.<code>
+	 * <elementName>.<code>
+	 */
+	public String[] resolveUICodes(String objectName, Class<?> objectClass, 
+			String elementName, String code) {
 		
-		ArrayList<String> codes = new ArrayList<String>(2);
-		if (field == null) {
-			if (objectName != null) {
-				codes.add(objectName +  HINT_SUFFIX);
-			}
-			if (objectClass != null) {
-				codes.add(PropertyUtils.getDeclaringClass(
-						objectClass, field).getName() + HINT_SUFFIX);
-			}
+		List<String> codes = Generics.newArrayList(3);
+		if (objectName != null) {
+			codes.add(objectName + '.' + code);
 		}
-		else {
-			if (objectName != null) {
-				codes.add(objectName +  '.' + field + HINT_SUFFIX);
-			}
-			if (objectClass != null) {
-				codes.add(PropertyUtils.getDeclaringClass(
-						objectClass, field).getName() + '.' + field + HINT_SUFFIX);
-			}
+		if (objectClass != null) {
+			codes.add(objectClass.getName() + '.' + code);
+		}
+		if (elementName != null) {
+			codes.add(elementName + '.' + code);
+		}
+		return StringUtils.toStringArray(codes);
+	}
+
+	
+	/**
+	 * <objectName>.<field>.<code>
+	 * <delcaringClass>.<field>.<code>
+	 * label.<elementName>.<code>
+	 */
+	public String[] resolveUICodes(String objectName, Class<?> objectClass, 
+			String field, String elementName, String code) {
+		
+		List<String> codes = Generics.newArrayList(3);
+		if (objectName != null) {
+			codes.add(objectName +  '.' + field + '.' + code);
+		}
+		if (objectClass != null) {
+			String declaringClassName = PropertyUtils.getDeclaringClass(objectClass, field).getName();
+			codes.add(declaringClassName + '.' + field + '.' + code);
+		}
+		if (elementName != null) {
+			codes.add("label." + elementName + '.' + code);
 		}
 		return StringUtils.toStringArray(codes);
 	}

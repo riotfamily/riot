@@ -19,6 +19,7 @@ import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
+import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
@@ -59,7 +60,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 				.attribute("type", "button")
 				.attribute("class", "choose")
 				.attribute("disabled", !isEnabled())
-				.attribute("value", "Choose")
+				.attribute("value", getChooseLabel())
 				.end();
 		
 		if (!isRequired() && getValue() != null) {
@@ -67,12 +68,20 @@ public abstract class AbstractChooser extends AbstractEditorBase
 					.attribute("type", "button")
 					.attribute("class", "unset")
 					.attribute("disabled", !isEnabled())
-					.attribute("value", "Unset")
+					.attribute("value", getUnsetLabel())
 					.end();
 		}
 		doc.end();
 	}
 
+	protected String getUnsetLabel() {
+		return MessageUtils.getUILabel(this, "chooser", "unset", "Unset");
+	}
+
+	protected String getChooseLabel() {
+		return MessageUtils.getUILabel(this, "chooser", "choose", "Choose");
+	}
+	
 	protected abstract void renderLabel(Object object, PrintWriter writer);
 	
 	public int getEventTypes() {		
@@ -126,6 +135,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	public Object getValue() {
 		return object;
 	}
+
 		
 	protected abstract String getChooserUrl();
 	

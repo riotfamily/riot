@@ -22,10 +22,12 @@ import org.springframework.validation.MessageCodesResolver;
  */
 public interface AdvancedMessageCodesResolver extends MessageCodesResolver {
 
-	String[] resolveLabel(String objectName, Class<?> objectClass);
+	String[] resolveLabelCodes(String objectName, Class<?> objectClass);
 	
-	String[] resolveLabel(String objectName, Class<?> objectClass, String field);
+	String[] resolveLabelCodes(String objectName, Class<?> objectClass, String field);
 	
-	String[] resolveHint(String objectName, Class<?> objectClass, String field);
+	String[] resolveUICodes(String objectName, Class<?> objectClass, String elementName, String code);
+	
+	String[] resolveUICodes(String objectName, Class<?> objectClass, String field, String elementName, String code);
 	
 }

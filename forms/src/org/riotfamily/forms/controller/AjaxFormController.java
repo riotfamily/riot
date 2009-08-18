@@ -43,6 +43,10 @@ public abstract class AjaxFormController extends AbstractFormController
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
+	
+	protected MessageSource getMessageSource() {
+		return messageSource;
+	}
 
 	protected ModelAndView handleFormRequest(Form form, 
 			HttpServletRequest request, HttpServletResponse response)
