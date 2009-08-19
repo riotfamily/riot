@@ -18,11 +18,13 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.RiotDao;
+import org.riotfamily.core.dao.Sortable;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport implements RiotDao {
+public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport 
+		implements RiotDao, Sortable {
 
 	public AbstractHibernateRiotDao(SessionFactory sessionFactory) {
 		setSessionFactory(sessionFactory);
@@ -44,6 +46,11 @@ public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport imple
         return listInternal(parent, params);
 	}
 	
+    public boolean canSortBy(String property) {
+    	return HibernateUtils.isPersistentProperty(
+    			getSessionFactory(), getEntityClass(), property);
+    }
+    
 	protected List<?> listInternal(Object parent, ListParams params) throws DataAccessException {
 		return getSession().createCriteria(getEntityClass()).list();
 	}

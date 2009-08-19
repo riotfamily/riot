@@ -36,6 +36,10 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 		return searchableProperties;
 	}
 	
+	public boolean canSortBy(String property) {
+		return true;
+	}
+	
 	@Override
 	public Collection<?> list(Object parent, ListParams params)
 			throws DataAccessException {

@@ -22,7 +22,6 @@ import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Order;
 import org.riotfamily.core.dao.Searchable;
-import org.riotfamily.core.dao.Sortable;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.util.StringUtils;
 
@@ -30,7 +29,7 @@ import org.springframework.util.StringUtils;
  * RiotDao implementation based on Hibernate.
  */
 public abstract class AbstractHqlDao extends AbstractHibernateRiotDao 
-		implements Sortable, Searchable {
+		implements Searchable {
 
 	private RiotLog log = RiotLog.get(AbstractHqlDao.class);
 
