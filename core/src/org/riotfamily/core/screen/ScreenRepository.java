@@ -55,6 +55,7 @@ public class ScreenRepository {
 	@SuppressWarnings("unchecked")
 	public<T extends RiotScreen> T getScreen(String id, Class<T> requiredType) {
 		RiotScreen screen = screenMap.get(id);
+		Assert.notNull(screen, "No such screen: " + id);
 		Assert.isInstanceOf(requiredType, screen);
 		return (T) screen;
 	}
