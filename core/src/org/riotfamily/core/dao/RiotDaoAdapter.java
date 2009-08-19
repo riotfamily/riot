@@ -22,7 +22,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class RiotDaoAdapter implements Constraints {
+public class RiotDaoAdapter {
 
 	public Class<?> getEntityClass() {
 		return null;
@@ -91,20 +91,6 @@ public class RiotDaoAdapter implements Constraints {
 		
 		throw new InvalidDataAccessApiUsageException(
 				"Delete operations are not supported by this DAO.");
-	}
-	
-	/**
-	 * Always returns <code>true</code>.
-	 */
-	public boolean canAdd(Object parent) {
-		return true;
-	}
-	
-	/**
-	 * Always returns <code>true</code>.
-	 */
-	public boolean canDelete(Object entity) {
-		return true;
 	}
 	
 }
