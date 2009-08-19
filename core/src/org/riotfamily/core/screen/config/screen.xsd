@@ -81,6 +81,16 @@
 			<xsd:element ref="beans:ref" />
 		</xsd:choice>
 		<xsd:attribute name="property" />
+		<xsd:attribute name="sortable" type="xsd:boolean" default="true" />
+		<xsd:attribute name="case-sensitive" type="xsd:boolean" default="false" />
+		<xsd:attribute name="default-direction" default="asc">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="asc" />
+					<xsd:enumeration value="desc" />
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 	</xsd:complexType>
 	
 	<xsd:complexType name="formType">

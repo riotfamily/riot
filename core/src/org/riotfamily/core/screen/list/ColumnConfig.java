@@ -27,7 +27,7 @@ public class ColumnConfig {
 
 	private boolean ascending = true;
 	
-	private boolean caseSensitive = true;
+	private boolean caseSensitive = false;
 
 	private ObjectRenderer renderer;
 
@@ -36,10 +36,6 @@ public class ColumnConfig {
 	public ColumnConfig() {
 	}
 	
-	public ColumnConfig(ObjectRenderer renderer) {
-		this.renderer = renderer;
-	}
-
 	public int getLookupLevel() {
 		return lookupLevel;
 	}
@@ -99,14 +95,14 @@ public class ColumnConfig {
 	public boolean isSortable() {
 		return sortable && property != null;
 	}
+	
+	public void setDefaultDirection(String dir) {
+		ascending = !"desc".equalsIgnoreCase(dir);
+	}
 
 	public boolean isAscending() {
 		return ascending;
 	}
-
-	public void setAscending(boolean ascending) {
-		this.ascending = ascending;
-	}	
 
 	public boolean isCaseSensitive() {		
 		return caseSensitive;
