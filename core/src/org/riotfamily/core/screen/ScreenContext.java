@@ -60,8 +60,8 @@ public class ScreenContext {
 		this.object = object;
 		this.parent = parent;
 		this.nestedTreeItem = nestedTreeItem;
-		this.dao = ScreenUtils.getDao(screen);
 		this.request = other.request;
+		this.dao = ScreenUtils.getDao(screen);
 	}
 	
 	public void expose() {
@@ -142,6 +142,10 @@ public class ScreenContext {
 		return new ScreenContext(itemScreen, item, null, false, this);
 	}
 	
+	public ScreenContext createChildContext(RiotScreen screen) {
+		return new ScreenContext(screen, null, getObject(), false, this);
+	}
+	
 	public String getListStateKey() {
 		return ScreenUtils.getListScreen(getScreen()).getListStateKey(this);
 	}
@@ -186,7 +190,7 @@ public class ScreenContext {
 	}
 	
 	public ScreenLink getLink() {
-		boolean isNew = objectId == null && screen instanceof ItemScreen; 
+		boolean isNew = object == null && objectId == null && screen instanceof ItemScreen; 
 		return new ScreenLink(getTitle(), getUrl(), screen.getIcon(), isNew);
 	}
 	

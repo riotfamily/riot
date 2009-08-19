@@ -81,6 +81,11 @@ public class ChooserCommandHandler extends CommandContextHandler {
 			return selection.size() == 1;
 		}
 		
+		@Override
+		protected String getIcon(String action) {
+			return "bullet_go";
+		}
+		
 		public CommandResult execute(CommandContext context, Selection selection) {
 			ScreenContext nextContext = new ScreenContext(nextList, 
 					null, selection.getSingleItem().getObject(), false, screenContext);
