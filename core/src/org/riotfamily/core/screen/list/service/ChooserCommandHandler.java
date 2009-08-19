@@ -30,8 +30,6 @@ import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 import org.riotfamily.core.screen.list.command.result.ScriptResult;
 
-import com.sun.tools.javac.jvm.Target;
-
 /**
  * List service handler that handles object-chooser related tasks. 
  * @author Felix Gnass [fgnass at neteye dot de]
