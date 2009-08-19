@@ -80,6 +80,15 @@ public final class SpringUtils {
 		return (T) beanFactory.getBean(name, requiredType);
 	}
 	
+	public static<T> T getBeanIfExists(BeanFactory beanFactory, String name, 
+			Class<T> requiredType) {
+		
+		if (beanFactory.containsBean(name)) {
+			return getBean(beanFactory, name, requiredType);
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static<T> T beanOfType(ListableBeanFactory lbf, Class<T> type) {
 		return (T) BeanFactoryUtils.beanOfType(lbf, type);
