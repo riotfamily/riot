@@ -15,6 +15,7 @@ package org.riotfamily.forms.element.select;
 import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
@@ -60,7 +61,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 				.attribute("type", "button")
 				.attribute("class", "choose")
 				.attribute("disabled", !isEnabled())
-				.attribute("value", getChooseLabel())
+				.attribute("value", FormatUtils.stripTags(getChooseLabel()))
 				.end();
 		
 		if (!isRequired() && getValue() != null) {
@@ -68,7 +69,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 					.attribute("type", "button")
 					.attribute("class", "unset")
 					.attribute("disabled", !isEnabled())
-					.attribute("value", getUnsetLabel())
+					.attribute("value", FormatUtils.stripTags(getUnsetLabel()))
 					.end();
 		}
 		doc.end();
