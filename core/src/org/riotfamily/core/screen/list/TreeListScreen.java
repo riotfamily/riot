@@ -56,8 +56,6 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 	
 	private String filterFormId;
 	
-	private String searchProperties;
-	
 	private List<ColumnConfig> columns;
 	
 	private String labelProperty;
@@ -216,14 +214,17 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 			if (filterFormId != null) {
 				filterForm = filterFormRepository.createForm(filterFormId);
 			}
-			if (searchProperties != null) {
-				if (filterForm == null) {
-					filterForm = new Form();
-					filterForm.setBeanClass(HashMap.class);
+			if (dao instanceof Searchable) {
+				String[] search = ((Searchable) dao).getSearchableProperties();
+				if (search != null && search.length > 0) {
+					if (filterForm == null) {
+						filterForm = new Form();
+						filterForm.setBeanClass(HashMap.class);
+					}
+					searchField = new TextField();
+					searchField.setLabel("Search");
+					filterForm.addElement(searchField);
 				}
-				searchField = new TextField();
-				searchField.setLabel("Search");
-				filterForm.addElement(searchField);
 			}
 			state = new ListState(key, getId(), locale, 
 					screenContext.getParentId(), filterForm, 
