@@ -111,13 +111,12 @@ public class FlashScopeView extends AbstractUrlBasedView {
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		
-		String url = getUrl();
-		String targetUrl = contextRelative 
-				? ServletUtils.resolveUrl(url, request)
-				: url;
+		String url = contextRelative 
+				? ServletUtils.resolveUrl(getUrl(), request)
+				: getUrl();
 				
-		FlashScope.store(request, model, ServletUtils.resolveToAbsoluteUrl(url, request));
-		sendRedirect(request, response, targetUrl, this.http10Compatible);
+		FlashScope.store(request, model, ServletUtils.getAbsoluteUrlPrefix(request)+ url);
+		sendRedirect(request, response, url, this.http10Compatible);
 	}
 	
 	/**
