@@ -16,7 +16,9 @@
 		<property name="storagePath" value="${riot.media.storagePath=}" />
 	</bean>
 	
-	<bean id="imageMagickIdentify" class="org.riotfamily.media.service.ImageMagickIdentify" />
+	<bean id="imageMagickIdentify" class="org.riotfamily.media.service.ImageMagickIdentify" >
+		<property name="command" value="${imageMagick.identifyCommand=}"/>
+	</bean>
 	
 	<bean id="ffmpeg" class="org.riotfamily.media.service.FFmpeg" />
 	

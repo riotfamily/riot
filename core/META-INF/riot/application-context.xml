@@ -52,7 +52,9 @@
 		
 	<!-- ImageMagick -->
 	
-	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick" />
+	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick">
+		<property name="command" value="${imageMagick.convertCommand=}"/>
+	</bean>
 	
 	<!--  Scheduling -->
 	
