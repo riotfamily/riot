@@ -37,7 +37,7 @@ public abstract class AbstractCommand implements Command {
 		return new CommandInfo(
 				action,
 				getLabel(context, action),
-				getIcon(context, action),
+				getIconUrl(context, getIcon(action)),
 				isShowOnForm(context));
 	}
 	
@@ -69,9 +69,9 @@ public abstract class AbstractCommand implements Command {
 				FormatUtils.xmlToTitleCase(action));
 	}
 		
-	private String getIcon(CommandContext context, String action) {
+	protected String getIconUrl(CommandContext context, String iconName) {
 		return context.getResourcePath() + "style/images/icons/" 
-				+ getIcon(action) + ".png";
+				+ iconName + ".png";
 	}
 	
 	protected String getIcon(String action) {

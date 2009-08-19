@@ -27,7 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.core.dao.RiotDao;
+import org.riotfamily.core.dao.Searchable;
 import org.riotfamily.core.screen.AbstractRiotScreen;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.RiotScreen;
@@ -39,13 +41,18 @@ import org.riotfamily.core.security.AccessController;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.factory.FormRepository;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 
-public class TreeListScreen extends AbstractRiotScreen implements Controller, ListScreen {
+public class TreeListScreen extends AbstractRiotScreen implements Controller, 
+		ListScreen, ApplicationContextAware, InitializingBean {
 
 	private String viewName = ResourceUtils.getPath(
 			TreeListScreen.class, "list.ftl");
@@ -56,16 +63,29 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 	
 	private String filterFormId;
 	
-	private String searchProperties;
-	
 	private List<ColumnConfig> columns;
 	
 	private String labelProperty;
 	
-	private Map<String, Command> commands = Generics.newLinkedHashMap();
+	private Map<String, Command> commandMap;
 		
 	private RiotScreen itemScreen;
 
+	private ApplicationContext applicationContext;
+	
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		
+		this.applicationContext = applicationContext;
+	}
+	
+	public void afterPropertiesSet() throws Exception {
+		if (commandMap == null) {
+			setCommands(SpringUtils.getBeanIfExists(applicationContext, 
+					"defaultCommands", Collection.class));
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.riotfamily.core.screen.list.ListScreen#getDao()
 	 */
@@ -75,9 +95,9 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 
 	@Override
 	public String getTitle(ScreenContext context) {
-		if (context.getParent() != null) {
+		if (context.getParent() != null && getParentScreen() instanceof ListScreen) {
 			return ScreenUtils.getParentListScreen(this)
-					.getItemLabel(context.getParent());
+					.getItemLabel(context.getParent());			
 		}
 		return super.getTitle(context);
 	}
@@ -105,23 +125,26 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 	}
 
 	public void setCommands(Collection<?> commands) {
-		for (Object command : commands) {
-			if (command instanceof Command) {
-				String id = ObjectUtils.getIdentityHexString(command);
-				this.commands.put(id, (Command) command);
-			}
-			else if (command instanceof Collection<?>) {
-				setCommands((Collection<?>) command);
-			}
-			else {
-				throw new IllegalArgumentException(
-						"Expected command or Collection but found " + command);
+		this.commandMap = Generics.newLinkedHashMap();
+		if (commands != null) {
+			for (Object command : commands) {
+				if (command instanceof Command) {
+					String id = ObjectUtils.getIdentityHexString(command);
+					this.commandMap.put(id, (Command) command);
+				}
+				else if (command instanceof Collection<?>) {
+					setCommands((Collection<?>) command);
+				}
+				else {
+					throw new IllegalArgumentException(
+							"Expected command or Collection but found " + command);
+				}
 			}
 		}
 	}
 
 	public Map<String, Command> getCommandMap() {
-		return commands;
+		return commandMap;
 	}
 	
 	/* (non-Javadoc)
@@ -216,14 +239,17 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller, Li
 			if (filterFormId != null) {
 				filterForm = filterFormRepository.createForm(filterFormId);
 			}
-			if (searchProperties != null) {
-				if (filterForm == null) {
-					filterForm = new Form();
-					filterForm.setBeanClass(HashMap.class);
+			if (dao instanceof Searchable) {
+				String[] search = ((Searchable) dao).getSearchableProperties();
+				if (search != null && search.length > 0) {
+					if (filterForm == null) {
+						filterForm = new Form();
+						filterForm.setBeanClass(HashMap.class);
+					}
+					searchField = new TextField();
+					searchField.setLabel("Search");
+					filterForm.addElement(searchField);
 				}
-				searchField = new TextField();
-				searchField.setLabel("Search");
-				filterForm.addElement(searchField);
 			}
 			state = new ListState(key, getId(), locale, 
 					screenContext.getParentId(), filterForm, 

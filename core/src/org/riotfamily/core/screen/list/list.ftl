@@ -21,7 +21,15 @@
 	</@template.block>
 
 	<@template.block name="extra">	
-		<#if filterForm??>
+		<div class="box command-box">
+			<div class="box-title">
+				<span class="label"><@c.message "label.commands">Commands</@c.message></span>
+			</div>
+			<div id="commands" class="commands">
+			</div>
+		</div>
+
+		<#if listState.filterForm??>
 			<div id="filter" class="box">
 				<div class="box-title">
 					<span class="label"><@c.message "label.list.filter">Filter</@c.message></span>
@@ -30,17 +38,10 @@
 				</div>
 			</div>
 		</#if>
-		<div class="box command-box">
-			<div class="box-title">
-				<span class="label"><@c.message "label.commands">Commands</@c.message></span>
-			</div>
-			<div id="commands" class="commands">
-			</div>
-		</div>
-		
+				
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${listState.key}');
-			list.render('list', 'commands', <#if expand??>'${expand}'<#else>null</#if><#if listState. filterForm??>, 'filterForm'</#if>);
+			list.render('list', 'commands', <#if expand??>'${expand}'<#else>null</#if><#if listState.filterForm??>, 'filterForm'</#if>);
 		</script>
 	</@template.block>
 

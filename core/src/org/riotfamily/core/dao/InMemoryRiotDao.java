@@ -21,10 +21,25 @@ import org.springframework.beans.PropertyAccessor;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.RecoverableDataAccessException;
+import org.springframework.util.StringUtils;
 
 public abstract class InMemoryRiotDao extends RiotDaoAdapter 
-		implements Sortable {
+		implements Sortable, Searchable {
 
+	private String[] searchableProperties;
+
+	public void setSearch(String search) {
+		searchableProperties = StringUtils.tokenizeToStringArray(search, " ,\t\r\n");
+	}
+	
+	public String[] getSearchableProperties() {
+		return searchableProperties;
+	}
+	
+	public boolean canSortBy(String property) {
+		return true;
+	}
+	
 	@Override
 	public Collection<?> list(Object parent, ListParams params)
 			throws DataAccessException {
@@ -76,7 +91,7 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 			return true;
 		}
 		PropertyAccessor itemAccessor = PropertyUtils.createAccessor(item);
-		for (String prop : params.getSearchProperties()) {
+		for (String prop : getSearchableProperties()) {
 			Object itemValue = itemAccessor.getPropertyValue(prop);
 			if (itemValue != null && itemValue.toString().indexOf(params.getSearch()) >= 0) {
 				return true;

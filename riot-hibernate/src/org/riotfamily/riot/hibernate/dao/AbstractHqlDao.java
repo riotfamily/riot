@@ -21,17 +21,20 @@ import org.hibernate.SessionFactory;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Order;
-import org.riotfamily.core.dao.Sortable;
+import org.riotfamily.core.dao.Searchable;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * RiotDao implementation based on Hibernate.
  */
 public abstract class AbstractHqlDao extends AbstractHibernateRiotDao 
-		implements Sortable {
+		implements Searchable {
 
 	private RiotLog log = RiotLog.get(AbstractHqlDao.class);
 
+	private String[] searchableProperties;
+	
     public AbstractHqlDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
@@ -48,11 +51,19 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     	StringBuffer from = new StringBuffer();
     	from.append(getEntityClass().getName());
     	from.append(" as this");
-    	HibernateUtils.appendJoinsForSearch(from, "this", params.getSearchProperties());    	    	
+    	HibernateUtils.appendJoinsForSearch(from, "this", getSearchableProperties());    	    	
     	return from.toString() ;
     }
     
-    protected String getWhere() {
+    public void setSearch(String search) {
+		searchableProperties = StringUtils.tokenizeToStringArray(search, " ,\t\r\n");
+	}
+    
+    public String[] getSearchableProperties() {
+		return searchableProperties;
+	}
+
+	protected String getWhere() {
     	return null;
     }
     
@@ -183,9 +194,9 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
 				params.getFilter());
     }
     
-    protected String getSearchWhereClause(ListParams params) {
+    protected final String getSearchWhereClause(ListParams params) {
     	return HibernateUtils.getSearchWhereClause("this", 
-    				params.getSearchProperties(), "search");
+    				getSearchableProperties(), "search");
     	
     }
 

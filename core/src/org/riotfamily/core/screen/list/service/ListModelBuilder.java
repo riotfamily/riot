@@ -106,8 +106,7 @@ public class ListModelBuilder extends ListItemLoader {
 			ListColumn column = new ListColumn();
 			column.setProperty(config.getProperty());
 			column.setHeading(getHeading(config.getProperty(), config.getLookupLevel(), i++));
-
-			column.setSortable(dao instanceof Sortable && config.isSortable());
+			column.setSortable(canSortBy(config));
 			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
 			if (params.hasOrder() && params.getPrimaryOrder()
 					.getProperty().equals(config.getProperty())) {
@@ -118,6 +117,13 @@ public class ListModelBuilder extends ListItemLoader {
 			listColumns.add(column);
 		}
 		return listColumns;
+	}
+	
+	private boolean canSortBy(ColumnConfig column) {
+		if (column.isSortable() && dao instanceof Sortable) {
+			return ((Sortable) dao).canSortBy(column.getProperty());
+		}
+		return false;
 	}
 	
 	private String getHeading(String property, int lookupLevel, int columnIndex) {

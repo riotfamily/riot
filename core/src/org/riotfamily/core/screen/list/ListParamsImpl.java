@@ -31,8 +31,6 @@ public class ListParamsImpl implements ListParams, Serializable {
 
 	private String search;
 	
-	private String[] searchProperties;
-	
 	private List<Order> order;
 	
 	private int pageSize;
@@ -47,7 +45,6 @@ public class ListParamsImpl implements ListParams, Serializable {
 		filter = params.getFilter();
 		filteredProperties = params.getFilteredProperties();
 		search = params.getSearch();
-		searchProperties = params.getSearchProperties();
 		order = params.getOrder();
 	}
 	
@@ -84,14 +81,6 @@ public class ListParamsImpl implements ListParams, Serializable {
 		this.search = search;
 	}
 	
-	public String[] getSearchProperties() {
-		return this.searchProperties;
-	}
-
-	public void setSearchProperties(String[] searchProperties) {
-		this.searchProperties = searchProperties;
-	}
-
 	public int getOffset() {
 		return offset;
 	}

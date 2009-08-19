@@ -27,10 +27,10 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.beans.PropertyAccessor;
 import org.springframework.beans.PropertyAccessorUtils;
+import org.springframework.core.GenericCollectionTypeResolver;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * Utility class to access bean properties via relection.
@@ -192,32 +192,13 @@ public final class PropertyUtils {
 		}
     }
     
-    /**
-	 * @since 6.4
-	 */
-	public static Method findReadMethod(Class<?> clazz, String property) {
-		String methodName = "get" + StringUtils.capitalize(property);
-		Method readMethod = BeanUtils.findDeclaredMethod(clazz, methodName, null);
-		if (readMethod != null) {
-			readMethod.setAccessible(true);
-		}
-		return readMethod;
-	}
-
-	/**
-	 * @since 6.4
-	 */
-	public static Method findWriteMethod(Class<?> clazz, String property) {
-		String methodName = "set" + StringUtils.capitalize(property);
-		Method writeMethod = BeanUtils.findDeclaredMethodWithMinimalParameters(
-				clazz, methodName);
-
-		if (writeMethod != null) {
-			writeMethod.setAccessible(true);
-		}
-		return writeMethod;
-	}
-
+    public static Class<?> getCollectionPropertyType(Class<?> clazz, String property) {
+    	PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(clazz, property);
+    	Method getter = pd.getReadMethod();
+    	Assert.notNull(getter, "No getter for property " + property + " in class " + clazz);
+    	return GenericCollectionTypeResolver.getCollectionReturnType(getter);
+    }
+    
     /**
      * Returns the (super-)class where the given property is declared.
      */

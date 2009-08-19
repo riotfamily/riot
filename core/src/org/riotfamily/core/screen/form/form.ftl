@@ -82,6 +82,19 @@
 				list.renderFormCommands({objectId: '${context.objectId}'}, 'commands');
 			</#if>
 		</script>
+		
+		<#if childLinks??>
+			<div class="box">
+				<div class="links">
+					<#list childLinks as child>
+						<a class="screen" href="${c.url(child.url)}"	style="${riot.iconStyle(child.icon!"brick")}">
+							${child.title}
+						</a>
+					</#list>
+				</div>
+			</div>
+		</#if>
+		
 	</@template.block>
 
 </@template.extend>

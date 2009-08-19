@@ -6,6 +6,7 @@
 	<@riot.scripts srcs=[
 		"prototype/prototype.js",
 		"scriptaculous/effects.js",
+		"riot-js/util.js", 
 		"riot-js/resources.js", 
 		"riot-js/window/dialog.js",
 		"riot-js/notification/notification.js"] 

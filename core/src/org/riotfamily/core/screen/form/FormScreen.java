@@ -21,6 +21,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.view.FlashScopeView;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
@@ -29,6 +30,7 @@ import org.riotfamily.core.dao.RiotDaoException;
 import org.riotfamily.core.screen.ItemScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.ScreenUtils;
 import org.riotfamily.core.screen.Screenlet;
 import org.riotfamily.forms.Form;
@@ -65,9 +67,9 @@ public class FormScreen extends AjaxFormController
 	
 	private RiotScreen parentScreen;
 	
-	private List<RiotScreen> childScreens;
+	private Collection<RiotScreen> childScreens;
 	
-	private List<Screenlet> screenlets;
+	private Collection<Screenlet> screenlets;
 
 	public FormScreen(FormContextFactory formContextFactory,
 			FormRepository formRepository,
@@ -96,8 +98,17 @@ public class FormScreen extends AjaxFormController
 	public void setIcon(String icon) {
 		this.icon = icon;
 	}
+	
+	public void setChildScreens(Collection<RiotScreen> childScreens) {
+		this.childScreens = childScreens;
+		if (childScreens != null) {
+			for (RiotScreen child : childScreens) {
+				child.setParentScreen(this);	
+			}
+		}
+	}
 
-	public void setScreenlets(List<Screenlet> screenlets) {
+	public void setScreenlets(Collection<Screenlet> screenlets) {
 		this.screenlets = screenlets;
 	}
 	
@@ -140,8 +151,14 @@ public class FormScreen extends AjaxFormController
 		
 		ScreenContext context = ScreenContext.get(request);
 		if (context.getObject() != null) {
-			//REVISIT
 			mv.addObject("listStateKey", context.createParentContext().getListStateKey());
+			if (childScreens != null) {
+				List<ScreenLink> childLinks = Generics.newArrayList();
+				for (RiotScreen screen : childScreens) {
+					childLinks.add(context.createChildContext(screen).getLink());
+				}
+				mv.addObject("childLinks", childLinks);
+			}
 		}
 		return mv;
 	}
@@ -270,7 +287,7 @@ public class FormScreen extends AjaxFormController
 		return getMessageSource().getMessage("label.form.new", null, "New", locale);
 	}
 
-	public List<Screenlet> getScreenlets() {
+	public Collection<Screenlet> getScreenlets() {
 		return screenlets;
 	}
 
