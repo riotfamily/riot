@@ -80,6 +80,10 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	public void setDefaultPageHandler(Object defaultPageHandler) {
 		this.defaultPageHandler = defaultPageHandler;
 	}
+	
+	protected Object getDefaultPageHandler() {
+		return defaultPageHandler;
+	}
 
 	protected Object getHandlerInternal(HttpServletRequest request)
 			throws Exception {
