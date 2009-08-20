@@ -249,5 +249,11 @@
 		<property name="defaultFlag" value="europeanunion" />
 		<property name="suffix" value=".gif" />
 	</bean>
+	
+	<bean id="deferredInvalidationFilterPlugin" class="org.riotfamily.cachius.invalidation.DeferredInvalidationFilterPlugin">
+	   <property name="filterName" value="website-filter" />
+	   <property name="order" value="0" />
+	   <property name="cacheService" ref="cacheService" />
+	</bean>
 
 </beans>
