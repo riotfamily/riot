@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.minify;
 
-import org.riotfamily.common.web.compressor.Compressor;
-import org.riotfamily.common.web.compressor.YUIJavaScriptCompressor;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -32,13 +30,8 @@ import org.riotfamily.common.web.compressor.YUIJavaScriptCompressor;
  */
 public class MinifyScriptController extends AbstractMinifyController {
 
-	private YUIJavaScriptCompressor compressor = new YUIJavaScriptCompressor();
-	
 	protected String getContentType() {
 		return "text/javascript";
 	}
 	
-	protected Compressor getCompressor() {
-		return compressor;
-	}
 }

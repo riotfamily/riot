@@ -34,23 +34,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.compressor.Compressor;
-import org.riotfamily.common.web.compressor.YUICssCompressor;
-
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class MinifyCssController extends AbstractMinifyController {
 
-	private YUICssCompressor compressor = new YUICssCompressor();
-	
 	protected String getContentType() {
 		return "text/css";
-	}
-	
-	protected Compressor getCompressor() {
-		return compressor;
 	}
 	
 	@Override

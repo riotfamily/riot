@@ -65,6 +65,8 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 	
 	private boolean reloadable;
 
+	private Compressor compressor;
+
 	private long startUpTime = System.currentTimeMillis();
 	
 	/**
@@ -73,6 +75,27 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 	 */
 	public void setReloadable(boolean reloadable) {
 		this.reloadable = reloadable;
+	}
+	
+	/**
+	 * Always returns <code>true</code>.
+	 */
+	public boolean gzipResponse(HttpServletRequest request) {
+		return true;
+	}
+
+	/**
+	 * Sets compressor to be used on the individual files
+	 */
+	public void setCompressor(Compressor compressor) {
+		this.compressor = compressor;
+	}
+	
+	/**
+	 * Returns the compressor set, or null if none set
+	 */
+	protected Compressor getCompressor() {
+		return compressor;
 	}
 	
 	/**
@@ -105,13 +128,6 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 		return CACHE_ETERNALLY;
 	}
 	
-	/**
-	 * Always returns <code>true</code>.
-	 */
-	public boolean gzipResponse(HttpServletRequest request) {
-		return true;
-	}
-	
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
@@ -142,15 +158,17 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 			
 			if (!reloadable) {
 				ServletUtils.setFarFutureExpiresHeader(response);
-				Compressor compressor = getCompressor();
-				if (compressor != null) {
-					Reader in = new InputStreamReader(new ByteArrayInputStream(
-							buffer.toByteArray()), response.getCharacterEncoding());
-					
-					compressor.compress(in, response.getWriter());
-					return null;
-				}
 			}
+
+			Compressor compressor = getCompressor();
+			if (compressor != null) {
+				Reader in = new InputStreamReader(new ByteArrayInputStream(
+						buffer.toByteArray()), response.getCharacterEncoding());
+				
+				compressor.compress(in, response.getWriter());
+				return null;
+			}
+
 			FileCopyUtils.copy(buffer.toByteArray(), response.getOutputStream());
 		}
 		return null;
@@ -167,7 +185,5 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 	}
 
 	protected abstract String getContentType();
-	
-	protected abstract Compressor getCompressor();
 
 }
