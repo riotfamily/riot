@@ -7,12 +7,12 @@
 		<ul class="screens">
 			<#list links as link>
 				<li class="screen">
-					<a href="${c.url(link.url)}" class="label" style="${riot.iconStyle(link.icon!"brick")}">${link.title}</a>
+					<a href="${c.url(link.url)}" class="label" style="${riot.iconStyle(link.icon!"brick")}">${link.title!}</a>
 					<#if link.childLinks??>
 						<span class="nested">
 							<#list link.childLinks as child>
 								<a class="nested-screen" href="${c.url(child.url)}"	style="${riot.iconStyle(child.icon!"brick")}">
-									${child.title}
+									${child.title!}
 								</a>
 							</#list>
 						</span>

@@ -81,5 +81,5 @@
 </#macro>
 
 <#macro renderLabel link active=false>
-	<b<#if active> class="active"</#if>><b><#if link.icon??><span class="icon" style="${riot.iconStyle(link.icon)}"></span></#if><span class="title<#if link.new> new</#if>">${link.title}</span></b></b><#t>
+	<b<#if active> class="active"</#if>><b><#if link.icon??><span class="icon" style="${riot.iconStyle(link.icon)}"></span></#if><span class="title<#if link.new> new</#if>">${link.title!}</span></b></b><#t>
 </#macro>
