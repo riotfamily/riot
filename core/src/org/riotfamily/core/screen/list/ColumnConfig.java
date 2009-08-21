@@ -27,7 +27,7 @@ public class ColumnConfig {
 
 	private boolean ascending = true;
 	
-	private boolean caseSensitive = false;
+	private boolean caseSensitive = true;
 
 	private ObjectRenderer renderer;
 
