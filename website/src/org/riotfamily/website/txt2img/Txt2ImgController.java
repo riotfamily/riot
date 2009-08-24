@@ -247,7 +247,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		for (String selector : selectors) {
 			out.write(selector);
 			out.write("{visibility: hidden}\n");
-			out.write("body.noscript ");
+			out.write("body.noscript, body.riot-mode-text ");
 			out.write(selector);
 			out.write("{visibility: visible}\n");
 		}
