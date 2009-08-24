@@ -274,7 +274,7 @@ public final class Cache implements Serializable {
 				List<CacheItem> items = taggedItems.get(tag);
 				if (items == null) {
 					List<CacheItem> newItems = new ArrayList<CacheItem>();
-					List<CacheItem> oldItems = taggedItems.putIfAbsent(tag, items);
+					List<CacheItem> oldItems = taggedItems.putIfAbsent(tag, newItems);
 					items = oldItems != null ? oldItems : newItems;
 				}
 				synchronized (items) {
