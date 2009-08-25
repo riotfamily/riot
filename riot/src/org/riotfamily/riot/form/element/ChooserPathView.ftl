@@ -37,9 +37,9 @@
 <#macro renderPath>
 	<#list path.components as comp>
 		<#if comp.enabled>
-			<b><a href="${riot.url(comp.editorUrl)}" target="editor" class="editor ${comp.editorType}">${comp.label?default('[untitled]')}</a></b>
+			<b><a href="${riot.url(comp.editorUrl)}" target="chooserList" class="editor ${comp.editorType}">${comp.label?default('[untitled]')}</a></b>
 		<#else>
-			<b<#if !comp_has_next> calss="active"</#if>><span class="editor ${comp.editorType}">${comp.label?default('[untitled]')}</span></b>
+			<b<#if !comp_has_next> class="active"</#if>><span class="editor ${comp.editorType}">${comp.label?default('[untitled]')}</span></b>
 		</#if>
 	</#list>
 </#macro>
