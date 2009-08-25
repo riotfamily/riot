@@ -36,6 +36,9 @@ riot.Toolbar = Class.create({
 				this.element.hide();
 			}
 			this.applyButton.click = function() {
+				var dirtyListIds = riot.publishWidgets.select(function(pw) { return !pw.live }).pluck('dirtyListIds').flatten().uniq();
+				var dirtyContainerIds = riot.publishWidgets.select(function(pw) { return !pw.live }).pluck('dirtyContainerIds').flatten().uniq();
+				ComponentEditor.publish(dirtyListIds, dirtyContainerIds);
 				riot.publishWidgets.invoke('applyChanges');
 				riot.toolbar.buttons.get('browse').click();
 			}

@@ -16,7 +16,7 @@ riot.getWrapper = function(el, selector) {
 			return riot.getComponentList(el);
 		 }
 	}
-	if (selector == '.riot-component'|| selector == '.riot-form') {
+	if (selector == '.riot-component' || selector == '.riot-form') {
 		return riot.getComponent(el);
 	}
 	if (selector == '.riot-text-editor') {
@@ -738,9 +738,23 @@ riot.PublishWidget = Class.create({
 		return !instance.live;
 	},
 
+	getDirtyListIds: function() {
+		if (!this.live) {
+			return this.dirtyListIds;
+		}
+		return [];
+	},
+
+	getDirtyContainerIds: function() {
+		if (!this.live) {
+			return this.dirtyContainerIds;
+		}
+		return [];
+	},
+	
 	applyChanges: function() {
 		if (!this.live) {
-			ComponentEditor.publish(this.dirtyListIds, this.dirtyContainerIds);
+			//ComponentEditor.publish(this.dirtyListIds, this.dirtyContainerIds);
 			this.controller.dirty = false;
 		}
 	}
