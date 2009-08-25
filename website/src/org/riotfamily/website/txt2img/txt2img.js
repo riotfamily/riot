@@ -93,7 +93,8 @@ var Txt2ImgReplacement = Class.create({
 		this.config = config;
 		this.el = $(el);
 		this.sel = sel;
-		this.el.observe('inplace:edited', this.replace.bind(this));
+		this.el.observe('inplace:editOn', this.undo.bind(this));
+		this.el.observe('inplace:editOff', this.replace.bind(this));
 	},
 	
 	// Whether to use the alphaImageLoader or not (detects IE 6):
@@ -105,6 +106,13 @@ var Txt2ImgReplacement = Class.create({
 		}
 	},
 		
+	undo: function() {
+		var pt = this.el.down('.print-text');
+		if (pt) {
+			this.el.update(pt.innerHTML).removeClassName('txt2img');
+		}
+	},
+	
 	updateText: function(text) {
 		if (!text) {
 			text = this.el.innerHTML.strip().gsub(/<br\/?>/i, '\n').stripTags();
