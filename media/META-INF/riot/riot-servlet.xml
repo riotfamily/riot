@@ -33,13 +33,6 @@
 		<value>classpath:/org/riotfamily/media/runtime/i18n/messages</value>
 	</override:add>
 	
-	<bean id="mediaCleanUp" class="org.riotfamily.media.cleanup.HibernateCleanUpTask">
-		<constructor-arg ref="sessionFactory" />
-		<constructor-arg ref="fileStore" />
-		<constructor-arg ref="transactionManager" />
-		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily}" />
-	</bean>
-	
     <bean id="riotImageRenderer" class="org.riotfamily.media.riot.ui.RiotImageRenderer" />
 
 </beans>

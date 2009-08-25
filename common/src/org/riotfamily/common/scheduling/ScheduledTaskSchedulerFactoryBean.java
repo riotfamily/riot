@@ -20,7 +20,6 @@ import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.StatefulJob;
 import org.quartz.Trigger;
@@ -56,8 +55,6 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 	
 	private List<Trigger> triggers = Generics.newArrayList();
 	
-	private Scheduler scheduler;
-		
 	@Override
 	public void setApplicationContext(ApplicationContext ctx) {
 		super.setApplicationContext(ctx);
@@ -92,21 +89,19 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 	}
 
 	@Override
-	public Object getObject() {
-		scheduler = (Scheduler) super.getObject();
+	protected void registerJobsAndTriggers() {
 		for (Trigger trigger : triggers) {
 			try {
 				JobDetailBean job = new JobDetailBean();
 				job.setName(trigger.getName());
 				job.setJobClass(ScheduledTaskQueueJob.class);
-				scheduler.scheduleJob(job, trigger);
+				getScheduler().scheduleJob(job, trigger);
 			} 
 			catch (SchedulerException e) {
 				log.error("Error adding Trigger", e);
 				throw new BeanCreationException("Error adding Trigger", e);
 			}
 		}
-		return scheduler;
 	}
 		
 	private class ScheduledTaskJobFactory implements JobFactory {

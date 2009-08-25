@@ -51,6 +51,13 @@
 		<constructor-arg ref="ffmpeg" />
 	</bean>
 	
+	<bean id="mediaCleanUp" class="org.riotfamily.media.cleanup.HibernateCleanUpTask">
+		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="fileStore" />
+		<constructor-arg ref="transactionManager" />
+		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily}" />
+	</bean>
+	
 	<bean class="org.riotfamily.media.model.RiotFile" scope="prototype">
 		<property name="mediaService" ref="mediaService" />
 	</bean>
