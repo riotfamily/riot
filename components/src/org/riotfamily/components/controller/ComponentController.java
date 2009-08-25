@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
@@ -128,9 +129,13 @@ public class ComponentController extends AbstractCacheableController {
 		Long id = getVersionId(request);
 		ComponentVersion version = componentDao.loadComponentVersion(id);
 		Assert.notNull(version, "No such component: " + id);
+
+		boolean editMode = EditModeUtils.isEditMode(request);
+		ComponentCacheUtils.addContainerTags(request, version.getContainer(), editMode);
 		ComponentCacheUtils.addListTags(request, version.getContainer());
 
 		Component component = componentRepository.getComponent(version);
+		ComponentCacheUtils.addComponentTags(request, component, version);
 
 		Assert.isTrue(requiredType == null ||
 				version.getType().equals(requiredType),
