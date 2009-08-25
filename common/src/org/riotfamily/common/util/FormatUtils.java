@@ -127,8 +127,10 @@ public final class FormatUtils {
 		int i;
 		while ((i = sb.indexOf("-", offset)) >= 0) {
 			sb.deleteCharAt(i);
-			sb.setCharAt(i, Character.toUpperCase(sb.charAt(i)));
-			offset = i;
+			if (sb.length() > i) {
+				sb.setCharAt(i, Character.toUpperCase(sb.charAt(i)));
+				offset = i;
+			}
 		}
 		return sb.toString();
 	}
