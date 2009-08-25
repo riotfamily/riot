@@ -36,6 +36,7 @@ import org.devlib.schmidt.imageinfo.ImageInfo;
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.ContentElement;
@@ -182,11 +183,12 @@ public class ImageUpload extends FileUpload {
 	protected void cropImage(int width, int height, int x, int y,
 			int scaledWidth) throws IOException {
 
-		if (croppedFile == null) {
-			croppedFile = File.createTempFile("000", ".tmp");
-		}
 		if (originalFile == null) {
 			originalFile = getFile();
+		}
+		if (croppedFile == null) {
+			String extension = FormatUtils.getExtension(originalFile.getName());
+			croppedFile = File.createTempFile("000", "." + extension);
 		}
 		cropper.cropImage(originalFile, croppedFile, width, height, x, y,
 				scaledWidth);

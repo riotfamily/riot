@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.io.CommandUtils;
+import org.riotfamily.common.io.RuntimeCommand;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
@@ -48,7 +48,7 @@ public class ImageMagickCropperFactoryBean extends AbstractFactoryBean {
 	protected Object createInstance() throws Exception {
 		try {
 			log.info("Looking for ImageMagick binary: " + convertCommand);
-			String version = CommandUtils.exec(convertCommand, "-version");
+			String version = new RuntimeCommand(convertCommand, "-version").exec().getOutput(); 
 			log.info(version);
 			ImageMagickCropper cropper = new ImageMagickCropper();
 			int majorVersion = FormatUtils.extractInt(version, "ImageMagick ([0-9])");
