@@ -351,7 +351,7 @@ public class CacheService {
 	 *  @since 8.0.1  
 	 */
 	public void beginLocallyDeferredInvalidation() {
-		log.debug("Begin locally deferred cache invalidation.");
+		log.trace("Begin locally deferred cache invalidation.");
 		deferredCacheInvalidators.set(
 			new DeferredCacheInvalidator(deferredCacheInvalidators.get()));
 	}
@@ -376,7 +376,7 @@ public class CacheService {
 			deferredCacheInvalidators.get();
 		
 		if (deferredCacheInvalidator != null) {
-			log.debug("Commit locally deferred cache invalidation.");
+			log.trace("Commit locally deferred cache invalidation.");
 
 			deferredCacheInvalidator.commit();
 			deferredCacheInvalidators.set(deferredCacheInvalidator.getParent());
@@ -396,9 +396,7 @@ public class CacheService {
 	
 	private class ImmediateCacheInvalidator implements CacheInvalidator {
 		public void invalidateTaggedItems(String tag) {
-			if (log.isDebugEnabled()) {
-				log.debug("Immediately invalidating items tagged as %s.", tag);
-			}
+			log.trace("Immediately invalidating items tagged as %s.", tag);
 			
 			CacheService.this.immediatelyInvalidateTaggedItems(tag);
 		}
@@ -426,19 +424,14 @@ public class CacheService {
 		}
 
 		public void invalidateTaggedItems(String tag) {
-			if (log.isDebugEnabled()) {
-				log.debug("Storing tag %s for later invalidation of items " +
-					"tagged with it.", tag);
-			}
+			log.trace("Storing tag %s for later invalidation of items " +
+			    "tagged with it.", tag);
 			tags.add(tag);
 		}
 		
 		public void commit() {
-			if (log.isDebugEnabled()) {
-				log.debug("Performing invalidation of items tagged with one " +
-					"out of %d stored tags.", tags.size());
-			}
-
+			log.trace("Performing invalidation of items tagged with one " +
+				"out of %d stored tags.", tags.size());
 			CacheInvalidator invalidator = getDownstreamInvalidator();
 			for (String tag : tags) {
 				invalidator.invalidateTaggedItems(tag);
