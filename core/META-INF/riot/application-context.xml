@@ -90,6 +90,14 @@
 		<property name="startDelay" value="0" />
 	</bean>
 	
+	<bean id="minutelyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<description>
+			Quartz trigger that fires every minute.
+		</description>
+		<property name="name" value="minutely" />
+		<property name="cronExpression" value="0 * * * * ?" />
+	</bean>
+	
 	<bean id="dailyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<description>
 			Quartz trigger that fires once a day at 3:00 AM.
