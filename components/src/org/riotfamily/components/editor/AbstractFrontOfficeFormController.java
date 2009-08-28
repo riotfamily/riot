@@ -46,10 +46,10 @@ public abstract class AbstractFrontOfficeFormController
 	private PlatformTransactionManager transactionManager;
 	
 	private String viewName = ResourceUtils.getPath(
-			AbstractFrontOfficeFormController.class, "ComponentFormView.ftl");
+			AbstractFrontOfficeFormController.class, "form.ftl");
 
 	private String successViewName = ResourceUtils.getPath(
-			AbstractFrontOfficeFormController.class, "ComponentFormSuccessView.ftl");
+			AbstractFrontOfficeFormController.class, "form-success.ftl");
 
 	private String formIdAttribute = "formId";
 

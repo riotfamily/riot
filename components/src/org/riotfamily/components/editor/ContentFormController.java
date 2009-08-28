@@ -16,10 +16,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.CacheService;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
-import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentFragment;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.FormContextFactory;
@@ -34,15 +31,11 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 public class ContentFormController extends AbstractFrontOfficeFormController {
 
-	private CacheService cacheService;
-	
 	public ContentFormController(FormContextFactory formContextFactory,
 			FormRepository formRepository,
-			PlatformTransactionManager transactionManager,
-			CacheService cacheService) {
+			PlatformTransactionManager transactionManager) {
 		
 		super(formContextFactory, formRepository, transactionManager);
-		this.cacheService = cacheService;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -60,10 +53,8 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 	}
 	
 	protected Object update(Object object, HttpServletRequest request) {
-		ContentFragment part = (ContentFragment) object;
-		ContentContainer container = ContentContainer.loadByContent(part.getContent());
-		//ComponentCacheUtils.invalidatePreviewVersion(cacheService, container);
-		return part.getContent().merge();
+		ContentFragment fragment = (ContentFragment) object;
+		return fragment.getContent().merge();
 	}
 
 }
