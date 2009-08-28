@@ -114,6 +114,7 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	}
 
 	public void setXml(String xml) {
+		this.xml = xml;
 		unmarshalling = true;
 		if (fragments != null) {
 			fragments.clear();
