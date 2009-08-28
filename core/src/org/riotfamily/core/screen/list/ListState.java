@@ -43,7 +43,7 @@ public class ListState implements Serializable {
 	
 	private TextField searchField;
 	
-	private ListParamsImpl params = new ListParamsImpl();
+	private ListParamsImpl params;
 	
 	private ChooserSettings chooserSettings;
 	
@@ -59,7 +59,7 @@ public class ListState implements Serializable {
 	
 	ListState(String key, String screenId, Locale locale,
 			String parentId, Form filterForm, TextField searchField, 
-			ChooserSettings chooserSettings) {
+			int pageSize, ChooserSettings chooserSettings) {
 		
 		this.key = key;
 		this.screenId = screenId;
@@ -68,6 +68,7 @@ public class ListState implements Serializable {
 		this.filterForm = filterForm;
 		this.searchField = searchField;
 		this.chooserSettings = chooserSettings;
+		this.params = new ListParamsImpl(pageSize);
 	}
 
 	public boolean isInitialized() {

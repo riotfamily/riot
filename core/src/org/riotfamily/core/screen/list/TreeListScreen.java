@@ -59,6 +59,8 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 	
 	private RiotDao dao;
 	
+	private int pageSize = 25;
+	
 	private FormRepository filterFormRepository;
 	
 	private String filterFormId;
@@ -72,7 +74,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 	private RiotScreen itemScreen;
 
 	private ApplicationContext applicationContext;
-	
+
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		
@@ -84,6 +86,10 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 			setCommands(SpringUtils.getBeanIfExists(applicationContext, 
 					"defaultCommands", Collection.class));
 		}
+	}
+	
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
 	}
 	
 	/* (non-Javadoc)
@@ -253,7 +259,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 			}
 			state = new ListState(key, getId(), locale, 
 					screenContext.getParentId(), filterForm, 
-					searchField, chooserSettings);
+					searchField, pageSize, chooserSettings);
 			
 			ListState.put(request, key, state);
 		}

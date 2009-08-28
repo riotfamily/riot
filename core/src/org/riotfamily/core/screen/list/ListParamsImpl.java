@@ -37,8 +37,11 @@ public class ListParamsImpl implements ListParams, Serializable {
 	
 	private int offset;
 
-	
 	public ListParamsImpl() {
+	}
+	
+	public ListParamsImpl(int pageSize) {
+		this.pageSize = pageSize;
 	}
 	
 	public ListParamsImpl(ListParams params) {
@@ -86,7 +89,7 @@ public class ListParamsImpl implements ListParams, Serializable {
 	}
 
 	public void setOffset(int offset) {
-		this.offset = offset >= 0 ? offset : 0;
+		this.offset = (offset >= 0 && pageSize > 0) ? offset : 0;
 	}
 	
 	public int getPage() {

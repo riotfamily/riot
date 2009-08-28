@@ -41,6 +41,18 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 	}
 	
 	@Override
+	public int getListSize(Object parent, ListParams params)
+			throws DataAccessException {
+		
+		try {
+			return listInternal(parent).size();
+		}
+		catch (Exception e) {
+			throw new RecoverableDataAccessException(e.getMessage(), e);
+		}
+	}
+	
+	@Override
 	public Collection<?> list(Object parent, ListParams params)
 			throws DataAccessException {
 		
@@ -55,6 +67,14 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 			if (params.getOrder() != null && params.getOrder().size() > 0) {
 				Order order = params.getOrder().get(0);
 				PropertyComparator.sort(list, order);
+			}
+			
+			if (params.getPageSize() > 0) {
+				int end = params.getOffset() + params.getPageSize();
+				if (end >= list.size()) {
+					end = list.size() - 1;
+				}
+				return list.subList(params.getOffset(), end);
 			}
 			return list;
 		}
