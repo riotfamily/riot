@@ -20,8 +20,12 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.metadata.CollectionMetadata;
+import org.hibernate.type.CollectionType;
+import org.hibernate.type.ComponentType;
+import org.hibernate.type.EntityType;
+import org.hibernate.type.Type;
 import org.riotfamily.common.scheduling.HibernateTask;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
@@ -117,24 +121,70 @@ public class HibernateCleanUpTask extends HibernateTask {
 		Collection<ClassMetadata> allMeta = getSessionFactory().getAllClassMetadata().values();
 		for (ClassMetadata meta : allMeta) { 
 			for (String name : meta.getPropertyNames()) {
-				if (RiotFile.class.isAssignableFrom(meta.getPropertyType(name).getReturnedClass())) {
+				Type type = meta.getPropertyType(name);
+				if (RiotFile.class.isAssignableFrom(type.getReturnedClass())) {
 					fileQueries.add(String.format(
 							"select %1$s.id from %2$s where %1$s is not null",
 							name, meta.getEntityName()));
 				}
+				else if (type.isComponentType()) {
+					handleComponentType((ComponentType) type, name, meta.getEntityName());
+				}
+				else if (type.isCollectionType()) {
+					CollectionType collectionType = (CollectionType) type;
+					Type elementType = collectionType.getElementType(
+							(SessionFactoryImplementor) getSessionFactory());
+					
+					if (RiotFile.class.isAssignableFrom(elementType.getReturnedClass())) {
+						fileQueries.add(String.format("select file.id from %1$s ref " +
+								"join ref.%2$s as file where file is not null",
+								meta.getEntityName(), name));	
+					}
+					else if (elementType.isComponentType()) {
+						handleCollectionComponentType((ComponentType) elementType, 
+								null, name, meta.getEntityName());
+					}
+				}
 			}
 		}
+	}
+	
+	private void handleComponentType(ComponentType componentType, String property, 
+				String entityName) {
 		
-		Collection<CollectionMetadata> allCollMeta = getSessionFactory().getAllCollectionMetadata().values();
-		for (CollectionMetadata meta : allCollMeta) {
-			if (RiotFile.class.isAssignableFrom(meta.getElementType().getReturnedClass())) {
-				String role = meta.getRole();
-				int i = role.lastIndexOf('.');
-				String entityName = role.substring(0, i);
-				String property = role.substring(i + 1);
-				fileQueries.add(String.format("select file.id from %1$s ref " +
-						"join ref.%2$s as file where file is not null",
-						entityName, property));	
+		for (int i = 0; i < componentType.getSubtypes().length; i++) {
+			Type subtype = componentType.getSubtypes()[i];
+			String subProperty = property + "." + componentType.getPropertyNames()[i];
+			if (subtype instanceof EntityType 
+						&& RiotFile.class.isAssignableFrom(subtype.getReturnedClass())) {
+				
+				fileQueries.add(String.format("select %1$s.id from %2$s where %1$s is not null",
+						subProperty, entityName));
+			}
+			else if (subtype.isComponentType()) {
+				handleComponentType((ComponentType) subtype, subProperty, entityName);
+			}
+		}
+	}
+
+	private void handleCollectionComponentType(ComponentType componentType, String property, String collectionProperty, String entityName) {
+		for (int i = 0; i < componentType.getSubtypes().length; i++) {
+			Type subtype = componentType.getSubtypes()[i];
+			
+			String subProperty = property != null ? 
+					property + "." + componentType.getPropertyNames()[i] : 
+					componentType.getPropertyNames()[i];
+
+			if (subtype instanceof EntityType 
+					&& RiotFile.class.isAssignableFrom(subtype.getReturnedClass())) {
+				
+				fileQueries.add(String.format("select file.id from %2$s ref " +
+						"join ref.%3$s as col join col.%1$s file where file is not null",
+						subProperty, entityName, collectionProperty));
+			}
+			else if (subtype.isComponentType()) {
+				handleCollectionComponentType((ComponentType) subtype, 
+						subProperty, collectionProperty, entityName);
 			}
 		}
 	}
