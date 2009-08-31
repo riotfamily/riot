@@ -25,6 +25,9 @@
 	<bean id="componentDao" class="org.riotfamily.components.dao.HibernateComponentDao">
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="cacheService" />
+		<constructor-arg ref="delayedContentCleanupQueue" />
 	</bean>
+
+    <bean id="delayedContentCleanupQueue" class="org.riotfamily.components.dao.cleanup.DelayedContentCleanupQueue" />
 	
 </beans>
