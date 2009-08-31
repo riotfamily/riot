@@ -29,6 +29,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
+import org.riotfamily.components.dao.cleanup.DelayedContentCleanupQueue;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
@@ -51,9 +52,15 @@ public class HibernateComponentDao implements ComponentDao {
 	
 	private HibernateHelper hibernate;
 	
-	public HibernateComponentDao(SessionFactory sessionFactory, CacheService cacheService) {
+	private DelayedContentCleanupQueue delayedContentCleanupQueue;
+	
+	public HibernateComponentDao(SessionFactory sessionFactory,
+		CacheService cacheService,
+		DelayedContentCleanupQueue delayedContentCleanupQueue) {
+		
 		this.hibernate = new HibernateHelper(sessionFactory, "components");
 		this.cacheService = cacheService;
+		this.delayedContentCleanupQueue = delayedContentCleanupQueue;
 	}
 	
 	public void deleteComponentList(ComponentList list) {
@@ -62,6 +69,10 @@ public class HibernateComponentDao implements ComponentDao {
 
 	public void deleteContent(Content version) {
 		hibernate.delete(version);
+	}
+	
+	public void deleteContentLater(Content version) {
+		delayedContentCleanupQueue.put(version);
 	}
 
 	public void deleteContentContainer(ContentContainer container) {
@@ -156,7 +167,7 @@ public class HibernateComponentDao implements ComponentDao {
 				Content liveVersion = container.getLiveVersion();
 				container.setLiveVersion(preview.createCopy());
 				if (liveVersion != null) {
-					deleteContent(liveVersion);
+					deleteContentLater(liveVersion);
 				}
 				container.setDirty(false);
 				ComponentCacheUtils.invalidateContainer(cacheService, container);

@@ -146,4 +146,23 @@
 		</bean>
 	</override:add>
 	
+	<bean id="delayedContentCleanupTrigger" class="org.riotfamily.components.dao.cleanup.DelayedContentCleanupTriggerBean">
+        <description>
+            Quartz trigger for delayed content cleanup
+        </description>
+        <property name="name" value="delayedContentCleanup" />
+        <property name="delay" value="${riot.components.delayedContentCleanup.delay=60}" />
+    </bean>
+    
+    <bean id="delayedContentCleanupTask" class="org.riotfamily.components.dao.cleanup.HibernateDelayedContentCleanupTask">
+        <constructor-arg ref="sessionFactory" />
+        <constructor-arg ref="transactionManager" />
+        
+        <property name="triggerNames" value="delayedContentCleanup" />
+        
+        <property name="delay" value="${riot.components.delayedContentCleanup.delay=60}" />
+        <property name="queue" ref="delayedContentCleanupQueue" />
+        <property name="componentDao" ref="componentDao" />
+    </bean>
+	
 </beans>
