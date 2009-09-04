@@ -17,10 +17,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.CachiusContext;
-import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.CacheableController;
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.website.cache.AbstractCacheableController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -46,16 +45,12 @@ public class SiteListController extends AbstractCacheableController {
 			return new ModelAndView(new RedirectView(url, true));
 		}
 		if (!sites.isEmpty()) {
-			CachiusContext.tag(Site.class.getName());
+			CacheContext.tag(Site.class.getName());
 			return new ModelAndView(viewName, "sites", sites);
 		}
 
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		return null;
-	}
-
-	public long getTimeToLive(HttpServletRequest request) {
-		return CacheableController.CACHE_ETERNALLY;
 	}
 
 }

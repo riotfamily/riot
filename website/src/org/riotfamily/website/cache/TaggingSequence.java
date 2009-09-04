@@ -15,7 +15,7 @@ package org.riotfamily.website.cache;
 import java.util.Collection;
 import java.util.List;
 
-import org.riotfamily.cachius.CachiusContext;
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.common.util.Generics;
 
 import freemarker.template.ObjectWrapper;
@@ -42,7 +42,7 @@ public class TaggingSequence extends SimpleSequence {
 	@Override
 	public int size() {
 		for (String tag : tags) {
-			CachiusContext.tag(tag);
+			CacheContext.tag(tag);
 		}
 		return super.size();
 	}

@@ -127,10 +127,10 @@ public class HibernateCleanUpTask extends HibernateTask {
 							"select %1$s.id from %2$s where %1$s is not null",
 							name, meta.getEntityName()));
 				}
-				else if (type.isComponentType()) {
+				else if (type instanceof ComponentType) {
 					handleComponentType((ComponentType) type, name, meta.getEntityName());
 				}
-				else if (type.isCollectionType()) {
+				else if (type instanceof CollectionType) {
 					CollectionType collectionType = (CollectionType) type;
 					Type elementType = collectionType.getElementType(
 							(SessionFactoryImplementor) getSessionFactory());

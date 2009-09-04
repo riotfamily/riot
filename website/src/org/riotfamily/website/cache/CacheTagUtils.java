@@ -14,8 +14,8 @@ package org.riotfamily.website.cache;
 
 import java.io.Serializable;
 
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.cachius.CachiusContext;
 import org.riotfamily.common.hibernate.ActiveRecord;
 import org.riotfamily.common.hibernate.ActiveRecordUtils;
 import org.springframework.util.ClassUtils;
@@ -38,16 +38,16 @@ public final class CacheTagUtils {
 	}
 		
 	public static void tag(Class<?> clazz, Serializable id) {
-		CachiusContext.tag(getTag(clazz, id));
+		CacheContext.tag(getTag(clazz, id));
 	}
 	
 	public static void tag(ActiveRecord record) {
 		Serializable id = ActiveRecordUtils.getId(record);
-		CachiusContext.tag(getTag(record.getClass(), id));
+		CacheContext.tag(getTag(record.getClass(), id));
 	}
 	
 	public static void tag(Class<?> clazz) {
-		CachiusContext.tag(getTag(clazz));
+		CacheContext.tag(getTag(clazz));
 	}
 	
 	public static void tag(String className) throws ClassNotFoundException {

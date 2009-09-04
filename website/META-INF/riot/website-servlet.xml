@@ -61,9 +61,9 @@
 		<property name="filterName" value="website-filter" />
 	</bean>
 	
-	<bean id="cacheKeyAugmentor" class="org.riotfamily.cachius.servlet.NoOpCacheKeyAugmentor" />
+	<bean id="cacheKeyAugmentor" class="org.riotfamily.website.cache.NoOpCacheKeyAugmentor" />
 	
-	<bean id="cacheableHandlerAdapter" class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
+	<bean id="cacheableHandlerAdapter" class="org.riotfamily.website.cache.CacheableControllerHandlerAdapter">
 		<description>
 			HandlerAdapter that handles CacheableControllers.
 		</description>
@@ -141,7 +141,6 @@
 			<props>
 				<prop key="c">classpath:org/riotfamily/website/view/common.ftl</prop>
 				<prop key="form">classpath:org/riotfamily/website/form/form.ftl</prop>
-				<prop key="cache">classpath:org/riotfamily/website/cache/cache.ftl</prop>
 				<prop key="template">classpath:org/riotfamily/website/template/template.ftl</prop>
 				<prop key="txt2img">classpath:org/riotfamily/website/txt2img/txt2img.ftl</prop>
 			</props>
@@ -206,12 +205,7 @@
 	</bean>
 	
 	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory" />
-	
-	<bean id="cacheMacroHelper" class="org.riotfamily.website.cache.CacheMacroHelperFactory">
-		<constructor-arg ref="cacheService" />
-		<constructor-arg ref="cacheKeyAugmentor" />
-	</bean>
-	
+		
 	<bean id="riotHyphenator" class="org.riotfamily.website.hyphenate.RiotHyphenator">
 		<property name="baseDir" value="/WEB-INF/hyphenation" />
 	</bean>

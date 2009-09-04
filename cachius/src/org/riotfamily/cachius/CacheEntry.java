@@ -1,39 +1,25 @@
-/* Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.riotfamily.cachius;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
-/**
- * Class that holds a reference to the actual cached data and a lock that 
- * can be used to synchronize the access. It also keeps track of the last
- * access time so that least recently used items can be evicted if the 
- * cache capacity is exceeded.
- *  
- * @author Felix Gnass [fgnass at neteye dot de]
- */
-public class CacheEntry {
 
+/**
+ * Class that is used as value object in the ConcurrentHashMap of a Cache.
+ * Provides a ReadWriteLock to synchronize the access to the underlying 
+ * CacheItem. Additionally it records when the item was accessed for the 
+ * last time.
+ */
+public class CacheEntry implements Serializable, Comparable<CacheEntry> {
+	
 	/** The key used for lookups */
     private String key;
     
-    private File cacheDir;
-    
-    private CacheItem item;
+	/** The actual item */
+    private CacheItem item = new CacheItem();
     
     /** Time of the last access */
     private long lastAccess;
@@ -44,33 +30,27 @@ public class CacheEntry {
      */
     private transient ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
     
-    
-    public CacheEntry(String key, File cacheDir) throws IOException {
+    CacheEntry(String key) {
     	this.key = key;
-    	this.cacheDir = cacheDir;
-    	this.item = newItem();
-	}
-
-	/**
+    }
+    
+    /**
      * Returns the key.
      */
     public String getKey() {
         return key;
     }
-        
+	
     public CacheItem getItem() {
+    	touch();
 		return item;
 	}
-
-	public void replaceItem(CacheItem newItem) {
-		this.item.delete();
-		this.item = newItem;
+    
+    public void setItem(CacheItem item) {
+    	touch();
+		this.item = item;
 	}
-	
-	public CacheItem newItem() throws IOException {
-		return new CacheItem(this, cacheDir);
-	}
-	
+    
 	/**
 	 * Returns the lock. 
 	 */
@@ -79,9 +59,9 @@ public class CacheEntry {
 	}
 	
 	/**
-     * Sets the lastUsed timestamp to the current time.
+     * Sets the lastAccess timestamp to the current time.
      */
-    protected void touch() {
+    private void touch() {
     	this.lastAccess = System.currentTimeMillis();
     }
     
@@ -92,7 +72,6 @@ public class CacheEntry {
 		return this.lastAccess;
 	}
 		
-	
 	protected void delete() {
     	WriteLock writeLock = lock.writeLock();
     	writeLock.lock();
@@ -132,4 +111,10 @@ public class CacheEntry {
     public String toString() {
     	return key;
     }
+
+	public int compareTo(CacheEntry that) {
+		long l1 = this.lastAccess;
+		long l2 = that.lastAccess;
+		return (l1 < l2 ? -1 : (l1 == l2 ? 0 : 1));
+	}
 }
