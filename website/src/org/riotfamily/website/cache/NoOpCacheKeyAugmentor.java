@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class NoOpCacheKeyAugmentor implements CacheKeyAugmentor {
 
-	public void augmentCacheKey(StringBuffer key, HttpServletRequest request) {
+	public void augmentCacheKey(StringBuilder key, HttpServletRequest request) {
 	}
 
 }

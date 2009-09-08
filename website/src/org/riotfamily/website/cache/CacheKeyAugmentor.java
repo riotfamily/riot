@@ -20,6 +20,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface CacheKeyAugmentor {
 
-	public void augmentCacheKey(StringBuffer key, HttpServletRequest request);
+	public void augmentCacheKey(StringBuilder key, HttpServletRequest request);
 
 }

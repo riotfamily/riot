@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.riotfamily.cachius.persistence.Deleteable;
+
 /**
  * Container that holds information about the liveness as well as the actual data.
  */
@@ -181,7 +183,9 @@ public class CacheItem implements Serializable {
 	}
 	
 	public void delete() {
-		//TODO
+		if (data instanceof Deleteable) {
+			((Deleteable) data).delete();
+		}
 	}
 
 	public void serveStaleUntilExpired() {

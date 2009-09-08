@@ -1,7 +1,5 @@
 package org.riotfamily.cachius.http;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,19 +65,16 @@ public abstract class AbstractHttpHandler implements CacheHandler {
 	public Serializable capture(DiskStore diskStore) throws Exception {
 		ResponseData data = new ResponseData(response.getCharacterEncoding());
 		SessionIdEncoder sessionIdEncoder = new SessionIdEncoder(request);
-		File file = diskStore.getFile();
-		CachiusResponse cachiusResponse = new CachiusResponse(data, file, 
-				sessionIdEncoder, directives);
+		CachiusResponse cachiusResponse = new CachiusResponse(data, diskStore, 
+				sessionIdEncoder, isCompressible(), directives);
 		
 		handleRequest(request, cachiusResponse);
 		cachiusResponse.stopCapturing();
 		return data;
 	}
-
-	public void delete(Serializable obj) throws IOException {
-		assert obj instanceof ResponseData;
-		ResponseData data = (ResponseData) obj;
-		data.delete();
+	
+	protected boolean isCompressible() {
+		return false;
 	}
 	
 	protected abstract void handleRequest(HttpServletRequest request,

@@ -27,6 +27,8 @@ import org.springframework.web.servlet.View;
 public class ControllerCacheHandler extends AbstractHttpHandler {
 
 	private CacheableController controller;
+
+	private CacheKeyAugmentor cacheKeyAugmentor;
 	
 	private ViewResolverHelper viewResolverHelper;
 	
@@ -37,12 +39,16 @@ public class ControllerCacheHandler extends AbstractHttpHandler {
 
 		super(request, response);
 		this.controller = controller;
+		this.cacheKeyAugmentor = cacheKeyAugmentor;
 		this.viewResolverHelper = viewResolverHelper;
 	}
 
 	@Override
 	public String getCacheKey() {
-		return controller.getCacheKey(getRequest());
+		StringBuilder key = new StringBuilder();
+		key.append(controller.getCacheKey(getRequest()));
+		cacheKeyAugmentor.augmentCacheKey(key, getRequest());
+		return key.toString();
 	}
 	
 	@Override
@@ -50,7 +56,8 @@ public class ControllerCacheHandler extends AbstractHttpHandler {
 		return controller.getLastModified(getRequest());
 	}
 
-	protected boolean responseShouldBeZipped() {
+	@Override
+	protected boolean isCompressible() {
 		if (controller instanceof Compressible) {
 			return ((Compressible) controller).gzipResponse(getRequest());
 		}

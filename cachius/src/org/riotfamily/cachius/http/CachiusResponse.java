@@ -29,10 +29,14 @@ import org.riotfamily.cachius.http.content.BinaryContent;
 import org.riotfamily.cachius.http.content.ChunkedContent;
 import org.riotfamily.cachius.http.content.ContentFragment;
 import org.riotfamily.cachius.http.content.Directives;
+import org.riotfamily.cachius.http.content.GzipContent;
+import org.riotfamily.cachius.http.header.SessionIdCookie;
+import org.riotfamily.cachius.http.header.StaticCookie;
 import org.riotfamily.cachius.http.support.DelegatingServletOutputStream;
 import org.riotfamily.cachius.http.support.ScanWriter;
 import org.riotfamily.cachius.http.support.SessionIdEncoder;
 import org.riotfamily.cachius.http.support.ScanWriter.Block;
+import org.riotfamily.cachius.persistence.DiskStore;
 
 
 /**
@@ -47,24 +51,30 @@ public class CachiusResponse implements HttpServletResponse {
     
     private SessionIdEncoder sessionIdEncoder;
     
+    private boolean compressible;
+    
     private Directives directives;
     
-    private File file;
+    private DiskStore diskStore;
     
     private ServletOutputStream outputStream;
     
     private PrintWriter writer;
     
     private ScanWriter scanWriter;
+    
+    private File file;
 	    	
-    public CachiusResponse(ResponseData data, File file, 
-    		SessionIdEncoder sessionIdEncoder, 
-    		Directives directives) {
+    public CachiusResponse(ResponseData data, DiskStore diskStore, 
+    		SessionIdEncoder sessionIdEncoder, boolean compressible, 
+    		Directives directives) throws IOException {
     	
     	this.data = data;
-    	this.file = file;
+    	this.diskStore = diskStore;
     	this.sessionIdEncoder = sessionIdEncoder;
+    	this.compressible = compressible;
         this.directives = directives;
+        this.file = diskStore.getFile();
     }
 	
     public int getStatus() {
@@ -134,7 +144,12 @@ public class CachiusResponse implements HttpServletResponse {
     }
 
     public void addCookie(Cookie cookie) {
-        data.getCookies().add(cookie);
+    	if (sessionIdEncoder.isSessionIdCookie(cookie)) {
+    		data.getCookies().add(new SessionIdCookie(cookie));
+    	}
+    	else {
+    		data.getCookies().add(new StaticCookie(cookie));
+    	}
     }    
     
     /**
@@ -190,7 +205,7 @@ public class CachiusResponse implements HttpServletResponse {
     public void stopCapturing() throws IOException {
     	flushBuffer();
     	resetBuffer();
-    	if (scanWriter != null) {
+    	if (scanWriter != null && scanWriter.foundBlocks()) {
     		ChunkedContent content = new ChunkedContent(file);
     		for (Block block : scanWriter.getBlocks()) {
     			ContentFragment fragment = directives.parse(block.getValue());
@@ -202,7 +217,12 @@ public class CachiusResponse implements HttpServletResponse {
     		data.setContent(content);
     	}
     	else {
-    		data.setContent(new BinaryContent(file));
+    		if (compressible) {
+    			data.setContent(new GzipContent(file, diskStore.getFile()));
+    		}
+    		else {
+    			data.setContent(new BinaryContent(file));
+    		}
     	}
     }
         

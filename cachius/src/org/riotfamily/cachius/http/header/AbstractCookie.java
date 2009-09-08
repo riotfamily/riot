@@ -10,24 +10,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.cachius.http.support;
+package org.riotfamily.cachius.http.header;
 
 import java.io.Serializable;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
  */
-public class SerializableCookie implements Serializable {
-
-	private static final long serialVersionUID = 7012664038620916590L;
+public abstract class AbstractCookie implements Serializable {
 
 	private String name;
 
-    private String value;
-    
     private String domain;
 
     private String path;
@@ -40,9 +37,8 @@ public class SerializableCookie implements Serializable {
     
     private String comment;
 
-    public SerializableCookie(Cookie cookie) {
+    public AbstractCookie(Cookie cookie) {
         name = cookie.getName();
-        value = cookie.getValue();
         domain = cookie.getDomain();
         path = cookie.getPath();
         maxAge = cookie.getMaxAge();
@@ -51,8 +47,14 @@ public class SerializableCookie implements Serializable {
         comment = cookie.getComment();
     }
 
-    public Cookie create() {
-        Cookie cookie = new Cookie(name, value);
+    public void send(HttpServletRequest request, 
+    		HttpServletResponse response) {
+    	
+    	response.addCookie(createCookie(request));
+    }
+    
+    protected Cookie createCookie(HttpServletRequest request) {
+        Cookie cookie = new Cookie(name, getValue(request));
         if (domain != null) {
             cookie.setDomain(domain);
         }
@@ -63,4 +65,7 @@ public class SerializableCookie implements Serializable {
         cookie.setComment(comment);
         return cookie;
     }
+
+	protected abstract String getValue(HttpServletRequest request);
+
 }

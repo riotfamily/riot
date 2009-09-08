@@ -9,11 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.http.content.Content;
-import org.riotfamily.cachius.http.support.Cookies;
-import org.riotfamily.cachius.http.support.Headers;
+import org.riotfamily.cachius.http.header.Cookies;
+import org.riotfamily.cachius.http.header.Headers;
+import org.riotfamily.cachius.persistence.Deleteable;
 
 
-public class ResponseData implements Serializable {
+public class ResponseData implements Serializable, Deleteable {
 
 	/** The HTTP Status code */
     private int statusCode;
@@ -113,10 +114,10 @@ public class ResponseData implements Serializable {
     		response.setContentType(contentType);
     	}
         if (headers != null) {
-            headers.addToResponse(response);
+            headers.send(request, response);
         }
         if (cookies != null) {
-        	cookies.addToResponse(response);
+        	cookies.send(request, response);
         }
         if (error) {
 			response.sendError(statusCode, errorMessage);

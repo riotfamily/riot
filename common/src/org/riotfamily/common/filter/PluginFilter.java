@@ -68,6 +68,7 @@ public final class PluginFilter extends OncePerRequestFilter {
 				ATTRIBUTE_PREFIX + getFilterName(), this);
 	}
 	
+	@SuppressWarnings("unchecked")
 	synchronized void addPlugin(FilterPlugin plugin) {
 		int n = plugins.length;
         FilterPlugin[] newPlugins = new FilterPlugin[n + 1];

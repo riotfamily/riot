@@ -32,7 +32,7 @@ public class CodeRevelationCacheKeyAugmentor implements CacheKeyAugmentor {
 		this.messageSource = messageSource;
 	}
 
-	public void augmentCacheKey(StringBuffer key, HttpServletRequest request) {
+	public void augmentCacheKey(StringBuilder key, HttpServletRequest request) {
 		if (messageSource.isRevealCodes()) {
 			key.append(";revealedMessageCodes");
 		}

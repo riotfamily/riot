@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.cachius.http.support;
+package org.riotfamily.cachius.http.header;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -40,27 +41,35 @@ public class Headers implements Serializable {
 	}
 	
 	public void add(String name, String value) {
-		getHeader(name).addValue(value);
+		getHeader(name).addValue(createValue(value));
 	}
 	
 	public void addInt(String name, int value) {
-		add(name, String.valueOf(value));
+		addString(name, String.valueOf(value));
 	}
 
 	public void addDate(String name, long date) {
-		add(name, format.format(new Date(date)));
+		addString(name, format.format(new Date(date)));
+	}
+	
+	private void addString(String name, String value) {
+		getHeader(name).addValue(new StaticHeaderValue(value));
 	}
 	
 	public void set(String name, String value) {
-		getHeader(name).setValue(value);
+		getHeader(name).setValue(createValue(value));
 	}
-	
+
 	public void setInt(String name, int value) {
-		set(name, String.valueOf(value));
+		setString(name, String.valueOf(value));
 	}
 
 	public void setDate(String name, long date) {
-		set(name, format.format(new Date(date)));
+		setString(name, format.format(new Date(date)));
+	}
+	
+	private void setString(String name, String value) {
+		getHeader(name).setValue(new StaticHeaderValue(value));
 	}
 
 	public void clear() {
@@ -97,42 +106,17 @@ public class Headers implements Serializable {
 		}
 	}
 	
-	public void addToResponse(HttpServletResponse response) {
-		for (Header header : headers) {
-			header.addToResponse(response);
+	private HeaderValue createValue(String value) {
+		int i = value.indexOf("(@sessionid)");
+		if (i >= 0) {
+			return new SessionIdHeaderValue(value, i, 12);
 		}
+		return new StaticHeaderValue(value);
 	}
 	
-	private static class Header implements Serializable {
-		
-		private static final long serialVersionUID = -4213831361339746664L;
-
-		private String name;
-		
-		private ArrayList<String> values = new ArrayList<String>();
-
-		public Header(String name) {
-			this.name = name;
+	public void send(HttpServletRequest request, HttpServletResponse response) {
+		for (Header header : headers) {
+			header.send(request, response);
 		}
-		
-		public String getName() {
-			return name;
-		}
-		
-		public void setValue(String value) {
-			values.clear();
-			addValue(value);
-		}
-		
-		public void addValue(String value) {
-			values.add(value);
-		}
-		
-		public void addToResponse(HttpServletResponse response) {
-			for (String value : values) {
-				response.addHeader(name, value);	
-			}
-		}
-		
 	}
 }

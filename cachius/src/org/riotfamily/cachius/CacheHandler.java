@@ -30,8 +30,6 @@ public interface CacheHandler {
 	
 	public void serve(Serializable data) throws Exception;
 	
-	public void delete(Serializable data) throws Exception;
-
 	/**
 	 * Callback method that is invoked when no CacheItem could be created. 
 	 * This can be the case when either {@link #getCacheKey()} returns 

@@ -15,17 +15,15 @@ package org.riotfamily.cachius.http.support;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Utility class for working with URL-based session tracking.
  */
 public class SessionIdEncoder {
 
-	//private String sessionId;
-	
-	//private boolean requestedSessionIdFromCookie;
-	
 	private String scheme;
 
 	private String serverName;
@@ -36,12 +34,18 @@ public class SessionIdEncoder {
 
 	private String requestUrl;
 	
+	private String sessionId;
+	
 	public SessionIdEncoder(HttpServletRequest request) {
 		scheme = request.getScheme();
 		serverName = request.getServerName();
 		serverPort = request.getServerPort();
 		contextPath = request.getContextPath();
 		requestUrl = request.getRequestURL().toString();
+		if (!request.isRequestedSessionIdFromCookie()) {
+			HttpSession session = request.getSession(false);
+			sessionId = session != null ? session.getId() : null;
+		}
 	}
 	
 	/**
@@ -210,7 +214,7 @@ public class SessionIdEncoder {
             path = path.substring(0, pound);
         }
         StringBuilder sb = new StringBuilder(path);
-        if( sb.length() > 0 ) { // jsessionid can't be first.
+        if( sb.length() > 0) {
             appendSessionId(sb);
         }
         sb.append(anchor);
@@ -218,12 +222,24 @@ public class SessionIdEncoder {
         return sb.toString();
     }
     
-    protected boolean containsSessionId(String file) {
+    public boolean containsSessionId(String file) {
     	return file.indexOf("(@sessionid)") >= 0;
 	}
 
-    protected void appendSessionId(StringBuilder sb) {
+    public void appendSessionId(StringBuilder sb) {
     	sb.append("(@sessionid)");
     }
+    
+    public String replaceSessionId(String url) {
+    	String replacement = "";
+    	if (sessionId != null) {
+    		replacement = ";jsessionid=" + sessionId; 
+    	}
+    	return url.replace("(@sessionid)", replacement);
+    }
+
+	public boolean isSessionIdCookie(Cookie cookie) {
+		return sessionId != null && sessionId.equals(cookie.getValue());
+	}
 
 }

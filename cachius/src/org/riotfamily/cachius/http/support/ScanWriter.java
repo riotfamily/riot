@@ -47,6 +47,10 @@ public class ScanWriter extends Writer {
 	public Collection<Block> getBlocks() {
 		return blocks;
 	}
+	
+	public boolean foundBlocks() {
+		return blocks.size() > 0;
+	}
 
 	@Override
 	public void close() throws IOException {
@@ -129,4 +133,5 @@ public class ScanWriter extends Writer {
     		return sb.toString();
     	}
     }
+
 }

@@ -24,7 +24,7 @@ import org.riotfamily.website.cache.CacheKeyAugmentor;
  */
 public class EditModeCacheKeyAugmentor implements CacheKeyAugmentor {
 
-	public void augmentCacheKey(StringBuffer key, HttpServletRequest request) {
+	public void augmentCacheKey(StringBuilder key, HttpServletRequest request) {
 		if (AccessController.isAuthenticatedUser()) {
 			if (EditModeUtils.isEditMode(request)) {
 				key.insert(0, "edit:");

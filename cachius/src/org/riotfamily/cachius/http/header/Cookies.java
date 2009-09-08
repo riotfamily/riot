@@ -10,13 +10,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.cachius.http.support;
+package org.riotfamily.cachius.http.header;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 
 
 /**
@@ -27,23 +28,25 @@ public class Cookies implements Serializable {
 
 	private static final long serialVersionUID = -6620847178807123964L;
 
-	private ArrayList<SerializableCookie> cookies;
+	private ArrayList<AbstractCookie> cookies;
 	
-	public void add(Cookie cookie) {
+	public void add(AbstractCookie cookie) {
 		if (cookies == null) {
-			cookies = new ArrayList<SerializableCookie>();
+			cookies = new ArrayList<AbstractCookie>();
 		}
-		cookies.add(new SerializableCookie(cookie));
+		cookies.add(cookie);
 	}
 	
 	public void clear() {
 		cookies = null;
 	}
 	
-	public void addToResponse(HttpServletResponse response) {
+	public void send(HttpServletRequest request, 
+			HttpServletResponse response) {
+
 		if (cookies != null) {
-			for (SerializableCookie cookie : cookies) {
-				response.addCookie(cookie.create());
+			for (AbstractCookie cookie : cookies) {
+				cookie.send(request, response);
 			}
 		}
 	}

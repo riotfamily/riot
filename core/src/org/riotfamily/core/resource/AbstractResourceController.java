@@ -28,8 +28,10 @@ import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.website.cache.AbstractCacheableController;
+import org.riotfamily.website.cache.Compressible;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.LastModified;
 
 /**
  * Controller that serves an internal resource.
@@ -40,7 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
  * </p>
  */
 public class AbstractResourceController extends AbstractCacheableController
-		{ //implements LastModified, Compressible {
+		implements LastModified, Compressible {
 
 	private RiotLog log = RiotLog.get(AbstractResourceController.class);
 	
