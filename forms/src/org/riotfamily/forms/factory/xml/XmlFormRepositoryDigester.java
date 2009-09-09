@@ -377,7 +377,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		return pvs;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Object getOptionsModel(Element ele) {
 		log.debug("Looking for OptionsModel ...");
 		Element modelElement = XmlUtils.getFirstChildByRegex(ele, "model|options|key-options");
@@ -412,7 +411,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 						AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
 			}
 			else {
-				bean = SpringUtils.getBean(beanFactory, attr, requiredClass);
+				bean = beanFactory.getBean(attr, requiredClass);
 				singleton = beanFactory.isSingleton(attr);
 			}
 		}
@@ -428,7 +427,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		
 		String ref = XmlUtils.getAttribute(element, refAttribute);
 		if (ref != null) {
-			bean = SpringUtils.getBean(beanFactory, ref, requiredClass);
+			bean = beanFactory.getBean(ref, requiredClass);
 			singleton = beanFactory.isSingleton(ref);
 		}
 		else {

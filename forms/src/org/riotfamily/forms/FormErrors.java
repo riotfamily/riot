@@ -83,7 +83,6 @@ public class FormErrors extends AbstractErrors {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<String> getErrors(Element element) {
 		if (element instanceof Editor) {
 			ArrayList<String> messages = Generics.newArrayList();
@@ -147,7 +146,6 @@ public class FormErrors extends AbstractErrors {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void addAllErrors(Errors errors) {
 		this.errors.addAll(errors.getAllErrors());
 		

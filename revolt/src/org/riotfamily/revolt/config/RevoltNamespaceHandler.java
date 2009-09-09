@@ -96,7 +96,6 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 				"Expected <history> but found: " + element.getNodeName());
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<ChangeSet> parseChangeSets(Element element) {
 		ArrayList<ChangeSet> changeSets = Generics.newArrayList();
 		Iterator<Element> it = DomUtils.getChildElementsByTagName(element, "change-set").iterator();

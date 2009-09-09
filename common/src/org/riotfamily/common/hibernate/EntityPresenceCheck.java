@@ -18,7 +18,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-public class EntityPresenceCheck implements FactoryBean {
+public class EntityPresenceCheck implements FactoryBean<Object> {
 
 	private SessionFactory sessionFactory;
 	

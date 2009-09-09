@@ -4,15 +4,13 @@
     	<conf name="build" />
     	<conf name="runtime" />
     	<conf name="test" extends="runtime" />
-    	<conf name="src" />
     </configurations>
     <publications>
-    	<artifact conf="build,runtime,test" />
-    	<artifact type="source" ext="src.zip" conf="src" />
+    	<artifact />
+    	<artifact type="source" ext="src.zip" />
     </publications>
     <dependencies>
-		<dependency org="riotfamily" name="riot-common" rev="${dep.riot.revision}" conf="*->@" />
 		<dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="build,runtime->default" />
-		<dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->webmvc;src->src" />
+		<dependency org="sun" name="servlet-api" rev="2.4" conf="build->default" />
     </dependencies>
 </ivy-module>

@@ -79,11 +79,6 @@
 
 		<!-- Set module.revision to value from ivy.xml -->
 		<property name="module.revision" value="${ivy.revision}" />
-
-		<!-- Set a property if the module has a 'src' configuration -->
-		<condition property="module.src-conf.exists">
-			<contains string="${ivy.configurations}" substring="src" />
-		</condition>
 	</target>
 
 	<target name="-check-uptodate">
@@ -101,12 +96,6 @@
 		<ivy:retrieve pattern="${lib.dir}/[artifact].[ext]" />
 	</target>
 	
-	<target name="retrieve-sources" depends="-init-module">
-		<echo message="Retrieving sources" />
-		<ivy:resolve conf="src" showprogress="false" />
-		<ivy:retrieve pattern="${lib.dir}/[artifact].[ext]" />
-	</target>
-
 	<target name="report" depends="resolve">
 		<ivy:report todir="${build.dir}/reports" graph="false" conf="runtime" />
 	</target>
@@ -192,9 +181,7 @@
 	<!--
 	  - Creates a zip file containing all source files
 	  -->
-	<target name="src-zip" if="module.src-conf.exists" depends="-init-module"
-			description="Creates a zip file containing the sources">
-		
+	<target name="src-zip" unless="ommit-source-artifact" description="Creates a zip file containing the sources">
 		<echo message="Creating src-zip" />
 		<zip basedir="${module.src.dir}" destfile="${module.src.zip}" />
 	</target>

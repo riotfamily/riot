@@ -208,18 +208,17 @@ public class SearchController implements Controller, InitializingBean {
 		return new CachingWrapperFilter(new QueryWrapperFilter(filterQuery));
 	}
 
-	@SuppressWarnings("unchecked")
 	protected Query createFilterQuery(HttpServletRequest request) {
-		Map<String, String> filterParams = WebUtils.getParametersStartingWith(request, "filter_");
+		Map<String, Object> filterParams = WebUtils.getParametersStartingWith(request, "filter_");
 		if (filterParams.isEmpty()) {
 			return null;
 		}
 		BooleanQuery query = new BooleanQuery();
-		Iterator<Map.Entry<String, String>> it = filterParams.entrySet().iterator();
+		Iterator<Map.Entry<String, Object>> it = filterParams.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<String, String> entry = it.next();
+			Map.Entry<String, Object> entry = it.next();
 			String field = entry.getKey();
-			String value = entry.getValue();
+			String value = String.valueOf(entry.getValue());
 			query.add(new TermQuery(new Term(field, value)), Occur.MUST);
 		}
 		return query;

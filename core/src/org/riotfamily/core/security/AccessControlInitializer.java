@@ -12,9 +12,10 @@
  */
 package org.riotfamily.core.security;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.security.policy.AuthorizationPolicy;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -29,9 +30,8 @@ import org.springframework.core.OrderComparator;
  */
 public class AccessControlInitializer implements ApplicationContextAware {
 	
-	@SuppressWarnings("unchecked")
 	public void setApplicationContext(ApplicationContext context) {
-		ArrayList policies = new ArrayList();
+		List<AuthorizationPolicy> policies = Generics.newArrayList();
 		policies.addAll(BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				context, AuthorizationPolicy.class).values());
 		

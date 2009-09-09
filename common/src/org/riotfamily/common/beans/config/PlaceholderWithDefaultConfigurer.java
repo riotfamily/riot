@@ -134,7 +134,7 @@ public class PlaceholderWithDefaultConfigurer
 		}
 
 		public String resolveStringValue(String strVal) throws BeansException {
-			String value = parseStringValue(strVal, this.props, new HashSet<Object>());
+			String value = parseStringValue(strVal, this.props, new HashSet<String>());
 			if (NULL_DEFAULT.equals(value)) {
 				return null;
 			}

@@ -29,8 +29,7 @@ import org.riotfamily.common.servlet.ServletUtils;
  */
 public class RedirectAfterPostView extends FlashScopeView {
 
-	@SuppressWarnings("unchecked")
-	public void render(Map model, HttpServletRequest request, 
+	public void render(Map<String, ?> model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
 		setHttp10Compatible(ServletUtils.isHttp10(request));

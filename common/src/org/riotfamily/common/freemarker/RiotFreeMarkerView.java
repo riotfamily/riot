@@ -145,7 +145,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 							+ "] in FreeMarkerView '" + getBeanName() + "'");
 				}
 				Locale locale = RequestContextUtils.getLocale(request);
-				processTemplate(getTemplate(locale), model, response);
+				getTemplate(locale).process(model, response.getWriter());
 			}
 		}
 		finally {

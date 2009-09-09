@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.website.cache.AbstractCacheableController;
 import org.riotfamily.website.cache.Compressible;
 import org.riotfamily.website.performance.YUIJavaScriptCompressor;
@@ -71,7 +70,7 @@ public class Txt2ImgController extends AbstractCacheableController
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		
-		for (ReplacementRule rule : SpringUtils.listBeansOfType(applicationContext, ReplacementRule.class)) {
+		for (ReplacementRule rule : applicationContext.getBeansOfType(ReplacementRule.class).values()) {
 			String[] sel = StringUtils.tokenizeToStringArray(rule.getSelector(), ",");
 			for (int i = 0; i < sel.length; i++) {
 				selectors.add(sel[i]);

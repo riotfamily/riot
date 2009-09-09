@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.Map;
 
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.riot.job.dao.JobDao;
 import org.riotfamily.riot.job.model.JobDetail;
 import org.riotfamily.riot.job.model.JobLogEntry;
@@ -52,7 +51,7 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	}
 
 	public void setApplicationContext(ApplicationContext context) {
-		jobs = SpringUtils.beansOfType(context, Job.class);
+		jobs = context.getBeansOfType(Job.class);
 	}
 	
 	/**

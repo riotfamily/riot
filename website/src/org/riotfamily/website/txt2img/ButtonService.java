@@ -61,7 +61,7 @@ public class ButtonService implements ApplicationContextAware {
 	}
 
 	public void setApplicationContext(ApplicationContext ctx) {
-		buttons = SpringUtils.beansOfType(ctx, ButtonRenderer.class);
+		buttons = ctx.getBeansOfType(ButtonRenderer.class);
 	}
 	
 	public String getInlineStyle(String style, String label, 

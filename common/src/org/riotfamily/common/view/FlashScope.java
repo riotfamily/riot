@@ -41,7 +41,6 @@ public class FlashScope {
 	 * @param model The model to store
 	 * @param url The URL of the next request  
 	 */
-	@SuppressWarnings("unchecked")
 	public static void store(HttpServletRequest request, Map<?, ?> model, String url) {
 		FlashScope flashScope = getFlashScope(request, true);
 		flashScope.models.put(url, (Map<String, ?>) model);

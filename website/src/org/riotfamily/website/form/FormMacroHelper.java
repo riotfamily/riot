@@ -98,7 +98,6 @@ public class FormMacroHelper {
 		return errors != null && errors.hasErrors();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<ObjectError> getAllErrors() {
 		Errors errors = getErrors();
 		if (errors != null) {
@@ -112,7 +111,6 @@ public class FormMacroHelper {
 		return errors != null && errors.hasGlobalErrors();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ObjectError> getGlobalErrors() {
 		Errors errors = getErrors();
 		if (errors != null) {
@@ -126,7 +124,6 @@ public class FormMacroHelper {
 		return errors != null && !errors.isEmpty();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<FieldError> getFieldErrors(String field) {
 		Errors errors = getErrors();
 		if (errors != null) {
