@@ -14,8 +14,6 @@ package org.riotfamily.pages.view;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.pages.mapping.PageResolver;
-import org.riotfamily.pages.model.Site;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
@@ -45,8 +43,6 @@ public class SiteRequestToViewNameTranslator
 
 	private boolean stripExtension = true;
 	
-	private boolean stripSitePrefix = true;
-
 	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 
 
@@ -92,14 +88,6 @@ public class SiteRequestToViewNameTranslator
 	 */
 	public void setStripExtension(boolean stripExtension) {
 		this.stripExtension = stripExtension;
-	}
-
-	/**
-	 * Set whether or not the site prefix should be stripped. Default is "true".
-	 * @param stripSitePrefix <code>true</code> if the site prefix should be stripped
-	 */
-	public void setStripSitePrefix(boolean stripSitePrefix) {
-		this.stripSitePrefix = stripSitePrefix;
 	}
 
 	/**
@@ -157,12 +145,6 @@ public class SiteRequestToViewNameTranslator
 	 */
 	protected String transformPath(String lookupPath, HttpServletRequest request) {
 		String path = lookupPath;
-		if (this.stripSitePrefix) {
-			Site site = PageResolver.getResolvedSite(request);
-			if (site != null && site.prefixMatches(path)) {
-				path = site.stripPrefix(path);
-			}
-		}
 		if (this.stripLeadingSlash && path.startsWith(SLASH)) {
 			path = path.substring(1);
 		}

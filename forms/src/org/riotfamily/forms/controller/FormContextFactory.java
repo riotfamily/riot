@@ -25,7 +25,6 @@ import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.i18n.RiotMessageCodesResolver;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.OptionsModelAdapter;
 import org.riotfamily.forms.TemplateRenderer;
@@ -96,7 +95,6 @@ public final class FormContextFactory implements MessageSourceAware,
 		this.resourceLoader = resourceLoader;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		if (beanFactory instanceof AbstractBeanFactory) {
 			AbstractBeanFactory abf = (AbstractBeanFactory) beanFactory;
@@ -104,8 +102,8 @@ public final class FormContextFactory implements MessageSourceAware,
 		}
 		if (beanFactory instanceof ListableBeanFactory) {
 			ListableBeanFactory lbf = (ListableBeanFactory) beanFactory;
-			optionValuesAdapters.addAll(SpringUtils.beansOfType(
-					lbf, OptionsModelAdapter.class).values());			
+			optionValuesAdapters.addAll(lbf.getBeansOfType(
+					OptionsModelAdapter.class).values());			
 		}
 	}
 	

@@ -41,7 +41,7 @@
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="packagesToScan">
 			<list>
-				<value>org.riotfamily.</value>
+				<value>org.riotfamily</value>
 			</list> 	
 		</property>
 		<property name="hibernateProperties" value="${hibernate.*}" />

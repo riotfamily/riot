@@ -73,7 +73,6 @@ public final class SpringUtils {
 		return (T) beanFactory.createBean(beanClass, autowire, false);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> T getBean(BeanFactory beanFactory, String name, 
 			Class<T> requiredType) {
 		
@@ -89,7 +88,6 @@ public final class SpringUtils {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> T beanOfType(ListableBeanFactory lbf, Class<T> type) {
 		return (T) BeanFactoryUtils.beanOfType(lbf, type);
 	}
@@ -99,19 +97,16 @@ public final class SpringUtils {
 		return beanOfType((ListableBeanFactory) beanFactory, type);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> T beanOfTypeIncludingAncestors(ListableBeanFactory lbf, Class<T> type) {
 		return (T) BeanFactoryUtils.beanOfTypeIncludingAncestors(lbf, type);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfType(
 			ListableBeanFactory lbf, Class<T> type) {
 		
 		return lbf.getBeansOfType(type);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfType(ListableBeanFactory lbf, 
 			Class<T> type, boolean includeNonSingletons, boolean allowEagerInit) {
 		
@@ -124,7 +119,6 @@ public final class SpringUtils {
 		return beansOfType(lbf, type).values();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfTypeIncludingAncestors(
 			ListableBeanFactory lbf, Class<T> type) {
 		
@@ -137,7 +131,6 @@ public final class SpringUtils {
 		return beansOfTypeIncludingAncestors(lbf, type).values();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> List<T> orderedBeansIncludingAncestors(
 			ListableBeanFactory lbf, Class<T> type) {
 		
@@ -146,7 +139,6 @@ public final class SpringUtils {
 		return beans;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> List<T> orderedBeans(ListableBeanFactory lbf, Class<T> type) {
 		ArrayList<T> beans = new ArrayList<T>(listBeansOfType(lbf, type));
 		Collections.sort(beans, new AnnotationAwareOrderComparator());
@@ -179,7 +171,6 @@ public final class SpringUtils {
 				.getBean(beanName);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> T getBean(ServletContext servletContext, 
 			String servletName, String beanName, Class<T> requiredType) {
 		

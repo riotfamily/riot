@@ -51,7 +51,7 @@ public class SimpleFormRequest implements FormRequest {
 			String[] values = (String[]) value;
 			return values.length > 0 ? values[0] : null;
 		}
-		if (value instanceof Collection) {
+		if (value instanceof Collection<?>) {
 			Iterator<?> it  = ((Collection<?>) value).iterator();
 			return it.hasNext() ? (String) it.next() : null;
 		}
@@ -61,13 +61,14 @@ public class SimpleFormRequest implements FormRequest {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public String[] getParameterValues(String name) {
 		Object value = params.get(name);
 		if (value instanceof String[]) {
 			return (String[]) value;
 		}
-		if (value instanceof Collection) {
-			return StringUtils.toStringArray((Collection<?>) value);
+		if (value instanceof Collection<?>) {
+			return StringUtils.toStringArray((Collection<String>) value);
 		}
 		if (value instanceof String) {
 			return new String[] { (String) value };

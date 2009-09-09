@@ -58,8 +58,7 @@ public class JsonView extends AbstractView {
 		this.characterEncoding = characterEncoding;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected void renderMergedOutputModel(Map model,
+	protected void renderMergedOutputModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 

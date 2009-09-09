@@ -1,202 +1,103 @@
-/* Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.riotfamily.cachius;
 
-import java.io.IOException;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
-import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.cachius.invalidation.DefaultItemInvalidator;
+import org.riotfamily.cachius.invalidation.ItemIndex;
+import org.riotfamily.cachius.invalidation.ItemInvalidator;
+import org.riotfamily.cachius.persistence.DiskStore;
 
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
- */
 public class CacheService {
 
-	private RiotLog log = RiotLog.get(CacheService.class);
+	private CacheManager cacheManager;
 	
-	private Cache cache;
+	private DiskStore diskStore;
 	
-	private boolean checkInvolvedFiles;
+	private ItemIndex index = new ItemIndex();
 	
-	private boolean staleUnlessExpired;
+	private ItemInvalidator invalidator = new DefaultItemInvalidator();
 	
-	private boolean staleWhileRevalidate;
-	
-	private CachiusStatistics stats;
-	
-	public CacheService(Cache cache) {
-		this.cache = cache;
-		this.stats = new CachiusStatistics(this);
-	}
-	
-	public CachiusStatistics getStatistics() {
-		return stats;
-	}
-	
-	protected Cache getCache() {
-		return cache;
-	}
-		
-	public void setCheckInvolvedFiles(boolean checkInvolvedFiles) {
-		this.checkInvolvedFiles = checkInvolvedFiles;
-	}
-	
-	/**
-	 * Sets whether cached data with a set expiration date should be served
-	 * until it expires even if it has been invalidated.  
-	 */
-    public void setStaleUnlessExpired(boolean staleUnlessExpired) {
-		this.staleUnlessExpired = staleUnlessExpired;
+	public CacheService(CacheManager cacheManager, DiskStore diskStore) {
+		this.cacheManager = cacheManager;
+		this.diskStore = diskStore;
 	}
 
-    /**
-     * Sets whether stale data should be served during revalidation. If set to 
-     * <code>false</code> concurrent threads will wait until the content has
-     * been updated. If set to <code>true</code> only the first thread has to
-     * wait while others will still see the old version.
-     */
-	public void setStaleWhileRevalidate(boolean staleWhileRevalidate) {
-		this.staleWhileRevalidate = staleWhileRevalidate;
+	protected Cache getCache(String region) {
+		return cacheManager.getCache(region);
 	}
 
-	/**
-     * Invalidates all items tagged with the given String.
-     */
-    public void invalidateTaggedItems(String tag) {
-        cache.invalidateTaggedItems(tag);
-    }
-
-	public long getLastModified(CacheHandler handler) {
-		CacheEntry entry = null;
+	private CacheEntry getCacheEntry(CacheHandler handler) {
+		Cache cache = getCache(handler.getCacheRegion());
 		String cacheKey = handler.getCacheKey();
+		CacheEntry entry = null;
 		if (cacheKey != null) {
-			entry = cache.getItem(cacheKey);
+			entry = cache.getEntry(cacheKey);
 		}
-		if (entry != null) {
-			CacheItem item = entry.getItem();
-			if (!item.isExpired()) {
-	        	return item.getLastModified();
-			}
-		}
-		try {
-			return handler.getLastModified();
-		}
-		catch (Exception e) {
-			log.error("Error invoking the last-modified method", e);
-			return -1L;
-		}
+		return entry;
+	}
+	
+	public long getLastModified(CacheHandler handler) {
+		CacheEntry entry = getCacheEntry(handler);
+        if (entry != null) {
+        	CacheItem item = entry.getItem();
+        	if (item.isUpToDate(handler)) {
+        		return item.getLastModified();
+        	}
+        }
+        return handler.getLastModified();
 	}
 	
 	public void handle(CacheHandler handler) throws Exception {
-		CacheEntry entry = null;
-		String cacheKey = handler.getCacheKey();
-		if (cacheKey != null) {
-			entry = cache.getItem(cacheKey);
-		}
+		CacheEntry entry = getCacheEntry(handler);
         if (entry == null) {
             handler.handleUncached();
         }
         else {
         	CacheItem item = entry.getItem();
-        	long mtime = getModificationTime(item, handler);
-        	if (mtime > item.getLastModified()|| (item.isInvalidated() 
-        			&& mtime == item.getLastModified())) {
-        		
-        		stats.addMiss();
-        		capture(entry, mtime, handler);
+        	if (item.isUpToDate(handler)) {
+        		//stats.addHit();
+        		//log.debug("Serving cached content: " + entry.getKey());
+        		serveData(handler, entry);
         	}
         	else {
-        		stats.addHit();
-        		if (log.isDebugEnabled()) {
-            		log.debug("Serving cached content: " + entry.getKey());
-            	}
-        		serveCacheEntry(handler, entry);        			
+        		//stats.addMiss();
+        		capture(entry, handler);        		        			
         	}
         }
 	}
 	
-	private long getModificationTime(CacheItem item,
-    		CacheHandler handler) throws Exception {
-		
-		long mtime = getHandlerModificationTime(item, handler);
-		if (checkInvolvedFiles) {
-			mtime = Math.max(mtime, item.getLastFileModification());
-		}
-		return mtime;
-	}
-	
-	private boolean mustRevalidate(CacheItem cacheItem) {
-		return cacheItem.isExpired() || (cacheItem.isInvalidated() 
-				&& !staleUnlessExpired);
-	}
-	
-	private long getHandlerModificationTime(CacheItem cacheItem,
-    		CacheHandler handler) throws Exception {
-
-		if (mustRevalidate(cacheItem)) {
-			long mtime = handler.getLastModified();
-			if (mtime < 0) {
-				log.warn("Handler [%s] returned a negative lastModified value: %s", handler, mtime);
-				mtime = System.currentTimeMillis();
-			}
-			if (mtime == cacheItem.getLastModified()) {
-				cacheItem.setTimeToLive(handler.getTimeToLive());
-			}
-			return mtime;
-		}
-		return cacheItem.getLastModified();
-    }
-	
-    
-    private void capture(CacheEntry entry, long mtime, 
-    		CacheHandler handler) throws Exception {
-    	
+	private void capture(CacheEntry entry, CacheHandler handler) throws Exception {
     	CacheItem item = entry.getItem();
-    	if (log.isDebugEnabled()) {
-    		log.debug("Updating cache item %s", item);
-    	}
 		long t1 = System.currentTimeMillis();
-    	if (staleWhileRevalidate && item.exists()) {
-    		nonBlockingCapture(entry, mtime, handler);
+    	if (item != null && item.isServeStaleWhileRevalidate()) {
+    		nonBlockingCapture(entry, handler);
     	}
     	else {
-    		blockingCapture(entry, mtime, handler);
+    		blockingCapture(entry, handler);
     	}
     	long t2 = System.currentTimeMillis();
-    	stats.itemUpdated(item, t2 - t1);
+    	//stats.itemUpdated(item, t2 - t1);
     }
-    
-    private void nonBlockingCapture(CacheEntry entry, long mtime, 
-    		CacheHandler handler) throws Exception {
-    	
+	
+	 private void nonBlockingCapture(CacheEntry entry, CacheHandler handler)
+	 		throws Exception {
+	    	
     	CacheItem oldItem;
-    	// Acquire a write-lock to set the lastModified time, so that
-    	// the item looks up-to-date for other threads. 
+    	// Acquire a write-lock to replace the item by a temporary one
+    	// that serves the old data.
     	WriteLock writeLock = entry.getLock().writeLock();
 		writeLock.lock();
 		try {
 			oldItem = entry.getItem();
-			if (oldItem.getLastModified() > mtime) {
-				log.debug("Item has already been updated by another thread");
-				serveCacheEntry(handler, entry);
+			if (oldItem.isUpToDate(handler)) {
+				//log.debug("Item has already been updated by another thread");
+				serveData(handler, entry);
 				return;
 			}
 			else {
-				oldItem.setLastModified(mtime);
-				oldItem.setTimeToLive(handler.getTimeToLive());
+				entry.setItem(new CacheItem(oldItem));					
 			}
 		}
 		finally {
@@ -206,49 +107,18 @@ public class CacheService {
 			}
 		}
 		
-		log.debug("Performing non-blocking update ...");
+		//log.debug("Performing non-blocking update ...");
 		
 		// Create a new CacheItem and capture the content ...
-		CacheItem newItem = entry.newItem();
+		CacheItem newItem = new CacheItem();
+
+		updateInContext(handler, newItem);
 		
-		boolean update = updateCacheItem(handler, mtime, oldItem, newItem);
-		if (update) {
-			// Acquire a write-lock again to swap the CacheItems
-			writeLock = entry.getLock().writeLock();
-			writeLock.lock();
-			try {
-				entry.replaceItem(newItem);
-				serveCacheEntry(handler, entry);
-			}
-			finally {
-				// The lock should have already been released by serveCacheEntry(),
-				// but in case an exception was thrown before, make sure the entry is unlocked.
-				if (entry.getLock().isWriteLockedByCurrentThread()) {
-					writeLock.unlock();
-				}
-			}	
-		}
-		else {
-			// The item should be discarded
-			CachiusContext.bubbleUp(newItem);
-			handler.writeCacheItem(newItem);
-			newItem.delete();
-		}
-    }
-    
-    private void blockingCapture(CacheEntry entry, long mtime, 
-    		CacheHandler handler) throws Exception {
-    	
-    	WriteLock writeLock = entry.getLock().writeLock();
+		// Acquire a write-lock again to swap the CacheItems
+		writeLock = entry.getLock().writeLock();
 		writeLock.lock();
 		try {
-			CacheItem item = entry.getItem();
-			if (item.getLastModified() < mtime) {
-				// Item is stale and must be revalidated
-				updateCacheItem(handler, mtime, item, item);
-			}
-			// Serve the cached content (either old or newly created)
-			serveCacheEntry(handler, entry);
+			replaceItemAndServeData(entry, handler, oldItem, newItem);
 		}
 		finally {
 			// The lock should have already been released by serveCacheEntry(),
@@ -256,57 +126,76 @@ public class CacheService {
 			if (entry.getLock().isWriteLockedByCurrentThread()) {
 				writeLock.unlock();
 			}
-		}
-    }
-    
-    private boolean updateCacheItem(CacheHandler handler, long mtime,
-    		CacheItem oldItem, CacheItem newItem) throws Exception {
+		}	
+	}
+	 
+    private void blockingCapture(CacheEntry entry, CacheHandler handler)
+    		throws Exception {
     	
-    	CachiusContext ctx = CachiusContext.openNestedContext();
-		boolean update = handler.updateCacheItem(newItem);
-		ctx.close();
-		if (update && !ctx.isPreventCaching()) {
-			cache.removeFromIndex(oldItem);
-			
-			newItem.setLastModified(mtime);
-			newItem.setTimeToLive(getSmallestPositiveValue(
-					handler.getTimeToLive(),
-					ctx.getTimeToLive()));
-			
-			newItem.setTags(ctx.getTags());
-			cache.addToIndex(newItem);
-			
-			if (checkInvolvedFiles) {
-				newItem.setInvolvedFiles(ctx.getInvolvedFiles());
+    	WriteLock writeLock = entry.getLock().writeLock();
+		writeLock.lock();
+		try {
+			CacheItem oldItem = entry.getItem();
+			if (oldItem.isUpToDate(handler)) {
+				//log.debug("Item has already been updated by another thread");
+				serveData(handler, entry);
 			}
 			else {
-				newItem.setInvolvedFiles(null);
+				// Item is stale and must be revalidated
+				//log.debug("Performing blocking update ...");
+				CacheItem newItem = new CacheItem();
+				updateInContext(handler, newItem);
+				replaceItemAndServeData(entry, handler, oldItem, newItem);
 			}
-			return true;
 		}
-		else {
-			newItem.invalidate();
-			return false;
+		finally {
+			// The lock should have already been released by serveData(),
+			// but in case an exception was thrown before, make sure the entry is unlocked.
+			if (entry.getLock().isWriteLockedByCurrentThread()) {
+				writeLock.unlock();
+			}
 		}
     }
     
-    private long getSmallestPositiveValue(long a, long b) {
-    	if (a < 0) {
-    		return b;
+    private void updateInContext(CacheHandler handler, CacheItem newItem)
+    		throws Exception {
+    	
+    	CacheItem parent = CacheContext.getItem();
+    	try { 
+	    	CacheContext.setItem(newItem);
+			newItem.setData(handler.capture(diskStore));
     	}
-    	if (b < 0) {
-    		return a;
+    	finally {
+    		CacheContext.setItem(parent);
     	}
-    	return Math.min(a, b);
     }
+    
+    private void replaceItemAndServeData(CacheEntry entry, CacheHandler handler,
+			CacheItem oldItem, CacheItem newItem) throws Exception {
+		
+		if (!newItem.isError() || !oldItem.isServeStaleOnError()) {
+			entry.setItem(newItem);
+		}
+		serveData(handler, entry);
+		
+		if (newItem.isError()) {
+			entry.setItem(oldItem);
+			newItem.delete();
+		}
+		else {
+			index.remove(oldItem);
+			index.add(newItem);
+			oldItem.delete();
+		}
+	}
     
     /**
      * Serves the cached content. Acquires a read-lock for the given entry.
      * if the current thread already has a write-lock, the lock is down-graded.
      * When the method returns, all locks will be released.
      */
-    private void serveCacheEntry(CacheHandler handler, CacheEntry entry) 
-    		throws IOException {
+    private void serveData(CacheHandler handler, CacheEntry entry) 
+    		throws Exception {
     	
 		ReadLock readLock = entry.getLock().readLock();
         readLock.lock();
@@ -315,12 +204,19 @@ public class CacheService {
         		entry.getLock().writeLock().unlock();
         	}
         	CacheItem item = entry.getItem();
-        	CachiusContext.bubbleUp(item);
-        	handler.writeCacheItem(item);
+        	handler.serve(item.getData());
+        	CacheItem parentItem = CacheContext.getItem();
+        	if (parentItem != null) {
+        		parentItem.addAll(item);
+        	}
         }
         finally {
         	readLock.unlock();	
         }
     }
-        
+
+	public void invalidateTaggedItems(String tag) {
+		invalidator.invalidate(index, tag);
+	}
+    
 }

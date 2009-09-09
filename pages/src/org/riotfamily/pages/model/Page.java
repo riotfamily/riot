@@ -196,9 +196,6 @@ public class Page extends ActiveRecordBeanSupport implements ContentContainerOwn
 	@Transient
 	public String getUrl() {
 		StringBuilder url = new StringBuilder();
-		if (site.getPathPrefix() != null) {
-			url.append(site.getPathPrefix());
-		}
 		url.append(getPath());
 		String suffix = schema.getDefaultSuffix(pageType);
 		if (suffix != null) {

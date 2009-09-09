@@ -24,6 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.GenericFilterBean;
 
 /**
+ * Generic base-class for filters hat work on <em>Http</em>ServletRequest 
+ * and <em>Http</em>ServletResponse objects.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */

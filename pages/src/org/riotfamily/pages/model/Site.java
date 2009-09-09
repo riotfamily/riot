@@ -35,7 +35,6 @@ import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -50,8 +49,6 @@ public class Site extends ActiveRecordBeanSupport {
 	
 	private String hostName;
 	
-	private String pathPrefix;
-
 	private Locale locale;
 	
 	private Site masterSite;
@@ -78,17 +75,12 @@ public class Site extends ActiveRecordBeanSupport {
 
 	public String getName() {
 		if (name == null) {
-			StringBuffer sb = new StringBuffer();
 			if (hostName != null) {
-				sb.append(hostName);
-				if (pathPrefix != null) {
-					sb.append(pathPrefix);	
-				}
+				name = hostName;
 			}
 			else {
-				sb.append(locale);
+				name = locale.toString();
 			}
-			name = sb.toString();
 		}
 		return name;
 	}
@@ -112,39 +104,6 @@ public class Site extends ActiveRecordBeanSupport {
 	public void setHostName(String hostName) {
 		this.hostName = hostName;
 	}
-
-	public String getPathPrefix() {
-		return this.pathPrefix;
-	}
-
-	public void setPathPrefix(String pathPrefix) {
-		this.pathPrefix = normalizePrefix(pathPrefix);
-	}
-	
-	private String normalizePrefix(String prefix) {
-		if (prefix != null) {
-			// Strip trailing slash
-			if (prefix.endsWith("/")) {
-				prefix = prefix.substring(0, prefix.length() - 1);
-			}
-			// represent empty prefixes to null
-			if (!StringUtils.hasText(prefix)) {
-				return null;
-			}
-			// Add leading slash
-			if (!prefix.startsWith("/")) {
-				prefix = "/" + prefix;
-			}
-		}
-		return prefix;
-	}
-	
-	public String stripPrefix(String path) {
-		if (pathPrefix != null && path != null && path.startsWith(pathPrefix)) {
-			return path.substring(pathPrefix.length());
-		}
-		return path;
-	}
 	
 	/**
 	 * Returns whether the given hostName matches the configured one.
@@ -165,15 +124,7 @@ public class Site extends ActiveRecordBeanSupport {
 				|| (this.hostName != null && this.hostName.equals(hostName))
 				|| (this.aliases != null && this.aliases.contains(hostName));
 	}
-	
-	public boolean prefixMatches(String path) {
-		return pathPrefix == null || path.startsWith(pathPrefix + "/") || pathPrefix.equals(path);
-	}
-			
-	public boolean matches(String hostName, String path) {
-			return hostNameMatches(hostName) && prefixMatches(path);
-	}
-
+				
 	@ManyToOne(cascade=CascadeType.MERGE)
 	public Site getMasterSite() {
 		return this.masterSite;
@@ -280,9 +231,6 @@ public class Site extends ActiveRecordBeanSupport {
         if (contextPath.length() > 0 && !path.startsWith(contextPath)) {
         	url.append(contextPath);
         }
-        if (pathPrefix != null && !path.startsWith(contextPath + pathPrefix)) {
-        	url.append(pathPrefix);
-        }
 		url.append(path);
 		return url.toString();
 	}
@@ -309,7 +257,6 @@ public class Site extends ActiveRecordBeanSupport {
 		Site other = (Site) obj;
 		
 		return ObjectUtils.nullSafeEquals(this.hostName, other.getHostName())
-				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.getPathPrefix())
 				&& ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
 				&& ObjectUtils.nullSafeEquals(this.masterSite, other.getMasterSite());
 	}
@@ -345,9 +292,9 @@ public class Site extends ActiveRecordBeanSupport {
 		return find("from Site order by position");
 	}
 	
-	public static Site loadByHostNameAndPath(String hostName, String path) {
+	public static Site loadByHostName(String hostName) {
 		for (Site site : findAll()) {
-			if (site.matches(hostName, path)) {
+			if (site.hostNameMatches(hostName)) {
 				return site;
 			}
 		}

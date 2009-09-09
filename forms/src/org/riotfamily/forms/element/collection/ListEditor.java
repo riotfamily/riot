@@ -202,7 +202,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 			}
 		}
 		if (value != null) {
-			if (!(value instanceof Collection)) {
+			if (!(value instanceof Collection<?>)) {
 				throw new IllegalArgumentException("Value must implement " +
 						"the java.util.Collection interface");
 			}

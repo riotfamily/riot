@@ -20,7 +20,7 @@ import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.CachiusContext;
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
@@ -107,7 +107,7 @@ public class ResourceHandlerMapping extends AbstractHandlerMapping {
 				response.setContentType(contentType);
 			}
 			if (file != null && WebUtils.isIncludeRequest(request)) {
-				CachiusContext.addFile(file);
+				CacheContext.addFile(file);
 			}
 			IOUtils.serve(res.getInputStream(), response.getOutputStream());
 			return null;

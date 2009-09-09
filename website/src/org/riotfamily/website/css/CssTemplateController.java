@@ -25,10 +25,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.Compressible;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.website.cache.AbstractCacheableController;
+import org.riotfamily.website.cache.Compressible;
 import org.riotfamily.website.freemarker.RiotFileTemplateLoader;
 import org.riotfamily.website.performance.ResourceStamper;
 import org.riotfamily.website.performance.YUICssCompressor;

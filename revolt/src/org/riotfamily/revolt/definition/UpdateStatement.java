@@ -27,7 +27,6 @@ public class UpdateStatement {
 	
 	private String sql;
 
-	@SuppressWarnings("unchecked")
 	public UpdateStatement(String dialects, String sql) {
 		if (StringUtils.hasText(dialects)) {
 			this.supportedDialectNames = StringUtils.commaDelimitedListToSet(

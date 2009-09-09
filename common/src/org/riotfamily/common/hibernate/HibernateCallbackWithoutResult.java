@@ -25,7 +25,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
  * 
  * @since 9.0
  */
-public abstract class HibernateCallbackWithoutResult implements HibernateCallback {
+public abstract class HibernateCallbackWithoutResult implements HibernateCallback<Object> {
 
 	public final Object doInHibernate(Session session) 
 			throws HibernateException, SQLException {

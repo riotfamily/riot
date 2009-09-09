@@ -15,10 +15,10 @@ package org.riotfamily.pages.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.website.cache.CacheTagUtils;
+import org.riotfamily.website.cache.CacheableController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -28,7 +28,7 @@ public class FolderController implements CacheableController {
 		return request.getRequestURL().toString();
 	}
 
-	public long getLastModified(HttpServletRequest request) throws Exception {
+	public long getLastModified(HttpServletRequest request) {
 		return System.currentTimeMillis();
 	}
 

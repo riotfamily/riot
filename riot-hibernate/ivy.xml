@@ -4,20 +4,19 @@
     	<conf name="build" />
     	<conf name="runtime" />
     	<conf name="test" extends="runtime" />
-    	<conf name="src" />
     </configurations>
     <publications>
-    	<artifact conf="build,runtime,test" />
+    	<artifact />
+    	<artifact type="source" ext="src.zip" />
     	<artifact name="riot-hibernate-context" conf="runtime" />
-    	<artifact type="source" ext="src.zip" conf="src" />
     </publications>
     <dependencies>
         <dependency org="riotfamily" name="riot-core" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="riotfamily" name="revolt" rev="${dep.riot.revision}" conf="*->@" />
-        <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->aop;src->src" />
-        <dependency org="hibernate" name="hibernate" rev="${dep.hibernate.revision}" conf="build->core;runtime->standalone,c3p0,javassist;src->src" />
-		<dependency org="hibernate" name="hibernate-annotations" rev="${dep.hibernate-annotations.revision}" conf="build,runtime->default" />
+        <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="*->default" />
+        <dependency org="hibernate" name="hibernate" rev="${dep.hibernate.revision}" conf="*->standalone,c3p0,javassist,src" />
+		<dependency org="hibernate" name="hibernate-annotations" rev="${dep.hibernate-annotations.revision}" conf="*->default" />
 		<dependency org="slf4j" name="slf4j" rev="1.4.2" conf="runtime->jcl" />
-		<dependency org="c3p0" name="c3p0" rev="0.9.1.1" conf="build,runtime->default" />
+		<dependency org="c3p0" name="c3p0" rev="0.9.1.1" conf="*->default" />
     </dependencies>
 </ivy-module>

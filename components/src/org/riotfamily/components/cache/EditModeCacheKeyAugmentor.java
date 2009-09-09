@@ -14,9 +14,9 @@ package org.riotfamily.components.cache;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.core.security.AccessController;
+import org.riotfamily.website.cache.CacheKeyAugmentor;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -24,7 +24,7 @@ import org.riotfamily.core.security.AccessController;
  */
 public class EditModeCacheKeyAugmentor implements CacheKeyAugmentor {
 
-	public void augmentCacheKey(StringBuffer key, HttpServletRequest request) {
+	public void augmentCacheKey(StringBuilder key, HttpServletRequest request) {
 		if (AccessController.isAuthenticatedUser()) {
 			if (EditModeUtils.isEditMode(request)) {
 				key.insert(0, "edit:");

@@ -41,13 +41,12 @@ public class ViewResolverHelper {
 
     private RequestToViewNameTranslator viewNameTranslator;
 
-	@SuppressWarnings("unchecked")
 	public ViewResolverHelper(ListableBeanFactory beanFactory) {
-		Map matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+		Map<String, ViewResolver> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				beanFactory, ViewResolver.class, true, false);
 
         if (!matchingBeans.isEmpty()) {
-            this.viewResolvers = new ArrayList(matchingBeans.values());
+            this.viewResolvers = new ArrayList<ViewResolver>(matchingBeans.values());
             Collections.sort(this.viewResolvers, new OrderComparator());
         }
 

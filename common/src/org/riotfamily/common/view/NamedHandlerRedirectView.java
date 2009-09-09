@@ -48,8 +48,7 @@ public class NamedHandlerRedirectView extends RedirectView {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
-	public void render(Map model, HttpServletRequest request, 
+	public void render(Map<String, ?> model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
 		if (handlerUrlResolver == null) {

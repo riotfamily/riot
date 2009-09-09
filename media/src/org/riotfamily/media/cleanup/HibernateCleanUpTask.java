@@ -130,7 +130,7 @@ public class HibernateCleanUpTask extends HibernateTask {
 				else if (type instanceof ComponentType) {
 					handleComponentType((ComponentType) type, name, meta.getEntityName());
 				}
-				else if (type.isCollectionType()) {
+				else if (type instanceof CollectionType) {
 					CollectionType collectionType = (CollectionType) type;
 					Type elementType = collectionType.getElementType(
 							(SessionFactoryImplementor) getSessionFactory());

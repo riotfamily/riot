@@ -15,8 +15,8 @@ package org.riotfamily.website.txt2img;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.cachius.spring.Compressible;
+import org.riotfamily.website.cache.CacheableController;
+import org.riotfamily.website.cache.Compressible;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ButtonStylesheetController implements CacheableController, Compressible {
@@ -39,7 +39,7 @@ public class ButtonStylesheetController implements CacheableController, Compress
 		return buttonService.isReloadable() ? 0 : CACHE_ETERNALLY;
 	}
 	
-	public long getLastModified(HttpServletRequest request) throws Exception {
+	public long getLastModified(HttpServletRequest request) {
 		return buttonService.getLastModified();
 	}
 

@@ -47,7 +47,6 @@ public class JobUIUpdater implements ServletContextAware {
 		send(jd.getId(), "updateJob", jd);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void send(Long jobId, String functionName, Object arg) {		
 		ServerContext serverContext = ServerContextFactory.get(servletContext);
 		Iterator<ScriptSession> it = serverContext.getAllScriptSessions().iterator();

@@ -15,7 +15,7 @@ package org.riotfamily.website.freemarker;
 import java.io.File;
 import java.io.IOException;
 
-import org.riotfamily.cachius.CachiusContext;
+import org.riotfamily.cachius.CacheContext;
 
 import freemarker.cache.FileTemplateLoader;
 
@@ -36,7 +36,7 @@ public class RiotFileTemplateLoader extends FileTemplateLoader {
 	public Object findTemplateSource(String name) throws IOException {
 		File file = (File) super.findTemplateSource(name);
 		if (file != null) {
-			CachiusContext.addFile(file);
+			CacheContext.addFile(file);
 		}
 		return file;
 	}

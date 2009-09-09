@@ -14,8 +14,8 @@ package org.riotfamily.core.resource;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.common.i18n.CodeRevealingMessageSource;
+import org.riotfamily.website.cache.CacheKeyAugmentor;
 
 /**
  * CacheKeyAugmentor that adds a String to the cacheKey if message code 
@@ -32,7 +32,7 @@ public class CodeRevelationCacheKeyAugmentor implements CacheKeyAugmentor {
 		this.messageSource = messageSource;
 	}
 
-	public void augmentCacheKey(StringBuffer key, HttpServletRequest request) {
+	public void augmentCacheKey(StringBuilder key, HttpServletRequest request) {
 		if (messageSource.isRevealCodes()) {
 			key.append(";revealedMessageCodes");
 		}

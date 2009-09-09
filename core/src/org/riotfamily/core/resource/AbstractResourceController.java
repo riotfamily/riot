@@ -24,11 +24,11 @@ import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.Compressible;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.website.cache.AbstractCacheableController;
+import org.riotfamily.website.cache.Compressible;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.LastModified;
@@ -126,12 +126,15 @@ public class AbstractResourceController extends AbstractCacheableController
 	}
 	
 	public long getLastModified(HttpServletRequest request) {
+		/*
 		if (checkForModifications) {
 			String path = getResourcePath(request);
 			long mtime = getLastModified(path);
 			return mtime >= 0 ? mtime : lastModified;
 		}
 		return lastModified;
+		*/
+		return System.currentTimeMillis();
 	}
 	
 	protected long getLastModified(String path) {

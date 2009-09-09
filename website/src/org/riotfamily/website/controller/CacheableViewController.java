@@ -14,8 +14,8 @@ package org.riotfamily.website.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.website.cache.CacheableController;
 
 public class CacheableViewController extends ConfigurableViewController 
 		implements CacheableController {
