@@ -45,7 +45,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			return null;
 		}
 		Page page = pageResolver.getPage(request);
-		String path = pageResolver.getPathWithinSite(request);
+		String path = pageResolver.getLookupPath(request);
 		if (page == null) {
 			Site site = pageResolver.getSite(request);
 			if (site == null) {

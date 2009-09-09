@@ -74,10 +74,6 @@ public class SiteFacade {
 		return site.getName();
 	}
 
-	public String getPathPrefix() {
-		return site.getPathPrefix();
-	}
-
 	public boolean isEnabled() {
 		return site.isEnabled();
 	}
