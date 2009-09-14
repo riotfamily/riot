@@ -69,7 +69,7 @@ public class ScreenContext {
 	}
 	
 	public String getObjectId() {
-		if (objectId == null && object != null) {
+		if (objectId == null && object != null && dao != null) {
 			objectId = dao.getObjectId(object);
 		}
 		return objectId;

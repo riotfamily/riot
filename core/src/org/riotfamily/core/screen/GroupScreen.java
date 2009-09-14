@@ -45,7 +45,7 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 	
 	@Override
 	public String getTitle(ScreenContext context) {
-		if (context.getObject() != null) {
+		if (context.getObject() != null && getParentScreen() instanceof ListScreen) {
 			return ScreenUtils.getLabel(context.getObject(), this);
 		}
 		return super.getTitle(context);

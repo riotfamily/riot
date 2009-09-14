@@ -276,7 +276,9 @@ public class FormScreen extends AjaxFormController
 	}
 
 	public void setParentScreen(RiotScreen parentScreen) {
-		this.parentScreen = parentScreen;
+		if (this.parentScreen == null) {
+			this.parentScreen = parentScreen;
+		}
 	}
 	
 	public String getTitle(ScreenContext context) {
