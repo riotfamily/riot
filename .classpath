@@ -15,7 +15,6 @@
 	<classpathentry kind="src" path="dbmsgsrc/src"/>
 	<classpathentry kind="src" path="crawler/src"/>
 	<classpathentry kind="src" path="search/src"/>
-	<classpathentry kind="src" path="linkcheck/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/dwr.jar"/>
@@ -52,14 +51,14 @@
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/spring-aop.jar"/>
 	<classpathentry kind="lib" path="lib/spring-beans.jar" sourcepath="lib/spring-beans.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-context-support.jar"/>
+	<classpathentry kind="lib" path="lib/spring-context-support.jar" sourcepath="lib/spring-context-support.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-context.jar" sourcepath="lib/spring-context.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-core.jar"/>
-	<classpathentry kind="lib" path="lib/spring-expression.jar"/>
+	<classpathentry kind="lib" path="lib/spring-core.jar" sourcepath="lib/spring-core.src.zip"/>
+	<classpathentry kind="lib" path="lib/spring-expression.jar" sourcepath="lib/spring-expression.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-jdbc.jar"/>
 	<classpathentry kind="lib" path="lib/spring-orm.jar" sourcepath="lib/spring-orm.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-transaction.jar"/>
 	<classpathentry kind="lib" path="lib/spring-web-servlet.jar" sourcepath="lib/spring-web-servlet.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-web.jar"/>
+	<classpathentry kind="lib" path="lib/spring-web.jar" sourcepath="lib/spring-web.src.zip"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
