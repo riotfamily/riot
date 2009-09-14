@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.media.store.FileStore;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,7 +38,7 @@ public class DownloadController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		String uri = (String) request.getAttribute("uri");
+		String uri = "/" + HandlerUrlUtils.getPathWithinMapping(request);
 		if (uri != null) {
 			File file = fileStore.retrieve(uri);
 			log.debug("Serving file "+uri+" with content-disposition: attachment");
