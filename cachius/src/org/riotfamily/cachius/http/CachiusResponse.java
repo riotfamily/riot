@@ -53,6 +53,8 @@ public class CachiusResponse implements HttpServletResponse {
     
     private boolean compressible;
     
+    private long gzipThreshold;
+    
     private Directives directives;
     
     private DiskStore diskStore;
@@ -64,15 +66,16 @@ public class CachiusResponse implements HttpServletResponse {
     private ScanWriter scanWriter;
     
     private File file;
-	    	
+
     public CachiusResponse(ResponseData data, DiskStore diskStore, 
-    		SessionIdEncoder sessionIdEncoder, boolean compressible, 
-    		Directives directives) throws IOException {
+    		SessionIdEncoder sessionIdEncoder, boolean compressible,
+    		int gzipThreshold, Directives directives) throws IOException {
     	
     	this.data = data;
     	this.diskStore = diskStore;
     	this.sessionIdEncoder = sessionIdEncoder;
     	this.compressible = compressible;
+    	this.gzipThreshold = gzipThreshold;
         this.directives = directives;
         this.file = diskStore.getFile();
     }
@@ -217,7 +220,7 @@ public class CachiusResponse implements HttpServletResponse {
     		data.setContent(content);
     	}
     	else {
-    		if (compressible) {
+    		if (compressible && file.length() > gzipThreshold) {
     			data.setContent(new GzipContent(file, diskStore.getFile()));
     		}
     		else {

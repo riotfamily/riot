@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.support.IOUtils;
+import org.springframework.web.util.WebUtils;
 
 public class GzipContent extends BinaryContent {
 
@@ -68,7 +69,9 @@ public class GzipContent extends BinaryContent {
 		if (responseCanBeZipped(request)) {
 			serveZipped(request, response);
 		}
-		super.serve(request, response);
+		else {
+			super.serve(request, response);
+		}
 	}
 	
 	protected void serveZipped(HttpServletRequest request,
@@ -95,7 +98,7 @@ public class GzipContent extends BinaryContent {
 	protected boolean responseCanBeZipped(HttpServletRequest request) {
 		return clientAcceptsGzip(request) 
 				&& !userAgentHasGzipBugs(request)
-				; //&& !WebUtils.isIncludeRequest(getRequest());
+				&& !WebUtils.isIncludeRequest(request);
 	}
 	
 	/**
