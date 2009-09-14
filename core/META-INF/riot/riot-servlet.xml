@@ -54,6 +54,9 @@
 
 	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
 	
+	<bean class="org.riotfamily.common.view.FlashScopeFilterPlugin">
+		<property name="filterName" value="riot-filter" />
+	</bean>
 
 	<!-- Spring Web-MVC Setup -->
 	
@@ -70,7 +73,6 @@
     
     <util:list id="handlerInterceptors">
 		<ref bean="loginInterceptor" />
-		<bean class="org.riotfamily.common.view.FlashScopeInterceptor" />
 		<bean class="org.riotfamily.common.interceptor.RequestHolderInterceptor" />
 	</util:list>
 			
@@ -92,15 +94,18 @@
 		</property>
 	</bean>
 	
-	<bean id="handlerMapping" class="org.riotfamily.common.mapping.AdvancedBeanNameHandlerMapping">
+	<bean id="beanNameHandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
 		<property name="order" value="2" />
-		<property name="servletPrefix" ref="riotServletPrefix" />
 		<property name="interceptors" ref="handlerInterceptors" />
 	</bean>
 	
 	<bean class="org.directwebremoting.spring.DwrHandlerMapping">
 		<property name="interceptors" ref="handlerInterceptors" />
 	</bean>
+    
+    <bean class="org.riotfamily.common.mapping.ReverseUrlHanderMappingAdapter">
+    	<property name="servletPrefix" ref="riotServletPrefix" />
+    </bean>
     
     <bean id="handlerUrlResolver" class="org.riotfamily.common.mapping.HandlerUrlResolver">
 		<property name="parent">
@@ -127,19 +132,17 @@
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/core/runtime/view/error.ftl" />
 	</bean>
 
-	<!--
     <bean id="cacheKeyAugmentor" class="org.riotfamily.core.resource.CodeRevelationCacheKeyAugmentor">
 		<constructor-arg ref="messageSource" />
 	</bean>
 	
-    <bean id="cacheableHandlerAdapter" class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
+    <bean id="cacheableHandlerAdapter" class="org.riotfamily.website.cache.CacheableControllerHandlerAdapter">
     	<description>
     		HandlerAdapter that handles CacheableControllers.
     	</description>
 		<constructor-arg ref="cacheService" />
 		<property name="cacheKeyAugmentor" ref="cacheKeyAugmentor" />
 	</bean>
-	-->
 	
 	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter">
 		<description>
@@ -152,7 +155,7 @@
 			FreeMarker configuration.
 		</description>
 		<property name="defaultEncoding" value="UTF-8" />
-		<property name="templateLoaders">
+		<property name="preTemplateLoaders">
 			<list>
 				<bean class="org.riotfamily.common.freemarker.ResourceTemplateLoader" />
 			</list>
@@ -207,7 +210,6 @@
 				<value>/login</value>
 				<value>/logout</value>
 				<value>/resources/**</value>
-				<value>/joined/**</value>
 			</list>
 		</property>
 	</bean>
@@ -349,7 +351,7 @@
 	
 	<!-- Dialog commands -->
 	
-	<bean id="commandDialogController" name="/dialog/@{formKey}" 
+	<bean id="commandDialogController" name="/dialog/{formKey}" 
 			class="org.riotfamily.core.screen.list.command.impl.dialog.DialogFormController">
 		<constructor-arg ref="formContextFactory" />
 	</bean>
@@ -361,22 +363,9 @@
 			<property name="match" value="/**/*.css" />
 			<property name="properties" ref="cssProperties" />
 		</bean>
-		<bean class="org.riotfamily.core.resource.PropertyResourceFilter">
-			<property name="match" value="/**/frameset.js" />
-			<property name="properties">
-				<map>
-					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
-				</map>
-			</property>
-		</bean>
 	</util:list>
 	
 	<util:map id="cssProperties">
-		<entry key="highlight_color" value="#cb0038" />
-		<entry key="title_bg_color" value="#3d3d3d" />
-		<entry key="label_color" value="#3d3d3d" />
-		<entry key="error_color" value="#cb0038" />
-		<entry key="toolbar_border_color" value="#3d3d3d" />
 		<entry key="resourcePath" value-ref="resourcePath" />
 	</util:map>
 	
@@ -408,8 +397,7 @@
 		</bean>
 	</util:list>
 	
-	<bean id="resourceController" name="/resources/*/@{resource*}" class="org.riotfamily.core.resource.ResourceController">
-		<property name="pathAttribute" value="resource" />
+	<bean id="resourceController" name="/resources/{version}/**" class="org.riotfamily.core.resource.ResourceController">
 		<property name="fileTypeMap" ref="fileTypeMap" />
 		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
 		<property name="filters" ref="resourceFilters" />
@@ -426,14 +414,14 @@
 		</property>
 	</bean>
 	
-	<bean id="minifyScriptController" name="/resources/*/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
+	<bean id="minifyScriptController" name="/resources/{version}/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
 		<description>
 			Controller to compress (minify) JavaScript files.
 		</description>
 		<constructor-arg ref="javaScriptCompressor" />
 	</bean>
 	
-	<bean id="minifyCssController" name="/resources/*/joined.css" class="org.riotfamily.website.performance.MinifyCssController">
+	<bean id="minifyCssController" name="/resources/{version}/joined.css" class="org.riotfamily.website.performance.MinifyCssController">
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
@@ -451,8 +439,8 @@
 	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />
  
 	<!-- 
-	<bean id="exportController" name="/export/@{listSessionKey}/@{commandId}" class="org.riotfamily.riot.list.command.export.ExportController" />
-	<alias alias="/export/@{listSessionKey}/@{commandId}/@{objectId}" name="exportController"/>
+	<bean id="exportController" name="/export/{listSessionKey}/{commandId}" class="org.riotfamily.riot.list.command.export.ExportController" />
+	<alias alias="/export/{listSessionKey}/{commandId}/{objectId}" name="exportController"/>
  	-->
  
 	<!--

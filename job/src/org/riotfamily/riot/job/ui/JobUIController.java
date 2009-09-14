@@ -15,6 +15,7 @@ package org.riotfamily.riot.job.ui;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.riot.job.JobManager;
@@ -42,7 +43,7 @@ public class JobUIController implements Controller {
 			HttpServletResponse response) throws Exception {
 		
 		String jobType = ServletUtils.getRequiredStringAttribute(request, "type");
-		String objectId = (String) request.getAttribute("objectId");
+		String objectId = HandlerUrlUtils.getPathVariable(request, "objectId");
 		
 		JobDetail detail = jobManager.getOrCreateJob(jobType, objectId, true);
 		ModelAndView mv = new ModelAndView(viewName);

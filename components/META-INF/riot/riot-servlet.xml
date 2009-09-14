@@ -51,7 +51,7 @@
 	  - Controller that renders forms to edit component properties.
 	  -->
 	<bean id="componentFormController"
-		name="/components/form/@{contentId}/@{formId*}"
+		name="/components/form/{contentId}/{formId}"
 		class="org.riotfamily.components.editor.ContentFormController">
 		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="contentFormRepository" />

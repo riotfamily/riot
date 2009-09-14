@@ -224,7 +224,7 @@ public class CommonMacroHelper {
 				.append(request.getContextPath()).append(url).toString();
 	}
 
-	public String getUrlForHandler(String handlerName, Object attributes) {
+	public String getUrlForHandler(String handlerName, Object... attributes) {
 		return handlerUrlResolver.getUrlForHandler(handlerName, attributes);
 	}
 

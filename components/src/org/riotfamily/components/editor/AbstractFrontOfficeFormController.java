@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.dao.RiotDaoException;
@@ -51,8 +52,6 @@ public abstract class AbstractFrontOfficeFormController
 	private String successViewName = ResourceUtils.getPath(
 			AbstractFrontOfficeFormController.class, "form-success.ftl");
 
-	private String formIdAttribute = "formId";
-
 	
 	public AbstractFrontOfficeFormController(
 			FormContextFactory formContextFactory, 
@@ -72,7 +71,7 @@ public abstract class AbstractFrontOfficeFormController
 	}
 
 	protected String getFormId(HttpServletRequest request) {
-		return (String) request.getAttribute(formIdAttribute);
+		return HandlerUrlUtils.getPathVariable(request, "formId");
 	}
 
 	protected String getSessionAttribute(HttpServletRequest request) {

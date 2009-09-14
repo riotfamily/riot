@@ -13,6 +13,7 @@
 package org.riotfamily.common.mapping;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 public final class HandlerUrlUtils {
@@ -78,6 +80,21 @@ public final class HandlerUrlUtils {
 		
 		String url = getContextRelativeUrl(request, handlerName);
 		ServletUtils.resolveAndRedirect(request, response, url);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String getPathVariable(HttpServletRequest request, String name) {
+		Map<String, String> vars = (Map<String, String>) request.getAttribute(
+				HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+		
+		if (vars != null) {
+			return vars.get(name);
+		}
+		return null;
+	}
+
+	public static String getPathWithinMapping(HttpServletRequest request) {
+		return (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 	}
 	
 }

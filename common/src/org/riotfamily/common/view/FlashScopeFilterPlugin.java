@@ -12,25 +12,30 @@
  */
 package org.riotfamily.common.view;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.riotfamily.common.filter.FilterPlugin;
 
 /**
- * HandlerInterceptor that exposes data stored in the {@link FlashScope} as
+ * FilterPlugin that exposes data stored in the {@link FlashScope} as
  * request attributes.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */
-public class FlashScopeInterceptor extends HandlerInterceptorAdapter {
+public class FlashScopeFilterPlugin extends FilterPlugin {
 
 	@Override
-	public boolean preHandle(HttpServletRequest request,
-			HttpServletResponse response, Object handler) throws Exception {
+	public void doFilter(HttpServletRequest request,
+			HttpServletResponse response, FilterChain filterChain)
+			throws IOException, ServletException {
 
 		FlashScope.expose(request);
-		return true;
+		filterChain.doFilter(request, response);
 	}
 }

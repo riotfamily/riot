@@ -12,8 +12,12 @@
  */
 package org.riotfamily.common.mapping;
 
-public interface ReverseHandlerMapping {
+import org.springframework.web.servlet.HandlerMapping;
 
-	public String getUrlForHandler(String handlerName, Object... vars);
+public interface ReverseHandlerMappingAdapter {
+
+	public boolean supports(HandlerMapping mapping);
+	
+	public ReverseHandlerMapping adapt(HandlerMapping mapping);
 	
 }

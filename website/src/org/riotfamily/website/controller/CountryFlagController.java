@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -58,7 +59,7 @@ public class CountryFlagController implements Controller {
 					HttpServletResponse response) throws Exception {
 		
 		Resource res = null;
-		String localeString = (String)request.getAttribute("locale");
+		String localeString = HandlerUrlUtils.getPathVariable(request, "locale");
 		if (localeString != null) {
 			Locale locale = StringUtils.parseLocaleString(localeString);			
 			if (locale != null) {			

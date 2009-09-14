@@ -77,18 +77,10 @@
 		</description>
 	</bean>
 	
-	<bean id="riotInterceptors" class="org.riotfamily.common.interceptor.ChainedHandlerInterceptor">
-		<description>
-			ChainedHandlerInterceptor that combines all interceptors that are required
-	  		by Riot or one of its modules. Modules should use the override:add tag and
-	  		add their interceptors to this bean definition.
-		</description>
-		<property name="interceptors">
-			<list>
-				<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
-				<bean class="org.riotfamily.common.view.FlashScopeInterceptor" />
-			</list>
-		</property>
+	<bean class="org.riotfamily.common.mapping.ReverseUrlHanderMappingAdapter" />
+	
+	<bean class="org.riotfamily.common.view.FlashScopeFilterPlugin">
+		<property name="filterName" value="website-filter" />
 	</bean>
 	
 	<bean id="cssTemplateController" name="/**/*.css" 
@@ -210,7 +202,7 @@
 		<property name="baseDir" value="/WEB-INF/hyphenation" />
 	</bean>
 	
-	<bean id="txt2ImgController" name="/riot-utils/txt2img.@{type}" class="org.riotfamily.website.txt2img.Txt2ImgController">
+	<bean id="txt2ImgController" name="/riot-utils/txt2img.{type}" class="org.riotfamily.website.txt2img.Txt2ImgController">
 		<property name="compressor">
 			<bean class="org.riotfamily.website.performance.YUIJavaScriptCompressor">
 				<property name="enabled" value="${riot.resources.compress=true}" />
@@ -218,7 +210,7 @@
 		</property>
 	</bean>
 	
-	<bean id="txt2imgButtonController" name="/riot-utils/imagebtn/@{style}.*" class="org.riotfamily.website.txt2img.ButtonController">
+	<bean id="txt2imgButtonController" name="/riot-utils/imagebtn/{style}.*" class="org.riotfamily.website.txt2img.ButtonController">
 		<constructor-arg ref="buttonService" />
 	</bean>
 	
@@ -226,7 +218,7 @@
 		<constructor-arg ref="buttonService" />
 	</bean>
 		
-	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.website.controller.CountryFlagController">
+	<bean id="countryFlagController" name="/riot-utils/country/{locale}.gif" class="org.riotfamily.website.controller.CountryFlagController">
 		<constructor-arg ref="fileTypeMap" />
 		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/icons/flags/" />
 		<property name="defaultFlag" value="europeanunion" />

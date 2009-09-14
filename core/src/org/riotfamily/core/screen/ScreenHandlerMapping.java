@@ -73,9 +73,9 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 		return null;
 	}
 
-	public String getUrlForHandler(String handlerName, Object attributes) {
-		if (attributes instanceof ScreenContext) {
-			ScreenContext context = (ScreenContext) attributes;
+	public String getUrlForHandler(String handlerName, Object... vars) {
+		if (vars != null && vars.length == 1 && vars[0] instanceof ScreenContext) {
+			ScreenContext context = (ScreenContext) vars[0];
 			StringBuilder path = new StringBuilder("/screen/");
 			path.append(handlerName).append('/');
 			if (context.getObjectId() != null) {

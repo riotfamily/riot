@@ -38,8 +38,8 @@
 	<bean id="jobUIController" class="org.riotfamily.riot.job.ui.JobUIController">
 		<property name="jobManager" ref="jobManager" />
 	</bean>
-	<alias name="jobUIController" alias="/job/@{type}" />
-	<alias name="jobUIController" alias="/job/@{type}/@{objectId}" />
+	<alias name="jobUIController" alias="/job/{type}" />
+	<alias name="jobUIController" alias="/job/{type}/{objectId}" />
 
 	<!-- 
 	<override:put ref="riotDwrConfigurator" property="converterTypes">		
