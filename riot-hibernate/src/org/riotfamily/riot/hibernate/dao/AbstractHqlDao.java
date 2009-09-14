@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.riot.hibernate.dao;
 
 import java.util.Iterator;
@@ -32,17 +21,20 @@ import org.hibernate.SessionFactory;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Order;
-import org.riotfamily.core.dao.SortableDao;
+import org.riotfamily.core.dao.Searchable;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * RiotDao implementation based on Hibernate.
  */
 public abstract class AbstractHqlDao extends AbstractHibernateRiotDao 
-		implements SortableDao {
+		implements Searchable {
 
 	private RiotLog log = RiotLog.get(AbstractHqlDao.class);
 
+	private String[] searchableProperties;
+	
     public AbstractHqlDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
@@ -59,11 +51,19 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     	StringBuffer from = new StringBuffer();
     	from.append(getEntityClass().getName());
     	from.append(" as this");
-    	HibernateUtils.appendJoinsForSearch(from, "this", params.getSearchProperties());    	    	
+    	HibernateUtils.appendJoinsForSearch(from, "this", getSearchableProperties());    	    	
     	return from.toString() ;
     }
     
-    protected String getWhere() {
+    public void setSearch(String search) {
+		searchableProperties = StringUtils.tokenizeToStringArray(search, " ,\t\r\n");
+	}
+    
+    public String[] getSearchableProperties() {
+		return searchableProperties;
+	}
+
+	protected String getWhere() {
     	return null;
     }
     
@@ -194,9 +194,9 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
 				params.getFilter());
     }
     
-    protected String getSearchWhereClause(ListParams params) {
+    protected final String getSearchWhereClause(ListParams params) {
     	return HibernateUtils.getSearchWhereClause("this", 
-    				params.getSearchProperties(), "search");
+    				getSearchableProperties(), "search");
     	
     }
 

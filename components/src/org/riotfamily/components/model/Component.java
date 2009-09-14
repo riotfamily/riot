@@ -1,49 +1,46 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.components.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import java.util.ListIterator;
 
-@Entity
-@DiscriminatorValue("Component")
-public class Component extends Content {
+import org.springframework.util.Assert;
 
+/**
+ * A ContentMap that is contained in a {@link ComponentList}. In addition to a
+ * reference to their list, components also have a type. This type is used to 
+ * select a rendering view and a form to edit the component's properties.   
+ */
+public class Component extends ContentMapImpl {
+
+	private ComponentList list;
+	
 	private String type;
 	
-	private ComponentList list;
-
-	public Component() {
-	}
-
-	public Component(String type) {
-		this.type = type;
+	public Component(ComponentList list) {
+		super(list.getContent());
+		this.list = list;
 	}
 	
+	public Component(ComponentList list, String id) {
+		super(list.getContent(), id);
+		this.list = list;
+	}
+
+	public ComponentList getList() {
+		return list;
+	}
+
 	public String getType() {
 		return this.type;
 	}
@@ -52,24 +49,32 @@ public class Component extends Content {
 		this.type = type;
 	}
 
-	@ManyToOne(cascade=CascadeType.MERGE)
-	@JoinColumn(name="list", insertable=false, updatable=false)
-	public ComponentList getList() {
-		return list;
-	}
-
-	public void setList(ComponentList list) {
-		this.list = list;
-	}
-
-	public Content createCopy() {
-		Component copy = new Component(type);
-		copyValues(copy);
-		return copy;
-	}
-
-	public static Component load(Long id) {
-		return load(Component.class, id);
+	public void delete() {
+		Assert.isTrue(list.remove(this));
 	}
 	
+	public void move(String after) {
+		delete();
+		if (after != null) {
+			ListIterator<Component> it = list.listIterator();
+			while (it.hasNext()) {
+				if (it.next().getCompositeId().equals(after)) {
+					it.add(this);
+					break;
+				}
+			}
+		}
+		else {
+			list.add(0, this);
+		}
+	}
+	
+	public static Component load(String id) {
+		return (Component) Content.loadFragment(id);
+	}
+
+	public int getPosition() {
+		return list.indexOf(this);
+	}
+
 }

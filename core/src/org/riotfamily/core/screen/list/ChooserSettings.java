@@ -1,33 +1,22 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.core.screen.list;
 
 import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.core.screen.ScreenLink;
 
 public class ChooserSettings implements Serializable {
@@ -38,21 +27,40 @@ public class ChooserSettings implements Serializable {
 	
 	private String rootObjectId;
 
+	
+	
+	public ChooserSettings(String targetScreenId, String startScreenId,
+			String rootObjectId) {
+		
+		this.targetScreenId = targetScreenId;
+		this.startScreenId = startScreenId;
+		this.rootObjectId = rootObjectId;
+	}
+
 	public ChooserSettings(HttpServletRequest request) {
-		targetScreenId = request.getParameter("choose");
-		startScreenId = request.getParameter("start");
-		rootObjectId = request.getParameter("rootId");
+		this(request.getParameter("choose"),request.getParameter("start"), 
+					request.getParameter("rootId"));
 	}
 
 	public ScreenLink appendTo(ScreenLink link) {
-		if (targetScreenId != null) {
-			StringBuffer url = new StringBuffer(link.getUrl());
-			ServletUtils.appendParameter(url, "choose", targetScreenId);
-			ServletUtils.appendParameter(url, "start", startScreenId);
-			ServletUtils.appendParameter(url, "rootId", rootObjectId);
-			link.setUrl(url.toString());
-		}
+		StringBuffer url = new StringBuffer(link.getUrl());
+		appendTo(url);
+		link.setUrl(url.toString());
 		return link;
+	}
+	
+	public String appendTo(String url) {
+		StringBuffer sb = new StringBuffer(url);
+		appendTo(sb);
+		return sb.toString();
+	}
+	
+	private void appendTo(StringBuffer sb) {
+		if (targetScreenId != null) {
+			ServletUtils.appendParameter(sb, "choose", targetScreenId);
+			ServletUtils.appendParameter(sb, "start", startScreenId);
+			ServletUtils.appendParameter(sb, "rootId", rootObjectId);
+		}
 	}
 	
 	public String getTargetScreenId() {

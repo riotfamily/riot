@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   flx
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.website.txt2img;
 
 import java.io.IOException;
@@ -38,13 +27,12 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.Compressible;
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.web.compressor.YUIJavaScriptCompressor;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.website.cache.AbstractCacheableController;
+import org.riotfamily.website.cache.Compressible;
+import org.riotfamily.website.performance.YUIJavaScriptCompressor;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -68,11 +56,8 @@ public class Txt2ImgController extends AbstractCacheableController
 	private static final Resource SCRIPT_RESOURCE = new ClassPathResource(
 			"txt2img.js", Txt2ImgController.class);
 
-	private static final Resource PIXEL_RESOURCE = new ClassPathResource(
-			"pixel.gif", Txt2ImgController.class);
 
 	private long lastModified = System.currentTimeMillis();
-
 	
 	private Map<String, ReplacementRule> rules = new HashMap<String, ReplacementRule>();
 	
@@ -85,7 +70,7 @@ public class Txt2ImgController extends AbstractCacheableController
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		
-		for (ReplacementRule rule : SpringUtils.listBeansOfType(applicationContext, ReplacementRule.class)) {
+		for (ReplacementRule rule : applicationContext.getBeansOfType(ReplacementRule.class).values()) {
 			String[] sel = StringUtils.tokenizeToStringArray(rule.getSelector(), ",");
 			for (int i = 0; i < sel.length; i++) {
 				selectors.add(sel[i]);
@@ -261,7 +246,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		for (String selector : selectors) {
 			out.write(selector);
 			out.write("{visibility: hidden}\n");
-			out.write("body.noscript ");
+			out.write("body.noscript, body.riot-mode-text ");
 			out.write(selector);
 			out.write("{visibility: visible}\n");
 		}
@@ -280,8 +265,6 @@ public class Txt2ImgController extends AbstractCacheableController
 	 * to work around the PNG loading in IE &lt; 7.
 	 */
 	protected void servePixelGif(HttpServletResponse response) throws IOException {
-		response.setContentType("image/gif");
-		ServletUtils.setFarFutureExpiresHeader(response);
-		IOUtils.copy(PIXEL_RESOURCE.getInputStream(), response.getOutputStream());
+		ServletUtils.serveTransparentPixelGif(response);
 	}
 }

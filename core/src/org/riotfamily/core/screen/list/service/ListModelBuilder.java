@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.core.screen.list.service;
 
 import java.io.PrintWriter;
@@ -32,11 +21,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.core.dao.SortableDao;
-import org.riotfamily.core.dao.TreeDao;
+import org.riotfamily.core.dao.Sortable;
+import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListParamsImpl;
 import org.riotfamily.core.screen.list.dto.ListColumn;
@@ -66,17 +55,15 @@ public class ListModelBuilder extends ListItemLoader {
 	
 	public ListModel buildModel(String expandedId) {
 		Object[] expanded = loadExpanded(expandedId);
-		
 		List<ListItem> items = createItems(expanded, 0, null);
-
 		ListParamsImpl params = state.getParams();
-		int itemsTotal = dao.getListSize(root, params);
+		int itemsTotal = dao.getListSize(getParent(), params);
 		params.adjust(itemsTotal);
 		
 		ListModel model = new ListModel(items, itemsTotal, params);
 		model.setColumns(createColumns());
 		model.setCommandButtons(createButtons());
-		model.setTree(dao instanceof TreeDao);
+		model.setTree(dao instanceof Tree);
 		
 		//model.setInstantAction(chooser || singleAction);
 		
@@ -119,8 +106,7 @@ public class ListModelBuilder extends ListItemLoader {
 			ListColumn column = new ListColumn();
 			column.setProperty(config.getProperty());
 			column.setHeading(getHeading(config.getProperty(), config.getLookupLevel(), i++));
-
-			column.setSortable(dao instanceof SortableDao && config.isSortable());
+			column.setSortable(canSortBy(config));
 			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
 			if (params.hasOrder() && params.getPrimaryOrder()
 					.getProperty().equals(config.getProperty())) {
@@ -131,6 +117,13 @@ public class ListModelBuilder extends ListItemLoader {
 			listColumns.add(column);
 		}
 		return listColumns;
+	}
+	
+	private boolean canSortBy(ColumnConfig column) {
+		if (column.isSortable() && dao instanceof Sortable) {
+			return ((Sortable) dao).canSortBy(column.getProperty());
+		}
+		return false;
 	}
 	
 	private String getHeading(String property, int lookupLevel, int columnIndex) {

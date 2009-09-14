@@ -1,32 +1,24 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   flx
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.website.txt2img;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 
@@ -34,13 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.CacheHandler;
-import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.cachius.CacheService;
+import org.riotfamily.cachius.persistence.DiskStore;
 import org.riotfamily.common.image.ImageUtils;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.web.filter.ResourceStamper;
+import org.riotfamily.website.performance.ResourceStamper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -69,7 +61,7 @@ public class ButtonService implements ApplicationContextAware {
 	}
 
 	public void setApplicationContext(ApplicationContext ctx) {
-		buttons = SpringUtils.beansOfType(ctx, ButtonRenderer.class);
+		buttons = ctx.getBeansOfType(ButtonRenderer.class);
 	}
 	
 	public String getInlineStyle(String style, String label, 
@@ -115,6 +107,28 @@ public class ButtonService implements ApplicationContextAware {
 				request.getContextPath(), style, encodedLabel, locale);
 	}
 	
+	
+	private static class Button implements Serializable {
+		
+		private File file;
+		
+		private String inlineStyle;
+
+		public Button(File file, String inlineStyle) {
+			this.file = file;
+			this.inlineStyle = inlineStyle;
+		}
+
+		public String getInlineStyle() {
+			return inlineStyle;
+		}
+
+		public File getFile() {
+			return file;
+		}
+		
+	}
+	
 	private abstract class AbstractButtonHandler implements CacheHandler {
 
 		private String label;
@@ -134,27 +148,28 @@ public class ButtonService implements ApplicationContextAware {
 			this.imageUri = imageUri;
 		}
 
+		public String getCacheRegion() {
+			return ButtonService.class.getName();
+		}
+		
 		public String getCacheKey() {
 			return imageUri;
 		}
 		
-		public long getLastModified() throws Exception {
+		public long getLastModified() {
 			return renderer.getLastModified();
 		}
-
-		public long getTimeToLive() {
-			return reloadable ? 0 : CACHE_ETERNALLY;
-		}
-
-		public boolean updateCacheItem(CacheItem cacheItem) throws Exception {
+		
+		public Serializable capture(DiskStore diskStore) throws Exception {
+			File file = diskStore.getFile();
 			BufferedImage image = generateImage();
-			writeImage(image, cacheItem.getOutputStream());
-			Map<String, String> properties = Generics.newHashMap();
-			properties.put("inlineStyle", getInlineStyle(image));
-			cacheItem.setContentType("image/png");
-			cacheItem.setSetContentLength(true);
-			cacheItem.setProperties(properties);
-			return true;
+			writeImage(image, new FileOutputStream(file));
+			return new Button(file, getInlineStyle(image));
+		}
+		
+		public void delete(Serializable data) throws Exception {
+			Button button = (Button) data;
+			button.getFile().delete();
 		}
 		
 		protected BufferedImage generateImage() throws Exception {
@@ -187,8 +202,9 @@ public class ButtonService implements ApplicationContextAware {
 			inlineStyle = getInlineStyle(generateImage());
 		}
 		
-		public void writeCacheItem(CacheItem cacheItem) throws IOException {
-			inlineStyle = cacheItem.getProperties().get("inlineStyle");
+		public void serve(Serializable data) throws IOException {
+			Button button = (Button) data;
+			inlineStyle = button.getInlineStyle();
 		}
 		
 		public String getInlineStyle() {
@@ -212,9 +228,11 @@ public class ButtonService implements ApplicationContextAware {
 			response.setContentType("image/png");
 			writeImage(generateImage(), response.getOutputStream());
 		}
-		
-		public void writeCacheItem(CacheItem cacheItem) throws IOException {
-			cacheItem.writeTo(response);
+				
+		public void serve(Serializable data) throws IOException {
+			Button button = (Button) data;
+			response.setContentType("image/png");
+			IOUtils.serve(button.getFile(), response.getOutputStream());
 		}
 	}
 }

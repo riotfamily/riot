@@ -1,41 +1,57 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   flx
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.core.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.riotfamily.common.beans.ObjectWrapper;
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.Generics;
+import org.springframework.beans.PropertyAccessor;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.RecoverableDataAccessException;
+import org.springframework.util.StringUtils;
 
 public abstract class InMemoryRiotDao extends RiotDaoAdapter 
-		implements SortableDao {
+		implements Sortable, Searchable {
 
+	private String[] searchableProperties;
+
+	public void setSearch(String search) {
+		searchableProperties = StringUtils.tokenizeToStringArray(search, " ,\t\r\n");
+	}
+	
+	public String[] getSearchableProperties() {
+		return searchableProperties;
+	}
+	
+	public boolean canSortBy(String property) {
+		return true;
+	}
+	
+	@Override
+	public int getListSize(Object parent, ListParams params)
+			throws DataAccessException {
+		
+		try {
+			return listInternal(parent).size();
+		}
+		catch (Exception e) {
+			throw new RecoverableDataAccessException(e.getMessage(), e);
+		}
+	}
+	
 	@Override
 	public Collection<?> list(Object parent, ListParams params)
 			throws DataAccessException {
@@ -52,6 +68,14 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 				Order order = params.getOrder().get(0);
 				PropertyComparator.sort(list, order);
 			}
+			
+			if (params.getPageSize() > 0) {
+				int end = params.getOffset() + params.getPageSize();
+				if (end >= list.size()) {
+					end = list.size() - 1;
+				}
+				return list.subList(params.getOffset(), end);
+			}
 			return list;
 		}
 		catch (Exception e) {
@@ -61,13 +85,13 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 	
 	protected boolean filterMatches(Object item, ListParams params) {
 		if (params.getFilteredProperties() != null) {
-			ObjectWrapper itemWrapper = PropertyUtils.createWrapper(item);
-			ObjectWrapper filterWrapper = PropertyUtils.createWrapper(params.getFilter());
+			PropertyAccessor itemAccessor = PropertyUtils.createAccessor(item);
+			PropertyAccessor filterAccessor = PropertyUtils.createAccessor(params.getFilter());
 			for (String prop : params.getFilteredProperties()) {
-				Object filterValue = filterWrapper.getPropertyValue(prop);
+				Object filterValue = filterAccessor.getPropertyValue(prop);
 				if (filterValue != null) {
-					Object itemValue = itemWrapper.getPropertyValue(prop);
-					if (itemValue instanceof Collection) {
+					Object itemValue = itemAccessor.getPropertyValue(prop);
+					if (itemValue instanceof Collection<?>) {
 						Collection<?> c = (Collection<?>) itemValue;
 						if (!c.contains(filterValue)) {
 							return false;
@@ -86,9 +110,9 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 		if (params.getSearch() == null) {
 			return true;
 		}
-		ObjectWrapper itemWrapper = PropertyUtils.createWrapper(item);
-		for (String prop : params.getSearchProperties()) {
-			Object itemValue = itemWrapper.getPropertyValue(prop);
+		PropertyAccessor itemAccessor = PropertyUtils.createAccessor(item);
+		for (String prop : getSearchableProperties()) {
+			Object itemValue = itemAccessor.getPropertyValue(prop);
 			if (itemValue != null && itemValue.toString().indexOf(params.getSearch()) >= 0) {
 				return true;
 			}

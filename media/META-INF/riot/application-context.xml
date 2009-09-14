@@ -9,18 +9,38 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
-
-	<bean id="mediaDao" class="org.riotfamily.media.dao.HibernateMediaDao">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 	
 	<bean id="fileStore" class="org.riotfamily.media.store.DefaultFileStore">
 		<property name="uriPrefix" value="${riot.media.uriPrefix=/media}" />
 		<property name="storagePath" value="${riot.media.storagePath=}" />
 	</bean>
 	
-	<bean id="imageMagickIdentify" class="org.riotfamily.media.service.ImageMagickIdentify" />
+	<bean id="imageMagickIdentify" class="org.riotfamily.media.service.ImageMagickIdentify">
+		<description>
+			ImageMagick 'identify' command which is used to extract meta data from images.
+			
+			SETUP NOTE:
+			===========
+			
+			If the 'identify' binary is in your PATH you don't have to configure
+			anything. If not, you have to specify the location of your 
+			ImageMagick installation.
+			
+			If you used an installer, chances are good that the MAGICK_HOME
+			environment variable is set (in this case you also don't need to 
+			configure anything).
+			
+			If not, please set the location via the imageMagick.home property
+			in your application.properties file.
+			
+			For backwards compatibility you may also set the 
+			imageMagick.identifyCommand property, but remember that you also have
+			to specify imageMagick.convertCommand (which is used to crop images).
+		</description>
+		<property name="magickHome" value="${imageMagick.home=}" />
+		<property name="command" value="${imageMagick.identifyCommand=}" />
+	</bean>
 	
 	<bean id="ffmpeg" class="org.riotfamily.media.service.FFmpeg" />
 	
@@ -31,9 +51,15 @@
 		<constructor-arg ref="ffmpeg" />
 	</bean>
 	
-	<bean id="fileDataInitializer" class="org.riotfamily.common.beans.MethodInvokingBean">
-		<property name="staticMethod" value="org.riotfamily.media.model.RiotFile.setMediaService" />
-		<property name="argument" ref="mediaService"/>
+	<bean id="mediaCleanUp" class="org.riotfamily.media.cleanup.HibernateCleanUpTask">
+		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="fileStore" />
+		<constructor-arg ref="transactionManager" />
+		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily}" />
 	</bean>
-
+	
+	<bean class="org.riotfamily.media.model.RiotFile" scope="prototype">
+		<property name="mediaService" ref="mediaService" />
+	</bean>
+	
 </beans>

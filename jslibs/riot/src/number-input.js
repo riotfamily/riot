@@ -32,18 +32,12 @@ NumberInput.Field = Class.create({
 		this.validate();
 		
 		if (this.options.spinner) {
-			var div = document.createElement('div');
-			div.className = 'numberInput';
-			div.style.height = Element.getHeight(this.element) + 'px';
+			var div = this.element.setStyle({float: 'left'}).wrap(
+				new Element('div').addClassName('numberInput')
+				.setStyle({height: this.element.getHeight() + 'px'})
+			);
 
-			var p = this.element.parentNode;
-			p.insertBefore(div, this.element);
-			p.removeChild(this.element);
-			div.appendChild(this.element);
-			this.element.style.cssFloat = this.element.style.styleFloat = 'left';
-
-			var buttons = document.createElement('div');
-			buttons.className = 'spinButtons';
+			var buttons = new Element('div').addClassName('spinButtons');
 			buttons.style.height = div.style.height;
 			buttons.style.cssFloat = buttons.style.styleFloat = 'left';
 			div.appendChild(buttons);
@@ -52,10 +46,8 @@ NumberInput.Field = Class.create({
 			new NumberInput.SpinButton(this, 'decrease').appendTo(buttons);
 		}
 		if (this.options.unit != null) {
-			var unit = document.createElement('div');
-			unit.className = 'unit';
-			unit.appendChild(document.createTextNode(this.options.unit));
-			this.element.parentNode.appendChild(unit);
+			var unit = new Element('div').addClassName('unit').insert(this.options.unit);
+			this.element.up().insert(unit);
 		}
 		
 	},

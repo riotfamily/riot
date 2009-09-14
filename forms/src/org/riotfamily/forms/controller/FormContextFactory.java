@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- * 
- * The Original Code is Riot.
- * 
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- * 
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
- * ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.forms.controller;
 
 import java.util.Collection;
@@ -30,13 +19,12 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.freemarker.ResourceTemplateLoader;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.i18n.RiotMessageCodesResolver;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.OptionsModelAdapter;
 import org.riotfamily.forms.TemplateRenderer;
@@ -107,7 +95,6 @@ public final class FormContextFactory implements MessageSourceAware,
 		this.resourceLoader = resourceLoader;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		if (beanFactory instanceof AbstractBeanFactory) {
 			AbstractBeanFactory abf = (AbstractBeanFactory) beanFactory;
@@ -115,8 +102,8 @@ public final class FormContextFactory implements MessageSourceAware,
 		}
 		if (beanFactory instanceof ListableBeanFactory) {
 			ListableBeanFactory lbf = (ListableBeanFactory) beanFactory;
-			optionValuesAdapters.addAll(SpringUtils.beansOfType(
-					lbf, OptionsModelAdapter.class).values());			
+			optionValuesAdapters.addAll(lbf.getBeansOfType(
+					OptionsModelAdapter.class).values());			
 		}
 	}
 	

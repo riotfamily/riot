@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   flx
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.pages.config;
 
 import java.util.List;
@@ -28,13 +17,10 @@ import java.util.Map;
 
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.model.SiteMapItem;
 
 public class SystemPage extends PageType {
 
 	private String pathComponent;
-	
-	private boolean folder;
 	
 	private List<SystemPage> childPages;
 	
@@ -49,14 +35,6 @@ public class SystemPage extends PageType {
 
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
-	}
-
-	public boolean isFolder() {
-		return folder;
-	}
-
-	public void setFolder(boolean folder) {
-		this.folder = folder;
 	}
 
 	public List<SystemPage> getChildPages() {
@@ -75,23 +53,27 @@ public class SystemPage extends PageType {
 		this.properties = properties;
 	}
 
-	public void sync(SiteMapItem parent) {
+	private void sync(Page parent) {
 		Page page = Page.loadByTypeAndSite(getName(), parent.getSite());
 		if (page == null) {
-			page = createPage(parent.getSite());
-			parent.addPage(page);
+			page = createPage(parent.getSite(), parent);
 		}
 		update(page);
 	}
 	
-	private Page createPage(Site site) {
+	protected Page createPage(Site site, Page parent) {
 		Page page = new Page(getPathComponent(), site);
-		page.setFolder(folder);
-		page.getPageProperties().getPreviewVersion().wrap(properties);
+		if (properties != null) {
+			page.getContentContainer().getPreviewVersion().putAll(properties);
+		}
+		if (parent != null) {
+			parent.addPage(page);
+		}
+		page.save();
 		return page;
 	}
 
-	private void update(Page page) {
+	protected void update(Page page) {
 		page.setPageType(getName());
 		if (childPages != null) {
 			for (SystemPage child : childPages) {
@@ -103,7 +85,6 @@ public class SystemPage extends PageType {
 	@Override
 	void register(SitemapSchema schema) {
 		super.register(schema);
-		schema.addSystemPage(this);
 		if (childPages != null) {
 			for (SystemPage child : childPages) {
 				child.register(schema);

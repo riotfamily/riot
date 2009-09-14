@@ -22,21 +22,20 @@ function loadToolbarScripts() {
 		{src: 'riot-js/util.js', test: 'RElement'},
 		{src: 'scriptaculous/effects.js', test: 'Effect'},
 		{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
+		{src: 'riot-js/cookiejar.js', test: 'CookieJar'},
 		{src: 'toolbar.js'},
 		{src: 'riot-js/effects.js'},
-		{src: 'riot-js/window-callback.js'},
 		{src: 'riot-js/window/dialog.js'},
 		{src: 'inplace.js'},
 		{src: 'components.js'}
 	]);
-	Resources.loadScript(riot.path + 
-			'/joined/${riotVersion}/joined-script.js?files=' 
-			+ scripts.join(',') + '&lang=' + riot.language, 'riot.toolbar', toolbarScriptsLoaded);
+	var src = riot.resourcePath + 'joined.js?files=' + scripts.join(',') + '&lang=' + riot.language;
+	Resources.loadScript(src, 'riot.toolbar', toolbarScriptsLoaded);
 }
 
 function toolbarScriptsLoaded() {
     if (window.onToolbarLoaded) {
-    	onToolbarLoaded()
+    	onToolbarLoaded(riot.toolbar);
     }
     riot.toolbar.activate();
 }

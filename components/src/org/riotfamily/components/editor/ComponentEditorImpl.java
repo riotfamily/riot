@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.components.editor;
 
 import java.io.StringWriter;
@@ -39,12 +28,9 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
-import org.riotfamily.cachius.CacheService;
-import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.servlet.CapturingResponseWrapper;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.util.CapturingResponseWrapper;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ContentFormRepository;
 import org.riotfamily.components.meta.ComponentMetaData;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
@@ -52,8 +38,9 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.render.component.ComponentRenderer;
-import org.riotfamily.components.render.component.EditModeComponentDecorator;
+import org.riotfamily.components.render.component.EditModeComponentRenderer;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.session.LoginManager;
@@ -73,8 +60,6 @@ public class ComponentEditorImpl implements ComponentEditor,
 
 	private RiotLog log = RiotLog.get(ComponentEditorImpl.class);
 
-	private CacheService cacheService;
-	
 	private ComponentRenderer renderer;
 
 	private ComponentMetaDataProvider metaDataProvider;
@@ -84,13 +69,11 @@ public class ComponentEditorImpl implements ComponentEditor,
 	private MessageSource messageSource;
 	
 	
-	public ComponentEditorImpl(CacheService cacheService, 
-			ComponentRenderer renderer, 
+	public ComponentEditorImpl(ComponentRenderer renderer, 
 			ComponentMetaDataProvider metaDataProvider,
 			ContentFormRepository formRepository) {
 		
-		this.cacheService = cacheService;
-		this.renderer = new EditModeComponentDecorator(renderer, metaDataProvider, formRepository);
+		this.renderer = new EditModeComponentRenderer(renderer, metaDataProvider, formRepository);
 		this.metaDataProvider = metaDataProvider;
 	}
 
@@ -111,9 +94,9 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * Returns the value of the given property.
 	 */
 	@RemoteMethod
-	public String getText(Long contentId, String property) {
-		Content content = Content.load(contentId);
-		Object value = content.getValue(property);
+	public String getText(String contentId, String property) {
+		ContentMap content = Content.loadFragment(contentId);
+		Object value = content.get(property);
 		return value != null ? value.toString() : null;
 	}
 
@@ -121,21 +104,22 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * Sets the given property to a new value.
 	 */
 	@RemoteMethod
-	public void updateText(Long contentId, String property, String text) {
-		Content content = Content.load(contentId);
-		content.setValue(property, text);
+	public void updateText(String contentId, String property, String text) {
+		ContentMap content = Content.loadFragment(contentId);
+		content.put(property, text);
+		nofifyUsers();
 	}
 
 	/**
 	 *
 	 */
 	@RemoteMethod
-	public String[] updateTextChunks(Long componentId, String property,
+	public String[] updateTextChunks(String componentId, String property,
 			String[] chunks) {
 
 		String[] html = new String[chunks.length];
 		Component component = Component.load(componentId);
-		component.setValue(property, chunks[0]);
+		component.put(property, chunks[0]);
 		html[0] = renderComponent(component);
 		
 		String type = component.getType();
@@ -143,23 +127,13 @@ public class ComponentEditorImpl implements ComponentEditor,
 		int offset = list.indexOf(component);
 		
 		for (int i = 1; i < chunks.length; i++) {
-			component = createComponent(type);
-			list.insertComponent(component, offset + i);
-			component.setValue(property, chunks[i]);
+			component = createComponent(list, type);
+			list.add(offset + i, component);
+			component.put(property, chunks[i]);
 			html[i] = renderComponent(component);
 		}
+		nofifyUsers();
 		return html;
-	}
-
-	@RemoteMethod
-	public String[] getComponentLabels(String[] types, HttpServletRequest request) {
-		Locale locale = RequestContextUtils.getLocale(request);
-		String[] labels = new String[types.length];
-		for (int i = 0; i < types.length; i++) {
-			labels[i]= messageSource.getMessage("component." + types[i], null, 
-					FormatUtils.xmlToTitleCase(types[i]), locale);
-		}
-		return labels;
 	}
 	
 	@RemoteMethod
@@ -176,12 +150,13 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * by the given id.
 	 */
 	@RemoteMethod
-	public String insertComponent(Long listId, int position, String type) {
+	public String insertComponent(String listId, int position, String type) {
 		Assert.notNull(listId, "listId must not be null");
 		Assert.notNull(type, "type must not be null");
 		ComponentList componentList = ComponentList.load(listId);
-		Component component = createComponent(type);
-		componentList.insertComponent(component, position);
+		Component component = createComponent(componentList, type);
+		componentList.add(position, component);
+		nofifyUsers();
 		return renderComponent(component);
 	}
 
@@ -191,15 +166,18 @@ public class ComponentEditorImpl implements ComponentEditor,
 	 * @param type The type of the version to create
 	 * @return The newly created component
 	 */
-	private Component createComponent(String type) {
-		Component component = new Component(type);
-		component.wrap(metaDataProvider.getMetaData(type).getDefaults());
-		component.save();
+	private Component createComponent(ComponentList list, String type) {
+		Component component = new Component(list);
+		component.setType(type);
+		Map<String, Object> defaults = metaDataProvider.getMetaData(type).getDefaults();
+		if (defaults != null) {
+			component.putAll(defaults);
+		}
 		return component;
 	}
 	
 	@RemoteMethod
-	public String setType(Long componentId, String type) {
+	public String setType(String componentId, String type) {
 		Assert.notNull(componentId, "componentId must not be null");
 		Assert.notNull(type, "type must not be null");
 		Component component = Component.load(componentId);
@@ -208,18 +186,16 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 	
 	@RemoteMethod
-	public String renderComponent(Long componentId) {
-		Component component = Component.load(componentId);
-		return renderComponent(component);
+	public String renderComponent(String componentId) {
+		return renderComponent(Component.load(componentId));
 	}
 
 	private String renderComponent(Component component) {
 		try {
-			ComponentList list = component.getList();
 			StringWriter sw = new StringWriter();
 			HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
 			HttpServletResponse response = getCapturingResponse(sw);
-			renderer.render(component, list.indexOf(component), list.getSize(), request, response);
+			renderer.render(component, request, response);
 			return sw.toString();
 		}
 		catch (Exception e) {
@@ -229,37 +205,14 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 
 	@RemoteMethod
-	public void moveComponent(Long componentId, Long nextComponentId) {
-		Component component = Component.load(componentId);
-		ComponentList componentList = component.getList();
-		List<Component> components = componentList.getComponents();
-		components.remove(component);
-		if (nextComponentId != null) {
-			for (int i = 0; i < components.size(); i++) {
-				if (components.get(i).getId().equals(nextComponentId)) {
-					components.add(i, component);
-					break;
-				}
-			}
-		}
-		else {
-			components.add(component);
-		}
+	public void moveComponent(String componentId, String prevComponentId) {
+		Component.load(componentId).move(prevComponentId);
+		nofifyUsers();
 	}
 
 	@RemoteMethod
-	public void deleteComponent(Long componentId) {
-		Component component = Component.load(componentId);
-		ComponentList componentList = component.getList();
-		List<Component> components = componentList.getComponents();
-		components.remove(component);
-	}
-	
-	@RemoteMethod
-	public void markAsDirty(Long containerId) {
-		ContentContainer container = ContentContainer.load(containerId);
-		container.setDirty(true);
-		ComponentCacheUtils.invalidatePreviewVersion(cacheService, container);
+	public void deleteComponent(String componentId) {
+		Component.load(componentId).delete();
 		nofifyUsers();
 	}
 	

@@ -1,34 +1,23 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.pages.config;
 
-import org.riotfamily.common.beans.xml.ChildDecorator;
-import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.ListDecorator;
-import org.riotfamily.common.beans.xml.ListItemDecorator;
-import org.riotfamily.common.beans.xml.MapEntryDecorator;
-import org.riotfamily.common.beans.xml.PropertyValueDecorator;
+import org.riotfamily.common.beans.namespace.ChildDecorator;
+import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.namespace.ListItemDecorator;
+import org.riotfamily.common.beans.namespace.MapEntryDecorator;
+import org.riotfamily.common.beans.namespace.PropertyDecorator;
+import org.riotfamily.common.beans.namespace.PropertyValueDecorator;
 
 /**
  * NamespaceHandler that handles the <code>page</code> namespace as
@@ -38,19 +27,19 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
 		register("schema", SitemapSchema.class).setDecorator(
-				new ListDecorator("types"));
+				new PropertyDecorator("rootPage"));
 		
 		ChildDecorator typeDecorator = new ChildDecorator()
 				.register("bean", new PropertyValueDecorator("handler"))
 				.register("ref", new PropertyValueDecorator("handler"))
 				.register("type", new ListItemDecorator("childTypes"))
-				.register("type-ref", new ListItemDecorator("childTypes"));
+				.register("type-ref", new ListItemDecorator("childTypes"))
+				.register("prop", new MapEntryDecorator("properties", "key"))
+				.register("system-page", new ListItemDecorator("childPages"));
 				
 		register("type", PageType.class).setDecorator(typeDecorator);
-		
-		register("system-page", SystemPage.class).setDecorator(typeDecorator.copy()
-				.register("prop", new MapEntryDecorator("properties", "key"))
-				.register("system-page", new ListItemDecorator("childPages")));
+		register("root-page", RootPage.class).setDecorator(typeDecorator);
+		register("system-page", SystemPage.class).setDecorator(typeDecorator);
 		
 		register("type-ref", PageTypeRef.class);
 	}

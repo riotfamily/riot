@@ -13,7 +13,7 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 			
 	<description>
 		Riot servlet (Riot Hibernate)

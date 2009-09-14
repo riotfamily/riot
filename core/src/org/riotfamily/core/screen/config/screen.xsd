@@ -53,7 +53,7 @@
 					</xsd:element>
 					<xsd:element name="commands" minOccurs="0">
 						<xsd:complexType>
-							<xsd:choice maxOccurs="unbounded">
+							<xsd:choice minOccurs="0" maxOccurs="unbounded">
 								<xsd:element ref="beans:bean" />
 								<xsd:element ref="beans:ref" />
 							</xsd:choice>
@@ -62,6 +62,8 @@
 					<xsd:group ref="screenElements" minOccurs="0" />
 					<xsd:element name="screenlets" type="screenletsType" minOccurs="0" />
 				</xsd:sequence>
+				<xsd:attribute name="page-size" type="xsd:positiveInteger" />
+				<xsd:attribute name="label-property" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -80,6 +82,16 @@
 			<xsd:element ref="beans:ref" />
 		</xsd:choice>
 		<xsd:attribute name="property" />
+		<xsd:attribute name="sortable" type="xsd:boolean" default="true" />
+		<xsd:attribute name="case-sensitive" type="xsd:boolean" default="true" />
+		<xsd:attribute name="default-direction" default="asc">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="asc" />
+					<xsd:enumeration value="desc" />
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 	</xsd:complexType>
 	
 	<xsd:complexType name="formType">

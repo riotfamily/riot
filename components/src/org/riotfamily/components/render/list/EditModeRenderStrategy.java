@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.components.render.list;
 
 import java.io.IOException;
@@ -34,19 +23,19 @@ import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
-import org.riotfamily.components.render.component.EditModeComponentDecorator;
+import org.riotfamily.components.render.component.EditModeComponentRenderer;
 import org.riotfamily.forms.factory.FormRepository;
 
 public class EditModeRenderStrategy extends DefaultRenderStrategy {
 
-	private EditModeComponentDecorator editModeRenderer;
+	private EditModeComponentRenderer editModeRenderer;
 	
 	public EditModeRenderStrategy(ComponentRenderer renderer,
 			ComponentMetaDataProvider metaDataProvider,
 			FormRepository formRepository, ComponentListRenderer listRenderer) {
 		
 		super(renderer);
-		editModeRenderer = new EditModeComponentDecorator(
+		editModeRenderer = new EditModeComponentRenderer(
 				renderer, metaDataProvider, formRepository);
 		
 		listRenderer.setEditModeRenderStrategy(this);
@@ -57,6 +46,7 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 	 * actual list. The DIV has attributes that are required for the
 	 * Riot toolbar JavaScript.
 	 */
+	@Override
 	public void render(ComponentList list, 
 			ComponentListConfig config,
 			HttpServletRequest request, HttpServletResponse response) 
@@ -66,13 +56,13 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 		
 		doc.start("div")
 			.attribute("class", "riot-component-list")
-			.attribute("riot:listId", list.getId().toString());
+			.attribute("riot:listId", list.getCompositeId());
 		
 		doc.body();
 		super.render(list, config, request, response);
 		doc.end();
 		
-		doc.start("script").body("riotComponentListConfig" + list.getId() 
+		doc.start("script").body("riotComponentListConfig" + list.getCompositeId() 
 				+ " = " + config.toJSON() + ";", false);
 		
 		doc.end();
@@ -84,12 +74,12 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 	 * Riot toolbar JavaScript.
 	 * @throws IOException
 	 */
+	@Override
 	protected void renderComponent(Component component, 
-			int position, int listSize, ComponentListConfig config, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws Exception {
+			ComponentListConfig config, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
-		editModeRenderer.render(component, position, listSize, request, response);
+		editModeRenderer.render(component, request, response);
 	}
 
 }

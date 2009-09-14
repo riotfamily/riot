@@ -1,50 +1,39 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.pages.riot.dao;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import org.riotfamily.core.dao.CopyAndPasteEnabledDao;
-import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.Constraints;
+import org.riotfamily.core.dao.CopyAndPaste;
+import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.ListParams;
-import org.riotfamily.core.dao.ParentChildDao;
-import org.riotfamily.core.dao.SwappableItemDao;
-import org.riotfamily.core.dao.TreeDao;
+import org.riotfamily.core.dao.SingleRoot;
+import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.model.SiteMapItem;
 import org.springframework.dao.DataAccessException;
+import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRiotDao implements ParentChildDao, TreeDao, 
-		SwappableItemDao, CutAndPasteEnabledDao, CopyAndPasteEnabledDao {
+public class PageRiotDao implements SingleRoot,	Constraints, Swapping, 
+		CutAndPaste, CopyAndPaste {
 
 	private SitemapSchema sitemapSchema;
 	
@@ -58,7 +47,8 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 	}
 
 	public boolean canAdd(Object parent) {
-		return sitemapSchema.canHaveChildren((SiteMapItem) parent);
+		return parent instanceof Page 
+				&& sitemapSchema.canHaveChildren((Page) parent);
 	}
 	
 	public boolean canDelete(Object entity) {
@@ -85,26 +75,30 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		Page page = (Page) entity;
 		return page.getId().toString();
 	}
-
+		
+	public Object getRootNode(Object parent) {
+		if (parent == null) {
+			parent = Site.loadDefaultSite();
+		}
+		return ((Site) parent).getRootPage();
+	}
+	
 	public Collection<Page> list(Object parent, ListParams params)
 			throws DataAccessException {
 
-		SiteMapItem parentItem = (SiteMapItem) parent;
-		if (parentItem == null) {
-			parentItem = Site.loadDefaultSite();
-		}
-		return parentItem.getChildPagesWithFallback();
+		Assert.isInstanceOf(Page.class, parent);
+		return ((Page) parent).getChildPagesWithFallback();
 	}
 	
 	public Object getParentNode(Object node) {
 		Page page = (Page) node;
-		return page.getParentPage();
+		return page.getParent();
 	}
 
-	public boolean hasChildren(Object parent, Object root, ListParams params) {
-		Page page = (Page) parent;
-		if (root != null) {
-			if (!page.getSite().equals(((SiteMapItem) root).getSite())) {
+	public boolean hasChildren(Object node, Object parent, ListParams params) {
+		Page page = (Page) node;
+		if (parent instanceof Site) {
+			if (!((Site) parent).equals(page.getSite())) {
 				return false;
 			}
 		}
@@ -117,11 +111,8 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 
 	public void save(Object entity, Object parent) throws DataAccessException {
 		Page page = (Page) entity;
-		SiteMapItem parentItem = (SiteMapItem) parent;
-		if (parentItem == null) {
-			parentItem = Site.loadDefaultSite();
-		}
-		parentItem.addPage(page);
+		Assert.isInstanceOf(Page.class, parent);
+		((Page) parent).addPage(page);
 		page.save();
 	}
 
@@ -130,19 +121,22 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 		return page.merge();
 	}
 
+	public boolean canSwap(Object entity, Object parent, ListParams params,
+			int swapWith) {
+		
+		Page page = (Page) entity;
+		List<Page> siblings = page.getSiblings();
+		int i = siblings.indexOf(page) + swapWith;
+		return i >= 0 && i < siblings.size();
+	}
+	
 	public void swapEntity(Object entity, Object parent, ListParams params,
 			int swapWith) {
 
 		Page page = (Page) entity;
-	
-		List<Page> pages = new ArrayList<Page>(list(parent, params));
+		List<Page> pages = page.getSiblings();
 		int i = pages.indexOf(page);
-		Page otherPage = pages.get(i + swapWith);
-		
-		long pos = page.getPosition();
-		page.setPosition(otherPage.getPosition());
-		otherPage.setPosition(pos);
-		
+		Collections.swap(pages, i, i+ swapWith);
 		//TODO PageCacheUtils.invalidateNode(cacheService, parent);
 	}
 	
@@ -155,17 +149,14 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 	}
 	
 	public boolean canPasteCut(Object entity, Object target) {
-		return sitemapSchema.isValidChild((SiteMapItem) target, (Page) entity);
+		return target instanceof Page 
+				&& sitemapSchema.isValidChild((Page) target, (Page) entity);
 	}
 
 	public void pasteCut(Object entity, Object dest) {
 		Page page = (Page) entity;
-		SiteMapItem parentItem = (SiteMapItem) dest;
-		if (parentItem == null) {
-			parentItem = Site.loadDefaultSite();
-		}
 		page.getParent().removePage(page);
-		parentItem.addPage(page);
+		((Page) dest).addPage(page);
 		
 		//FIXME Invalidate cache items
 		//PageCacheUtils.invalidateNode(cacheService, node);

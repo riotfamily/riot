@@ -9,11 +9,19 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
 	<override:put ref="freemarkerConfig" property="macroLibraries">
 		<entry key="inplace" value="classpath:org/riotfamily/components/view/inplace.ftl" />
 	</override:put>
+	
+	<bean class="org.riotfamily.components.view.ContentMapObjectWrapperPlugin">
+		<description>
+			ObjectWrapperPlugin that wraps ContentMaps with a MapModel 
+			(instead of a SimpleHash) so that getOwner(), getId() etc. can be 
+			accessed by a template.
+		</description>
+	</bean>
 	
 	<bean id="inplaceMacroHelper" class="org.riotfamily.components.view.InplaceMacroHelperFactory">
 		<constructor-arg ref="componentListRenderer" />

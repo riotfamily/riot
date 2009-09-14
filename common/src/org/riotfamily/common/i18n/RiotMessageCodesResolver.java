@@ -1,31 +1,21 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- * 
- * The Original Code is Riot.
- * 
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- * 
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
- * ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.common.i18n;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
+import org.riotfamily.common.util.Generics;
 import org.springframework.util.StringUtils;
 
 /**
@@ -35,46 +25,53 @@ import org.springframework.util.StringUtils;
  */
 public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 
-	private static final char SEPARATOR = '.';
-
-	private static final String ERROR_PREFIX = "error.";
-	
-	private static final String HINT_SUFFIX = ".hint";
-	
+	/**
+	 * error.<objectName>.<code>
+	 * error.<code>
+	 */
 	public String[] resolveMessageCodes(String errorCode, String objectName) {
-		if (errorCode.startsWith(ERROR_PREFIX)) {
+		if (errorCode.startsWith("error.")) {
 			return new String[] {
 					errorCode
 			};
 		} 
 		else {
 			return new String[] {
-				ERROR_PREFIX + objectName + SEPARATOR + errorCode,
-				ERROR_PREFIX + errorCode
+				"error." + objectName + '.' + errorCode,
+				"error." + errorCode
 			};
 		}
 	}
 
+	/**
+	 * error.<objectName>.<field>.<code>
+	 * error.<field>.<code>
+	 * error.<code>
+	 */
 	@SuppressWarnings("unchecked")
 	public String[] resolveMessageCodes(String errorCode, String objectName, 
 			String field, Class fieldType) {
 		
-		if (errorCode.startsWith(ERROR_PREFIX)) {
+		if (errorCode.startsWith("error.")) {
 			return new String[] {
 					errorCode
 			};
 		} 
 		else {
 			return new String[] {
-				ERROR_PREFIX + objectName + SEPARATOR + field + SEPARATOR + errorCode,
-				ERROR_PREFIX + field + SEPARATOR + errorCode,
-				ERROR_PREFIX + errorCode
+				"error." + objectName + '.' + field + '.' + errorCode,
+				"error." + field + '.' + errorCode,
+				"error." + errorCode
 			};
 		}
 	}
 	
-	public String[] resolveLabel(String objectName, Class<?> objectClass) {
-		ArrayList<String> codes = new ArrayList<String>(2);
+	/**
+	 * <objectName>
+	 * <objectClass>
+	 */
+	public String[] resolveLabelCodes(String objectName, Class<?> objectClass) {
+		List<String> codes = Generics.newArrayList(2);
 		if (objectName != null) {
 			codes.add(objectName);
 		}
@@ -84,10 +81,14 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 		return StringUtils.toStringArray(codes);
 	}
 
-	public String[] resolveLabel(String objectName, Class<?> objectClass, 
+	/**
+	 * <objectName>.<field>
+	 * <declaringClass>.<field>
+	 */
+	public String[] resolveLabelCodes(String objectName, Class<?> objectClass, 
 			String field) {
 		
-		ArrayList<String> codes = new ArrayList<String>(2);
+		List<String> codes = Generics.newArrayList(2);
 		if (objectName != null) {
 			codes.add(objectName + '.' + field);
 		}
@@ -98,27 +99,46 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 		return StringUtils.toStringArray(codes);
 	}
 	
-	public String[] resolveHint(String objectName, Class<?> objectClass, 
-			String field) {
+	/**
+	 * <objectName>.<code>
+	 * <objectClass>.<code>
+	 * <elementName>.<code>
+	 */
+	public String[] resolveUICodes(String objectName, Class<?> objectClass, 
+			String elementName, String code) {
 		
-		ArrayList<String> codes = new ArrayList<String>(2);
-		if (field == null) {
-			if (objectName != null) {
-				codes.add(objectName +  HINT_SUFFIX);
-			}
-			if (objectClass != null) {
-				codes.add(PropertyUtils.getDeclaringClass(
-						objectClass, field).getName() + HINT_SUFFIX);
-			}
+		List<String> codes = Generics.newArrayList(3);
+		if (objectName != null) {
+			codes.add(objectName + '.' + code);
 		}
-		else {
-			if (objectName != null) {
-				codes.add(objectName +  '.' + field + HINT_SUFFIX);
-			}
-			if (objectClass != null) {
-				codes.add(PropertyUtils.getDeclaringClass(
-						objectClass, field).getName() + '.' + field + HINT_SUFFIX);
-			}
+		if (objectClass != null) {
+			codes.add(objectClass.getName() + '.' + code);
+		}
+		if (elementName != null) {
+			codes.add(elementName + '.' + code);
+		}
+		return StringUtils.toStringArray(codes);
+	}
+
+	
+	/**
+	 * <objectName>.<field>.<code>
+	 * <delcaringClass>.<field>.<code>
+	 * label.<elementName>.<code>
+	 */
+	public String[] resolveUICodes(String objectName, Class<?> objectClass, 
+			String field, String elementName, String code) {
+		
+		List<String> codes = Generics.newArrayList(3);
+		if (objectName != null) {
+			codes.add(objectName +  '.' + field + '.' + code);
+		}
+		if (objectClass != null) {
+			String declaringClassName = PropertyUtils.getDeclaringClass(objectClass, field).getName();
+			codes.add(declaringClassName + '.' + field + '.' + code);
+		}
+		if (elementName != null) {
+			codes.add("label." + elementName + '.' + code);
 		}
 		return StringUtils.toStringArray(codes);
 	}

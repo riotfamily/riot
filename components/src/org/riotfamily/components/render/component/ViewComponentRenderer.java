@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.components.render.component;
 
 import java.util.HashMap;
@@ -30,8 +19,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.view.ViewResolutionException;
-import org.riotfamily.common.web.view.ViewResolverHelper;
+import org.riotfamily.common.view.ViewResolutionException;
+import org.riotfamily.common.view.ViewResolverHelper;
 import org.riotfamily.components.model.Component;
 import org.springframework.web.servlet.View;
 
@@ -70,20 +59,18 @@ public class ViewComponentRenderer extends AbstractComponentRenderer {
 		}
 	}
 	
+	@Override
 	protected void renderInternal(Component component, 
-			int position, int listSize, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		Map<String, Object> props = component.unwrap();
-		if (props != null) {
-			model.putAll(props);
-		}
+		model.putAll(component);
 		
+		model.put("contentMap", component);
 		model.put(THIS, component);
-		model.put(POSITION, new Integer(position));
-		model.put(LIST_SIZE, new Integer(listSize));
-		model.put(PARENT, request.getAttribute(PARENT_ATTRIBUTE));
+		model.put(POSITION, component.getPosition());
+		model.put(LIST_SIZE, component.getList().size());
 		
 		try {
 			String viewName = viewNamePrefix + component.getType() + viewNameSuffix;

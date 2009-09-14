@@ -2,10 +2,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>Riot | ${context.title}</title>
+	<title>Riot | ${c.stripTagsAndWhitespaces(context.title)}</title>
 	<@riot.scripts srcs=[
 		"prototype/prototype.js",
 		"scriptaculous/effects.js",
+		"riot-js/util.js", 
 		"riot-js/resources.js", 
 		"riot-js/window/dialog.js",
 		"riot-js/notification/notification.js"] 
@@ -80,5 +81,5 @@
 </#macro>
 
 <#macro renderLabel link active=false>
-	<b<#if active> class="active"</#if>><b><#if link.icon??><span class="icon" style="${riot.iconStyle(link.icon)}"></span></#if><span class="title<#if link.new> new</#if>">${link.title}</span></b></b><#t>
+	<b<#if active> class="active"</#if>><b><#if link.icon??><span class="icon" style="${riot.iconStyle(link.icon)}"></span></#if><span class="title<#if link.new> new</#if>">${link.title!}</span></b></b><#t>
 </#macro>

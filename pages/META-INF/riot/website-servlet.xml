@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
 	<bean id="pageHandlerMapping" class="org.riotfamily.pages.mapping.PageHandlerMapping">
 		<constructor-arg ref="pageResolver" />
@@ -52,6 +52,10 @@
 	</bean>
 
 	<bean id="currentPage" class="org.riotfamily.pages.view.CurrentPageMacroHelperFactory">
+		<constructor-arg ref="pageResolver" />
+	</bean>
+	
+	<bean id="contentMap" class="org.riotfamily.pages.view.PageContentMapExposer">
 		<constructor-arg ref="pageResolver" />
 	</bean>
 

@@ -1,3 +1,15 @@
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.common.util;
 
 import java.util.ArrayList;
@@ -61,14 +73,21 @@ public final class SpringUtils {
 		return (T) beanFactory.createBean(beanClass, autowire, false);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> T getBean(BeanFactory beanFactory, String name, 
 			Class<T> requiredType) {
 		
 		return (T) beanFactory.getBean(name, requiredType);
 	}
 	
-	@SuppressWarnings("unchecked")
+	public static<T> T getBeanIfExists(BeanFactory beanFactory, String name, 
+			Class<T> requiredType) {
+		
+		if (beanFactory.containsBean(name)) {
+			return getBean(beanFactory, name, requiredType);
+		}
+		return null;
+	}
+	
 	public static<T> T beanOfType(ListableBeanFactory lbf, Class<T> type) {
 		return (T) BeanFactoryUtils.beanOfType(lbf, type);
 	}
@@ -78,19 +97,16 @@ public final class SpringUtils {
 		return beanOfType((ListableBeanFactory) beanFactory, type);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> T beanOfTypeIncludingAncestors(ListableBeanFactory lbf, Class<T> type) {
 		return (T) BeanFactoryUtils.beanOfTypeIncludingAncestors(lbf, type);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfType(
 			ListableBeanFactory lbf, Class<T> type) {
 		
 		return lbf.getBeansOfType(type);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfType(ListableBeanFactory lbf, 
 			Class<T> type, boolean includeNonSingletons, boolean allowEagerInit) {
 		
@@ -103,7 +119,6 @@ public final class SpringUtils {
 		return beansOfType(lbf, type).values();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfTypeIncludingAncestors(
 			ListableBeanFactory lbf, Class<T> type) {
 		
@@ -116,7 +131,6 @@ public final class SpringUtils {
 		return beansOfTypeIncludingAncestors(lbf, type).values();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> List<T> orderedBeansIncludingAncestors(
 			ListableBeanFactory lbf, Class<T> type) {
 		
@@ -125,7 +139,6 @@ public final class SpringUtils {
 		return beans;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> List<T> orderedBeans(ListableBeanFactory lbf, Class<T> type) {
 		ArrayList<T> beans = new ArrayList<T>(listBeansOfType(lbf, type));
 		Collections.sort(beans, new AnnotationAwareOrderComparator());
@@ -158,7 +171,6 @@ public final class SpringUtils {
 				.getBean(beanName);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static<T> T getBean(ServletContext servletContext, 
 			String servletName, String beanName, Class<T> requiredType) {
 		

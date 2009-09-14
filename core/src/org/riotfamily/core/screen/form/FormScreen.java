@@ -1,44 +1,36 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.core.screen.form;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.view.FlashScopeView;
+import org.riotfamily.common.view.FlashScopeView;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.RiotDaoException;
 import org.riotfamily.core.screen.ItemScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.ScreenUtils;
 import org.riotfamily.core.screen.Screenlet;
 import org.riotfamily.forms.Form;
@@ -51,6 +43,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class FormScreen extends AjaxFormController
 		implements ItemScreen, BeanNameAware {
@@ -74,9 +67,9 @@ public class FormScreen extends AjaxFormController
 	
 	private RiotScreen parentScreen;
 	
-	private List<RiotScreen> childScreens;
+	private Collection<RiotScreen> childScreens;
 	
-	private List<Screenlet> screenlets;
+	private Collection<Screenlet> screenlets;
 
 	public FormScreen(FormContextFactory formContextFactory,
 			FormRepository formRepository,
@@ -105,8 +98,17 @@ public class FormScreen extends AjaxFormController
 	public void setIcon(String icon) {
 		this.icon = icon;
 	}
+	
+	public void setChildScreens(Collection<RiotScreen> childScreens) {
+		this.childScreens = childScreens;
+		if (childScreens != null) {
+			for (RiotScreen child : childScreens) {
+				child.setParentScreen(this);	
+			}
+		}
+	}
 
-	public void setScreenlets(List<Screenlet> screenlets) {
+	public void setScreenlets(Collection<Screenlet> screenlets) {
 		this.screenlets = screenlets;
 	}
 	
@@ -149,8 +151,14 @@ public class FormScreen extends AjaxFormController
 		
 		ScreenContext context = ScreenContext.get(request);
 		if (context.getObject() != null) {
-			//REVISIT
 			mv.addObject("listStateKey", context.createParentContext().getListStateKey());
+			if (childScreens != null) {
+				List<ScreenLink> childLinks = Generics.newArrayList();
+				for (RiotScreen screen : childScreens) {
+					childLinks.add(context.createChildContext(screen).getLink());
+				}
+				mv.addObject("childLinks", childLinks);
+			}
 		}
 		return mv;
 	}
@@ -231,7 +239,8 @@ public class FormScreen extends AjaxFormController
 		
 		mv.addObject("notification", new FormNotification(form)
 				.setIcon("save")
-				.setMessage("Your changes have been saved."));
+				.setMessageKey("label.form.saved")
+				.setDefaultMessage("Your changes have been saved."));
 		
 		return mv;
 	}
@@ -274,10 +283,11 @@ public class FormScreen extends AjaxFormController
 		if (context.getObject() != null) {
 			return ScreenUtils.getLabel(context.getObject(), this);
 		}
-		return "New";
+		Locale locale = RequestContextUtils.getLocale(context.getRequest());
+		return getMessageSource().getMessage("label.form.new", null, "New", locale);
 	}
 
-	public List<Screenlet> getScreenlets() {
+	public Collection<Screenlet> getScreenlets() {
 		return screenlets;
 	}
 

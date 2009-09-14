@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
-	* Version: MPL 1.1
-	* The contents of this file are subject to the Mozilla Public License Version
-	* 1.1 (the "License"); you may not use this file except in compliance with
-	* the License. You may obtain a copy of the License at
-	* http://www.mozilla.org/MPL/
-	*
-	* Software distributed under the License is distributed on an "AS IS" basis,
-	* WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-	* for the specific language governing rights and limitations under the
-	* License.
-	*
-	* The Original Code is Riot.
-	*
-	* The Initial Developer of the Original Code is
-	* Neteye GmbH.
-	* Portions created by the Initial Developer are Copyright (C) 2007
-	* the Initial Developer. All Rights Reserved.
-	*
-	* Contributor(s):
-	*   Felix Gnass [fgnass at neteye dot de]
-	*
-	* ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.website.view;
 
 import java.io.File;
@@ -47,15 +36,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
-import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.property.PropertyUtils;
+import org.riotfamily.common.mapping.HandlerUrlResolver;
+import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.servlet.StringCapturingResponseWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.filter.ResourceStamper;
-import org.riotfamily.common.web.mapping.HandlerUrlResolver;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.common.web.util.StringCapturingResponseWrapper;
 import org.riotfamily.website.hyphenate.RiotHyphenator;
+import org.riotfamily.website.performance.ResourceStamper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.util.MethodInvoker;
@@ -236,7 +225,7 @@ public class CommonMacroHelper {
 	}
 
 	public String getUrlForHandler(String handlerName, Object attributes) {
-		return handlerUrlResolver.getUrlForHandler(request, handlerName, attributes);
+		return handlerUrlResolver.getUrlForHandler(handlerName, attributes);
 	}
 
 	public String getOriginatingRequestUri() {

@@ -6,11 +6,13 @@
 			<ivy pattern="${build.repo.dir}/[module]/[revision]/ivy.xml" />
 			<artifact pattern="${build.repo.dir}/[module]/[revision]/[artifact].[ext]" />
 		</filesystem>
+		
 		<url name="riotfamily">
 			<ivy pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/ivy.xml" />
 			<artifact pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/[artifact].[ext]" />
 			<artifact pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 		</url>
+		
 		<chain name="default" returnFirst="true">
 			<resolver ref="build" />
 			<resolver ref="local" />

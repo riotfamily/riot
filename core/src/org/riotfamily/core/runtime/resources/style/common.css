@@ -73,8 +73,8 @@ td {
 	display: none;
 }
 .main {
-	padding: 0 300px 50px 0;
-
+	padding: 0 300px 25px 0;
+	margin-bottom: 50px;
 }
 .extra {
 	width: 280px;
@@ -186,8 +186,16 @@ span.messageCode {
 	height: 31px;
 	padding-left: 16px;
 }
+
 #path .first .title {
 	display: none;
+}
+.chooser #path .first .title {
+	display: inline;
+}
+.chooser #path .first b b {
+	width: auto;
+	padding-left: 8px;
 }
 #path span.icon {
 	display: block;

@@ -97,10 +97,10 @@ th span {
 	padding-right: 16px;
 }
 th .sorted-asc {
-	background: url(images/asc.gif) 100% 55% no-repeat;
+	background: url(images/asc.gif) right center no-repeat;
 }
 th .sorted-desc {
-	background: url(images/desc.gif) 100% 55% no-repeat;
+	background: url(images/desc.gif) right center no-repeat;
 }
  
 .expand {

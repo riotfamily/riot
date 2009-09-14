@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- * 
- * The Original Code is Riot.
- * 
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2008
- * the Initial Developer. All Rights Reserved.
- * 
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
- * ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.media.service;
 
 import java.io.File;
@@ -29,7 +18,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.riotfamily.common.io.RuntimeCommand;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -73,9 +62,7 @@ public class FFmpeg implements InitializingBean {
 				command = getDefaultCommand();
 			}
 			log.info("Looking for FFmpeg binary: " + command);
-			
-			RuntimeCommand cmd = new RuntimeCommand(command, "-version");
-			version = cmd.exec().getErrors();
+			version = IOUtils.exec(command, "-version");
 			log.info(version);
 		}
 		catch (IOException e) {
@@ -95,19 +82,11 @@ public class FFmpeg implements InitializingBean {
 		Assert.state(isAvailable(), "FFmpeg binary '" 
 				+ command + "' not found in path.");
 		
-		String[] cmd = new String[args.size() + 1];
-		cmd[0] = command;
-		for (int i = 0; i < args.size(); i++) {
-			cmd[i + 1] = (String) args.get(i);
-		}
-		return new RuntimeCommand(cmd).exec().getResult();
+		return IOUtils.exec(command, args);
 	}
 	
 	public VideoMetaData identify(File file) throws IOException {
-		RuntimeCommand cmd = new RuntimeCommand(new String[] {command, "-i", 
-				file.getAbsolutePath()});
-
-		String out = cmd.exec().getErrors();
+		String out = IOUtils.exec(command, "-i", file.getAbsolutePath());
 		VideoMetaData meta = new VideoMetaData(); 
 		Matcher m = DURATION_PATTERN.matcher(out);
 		if (m.find()) {

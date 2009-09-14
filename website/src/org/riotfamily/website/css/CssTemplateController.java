@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.website.css;
 
 import java.io.File;
@@ -36,12 +25,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.Compressible;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.compressor.YUICssCompressor;
-import org.riotfamily.common.web.filter.ResourceStamper;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.website.cache.AbstractCacheableController;
+import org.riotfamily.website.cache.Compressible;
+import org.riotfamily.website.freemarker.RiotFileTemplateLoader;
+import org.riotfamily.website.performance.ResourceStamper;
+import org.riotfamily.website.performance.YUICssCompressor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -68,26 +58,22 @@ import freemarker.template.TemplateException;
  * <p>
  * Additionally the controller allows you to create styles that look different
  * in various contexts. A good example would be a website that uses multiple
- * color schemes. Therefore you can add named sections to your your ini file
- * and request <code>&lt;file>_&lt;section-name>.css</code> instead of
- * <code>&lt;file>.css</code>. This will cause the controller to expose the
- * properties of the requested section, possibly overriding any default
+ * color themes. Therefore you can add named sections to your your ini file
+ * and request <code>&lt;file&gt;_&lt;theme&gt;.css</code> instead of
+ * <code>&lt;file&gt;.css</code>. This will cause the controller to expose the
+ * properties of the requested theme, possibly overriding any default
  * values with the same name.
  * </p>
  * <p>
  * You can access the properties from all sections at any time by using
- * <code>&lt;section_name>.&lt;property_name></code> in the FreeMarker template.
- * If a default value has been overridden by a section value you can still
- * access the original default, by using <code>global.&lt;property_name></code>.
+ * <code>&lt;theme&gt;.&lt;property&gt;</code> in the FreeMarker template. 
+ * If a default value has been overridden by a section value you can still 
+ * access the original default, by using <code>global.&lt;property&gt;</code>.
  * </p>
  */
 public class CssTemplateController extends AbstractCacheableController
 		implements ServletContextAware, InitializingBean, 
 		LastModified, Compressible {
-
-	public static final String KEY_PROPERTY = "key";
-
-	public static final String CONTEXT_PATH_PROPERTY = "contextPath";
 
 	private static final String DEFAULT_INI_FILE_NAME = "css.ini";
 
@@ -95,12 +81,14 @@ public class CssTemplateController extends AbstractCacheableController
 
 	private ServletContext servletContext;
 
-	private Pattern keyPattern = Pattern.compile("(/[^/]+?)_(.*?)(\\.css)");
+	private Pattern themePattern = Pattern.compile("(/[^/]+?)_(.*?)(\\.css)");
 
 	private String contentType = "text/css";
 
 	private Configuration freeMarkerConfig;
 
+	private Map<String,Object> helpers;
+	
 	private IniFile iniFile;
 
 	private Pattern urlPattern = Pattern.compile(
@@ -127,6 +115,10 @@ public class CssTemplateController extends AbstractCacheableController
 
 	public void setFreeMarkerConfig(Configuration configuration) {
 		this.freeMarkerConfig = configuration;
+	}
+	
+	public void setHelpers(Map<String, Object> helpers) {
+		this.helpers = helpers;
 	}
 
 	/**
@@ -158,8 +150,8 @@ public class CssTemplateController extends AbstractCacheableController
 		if (freeMarkerConfig == null) {
 			freeMarkerConfig = new Configuration();
 		}
-		freeMarkerConfig.setDirectoryForTemplateLoading(
-				new File(servletContext.getRealPath("/")));
+		freeMarkerConfig.setTemplateLoader(new RiotFileTemplateLoader(
+				new File(servletContext.getRealPath("/"))));
 	}
 
 	public boolean gzipResponse(HttpServletRequest request) {
@@ -184,7 +176,7 @@ public class CssTemplateController extends AbstractCacheableController
 		String key = null;
 		File file = new File(servletContext.getRealPath(path));
 		if (!file.exists()) {
-			Matcher matcher = keyPattern.matcher(path);
+			Matcher matcher = themePattern.matcher(path);
 			if (matcher.find()) {
 				key = matcher.group(2);
 				path = matcher.replaceFirst("$1$3");
@@ -200,12 +192,12 @@ public class CssTemplateController extends AbstractCacheableController
 
 		private String path;
 
-		private String key;
+		private String theme;
 
-		public DynamicStylesheet(File file, String path, String key) {
+		public DynamicStylesheet(File file, String path, String theme) {
 			this.file = file;
 			this.path = path;
-			this.key = key;
+			this.theme = theme;
 		}
 
 		public long lastModified() {
@@ -247,9 +239,12 @@ public class CssTemplateController extends AbstractCacheableController
 			response.setContentType(contentType);
 
 			Map<String, Object>	model = buildModel();
-			model.put(KEY_PROPERTY, key);
-			model.put(CONTEXT_PATH_PROPERTY, request.getContextPath());
-
+			model.put("theme", theme);
+			model.put("contextPath", request.getContextPath());
+			model.put("colorTool", colorTool);
+			if (helpers != null) {
+				model.putAll(helpers);
+			}
 			Template template = freeMarkerConfig.getTemplate(path);
 			StringWriter sw = new StringWriter();
 			template.process(model, sw);
@@ -260,13 +255,12 @@ public class CssTemplateController extends AbstractCacheableController
 
 		private Map<String, Object> buildModel() {
 			HashMap<String, Object> model = Generics.newHashMap();
-			model.put("color", colorTool);
 			if (iniFile != null) {
 				Map<String, Map<String,Object>> sections = iniFile.getSections();
 				model.putAll(sections);
 				model.putAll(sections.get(IniFile.GLOBAL_SECTION));
-				if (key != null) {
-					Map<String, Object> current = sections.get(key);
+				if (theme != null) {
+					Map<String, Object> current = sections.get(theme);
 					if (current != null) {
 						model.putAll(current);
 					}
@@ -306,6 +300,5 @@ public class CssTemplateController extends AbstractCacheableController
 			matcher.appendTail(sb);
 			return sb.toString();
 		}
-
 	}
 }

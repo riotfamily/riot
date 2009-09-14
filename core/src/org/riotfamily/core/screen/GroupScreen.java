@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.core.screen;
 
 import java.util.List;
@@ -28,9 +17,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.mapping.HandlerUrlUtils;
+import org.riotfamily.core.security.AccessController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -68,19 +58,21 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 		ModelAndView mv = new ModelAndView(viewName);
 		List<ScreenLink> links = Generics.newArrayList();
 		for (RiotScreen screen : childScreens) {
-			GroupScreenLink link = new GroupScreenLink(screen.getTitle(context),
-					HandlerUrlUtils.getContextRelativeUrl(request, screen.getId(), context),
-					screen.getIcon());
-			
-			if (screen instanceof GroupScreen) {
-				for (RiotScreen nested : screen.getChildScreens()) {
-					link.addChildLink(new GroupScreenLink(nested.getTitle(context),
-							HandlerUrlUtils.getContextRelativeUrl(request, nested.getId(), context),
-							nested.getIcon()));
-				}
+			if (AccessController.isGranted("view", screen)) {
+				GroupScreenLink link = new GroupScreenLink(screen.getTitle(context),
+						HandlerUrlUtils.getContextRelativeUrl(request, screen.getId(), context),
+						screen.getIcon());
 				
+				if (screen instanceof GroupScreen) {
+					for (RiotScreen nested : screen.getChildScreens()) {
+						link.addChildLink(new GroupScreenLink(nested.getTitle(context),
+								HandlerUrlUtils.getContextRelativeUrl(request, nested.getId(), context),
+								nested.getIcon()));
+					}
+					
+				}
+				links.add(link);
 			}
-			links.add(link);
 		}
 		mv.addObject("links", links);
 		return mv;

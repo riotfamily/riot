@@ -92,12 +92,6 @@ var RElement = {
 		return el;
 	},
 
-	appendTo: function(el, parent) {
-		el = $(el);
-		$(parent).appendChild(el);
-		return el;
-	},
-
 	replaceBy: function(el, replacement) {
 		el = $(el);
 		replacement = $(replacement);
@@ -292,17 +286,3 @@ if (Prototype.Browser.IE) {
 
 Position.cumulativeOffset = RElement.cumulativeOffset;
 
-var RForm = {
-	getValues: function(form) {
-		return $(form).getElements().inject({}, function(map, e) {
-			if (e.name) {
-				var value = e.getValue();
-				if (value) {
-					if (!map[e.name]) map[e.name] = [];
-					map[e.name].push(value);
-				}
-			}
-			return map;
-		});
-	}
-}

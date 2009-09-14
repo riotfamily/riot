@@ -9,8 +9,6 @@
 }
 .screens a {
 	display: block;
-	background-repeat: no-repeat;
-	background-position: 6px center;
 	color: #3d3d3d;
 	text-decoration: none;
 	padding: 20px 20px 20px 26px;
@@ -34,3 +32,25 @@
 	padding: 6px 0 6px 26px;
 }
 
+.commands .action {
+	display: block;
+	width: 117px;
+	float: left;
+	text-decoration: none;
+	margin: 0 0 1px 1px;
+}
+
+a .icon {
+	display: -moz-inline-stack;
+	display: inline-block;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+	background-repeat: no-repeat;
+	margin-right: 4px;
+}
+
+a .label {
+	line-height: 18px;
+	vertical-align: middle;
+}

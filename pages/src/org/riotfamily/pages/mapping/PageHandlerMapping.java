@@ -1,38 +1,25 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.pages.mapping;
-
-import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.controller.HttpErrorController;
-import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.website.controller.HttpErrorController;
+import org.riotfamily.website.controller.RedirectController;
 import org.springframework.orm.hibernate3.HibernateSystemException;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
@@ -58,7 +45,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			return null;
 		}
 		Page page = pageResolver.getPage(request);
-		String path = pageResolver.getPathWithinSite(request);
+		String path = pageResolver.getLookupPath(request);
 		if (page == null) {
 			Site site = pageResolver.getSite(request);
 			if (site == null) {
@@ -68,40 +55,15 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		}
 		
 		exposePathWithinMapping(path, request);
-		return getPageHandler(page, request);
-	}
-	
-	
-	/**
-	 * Returns the handler for the given page.
-	 */
-	protected Object getPageHandler(Page page, HttpServletRequest request) {
-		if (page.isFolder()) {
-			return getFolderHandler(page.getChildPages());
-		}
 		return page.getHandler();
 	}
-
-	
-	private Object getFolderHandler(Collection<Page> childPages) {
-		for (Page page : childPages) {
-			if (page.isRequestable()) {
-				String url = page.getUrl();
-				return new RedirectController(url, true, false);
-			}
-		}
-		return new HttpErrorController(HttpServletResponse.SC_NOT_FOUND);
-	}
-	
+		
 	/**
 	 * Checks if an alias is registered for the given site and path and returns 
 	 * a RedirectController, or <code>null</code> in case no alias can be found.
 	 */
 	protected Object getPageNotFoundHandler(Site site, String path) {
 		try {
-			if (path.length() == 0) {
-				return getFolderHandler(site.getChildPages());
-			}
 			PageAlias alias = PageAlias.loadBySiteAndPath(site, path);
 			if (alias != null) {
 				Page page = alias.getPage();

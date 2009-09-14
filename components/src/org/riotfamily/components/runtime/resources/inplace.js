@@ -5,10 +5,10 @@ riot.stopEvent = function(ev) {
 
 riot.outline = {
 	elements: {
-		top: RBuilder.node('div', {className: 'riot-highlight riot-highlight-top'}).hide().appendTo(document.body),
-		right: RBuilder.node('div', {className: 'riot-highlight riot-highlight-right'}).hide().appendTo(document.body),
-		bottom: RBuilder.node('div', {className: 'riot-highlight riot-highlight-bottom'}).hide().appendTo(document.body),
-		left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide().appendTo(document.body)
+		top: RBuilder.node('div', {className: 'riot-highlight riot-highlight-top'}).hide(),
+		right: RBuilder.node('div', {className: 'riot-highlight riot-highlight-right'}).hide(),
+		bottom: RBuilder.node('div', {className: 'riot-highlight riot-highlight-bottom'}).hide(),
+		left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide()
 	},
 	
 	show: function(el, onclick, excludes) {
@@ -54,7 +54,9 @@ riot.outline = {
 		}
 	}
 }
-riot.outline.divs = $H(riot.outline.elements).values();
+
+riot.outline.divs = Object.values(riot.outline.elements);
+riot.outline.divs.each(function(e) {document.body.appendChild(e)});
 
 riot.InplaceEditor = Class.create({
 	initialize: function(element, content, options) {
@@ -144,7 +146,7 @@ riot.InplaceEditor = Class.create({
 		}
 		this.save();
 		this.hide();
-		if (this.element.onedit) this.element.onedit();
+		this.element.fire('inplace:edited');
 	}
 
 });

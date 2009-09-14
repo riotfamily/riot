@@ -428,7 +428,7 @@
 
 <#macro stylesheets hrefs compress=commonMacroHelper.compressResources rel="stylesheet" type="text/css" attributes...>
 	<#if compress>
-		<#local files = invokeStaticMethod('org.riotfamily.website.minify.MinifyCssController.buildParam', hrefs) />
+		<#local files = statics["org.riotfamily.website.performance.MinifyCssController"].buildParam(hrefs) />
 		<link rel="${rel}" type="${type}" href="${resource(pathForHandler("minifyCssController") + "?files=" + files?xml)}"${joinAttributes(attributes)} />
 	<#else>
 		<#if attributes?is_sequence>

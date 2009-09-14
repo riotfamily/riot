@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
 	<override:put ref="customFormElements">
 		<entry key="{http://www.riotfamily.org/schema/media/form-elements}file-upload"
@@ -32,13 +32,6 @@
 	<override:add ref="messageBasenames" append="true">
 		<value>classpath:/org/riotfamily/media/runtime/i18n/messages</value>
 	</override:add>
-	
-	<bean id="mediaCleanUp" class="org.riotfamily.media.cleanup.HibernateCleanUpTask">
-		<constructor-arg ref="sessionFactory" />
-		<constructor-arg ref="fileStore" />
-		<constructor-arg ref="transactionManager" />
-		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily}" />
-	</bean>
 	
     <bean id="riotImageRenderer" class="org.riotfamily.media.riot.ui.RiotImageRenderer" />
 

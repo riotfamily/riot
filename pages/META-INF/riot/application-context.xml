@@ -7,11 +7,11 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd
+		http://www.riotfamily.org/schema/common/override-9.0.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 		
-	<bean id="sitemapSchema" class="org.riotfamily.common.beans.config.SingletonLookupFactoryBean">
+	<bean id="sitemapSchema" class="org.riotfamily.common.beans.factory.SingletonLookupFactoryBean">
 		<constructor-arg value="org.riotfamily.pages.config.SitemapSchema" />
 	</bean>
 	
@@ -19,9 +19,8 @@
 		<constructor-arg ref="sitemapSchema" />
 	</bean>
 	
-	<bean class="org.riotfamily.pages.config.SystemPageSync">
+	<bean class="org.riotfamily.pages.config.DefaultSiteCreator">
 		<constructor-arg ref="sessionFactory" />
-		<constructor-arg ref="sitemapSchema" />
 	</bean>
 	
 	<bean class="org.riotfamily.pages.config.SystemPageSyncListener">
@@ -29,10 +28,6 @@
 	</bean>
 	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
-	
-	<bean class="org.riotfamily.pages.model.Site" scope="prototype">
-		<property name="cacheService" ref="cacheService" />
-	</bean>
 
 	<bean class="org.riotfamily.pages.model.Page" scope="prototype">
 		<property name="cacheService" ref="cacheService" />

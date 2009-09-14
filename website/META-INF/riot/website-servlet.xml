@@ -31,14 +31,14 @@
 		<property name="contextOverride" value="true" />
 	</bean>
 	
-	<bean id="expiresHeaderFilterPlugin" class="org.riotfamily.common.web.filter.ExpiresHeaderFilterPlugin">
+	<bean id="expiresHeaderFilterPlugin" class="org.riotfamily.website.performance.ExpiresHeaderFilterPlugin">
 		<description>
 			FilterPlugin that sets a far-future expires header for all stamped URLs.
 		</description>
 		<property name="filterName" value="website-filter" />
 	</bean>
 
-	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.common.web.filter.OpenSessionInViewFilterPlugin">
+	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.common.filter.OpenSessionInViewFilterPlugin">
 		<description>
 			FilterPlugin that binds a Hibernate Session to the thread for the 
 			entire processing of the request just like Spring's OpenSessionInViewFilter.
@@ -53,7 +53,7 @@
 		</description>
 	</bean>
 	
-	<bean class="org.riotfamily.common.web.servlet.ReloadableDispatcherServletConfig">
+	<bean class="org.riotfamily.common.servlet.ReloadableDispatcherServletConfig">
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
 	</bean>
 	
@@ -61,9 +61,9 @@
 		<property name="filterName" value="website-filter" />
 	</bean>
 	
-	<bean id="cacheKeyAugmentor" class="org.riotfamily.cachius.servlet.NoOpCacheKeyAugmentor" />
+	<bean id="cacheKeyAugmentor" class="org.riotfamily.website.cache.NoOpCacheKeyAugmentor" />
 	
-	<bean id="cacheableHandlerAdapter" class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
+	<bean id="cacheableHandlerAdapter" class="org.riotfamily.website.cache.CacheableControllerHandlerAdapter">
 		<description>
 			HandlerAdapter that handles CacheableControllers.
 		</description>
@@ -77,7 +77,7 @@
 		</description>
 	</bean>
 	
-	<bean id="riotInterceptors" class="org.riotfamily.common.web.interceptor.ChainedHandlerInterceptor">
+	<bean id="riotInterceptors" class="org.riotfamily.common.interceptor.ChainedHandlerInterceptor">
 		<description>
 			ChainedHandlerInterceptor that combines all interceptors that are required
 	  		by Riot or one of its modules. Modules should use the override:add tag and
@@ -86,7 +86,7 @@
 		<property name="interceptors">
 			<list>
 				<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
-				<bean class="org.riotfamily.common.web.view.FlashScopeInterceptor" />
+				<bean class="org.riotfamily.common.view.FlashScopeInterceptor" />
 			</list>
 		</property>
 	</bean>
@@ -100,24 +100,29 @@
 		<property name="addContextPathToUrls" value="true" />
 		<property name="stamper" ref="resourceStamper" />
 		<property name="compressor">
-			<bean class="org.riotfamily.common.web.compressor.YUICssCompressor">
+			<bean class="org.riotfamily.website.performance.YUICssCompressor">
 				<property name="enabled" value="${riot.resources.compress=true}" />
 			</bean>			
 		</property>
 	</bean>
 	
-	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.website.minify.MinifyCssController">
+	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.website.performance.MinifyCssController">
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
-		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	
-	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.website.minify.MinifyScriptController">
+	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
 		<description>
 			Controller to compress (minify) JavaScript files.
 		</description>
-		<property name="reloadable" value="${riot.resources.reloadable=false}" />
+		<constructor-arg ref="javaScriptCompressor" />
+	</bean>
+	
+	<bean id="clientErrorLogController" name="/riot-utils/error.*" class="org.riotfamily.website.controller.ClientErrorLogController">
+		<description>
+			Controller to log client-side JavaScript errors.
+		</description>
 	</bean>
 		
 	<bean id="freemarkerConfig" class="org.riotfamily.website.freemarker.WebsiteFreeMarkerConfigurer">
@@ -136,7 +141,6 @@
 			<props>
 				<prop key="c">classpath:org/riotfamily/website/view/common.ftl</prop>
 				<prop key="form">classpath:org/riotfamily/website/form/form.ftl</prop>
-				<prop key="cache">classpath:org/riotfamily/website/cache/cache.ftl</prop>
 				<prop key="template">classpath:org/riotfamily/website/template/template.ftl</prop>
 				<prop key="txt2img">classpath:org/riotfamily/website/txt2img/txt2img.ftl</prop>
 			</props>
@@ -160,7 +164,12 @@
 		</description>
 	</bean>
 	
-	<bean id="localizedObjectWrapperPlugin" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapperPlugin" />
+	<bean class="org.riotfamily.common.freemarker.MapEntityObjectWrapperPlugin">
+		<description>
+			ObjectWrapperPlugin that wraps Entities that implement the 
+			java.util.Map interface with a MapModel (instead of a SimpleHash).
+		</description>
+	</bean>
     
     <bean class="org.riotfamily.common.hibernate.ActiveRecordClassExposer">
     	<description>
@@ -170,11 +179,11 @@
     	<constructor-arg ref="sessionFactory" />
     </bean>
     
-	<bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
+	<bean id="viewResolver" class="org.riotfamily.common.freemarker.RiotFreeMarkerViewResolver">
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
 	
-	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver" />
+	<bean id="handlerUrlResolver" class="org.riotfamily.common.mapping.HandlerUrlResolver" />
 	
 	<bean id="commonMacroHelper" class="org.riotfamily.website.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
@@ -196,25 +205,18 @@
 	</bean>
 	
 	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory" />
-	
-	<bean id="cacheMacroHelper" class="org.riotfamily.website.cache.CacheMacroHelperFactory">
-		<constructor-arg ref="cacheService" />
-		<constructor-arg ref="cacheKeyAugmentor" />
-	</bean>
-	
+		
 	<bean id="riotHyphenator" class="org.riotfamily.website.hyphenate.RiotHyphenator">
 		<property name="baseDir" value="/WEB-INF/hyphenation" />
 	</bean>
 	
 	<bean id="txt2ImgController" name="/riot-utils/txt2img.@{type}" class="org.riotfamily.website.txt2img.Txt2ImgController">
 		<property name="compressor">
-			<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
+			<bean class="org.riotfamily.website.performance.YUIJavaScriptCompressor">
 				<property name="enabled" value="${riot.resources.compress=true}" />
 			</bean>			
 		</property>
 	</bean>
-	
-	<bean id="quickjumpController" name="/riot-utils/quickjump.html" class="org.riotfamily.common.web.controller.QuickjumpController" />
 	
 	<bean id="txt2imgButtonController" name="/riot-utils/imagebtn/@{style}.*" class="org.riotfamily.website.txt2img.ButtonController">
 		<constructor-arg ref="buttonService" />
@@ -224,7 +226,7 @@
 		<constructor-arg ref="buttonService" />
 	</bean>
 		
-	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.common.web.controller.CountryFlagController">
+	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.website.controller.CountryFlagController">
 		<constructor-arg ref="fileTypeMap" />
 		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/icons/flags/" />
 		<property name="defaultFlag" value="europeanunion" />

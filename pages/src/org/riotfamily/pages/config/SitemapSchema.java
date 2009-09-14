@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   flx
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.pages.config;
 
 import java.util.Collections;
@@ -31,7 +20,6 @@ import java.util.Map;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.model.SiteMapItem;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -39,12 +27,10 @@ public class SitemapSchema {
 
 	private String defaultSuffix;
 	
+	private RootPage rootPage;
+	
 	private Map<String, PageType> typeMap = Generics.newHashMap();
 		
-	private List<SystemPage> systemPages = Generics.newArrayList();
-	
-	private List<PageType> rootTypes = Generics.newArrayList();
-
 	public String getDefaultSuffix() {
 		return defaultSuffix;
 	}
@@ -53,15 +39,9 @@ public class SitemapSchema {
 		this.defaultSuffix = defaultSuffix;
 	}
 
-	public void setTypes(List<PageType> types) {
-		if (types != null) {
-			for (PageType type : types) {
-				type.register(this);
-				if (!(type instanceof SystemPage)) {
-					rootTypes.add(type);
-				}
-			}
-		}
+	public void setRootPage(RootPage rootPage) {
+		this.rootPage = rootPage;
+		rootPage.register(this);
 	}
 	
 	void addType(PageType type) {
@@ -78,10 +58,6 @@ public class SitemapSchema {
 		return typeMap.get(name);
 	}
 	
-	void addSystemPage(SystemPage page) {
-		systemPages.add(page);
-	}
-
 	void syncSystemPages() {
 		List<Site> sites = Site.findAll();
 		if (sites.isEmpty()) {
@@ -99,20 +75,13 @@ public class SitemapSchema {
 	}
 	
 	void syncSystemPages(Site site) {
-		if (systemPages != null) {
-			for (SystemPage systemPage : systemPages) {
-				systemPage.sync(site);
-			}
-		}
+		rootPage.sync(site);
 	}
 
-	public List<PageType> getChildTypeOptions(SiteMapItem parent) {
+	public List<PageType> getChildTypeOptions(Page parent) {
 		List<PageType> options = null;
 		if (parent instanceof Page) {
 			options = getPageType((Page) parent).getChildTypes();
-		}
-		else {
-			options = rootTypes;
 		}
 		if (options == null) {
 			options = Collections.emptyList();
@@ -132,11 +101,11 @@ public class SitemapSchema {
 		return getPageType(page) instanceof SystemPage;
 	}
 
-	public boolean canHaveChildren(SiteMapItem parent) {
+	public boolean canHaveChildren(Page parent) {
 		return !getChildTypeOptions(parent).isEmpty();
 	}
 	
-	public boolean isValidChild(SiteMapItem parent, Page child) {
+	public boolean isValidChild(Page parent, Page child) {
 		return getChildTypeOptions(parent).contains(getPageType(child));
 	}
 	

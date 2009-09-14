@@ -1,35 +1,31 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.core.form.element;
 
 import java.io.PrintWriter;
 
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.core.screen.ListScreen;
+import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenRepository;
+import org.riotfamily.core.screen.ScreenUtils;
+import org.riotfamily.core.screen.list.ChooserSettings;
 import org.riotfamily.forms.element.select.AbstractChooser;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class ObjectChooser extends AbstractChooser {
+public class ObjectChooser extends AbstractChooser 
+		implements ApplicationContextAware {
 
 	private String rootId;
 	
@@ -41,8 +37,14 @@ public class ObjectChooser extends AbstractChooser {
 	
 	private ListScreen targetList;
 
+	private ApplicationContext applicationContext;
+	
 	public ObjectChooser(ScreenRepository screenRepository) {
 		this.screenRepository = screenRepository;
+	}
+	
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
 	}
 
 	public void setTargetId(String targetId) {
@@ -56,14 +58,21 @@ public class ObjectChooser extends AbstractChooser {
 	@Override
 	protected void afterFormSet() {
 		targetList = screenRepository.getScreen(targetId, ListScreen.class);
-		rootList = screenRepository.getScreen(rootId, ListScreen.class);
+		if (rootId != null) {
+			rootList = screenRepository.getScreen(rootId, ListScreen.class);
+		}
+		else {
+			rootList = ScreenUtils.getRootListScreen(targetList);
+		}
 	}
 	
 	@Override
 	protected String getChooserUrl() {
-		// TODO Auto-generated method stub
-		//new ScreenContext(rootList, null, objectId, null, false);
-		return "/riot-skeleton/riot/screen/sitemap?choose=sitemap";
+		ChooserSettings settings = new ChooserSettings(targetId, rootId, null);
+		String url = HandlerUrlUtils.getUrlResolver(applicationContext)
+				.getUrlForHandler(rootList.getId(),
+				new ScreenContext(null, null, null, null, false));
+		return settings.appendTo(url);
 	}
 
 	@Override
@@ -73,7 +82,9 @@ public class ObjectChooser extends AbstractChooser {
 
 	@Override
 	protected void renderLabel(Object object, PrintWriter writer) {
-		writer.print(targetList.getItemLabel(object));
+		if (object != null) {
+			writer.print(targetList.getItemLabel(object));
+		}
 	}
 
 }

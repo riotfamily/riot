@@ -1,11 +1,22 @@
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.search.site;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Hibernate;
-import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.pages.model.Site;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -18,21 +29,13 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class SiteIdentifier {
 
-	private RiotLog log = RiotLog.get(SiteIdentifier.class);
-	
 	private PlatformTransactionManager transactionManager;
-	
-	private String contextPath;
 	
 	private List<Site> sites;
 
 	
 	public SiteIdentifier(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
-	}
-	
-	public void setContextPath(String contextPath) {
-		this.contextPath = contextPath;
 	}
 	
 	public void updateSiteList() {
@@ -51,52 +54,17 @@ public class SiteIdentifier {
 	
 	/**
 	 * Returns the first Site that matches the given URL.
-	 * <p>
-	 * <strong>Note:</strong> If no contextPath has been  
-	 * {@link #setContextPath(String) set manually}, the method will try to
-	 * guess the contextPath using the following strategy: If no matching Site
-	 * is found in the first pass, the leading directory name is stripped from
-	 * the URL and the lookup is performed again with the modified path. If 
-	 * this yields a result, {@link #setContextPath(String)} is invoked with the
-	 * assumed prefix. This behavior might lead to unexpected results in certain 
-	 * scenarios, for example when you have a Site that doesn't specify a
-	 * hostName (only a prefix) and you invoke this method with an URL that
-	 * contains this prefix as second directory name <em>before</em> you 
-	 * called it with a valid (resolvable) URL. This is very unlikely to 
-	 * happen. If you run into this problem nevertheless, you can set the 
-	 * contextPath {@link #setContextPath(String) manually}. 
 	 */	
 	public Site getSiteForUrl(String url) {
 		String hostName = ServletUtils.getHost(url);
-		String path = ServletUtils.getPath(url);
-		if (contextPath != null && contextPath.length() > 0) {
-			path = path.substring(contextPath.length());
-		}
-		Site site = getSite(hostName, path);
-		if (site == null) {
-			if (contextPath == null) {
-				if (path.length() > 1) {
-					int i = path.indexOf('/', 1);
-					if (i != -1) {
-						String cp = path.substring(0, i);
-						path = path.substring(i);
-						site = getSite(hostName, path);
-						if (site != null) {
-							contextPath = cp;
-							log.info("Assuming the contextPath is " + cp);
-						}
-					}
-				}
-			}
-		}
-		return site;
+		return getSite(hostName);
 	}
 
-	private Site getSite(String hostName, String path) {
+	private Site getSite(String hostName) {
 		Iterator<Site> it = sites.iterator();
 		while (it.hasNext()) {
 			Site site = it.next();
-			if (site.matches(hostName, path)) {
+			if (site.hostNameMatches(hostName)) {
 				return site;
 			}
 		}

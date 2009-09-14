@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.components.render.component;
 
 import java.io.IOException;
@@ -39,9 +28,6 @@ import org.riotfamily.components.model.Component;
  */
 public abstract class AbstractComponentRenderer implements ComponentRenderer {
 
-	public static final String CONTAINER = AbstractComponentRenderer.class.getName()
-			+ ".container";
-
 	public static final String COMPONENT_ID = "componentId";
 
 	public static final String THIS = "this";
@@ -54,15 +40,11 @@ public abstract class AbstractComponentRenderer implements ComponentRenderer {
 
 	protected RiotLog log = RiotLog.get(AbstractComponentRenderer.class);
 
-	public final void render(Component component, int position, int listSize, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
+	public final void render(Component component, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
 
-		Object outerContainer = request.getAttribute(CONTAINER);
-		request.setAttribute(CONTAINER, component);
 		try {
-			renderInternal(component, position, listSize, 
-					request, response);
+			renderInternal(component, request, response);
 		}
 		catch (Exception e) {
 			log.error("Error rendering component", e);
@@ -78,11 +60,10 @@ public abstract class AbstractComponentRenderer implements ComponentRenderer {
 
 			pre.end();
 		}
-		request.setAttribute(CONTAINER, outerContainer);
 	}
 
 	protected abstract void renderInternal(Component component,
-			int position, int listSize, HttpServletRequest request,
-			HttpServletResponse response) throws Exception;
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception;
 	
 }

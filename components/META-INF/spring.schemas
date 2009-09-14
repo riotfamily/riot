@@ -1,8 +1,0 @@
-http\://www.riotfamily.org/schema/components/component.xsd=org/riotfamily/components/config/component.xsd
-http\://www.riotfamily.org/schema/components/component-6.5.xsd=org/riotfamily/components/config/component.xsd
-http\://www.riotfamily.org/schema/components/component-7.0.xsd=org/riotfamily/components/config/component.xsd
-http\://www.riotfamily.org/schema/components/component-8.0.xsd=org/riotfamily/components/config/component.xsd
-
-http\://www.riotfamily.org/schema/components/form-elements.xsd=org/riotfamily/components/riot/form/form-elements.xsd
-http\://www.riotfamily.org/schema/components/form-elements-7.0.xsd=org/riotfamily/components/riot/form/form-elements.xsd
-http\://www.riotfamily.org/schema/components/form-elements-8.0.xsd=org/riotfamily/components/riot/form/form-elements.xsd

@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
 	<!-- FilterPlugin to collect request statistics -->
 	<bean id="requestCountFilterPlugin" class="org.riotfamily.statistics.web.RequestCountFilterPlugin">
@@ -31,7 +31,7 @@
         <property name="faultStatusCodes" value="${riot.statistics.request.faultStatusCodes=404,500}" />
     </bean>
 
-	<bean id="requestTimestampRenderer" class="org.riotfamily.common.web.ui.DateRenderer">
+	<bean id="requestTimestampRenderer" class="org.riotfamily.common.ui.DateRenderer">
 		<property name="pattern" value="dd.MM.yy HH:mm:ss" />
 	</bean>
 	
@@ -93,6 +93,7 @@
 									</property>
 									<property name="columns" ref="statsColumns" />
 					        	</bean>
+					        	<!-- 
 					        	<bean id="applicationProperties" class="org.riotfamily.core.screen.list.TreeListScreen">
 					        		<property name="icon" value="cog" />
 					        		<property name="dao">
@@ -102,6 +103,7 @@
         							</property>
         							<property name="columns" ref="statsColumns" />
 					        	</bean>
+					        	-->
 					        </list>
 				       </property>
 					</bean>
@@ -205,15 +207,6 @@
 						        </bean>
 							</list>
 						</property>
-					</bean>
-				        
-			   		<bean id="cachiusStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-						<property name="dao">
-							<bean class="org.riotfamily.statistics.dao.CachiusStatisticsDao">
-								<property name="cacheService" ref="cacheService" />
-							</bean>
-						</property>
-						<property name="columns" ref="statsColumns" />
 					</bean>
 				</list>
 			</property>

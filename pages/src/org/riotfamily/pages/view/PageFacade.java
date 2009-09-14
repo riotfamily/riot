@@ -1,47 +1,34 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- * 
- * The Original Code is Riot.
- * 
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- * 
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
- * ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.pages.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.model.SiteMapItem;
+import org.riotfamily.website.cache.CacheTagUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -57,17 +44,15 @@ public class PageFacade {
 	
 	private boolean preview;
 	
-	private Map<String, Object> properties = null;
-
 	public PageFacade(Page page, HttpServletRequest request) {
 		this.page = page;
 		this.request = request;
 		this.preview = isPreview(page);
-		TaggingContext.tag(page.getCacheTag());
+		CacheTagUtils.tag(page);
 	}
 		
 	private boolean isPreview(Page page) {
-		return EditModeUtils.isPreview(request, page.getPageProperties());
+		return EditModeUtils.isPreview(request, page.getContentContainer());
 	}
 	public Long getId() {
 		return page.getId();
@@ -87,14 +72,6 @@ public class PageFacade {
 	
 	public String getPathComponent() {
 		return page.getPathComponent();
-	}
-
-	public boolean isHidden() {
-		return page.isHidden();
-	}
-	
-	public boolean isFolder() {
-		return page.isFolder();
 	}
 
 	public String getPath() {
@@ -130,18 +107,21 @@ public class PageFacade {
 	}
 
 	public Page getParent() {
-		return page.getParentPage();
+		return page.getParent();
 	}
 
 	public Collection<Page> getChildPages() {
-		TaggingContext.tag(page.getCacheTag());
-		return getVisiblePages(page.getChildPages());
+		CacheTagUtils.tag(page);
+		return getPublishedPages(page.getChildPages());
 	}
 
 	public List<Page> getSiblings() {
-		SiteMapItem parent = page.getParent();
-		TaggingContext.tag(parent.getCacheTag());
-		return getVisiblePages(parent.getChildPages());
+		Page parent = page.getParent();
+		if (parent == null) {
+			return Collections.singletonList(page);
+		}
+		CacheTagUtils.tag(parent);
+		return getPublishedPages(parent.getChildPages());
 	}
 	
 	public Page getPreviousSibling() {
@@ -165,59 +145,43 @@ public class PageFacade {
 	public Collection<Page> getAncestors() {
 		return page.getAncestors();
 	}
-
-	public Object findPropertyInAncestors(String key) {
-		Page p = page;
-		while (p != null) {
-			Map<String, Object> props = p.getPageProperties().unwrap(preview);
-			Object value = props.get(key);
-			if (value != null) {
-				return value;
-			}
-			p = p.getParentPage();
-		}
-		return null;
-	}
 	
 	public String getPageType() {
 		return page.getPageType();
 	}
 
 	public Long getContentId() {
-		Content content = getPageProperties().getContent(preview);
-		return content != null ? content.getId() : null;
+		return getContent().getId();
 	}
 		
-	public PageProperties getPageProperties() {
-		PageProperties pageProperties = page.getPageProperties(); 
-		ComponentCacheUtils.addContainerTags(pageProperties, preview);
+	public ContentContainer getContentContainer() {
+		ContentContainer container = page.getContentContainer();
+		CacheTagUtils.tag(container);
+		/*
+		ComponentCacheUtils.addContainerTags(container, preview);
 		Page master = page.getMasterPage();
 		if (master != null) {
-			ComponentCacheUtils.addContainerTags(master.getPageProperties(), preview);
+			ComponentCacheUtils.addContainerTags(master.getContentContainer(), preview);
 		}
-		return pageProperties;
+		*/
+		return container;
 	}
 
-	public Map<String, Object> getProperties() {
-		if (properties == null) {
-			properties = getPageProperties().unwrap(preview);
-		}
-		return properties;
+	public Content getContent() {
+		Content content = getContentContainer().getContent(preview);
+		CacheTagUtils.tag(content);
+		return content;
 	}
 	
 	/**
 	 * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
 	 */
 	public Object get(String key) {
-		return getProperties().get(key);
-	}
-	
-	public Map<String, Object> getLocal() {
-		return getPageProperties().unwrapLocal(preview);
+		return getContent().get(key);
 	}
 
 	public String getTitle() {
-		Object title = getProperties().get(TITLE_PROPERTY);
+		Object title = get(TITLE_PROPERTY);
 		if (title != null) {
 			return title.toString();
 		}
@@ -229,14 +193,10 @@ public class PageFacade {
 		return page.isPublished();
 	}
 
-	public boolean isVisible() {
-		return page.isVisible(preview);
-	}
-
-	private List<Page> getVisiblePages(Collection<Page> pages) {
+	private List<Page> getPublishedPages(Collection<Page> pages) {
 		ArrayList<Page> result = new ArrayList<Page>();
 		for (Page page : pages) {
-			if (page.isVisible(isPreview(page))) {
+			if (page.isPublished() || isPreview(page)) {
 				result.add(page);
 			}
 		}

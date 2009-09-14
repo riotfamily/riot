@@ -1,29 +1,19 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- * 
- * The Original Code is Riot.
- * 
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- * 
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
- * ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.common.io;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,10 +22,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.SocketException;
+import java.util.List;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
 import org.springframework.util.FileCopyUtils;
 
@@ -247,6 +240,23 @@ public class IOUtils {
 		return -1;
 	}
 	
+	/**
+	 * Writes the content of the given buffer to an OutputStream,
+	 * swallowing exceptions caused by a ClientAbortException.
+	 */
+	public static void serve(byte[] buffer, OutputStream out) throws IOException {
+		try {
+			out.write(buffer);
+		}
+		catch (SocketException e) {
+		}
+		catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
+	}
+	
 	public static void closeStream(InputStream in) {
 		if (in != null) {
 			try {
@@ -331,4 +341,28 @@ public class IOUtils {
         }
         f.delete();
     }
+	
+	public static String exec(String command, String... args) throws IOException {
+		List<String> argList = null;
+		if (args != null) {
+			argList = Generics.newArrayList();
+			for (String arg : args) {
+				argList.add(arg);
+			}
+		}
+		return exec(command, argList);
+	}
+	
+	public static String exec(String command, List<String> args) throws IOException {
+		List<String> commandLine = Generics.newArrayList();
+		commandLine.add(command);
+		if (args != null) {
+			commandLine.addAll(args);
+		}
+		Process p = new ProcessBuilder(commandLine).redirectErrorStream(true).start();
+		Reader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		StringWriter sw = new StringWriter(); 
+		copy(reader, sw);
+		return sw.toString();
+	}
 }

@@ -4,14 +4,13 @@
     	<conf name="build" />
     	<conf name="runtime" />
     	<conf name="test" />
-    	<conf name="src" />
     </configurations>
     <publications>
-    	<artifact conf="build,runtime,test" />
-    	<artifact type="source" ext="src.zip" conf="src" />
+    	<artifact />
+    	<artifact type="source" ext="src.zip" />
     </publications>
     <dependencies>
         <dependency org="riotfamily" name="riot-pages" rev="${dep.riot.revision}" conf="*->@" />
-        <dependency org="apache" name="poi" rev="3.1" conf="build,runtime->default" />
+        <dependency org="apache" name="poi" rev="3.1" conf="*->default" />
     </dependencies>
 </ivy-module>

@@ -1,41 +1,30 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.components.render.list;
 
 import java.io.StringWriter;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.CapturingResponseWrapper;
+import org.riotfamily.common.servlet.CapturingResponseWrapper;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
-import org.riotfamily.components.model.ContentContainer;
-import org.riotfamily.components.render.component.ComponentRenderer;
+import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.core.security.AccessController;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -70,64 +59,31 @@ public class ComponentListRenderer {
 		this.metaDataProvider = metaDataProvider;
 	}
 	
-	private ComponentList createList(Content content, String key, 
+	private ComponentList createList(final Content content, String key, 
 			ComponentListConfig config) {
 		
-		final ComponentList list = new ComponentList();
-		content.setValue(key, list);
+		final ComponentList list = new ComponentList(content);
+		content.put(key, list);
 		if (config.getInitialTypes() != null) {
 			for (String type : config.getInitialTypes()) {
-				Component component = new Component(type);
-				component.wrap(metaDataProvider.getMetaData(type).getDefaults());
-				list.appendComponent(component);
+				Component component = new Component(list);
+				component.setType(type);
+				Map<String, Object> defaults = metaDataProvider.getMetaData(type).getDefaults();
+				if (defaults != null) {
+					component.putAll(defaults);
+				}
+				list.add(component);
 			}
 		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				list.save();
+				content.save();
 			}
 		});
 		return list;
 	}
 	
-	public String renderComponentList(ContentContainer container, 
-			String key, ComponentListConfig config,
-			HttpServletRequest request,
-			HttpServletResponse response) 
-			throws Exception {
-
-		ComponentList list = null;
-		RenderStrategy strategy = liveModeRenderStrategy;
-		if (EditModeUtils.isPreview(request, container)) {
-			list = (ComponentList) container.getPreviewVersion().getValue(key);
-			if (EditModeUtils.isEditMode(request)) {
-				if (list == null) {
-					list = createList(container.getPreviewVersion(), key, config);
-					
-					// If the new list is not empty, we have to store it and mark
-					// the container as dirty.
-					if (list.getSize() > 0) {
-						container.getPreviewVersion().setValue(key, list);
-						container.setDirty(true);
-					}
-				}
-				if (AccessController.isGranted("edit", container)) {
-					strategy = editModeRenderStrategy;
-				}
-			}
-		}
-		else if (container.getLiveVersion() != null) {
-			list = (ComponentList) container.getLiveVersion().getValue(key);
-		}
-		
-		StringWriter sw = new StringWriter();
-		if (list != null) {
-			strategy.render(list, config, request, new CapturingResponseWrapper(response, sw));
-		}
-		return sw.toString();
-	}
-	
-	public String renderNestedComponentList(Component component, 
+	public String renderComponentList(ContentMap contentMap, 
 			String key, ComponentListConfig config,
 			HttpServletRequest request,
 			HttpServletResponse response) 
@@ -135,14 +91,14 @@ public class ComponentListRenderer {
 
 		ComponentList list;
 		RenderStrategy strategy = liveModeRenderStrategy;
-		request.setAttribute(ComponentRenderer.PARENT_ATTRIBUTE, component);
-		list = (ComponentList) component.getValue(key);
+		list = (ComponentList) contentMap.get(key);
 		if (EditModeUtils.isEditMode(request)) {
 			if (list == null) {
-				list = createList(component, key, config);
+				list = createList(contentMap.getContent(), key, config);
 			}
-			//TODO Pass the root container instead ...
-			if (AccessController.isGranted("edit", list)) {
+			if (AccessController.isGranted("edit", 
+					contentMap.getContent().getContainer().getOwner())) {
+				
 				strategy = editModeRenderStrategy;
 			}
 		}
@@ -151,7 +107,6 @@ public class ComponentListRenderer {
 		if (list != null) {
 			strategy.render(list, config, request, new CapturingResponseWrapper(response, sw));
 		}
-		request.removeAttribute(ComponentRenderer.PARENT_ATTRIBUTE);
 		return sw.toString();
 	}
 

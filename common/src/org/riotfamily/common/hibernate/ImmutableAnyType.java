@@ -1,101 +1,83 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.common.hibernate;
 
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
+import org.dom4j.Node;
+import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.usertype.UserType;
-import org.springframework.util.ObjectUtils;
+import org.hibernate.MappingException;
+import org.hibernate.engine.Mapping;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.SessionImplementor;
+import org.hibernate.type.AbstractType;
+import org.hibernate.type.Type;
+import org.hibernate.util.EqualsHelper;
 
-/**
- * Hibernate UserType that can store any Java type which:
- * <ul>
- *   <li>is immutable</li>
- *   <li>implements serializable</li>
- *   <li>implements a toString() method</li>
- *   <li>either has a <code>public static valueOf(String)</code> method or 
- *   a single <code>String</code>-argument constructor that creates a new 
- *   instance from the <code>toString()</code> representation</li>
- * </ul>
- * <p>
- * The type is stored in two String columns, the first one stores the 
- * class name, the second one stores the <code>toString()</code> representation.
- * </p>
- * <p>
- * This UserType can be used to store any Java primitive type 
- * or enum. When values of this type are put into the 2nd-level cache, 
- * the materialized object is stored, eliminating the need for String 
- * conversion.
- * </p>
- */
-public class ImmutableAnyType implements UserType {
+public class ImmutableAnyType extends AbstractType {
 
+	public static final Type INSTANCE = new ImmutableAnyType();
+	
 	private static final int[] SQL_TYPES = new int[] {
 		Hibernate.STRING.sqlType(),
 		Hibernate.STRING.sqlType()
 	};
+	
+	private static final boolean[] BOTH = new boolean[] {true, true};
+	
+	private static final boolean[] NONE = new boolean[] {false, false};
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int[] sqlTypes() {
-		return SQL_TYPES;
+
+	public String getName() {
+		return "immutable_any";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Class<?> returnedClass() {
+	public Class<?> getReturnedClass() {
 		return Object.class;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean equals(Object x, Object y) throws HibernateException {
-		return ObjectUtils.nullSafeEquals(x, y);
+	public int[] sqlTypes(Mapping mapping) throws MappingException {
+		return SQL_TYPES;
+	}
+	
+	public int getColumnSpan(Mapping mapping) throws MappingException {
+		return 2;
+	}
+	
+	public boolean[] toColumnNullness(Object value, Mapping mapping) {
+		return value == null ? BOTH : NONE;
+	}
+	
+	public boolean isMutable() {
+		return false;
+	}
+	
+	public boolean isDirty(Object old, Object current, boolean[] checkable,
+			SessionImplementor session) throws HibernateException {
+
+		return !EqualsHelper.equals(old, current);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int hashCode(Object x) throws HibernateException {
-		return x.hashCode();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
+	public Object nullSafeGet(ResultSet rs, String[] names,
+			SessionImplementor session, Object owner)
 			throws HibernateException, SQLException {
 		
 		String type = (String) Hibernate.STRING.nullSafeGet(rs, names[0]);
@@ -149,11 +131,15 @@ public class ImmutableAnyType implements UserType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void nullSafeSet(PreparedStatement st, Object value, int index)
+	public Object nullSafeGet(ResultSet rs, String name,
+			SessionImplementor session, Object owner)
 			throws HibernateException, SQLException {
+		
+		throw new HibernateException("Type requires two columns");
+	}
+
+	public void nullSafeSet(PreparedStatement st, Object value, int index,
+			SessionImplementor session) throws HibernateException, SQLException {
 		
 		if (value == null) {
 			st.setNull(index, Hibernate.STRING.sqlType());
@@ -165,43 +151,47 @@ public class ImmutableAnyType implements UserType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Object deepCopy(Object value) throws HibernateException {
+	public void nullSafeSet(PreparedStatement st, Object value, int index,
+			boolean[] settable, SessionImplementor session)
+			throws HibernateException, SQLException {
+		
+		if (settable[0]) {
+			nullSafeSet(st, value, index, session);
+		}
+	}
+
+	public Object deepCopy(Object value, EntityMode entityMode,
+			SessionFactoryImplementor factory) throws HibernateException {
+		
 		// No need to copy as the value is immutable
 		return value;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isMutable() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Serializable disassemble(Object value) throws HibernateException {
-		return (Serializable) value;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Object assemble(Serializable cached, Object owner)
+	
+	@SuppressWarnings("unchecked")
+	public Object replace(Object original, Object target,
+			SessionImplementor session, Object owner, Map copyCache)
 			throws HibernateException {
-		
-		return cached;
-	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Object replace(Object original, Object target, Object owner)
-			throws HibernateException {
-		
 		return original;
 	}
+
+	public String toLoggableString(Object value,
+			SessionFactoryImplementor factory)
+			throws HibernateException {
+		
+		return value == null ? "null" : value.toString();
+	}
+	
+	public Object fromXMLNode(Node xml, Mapping factory)
+			throws HibernateException {
+	
+		throw new HibernateException("XML is not supported by this type");
+	}
+	
+	public void setToXMLNode(Node node, Object value,
+			SessionFactoryImplementor factory) throws HibernateException {
+	
+		throw new HibernateException("XML is not supported by this type");
+	}
+
 }

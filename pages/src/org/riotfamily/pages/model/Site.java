@@ -1,29 +1,17 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.pages.model;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,14 +31,10 @@ import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
-import org.riotfamily.cachius.CacheService;
-import org.riotfamily.common.hibernate.ActiveRecordSupport;
-import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.components.model.Content;
-import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -59,14 +43,12 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name="riot_sites")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class Site extends ActiveRecordSupport implements SiteMapItem {
+public class Site extends ActiveRecordBeanSupport {
 
 	private String name;
 	
 	private String hostName;
 	
-	private String pathPrefix;
-
 	private Locale locale;
 	
 	private Site masterSite;
@@ -78,16 +60,10 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	private long position;
 	
 	private Set<String> aliases;
+
+	private Page rootPage;
 	
 	private Content properties;
-	
-	private CacheService cacheService;
-	
-	
-	@Transient
-	public void setCacheService(CacheService cacheService) {
-		this.cacheService = cacheService;
-	}
 	
 	public boolean isEnabled() {
 		return this.enabled;
@@ -99,17 +75,12 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 
 	public String getName() {
 		if (name == null) {
-			StringBuffer sb = new StringBuffer();
 			if (hostName != null) {
-				sb.append(hostName);
-				if (pathPrefix != null) {
-					sb.append(pathPrefix);	
-				}
+				name = hostName;
 			}
 			else {
-				sb.append(locale);
+				name = locale.toString();
 			}
-			name = sb.toString();
 		}
 		return name;
 	}
@@ -133,39 +104,6 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	public void setHostName(String hostName) {
 		this.hostName = hostName;
 	}
-
-	public String getPathPrefix() {
-		return this.pathPrefix;
-	}
-
-	public void setPathPrefix(String pathPrefix) {
-		this.pathPrefix = normalizePrefix(pathPrefix);
-	}
-	
-	private String normalizePrefix(String prefix) {
-		if (prefix != null) {
-			// Strip trailing slash
-			if (prefix.endsWith("/")) {
-				prefix = prefix.substring(0, prefix.length() - 1);
-			}
-			// represent empty prefixes to null
-			if (!StringUtils.hasText(prefix)) {
-				return null;
-			}
-			// Add leading slash
-			if (!prefix.startsWith("/")) {
-				prefix = "/" + prefix;
-			}
-		}
-		return prefix;
-	}
-	
-	public String stripPrefix(String path) {
-		if (pathPrefix != null && path != null && path.startsWith(pathPrefix)) {
-			return path.substring(pathPrefix.length());
-		}
-		return path;
-	}
 	
 	/**
 	 * Returns whether the given hostName matches the configured one.
@@ -186,15 +124,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 				|| (this.hostName != null && this.hostName.equals(hostName))
 				|| (this.aliases != null && this.aliases.contains(hostName));
 	}
-	
-	public boolean prefixMatches(String path) {
-		return pathPrefix == null || path.startsWith(pathPrefix + "/") || pathPrefix.equals(path);
-	}
-			
-	public boolean matches(String hostName, String path) {
-			return hostNameMatches(hostName) && prefixMatches(path);
-	}
-
+				
 	@ManyToOne(cascade=CascadeType.MERGE)
 	public Site getMasterSite() {
 		return this.masterSite;
@@ -236,6 +166,15 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	}
 	
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	public Page getRootPage() {
+		return rootPage;
+	}
+
+	public void setRootPage(Page rootPage) {
+		this.rootPage = rootPage;
+	}
+
+	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	public Content getProperties() {
 		if (properties == null) {
 			properties = new Content();
@@ -248,22 +187,13 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	}
 
 	public Object getProperty(String key) {
-		Object value = null;
-		ValueWrapper<?> wrapper = getProperties().getWrapper(key);
-		if (wrapper != null) {
-			value = wrapper.unwrap();
-		}
+		Object value = getProperties().get(key);
 		if (value == null && masterSite != null) {
 			value = masterSite.getProperty(key);
 		}
 		return value;
 	}
-	
-	@Transient
-	public Map<String, Object> getLocalPropertiesMap() {
-		return getProperties().unwrap();
-	}
-	
+		
 	@Transient
 	public Map<String, Object> getPropertiesMap() {
 		Map<String, Object> mergedProperties;
@@ -273,7 +203,7 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 		else {
 			mergedProperties = new HashMap<String, Object>();
 		}
-		mergedProperties.putAll(getLocalPropertiesMap());
+		mergedProperties.putAll(getProperties());
 		return mergedProperties;
 	}
 	
@@ -301,77 +231,10 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
         if (contextPath.length() > 0 && !path.startsWith(contextPath)) {
         	url.append(contextPath);
         }
-        if (pathPrefix != null && !path.startsWith(contextPath + pathPrefix)) {
-        	url.append(pathPrefix);
-        }
 		url.append(path);
 		return url.toString();
 	}
-
-	// ----------------------------------------------------------------------
-	// Implementation of the SiteMapItem interface
-	// ----------------------------------------------------------------------
-
-	@Transient
-	public String getCacheTag() {
-		return Site.class.getName() + "#" + getId();
-	}
-	
-	public void invalidateCacheItems() {
-		if (cacheService != null) {
-			cacheService.invalidateTaggedItems(getCacheTag());
-		}
-	}
-	
-	@Transient
-	public List<Page> getChildPages() {
-		return Page.findRootPagesBySite(this);
-	}
-	
-	@Transient
-	public Collection<Page> getChildPagesWithFallback() {
-		List<Page> pages = Generics.newArrayList();
-		pages.addAll(getChildPages());
-		pages.addAll(getTranslationCandidates());
-		return pages;
-	}
-	
-	@Transient
-	private Collection<Page> getTranslationCandidates() {
-		List<Page> candidates = Generics.newArrayList();
-		Site master = getMasterSite();
-		if (master != null) {
-			for (Page page : master.getChildPages()) {
-				boolean translated = false;
-				for (Page child : getChildPages()) {
-					if (page.equals(child.getMasterPage())) {
-						translated = true;
-						break;
-					}
-				}
-				if (!translated) {
-					candidates.add(page);
-				}
-			}			
-		}
-		return candidates;
-	}
-	
-	public void addPage(Page page) {
-		page.setSite(this);
-		page.setParentPage(null);
-		page.save(); //REVISIT Should we really call save() here?
-	}
-	
-	public void removePage(Page page) {
-		page.setSite(null);
-	}
-	
-	@Transient
-	public Site getSite() {
-		return this;
-	}
-	
+		
 	// ----------------------------------------------------------------------
 	// Object identity methods
 	// ----------------------------------------------------------------------
@@ -394,7 +257,6 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 		Site other = (Site) obj;
 		
 		return ObjectUtils.nullSafeEquals(this.hostName, other.getHostName())
-				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.getPathPrefix())
 				&& ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
 				&& ObjectUtils.nullSafeEquals(this.masterSite, other.getMasterSite());
 	}
@@ -403,10 +265,6 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	// ActiveRecord methods
 	// ----------------------------------------------------------------------
 	
-	public List<String> listWildcardPaths() {
-		return find("select path from Page where site = ?", this);
-	}
-
 	public void refreshIfDetached() {
 		Session session = getSession();
 		if (!session.contains(this)) {
@@ -419,18 +277,11 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 	}
 	
 	public static Site loadDefaultSite() {
-		Site site = (Site) getSession().createCriteria(Site.class)
+		return (Site) getSession().createCriteria(Site.class)
 				.setCacheable(true)
 				.setCacheRegion("pages")
 				.setMaxResults(1)
 				.uniqueResult();
-		
-		if (site == null) {
-			site = new Site();
-			site.setLocale(Locale.getDefault());
-			site.save();
-		}
-		return site;
 	}
 	
 	public static Site loadByLocale(Locale locale) {
@@ -441,9 +292,9 @@ public class Site extends ActiveRecordSupport implements SiteMapItem {
 		return find("from Site order by position");
 	}
 	
-	public static Site loadByHostNameAndPath(String hostName, String path) {
+	public static Site loadByHostName(String hostName) {
 		for (Site site : findAll()) {
-			if (site.matches(hostName, path)) {
+			if (site.hostNameMatches(hostName)) {
 				return site;
 			}
 		}

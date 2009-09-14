@@ -30,30 +30,6 @@ riot.components = (function() {
 	}
 	
 	/**
-	 * Returns the ContentContainer for the given element.
-	 */
-	function getContentContainer(el) {
-		if (!el.contentContainer) {
-			el.contentContainer = new ContentContainer(el.readAttribute('riot:containerId'));
-		}
-		return el.contentContainer;
-	}
-	
-	/**
-	 * Searches the element's ancestors (including the element itself) for an
-	 * element with the class 'riot-container' and returns the expando for that
-	 * element.
-	 */
-	function findContainer(el) {
-		if (el && !el.hasClassName('riot-container')) {
-			el = el.up('.riot-container');
-		}
-		if (el) {
-			return getContentContainer(el);
-		}	
-	}
-
-	/**
 	 * Returns the ComponentList for the given element.
 	 */
 	function getComponentList(el) {
@@ -154,21 +130,6 @@ riot.components = (function() {
 	
 	var activeComponent = null;
 	
-	// -----------------------------------------------------------------------
-	// ContentContainer
-	// -----------------------------------------------------------------------
-	
-	var ContentContainer = Class.create({ 
-		initialize: function(id) {
-			this.id = id;
-		},
-		
-		markAsDirty: function(callback) {
-			ComponentEditor.markAsDirty(this.id, callback);
-			riot.toolbar.enablePreviewButton();
-		}
-	});
-
 	// -----------------------------------------------------------------------
 	// ComponentList
 	// -----------------------------------------------------------------------
@@ -299,7 +260,8 @@ riot.components = (function() {
 				var list = this;
 				var handler = list.removeComponent.bind(list);
 				this.componentElements.map(getContent).each(function(c) {
-					var min = this.getComponentConfig(c.type).min;
+					var cfg = this.getComponentConfig(c.type);
+					var min = cfg ? cfg.min : 0;
 					if (min == 0 || this.countComponents(c.type) > min) {
 						c.setClickHandler(handler);
 					}
@@ -317,7 +279,7 @@ riot.components = (function() {
 		
 		removeComponent: function(c) {
 			ComponentEditor.deleteComponent(c.id);
-			c.markAsDirty();
+			riot.toolbar.enablePreviewButton();
 			this.componentElements = this.componentElements.without(c.element);
 			riot.outline.hide();
 			riot.outline.suspended = true;
@@ -350,7 +312,6 @@ riot.components = (function() {
 		initialize: function(el, id) {
 			this.element = el;
 			this.id = id || el.readAttribute('riot:contentId');
-			this.container = findContainer(el);
 			this.form = el.readAttribute('riot:form');
 			this.autoSizePopup = el.readAttribute('riot:autoSizePopup') != 'false';
 			this.bShowOutline = this.showOutline.bindAsEventListener(this);
@@ -406,7 +367,7 @@ riot.components = (function() {
 		},
 		
 		updateText: function(key, value, updateFromServer) {
-			this.markAsDirty();
+			riot.toolbar.enablePreviewButton();
 			ComponentEditor.updateText(this.id, key, value,	updateFromServer 
 					? this.update.bind(this) : Prototype.emptyFunction);
 		},
@@ -422,8 +383,7 @@ riot.components = (function() {
 		},
 		
 		editProperties: function() {
-			var formUrl = riot.path + '/components/form/' + this.container.id 
-					+ '/' + this.id + '/' + this.form + '?' 
+			var formUrl = riot.path + '/components/form/' + this.id + '/' + this.form + '?' 
 					+ $H(riotComponentFormParams).toQueryString();
 
 			activeComponent = this;
@@ -441,16 +401,13 @@ riot.components = (function() {
 			// Timeout as we otherwise get an 0x8004005 [nsIXMLHttpRequest.open] error
 			// in Firefox 2.0. See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
 			setTimeout(function() {
-				this.markAsDirty(this.update.bind(this));
+				riot.toolbar.enablePreviewButton()
+				this.update();
 			}.bind(this), 1);
 		},
 		
 		update: function() {
 			window.location.reload();		
-		},
-		
-		markAsDirty: function(callback) {
-			findContainer(this.element).markAsDirty(callback);
 		}
 	});
 
@@ -467,7 +424,7 @@ riot.components = (function() {
 		
 		updateTextChunks: function(key, chunks) {
 			ComponentEditor.updateTextChunks(this.id, key, chunks, this.renderChunks.bind(this));
-			this.markAsDirty();
+			riot.toolbar.enablePreviewButton();
 		},
 		
 		renderChunks: function(chunks) {
@@ -488,11 +445,7 @@ riot.components = (function() {
 			html.evalScripts.bind(html).defer();
 			this.element = el;
 			riot.toolbar.selectedButton.applyHandler(false);
-			if (window.riotEditCallbacks) {
-				riotEditCallbacks.each(function(callback) {
-					callback(el);
-				});
-			}
+			el.fire('component:updated');
 			riot.toolbar.selectedButton.applyHandler(true);
 		}
 	});
@@ -596,12 +549,8 @@ riot.components = (function() {
 			this.componentList.findComponentElements();
 			this.componentList.updatePositionClasses();
 			this.id = el.readAttribute('riot:contentId');
-			if (window.riotEditCallbacks) {
-				riotEditCallbacks.each(function(callback) {
-					callback(el);
-				});
-			}
-			findContainer(el).markAsDirty();
+			el.fire('component:updated');
+			riot.toolbar.enablePreviewButton();
 			new Effect.BlindDown(el, {
 				duration: 0.5, 
 				afterFinish: this.afterInsert.bind(this)
@@ -698,32 +647,34 @@ riot.components = (function() {
 			if (el.getStyle('float') != 'none') {
 				draggable.options.constraint = false;
 			}
-			this.nextEl = draggable.element.next('.riot-component');
+			this.prevEl = draggable.element.previous('.riot-component');
 		},
 		
 		onEnd: function(eventName, draggable, event) {
 			var el = draggable.element;
 			el.removeClassName('riot-drag');
-			var nextEl = el.next('.riot-component');
-			if(el.parentNode == this.element && nextEl != this.nextEl) {
+			var prevEl = el.previous('.riot-component');
+			if(el.parentNode == this.element && prevEl != this.prevEl) {
 				this.componentList.findComponentElements();
-				var nextId = null;
-				if (nextEl) {
-					nextId = getContent(nextEl).id;
-					nextEl.forceRerendering();
+				var prevId = null;
+				if (prevEl) {
+					prevId = getContent(prevEl).id;
+					prevEl.forceRerendering();
 				}
 				var component = getContent(el);
-				ComponentEditor.moveComponent(component.id, nextId);
-				component.markAsDirty();
+				ComponentEditor.moveComponent(component.id, prevId);
+				riot.toolbar.enablePreviewButton();
 			}
 			this.componentList.updatePositionClasses();
-			this.nextEl = null;
+			this.prevEl = null;
 		}
 	});
 	
 	// -----------------------------------------------------------------------
 	// Initialization
 	// -----------------------------------------------------------------------
+	
+	containersToPublish = [];
 	
 	dwr.engine.setTextHtmlHandler(function() {
 		location.reload();
@@ -796,8 +747,7 @@ riot.components = (function() {
 			
 			previewFrame.setStyle({display: 'block'});
 			
-			riotPreviewFrame.init(riotContainerIds || $$('.riot-container')
-					.collect(getContentContainer).pluck('id'));
+			riotPreviewFrame.init(containersToPublish);
 		},
 		
 		showPreviewFrame: function() {
@@ -805,14 +755,14 @@ riot.components = (function() {
 			$$('body > *:not(#riotPreviewFrame)').invoke('hide');
 		},
 		
-		publish: function(containerIds) {
-			ComponentEditor.publish(containerIds);
-			previewFrame.initialized = false;	
+		publish: function() {
+			ComponentEditor.publish(containersToPublish);
+			previewFrame.initialized = false;
 			riot.toolbar.disablePreviewButton();
 		},
 		
-		discard: function(containerIds) {
-			ComponentEditor.discard(containerIds, function() {
+		discard: function() {
+			ComponentEditor.discard(containersToPublish, function() {
 				window.location.reload();
 			});
 		},
@@ -825,6 +775,14 @@ riot.components = (function() {
 			$$('body > *:not(#riotPreviewFrame)').invoke('show');
 			riot.outline.hide();
 			riot.toolbar.buttons.get('browse').click();
+		},
+		
+		propertiesChanged: function() {
+			activeComponent.propertiesChanged();
+		},
+		
+		registerContainer: function(id) {
+			containersToPublish.push(id);
 		},
 		
 		editProperties: function(e) {

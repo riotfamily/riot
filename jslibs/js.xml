@@ -14,6 +14,8 @@
 	
 	<property name="resolve.conf" value="default" />
 	
+	<property name="ommit-source-artifact" value="true" />
+	
 	<mapper id="resource.mapper" type="identity" />		
 	
 	<import file="../module-build.xml" />

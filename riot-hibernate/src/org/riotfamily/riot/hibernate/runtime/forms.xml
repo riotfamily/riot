@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.riotfamily.org/schema/forms/form-config
-		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd">
+		http://www.riotfamily.org/schema/forms/form-config-9.0.xsd">
 
 	<form id="riotUser" bean-class="org.riotfamily.riot.hibernate.security.User">
 		<group>

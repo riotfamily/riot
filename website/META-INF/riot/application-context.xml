@@ -6,9 +6,9 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
-	<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
+	<!--<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
 		<description>
 			A Cachius cache instance to cache web content.		
 		</description>
@@ -17,19 +17,27 @@
 		<property name="capacity" value="${riot.websiteCache.capacity=10000}" />
 		<property name="restore" value="${riot.websiteCache.restore=true}" />
 		<property name="enabled" value="${riot.websiteCache.enabled=true}" />
-    </bean>
+    </bean>-->
 	
-	 <bean id="cacheService" class="org.riotfamily.cachius.CacheService">
+	<bean id="cacheManager" class="org.riotfamily.cachius.CacheManager">
+	</bean>
+	   
+    <bean id="cacheService" class="org.riotfamily.cachius.CacheService">
 	 	<description>
 			A Cachius CacheService instance to cache and serve content.		
 		</description>
-        <constructor-arg ref="websiteCache" />
-        <property name="checkInvolvedFiles" value="${riot.resources.reloadable=false}" />
-        <property name="staleWhileRevalidate" value="${riot.websiteCache.staleWhileRevalidate=false}" />
-        <property name="staleUnlessExpired" value="${riot.websiteCache.staleUnlessExpired=false}" />
+        <constructor-arg ref="cacheManager" />
+        <constructor-arg>
+        	<bean class="org.riotfamily.cachius.persistence.SimpleDiskStore" />
+        </constructor-arg>
     </bean>
     
-    <bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
+    <bean id="resourceStamper" class="org.riotfamily.website.performance.ResourceStamper" />
+    
+    <bean id="javaScriptCompressor" class="org.riotfamily.website.performance.YUIJavaScriptCompressor">
+    	<property name="enabled" value="${riot.resources.compress=true}" />
+    	<property name="linebreak" value="1000" />
+    </bean>
     
     <override:add ref="hibernateInterceptors">
 	    <bean class="org.riotfamily.riot.hibernate.cachius.CacheTagInterceptor">

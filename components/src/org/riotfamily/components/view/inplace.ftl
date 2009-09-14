@@ -3,9 +3,6 @@
   - @namespace inplace
   -->
 
-<#--- @internal -->
-<#assign currentModel = .data_model />
-
 <#---
   - Whether the page is viewed in edit-mode.
   - <h4>Example:</h4>
@@ -34,9 +31,15 @@
 			var riotComponentFormParams = {};
 			${inplaceMacroHelper.initScript}
 			<#nested />
-			function onToolbarLoaded() {
-				riot.toolbar.edit = ${inplaceMacroHelper.isEditGranted()?string};
-				riot.toolbar.publish = ${inplaceMacroHelper.isPublishGranted()?string};
+			function onToolbarLoaded(toolbar) {
+				toolbar.edit = ${inplaceMacroHelper.isEditGranted()?string};
+				toolbar.publish = ${inplaceMacroHelper.isPublishGranted()?string};
+				<#if contentMap??>
+					riot.components.registerContainer(${contentMap.container.id});
+				 	<#if contentMap.content.dirty>
+						toolbar.enablePreviewButton();
+					</#if>
+				</#if>
 			}
 		</script>
 	<#elseif inplaceMacroHelper.liveMode>
@@ -59,43 +62,11 @@
 	</#if>
 </#macro>
 
-<#---
-  - <p>
-  - Macro that enables the Riot JavaScript edit-callbacks. The callback 
-  - functions are invoked when a controller is re-rendered via AJAX. 
-  - To register a custom callback, add the following code as nested content:
-  - </p>
-  - <pre>
-  - addRiotEditCallback(function(el) {
-  -     alert('ComponentList updated: ' + el.componentList.id);
-  - });
-  - </pre>
-  -->
-<#macro callbacks>
-	<#if editMode>
-		<!-- Riot edit callbacks -->
-		<script type="text/javascript" language="JavaScript">
-		var riotEditCallbacks = [];
-		function addRiotEditCallback(callback) {
-			riotEditCallbacks.push(callback);
-		}
-		<#nested />
-		</script>
-	</#if>
-</#macro>
-
 <#macro componentList key min=0 max=1000 initial=[] valid=[]>
-	<#if !currentContainer??>
-		<#stop "Use inplace.use to select a container">
+	<#if !contentMap??>
+		<#stop "No contentMap found in model">
 	</#if>
-	${inplaceMacroHelper.renderComponentList(currentContainer, key, min, max, initial, valid)!}
-</#macro>
-
-<#macro nestedComponentList key min=0 max=1000 initial=[] valid=[]>
-	<#if !this??>
-		<#stop "Nested lists can only be used inside a component view">
-	</#if>
-	${inplaceMacroHelper.renderNestedComponentList(this, key, min, max, initial, valid)!}
+	${inplaceMacroHelper.renderComponentList(contentMap, key, min, max, initial, valid)!}
 </#macro>
 
 <#---
@@ -165,14 +136,14 @@
 <#--- @internal -->
 <#macro editable key editor="text" tag="" alwaysUseNested=false transform=false attributes... >
 	<#compress>
-		<#if !currentContainer?? && !this??>
-			<#stop "Use inplace macros can only be used inside components or inplace.use tags">
+		<#if !contentMap??>
+			<#stop "No contentMap found in model">
 		</#if>
 		<#local attributes = c.unwrapAttributes(attributes) />
 		<#if alwaysUseNested>
 			<#local value><#nested /></#local>
 		<#else>
-			<#local value = currentModel[key]?if_exists />
+			<#local value = contentMap[key]?if_exists />
 			<#if !value?has_content>
 				<#local value><#nested /></#local>
 			</#if>
@@ -188,8 +159,8 @@
 			<#else>
 				<#local element="div" />
 			</#if>
-			<#local attributes = attributes + {"class" : ("riot-text-editor " + attributes.class?if_exists)?trim} />
-			<${element} riot:key="${key}" riot:editorType="${editor}"${c.joinAttributes(attributes)}>${value}</${element}>
+			<#local attributes = attributes + {"class" : ("riot-content riot-text-editor " + attributes.class?if_exists)?trim} />
+			<${element} riot:key="${key}" riot:contentId="${contentMap.compositeId}" riot:editorType="${editor}"${c.joinAttributes(attributes)}>${value}</${element}>
 		<#elseif tag?has_content>
 			<${tag}${c.joinAttributes(attributes)}>${value}</${tag}>
 		<#else>
@@ -198,9 +169,17 @@
 	</#compress>
 </#macro>
 
+<#macro properties form tag="div">
+	<#if editMode>
+		<${tag} class="riot-content riot-form" riot:contentId="${contentMap.compositeId}" riot:form="${form}"><#nested /></${tag}>
+	<#else>
+		<#nested />
+	</#if>
+</#macro>
+
 <#macro image key default="" transform=c.resolve attributes... >
 	<#compress>
-		<#local value = (currentModel[key].uri)!default>
+		<#local value = (contentMap[key].uri)!default>
 		<#if value?has_content>
 			<#if transform?is_string>
 				<#local src = transform?replace("*", value) />
@@ -208,11 +187,11 @@
 				<#local src = transform(value) />
 			</#if>
 			<#local attributes = attributes + {"src": src} />
-			<#if !attributes.width?has_content && currentModel[key]??>
-				<#local attributes = attributes + {"width": currentModel[key].width?c} />
+			<#if !attributes.width?has_content && contentMap[key]??>
+				<#local attributes = attributes + {"width": contentMap[key].width?c} />
 			</#if>
-			<#if !attributes.height?has_content && currentModel[key]??>
-				<#local attributes = attributes + {"height": currentModel[key].height?c} />
+			<#if !attributes.height?has_content && content[key]??>
+				<#local attributes = attributes + {"height": contentMap[key].height?c} />
 			</#if>
 			<#if !attributes.alt?has_content>
 				<#local attributes = attributes + {"alt": " "} />
@@ -233,46 +212,6 @@
 		} />
 	</#if>
 	<@text key=key tag=tag alwaysUseNested=alwaysUseNested textTransform=textTransform hyphenate=hyphenate attributes=attributes><#nested /></@text>
-</#macro>
-
-<#---
-  -
-  -->
-<#macro use container form="" tag="" autoSizePopup=true attributes...>
-	<#local attributes = c.unwrapAttributes(attributes) />
-	<#local previousModel = currentModel />
-	<#assign currentContainer = container />
-	<#assign currentModel = container.unwrap(editMode) />
-	<#if editMode>
-		<#if !tag?has_content>
-			<#local tag = "span" />
-		</#if>
-		<#local attributes = attributes + {
-				"riot:containerId": container.id?c,
-				"riot:contentId": container.getContent(editMode).id?c,
-				"class": ("riot-container riot-content " + attributes.class!)?trim
-		} />
-		<#if form?has_content>
-			<#local attributes = attributes + {
-					"class": attributes.class + " riot-form",
-					"riot:form": form,
-					"riot:autoSizePopup": autoSizePopup?string	
-			} />
-		</#if>
-		<#if container.dirty>
-			<#local attributes = attributes + {
-					"class": attributes.class + " riot-dirty"
-			} />
-		</#if>
-	</#if>
-	<#if tag?has_content>
-		<${tag}${c.joinAttributes(attributes)}>
-			<#nested>
-		</${tag}>
-	<#else>
-		<#nested>
-	</#if>
-	<#assign currentModel = previousModel />
 </#macro>
 
 <#---

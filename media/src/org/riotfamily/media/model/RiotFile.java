@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- * 
- * The Original Code is Riot.
- * 
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- * 
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
- * ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.media.model;
 
 import java.io.File;
@@ -37,22 +26,22 @@ import java.util.Map.Entry;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.media.service.MediaService;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,16 +59,10 @@ import org.springframework.web.multipart.MultipartFile;
 )
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorValue("file")
-public class RiotFile {
+public class RiotFile extends ActiveRecordBeanSupport {
 	
-	protected static MediaService mediaService;
+	protected MediaService mediaService;
 
-	public static void setMediaService(MediaService mediaService) {
-		RiotFile.mediaService = mediaService;
-	}
-	
-	private Long id;
-	
 	private String uri;
 	
 	private String fileName;
@@ -143,11 +126,16 @@ public class RiotFile {
 			}
 		}
 	}
+
+	@Required
+	public void setMediaService(MediaService mediaService) {
+		this.mediaService = mediaService;
+	}
 	
 	public RiotFile copy(boolean copyVariants) throws IOException {
 		return new RiotFile(this, copyVariants);
-	}	
-
+	}
+	
 	@Transient
 	public void setMultipartFile(MultipartFile multipartFile) throws IOException {
 		fileName = multipartFile.getOriginalFilename();
@@ -175,7 +163,7 @@ public class RiotFile {
 		File f = createEmptyFile(fileName);
 		FileCopyUtils.copy(in, new FileOutputStream(f));
 		contentType = mediaService.getContentType(f);		
-		update();
+		updateMetaData();
 	}
 	
 	@Transient
@@ -183,7 +171,7 @@ public class RiotFile {
 		File f = createEmptyFile(fileName);
 		FileCopyUtils.copy(bytes, f);
 		contentType = mediaService.getContentType(f);		
-		update();
+		updateMetaData();
 	}
 	
 	public File createEmptyFile(String name) throws IOException {
@@ -194,9 +182,9 @@ public class RiotFile {
 		return getFile();
 	}
 	
-	public void update() throws IOException {
-		Assert.state(emptyFileCreated == true, "update() must only be called " +
-				"after createEmptyFile() has been invoked!");
+	public void updateMetaData() throws IOException {
+		Assert.state(emptyFileCreated == true, "updateMetaData() must only be "
+				+ "called after createEmptyFile() has been invoked");
 		
 		size = getFile().length();
 		md5 = HashUtils.md5(getInputStream());
@@ -214,15 +202,6 @@ public class RiotFile {
 	protected void inspect(File file) throws IOException {
 	}
 	
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getUri() {
 		return this.uri;
 	}
@@ -299,6 +278,7 @@ public class RiotFile {
 	}
 
 	@OneToMany(cascade=CascadeType.ALL)
+	@JoinTable(name="riot_file_variants")
 	public Map<String, RiotFile> getVariants() {
 		return this.variants;
 	}
@@ -336,6 +316,18 @@ public class RiotFile {
 			return uri.equals(other.uri);
 		}
 		return super.equals(obj);
+	}
+	
+	// ----------------------------------------------------------------------
+	// Active record methods
+	// ----------------------------------------------------------------------
+	
+	public static RiotFile loadByUri(String uri) {
+		return loadByProperty(RiotFile.class, "uri", uri);
+	}
+	
+	public static RiotFile loadByMd5(String md5) {
+		return loadByProperty(RiotFile.class, "md5", md5);
 	}
 	
 }

@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd
+		http://www.riotfamily.org/schema/common/override-9.0.xsd
 		http://www.directwebremoting.org/schema/spring-dwr
     	http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
 	
@@ -25,7 +25,6 @@
 	  - Service bean to edit components. Exposed via DWR.
 	  -->
 	<bean id="componentEditor" class="org.riotfamily.components.editor.ComponentEditorImpl">
-		<constructor-arg ref="cacheService" />
 		<constructor-arg ref="componentRenderer" />
 		<constructor-arg ref="componentMetaDataProvider" />
 		<constructor-arg ref="contentFormRepository" />
@@ -34,13 +33,6 @@
 	
 	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.components.meta" />
 	
-	<override:put ref="customFormElements">
-		<entry key="{http://www.riotfamily.org/schema/components/form-elements}map"
-				value="org.riotfamily.components.riot.form.ContentMapEditor" />
-		<entry key="{http://www.riotfamily.org/schema/components/form-elements}list"
-				value="org.riotfamily.components.riot.form.ContentListEditor" />
-	</override:put>
-
 	<!--
 	  - FormRepository providing component property forms.
 	  -->
@@ -59,12 +51,11 @@
 	  - Controller that renders forms to edit component properties.
 	  -->
 	<bean id="componentFormController"
-		name="/components/form/@{containerId}/@{contentId}/@{formId*}"
+		name="/components/form/@{contentId}/@{formId*}"
 		class="org.riotfamily.components.editor.ContentFormController">
 		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="transactionManager" />
-		<constructor-arg ref="cacheService" /> 
 	</bean>
 	
 	<bean name="/components/publish"

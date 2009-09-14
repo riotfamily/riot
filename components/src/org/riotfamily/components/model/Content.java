@@ -1,86 +1,86 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.components.model;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.MapKey;
-import org.riotfamily.common.hibernate.ActiveRecordSupport;
-import org.riotfamily.components.model.wrapper.ValueCallback;
-import org.riotfamily.components.model.wrapper.ValueWrapper;
-import org.riotfamily.components.model.wrapper.ValueWrapperService;
+import org.hibernate.annotations.Type;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.website.cache.TagCacheItems;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.Assert;
 
+/**
+ * Entity that stores objects of any kind in a map. The map is serialized using
+ * a ContentMapMarshaller. 
+ */
 @Entity
 @Table(name="riot_contents")
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(
-    name="content_type",
-    discriminatorType=DiscriminatorType.STRING
-)
-@DiscriminatorValue("Content")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-public class Content extends ActiveRecordSupport {
+@TagCacheItems
+public class Content extends ActiveRecordBeanSupport implements ContentMap {
 
+	private ContentMapMarshaller marshaller;
+	
 	private int version;
 
-	private Map<String, ValueWrapper<?>> wrappers;
+	private ContentContainer container;
 
+	private boolean dirty;
+	
+	private String xml;
+
+	private boolean xmlRequiresUpdate;
+	
+	private transient boolean unmarshalling;
+	
+	private transient ContentMap map;
+	
+	private transient Map<String, ContentFragment> fragments;
+
+	private transient Set<Object> references;
+	
 	public Content() {
 	}
-
-	public Content createCopy() {
-		Content copy = new Content();
-		copyValues(copy);
-		return copy;
+	
+	public Content(ContentContainer container) {
+		this.container = container;
 	}
 	
-	protected final void copyValues(Content dest) {
-		for (Entry<String, ValueWrapper<?>> entry : getWrappers().entrySet()) {
-			ValueWrapper<?> copy = entry.getValue().deepCopy();
-			dest.getWrappers().put(entry.getKey(), copy);
-		}
+	public Content(Content other) {
+		setContainer(other.getContainer());
+		setXml(other.getXml());
+		dirty = false;
 	}
-
+	
+	@Transient
+	@Required
+	public void setMarshaller(ContentMapMarshaller marshaller) {
+		this.marshaller = marshaller;
+	}
+	
 	@Version
 	public int getVersion() {
 		return version;
@@ -90,93 +90,202 @@ public class Content extends ActiveRecordSupport {
 		this.version = version;
 	}
 
-	public ValueWrapper<?> getWrapper(String key) {
-		return getWrappers().get(key);
+	Content createCopy() {
+		dirty = false;
+		return new Content(this);
 	}
 	
-	public void setWrapper(String key, ValueWrapper<?> wrapper) {
-		getWrappers().put(key, wrapper);
-	}
-	
-	public Object getValue(String key) {
-		if (wrappers == null) {
-			return null;
-		}
-		ValueWrapper<?> wrapper = getWrapper(key);
-		return wrapper != null ? wrapper.getValue() : null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void setValue(String key, Object value) {
-		if (value == null) {
-			getWrappers().remove(key);
-		}
-		else if (value instanceof ValueWrapper) {
-			setWrapper(key, (ValueWrapper<?>) value);
-		}
-		else {
-			ValueWrapper<Object> wrapper = (ValueWrapper<Object>) getWrapper(key);
-			setWrapper(key, ValueWrapperService.createOrUpdate(wrapper, value));
-		}
+	@ManyToOne(fetch=FetchType.LAZY)
+	public ContentContainer getContainer() {
+		return container;
 	}
 
-	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinColumn(name="content")
-	@MapKey(columns={@Column(name="property")})
-	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
-	public Map<String, ValueWrapper<?>> getWrappers() {
-		if (wrappers == null) {
-			wrappers = new HashMap<String, ValueWrapper<?>>();
+	private void setContainer(ContentContainer container) {
+		this.container = container;
+	}
+	
+	@Type(type="text")
+	public String getXml() {
+		if (xml == null || xmlRequiresUpdate) {
+			xml = marshaller.marshal(getMap());
+			xmlRequiresUpdate = false;
 		}
-		return wrappers;
+		return xml;
 	}
 
-	public void setWrappers(Map<String, ValueWrapper<?>> wrappers) {
-		this.wrappers = wrappers;
+	public void setXml(String xml) {
+		this.xml = xml;
+		unmarshalling = true;
+		if (fragments != null) {
+			fragments.clear();
+		}
+		map = marshaller.unmarshal(this, xml);
+		xmlRequiresUpdate = false;
+		unmarshalling = false;
 	}
 	
-	public Map<String, Object> unwrap() {
-		HashMap<String, Object> result = new HashMap<String, Object>();
-		if (wrappers != null) {
-			for (Entry<String, ValueWrapper<?>> entry : wrappers.entrySet()) {
-				ValueWrapper<?> wrapper = entry.getValue();
-				if (wrapper != null) {
-					result.put(entry.getKey(), wrapper.unwrap());
-				}
-				else {
-					result.put(entry.getKey(), null);
-				}
-			}
-		}
-		return result;
+	public boolean isDirty() {
+		return dirty;
 	}
 	
-	public void wrap(Map<String, ?> values) {
-		if (values != null) {
-			for (Entry<String, ?> entry : values.entrySet()) {
-				setValue(entry.getKey(), entry.getValue());
-			}
-			Iterator<String> it = getWrappers().keySet().iterator();
-			while (it.hasNext()) {
-				String key = it.next();
-				if (!values.containsKey(key)) {
-					it.remove();
-				}
-			}
-		}
-		else {
-			getWrappers().clear();
+	protected void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+	
+	/**
+	 * ContentFragments invoke this method when they are modified.
+	 */
+	void fragmentModified() {
+		if (!unmarshalling) {
+			xmlRequiresUpdate = true;
+			setDirty(true);
 		}
 	}
 	
-	public void each(ValueCallback callback) {
-		for (ValueWrapper<?> wrapper : getWrappers().values()) {
-			wrapper.each(callback);
+	@Transient
+	private ContentMap getMap() {
+		if (map == null) {
+			map = new ContentMapImpl(this);
 		}
+		return map;
 	}
+	
+	@Transient
+	public Set<Object> getReferences() {
+		if (references == null) {
+			references = Generics.newHashSet();
+		}
+		return references;
+	}
+	
+	@Transient
+	private Map<String, ContentFragment> getFragments() {
+		if (fragments == null) {
+			fragments = Generics.newHashMap();
+		}
+		return fragments;
+	}
+	
+	// -----------------------------------------------------------------------
+	// Implementation of the ContentFragment interface
+	// -----------------------------------------------------------------------
+	
+	@Transient
+	public String getCompositeId() {
+		return getFragmentId();
+	}
+
+	@Transient
+	public String getFragmentId() {
+		return String.valueOf(getId());
+	}
+
+	@Transient
+	public Content getContent() {
+		return this;
+	}
+	
+	// -----------------------------------------------------------------------
+	// Implementation of the Map interface (delegate methods)
+	// -----------------------------------------------------------------------
+	
+	public void clear() {
+		getMap().clear();
+	}
+
+	public boolean containsKey(Object key) {
+		return getMap().containsKey(key);
+	}
+
+	public boolean containsValue(Object value) {
+		return getMap().containsValue(value);
+	}
+
+	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+		return getMap().entrySet();
+	}
+
+	public Object get(Object key) {
+		return getMap().get(key);
+	}
+
+	@Transient
+	public boolean isEmpty() {
+		return getMap().isEmpty();
+	}
+
+	public Set<String> keySet() {
+		return getMap().keySet();
+	}
+
+	public Object put(String key, Object value) {
+		return getMap().put(key, value);
+	}
+
+	public void putAll(Map<? extends String, ? extends Object> m) {
+		getMap().putAll(m);
+	}
+
+	public Object remove(Object key) {
+		return getMap().remove(key);
+	}
+
+	public int size() {
+		return getMap().size();
+	}
+
+	public Collection<Object> values() {
+		return getMap().values();
+	}
+	
+	// -----------------------------------------------------------------------
+	
+	String nextFragmentId() {
+		return version + "_" + getFragments().size();
+	}
+
+	String getCompositeId(ContentFragment part) {
+		return getId() + "_" + part.getFragmentId();
+	}
+	
+	void registerfragment(ContentFragment fragment) {
+		String id = fragment.getFragmentId();
+		Assert.notNull(id);
+		Assert.isTrue(!getFragments().containsKey(id));
+		getFragments().put(id, fragment); 
+	}
+	
+	private ContentFragment getFragment(String id) {
+		int i = id.indexOf('_');
+		if (i == -1) {
+			return this;
+		}
+		String fragmentId = id.substring(i + 1);
+		ContentFragment fragment = getFragments().get(fragmentId);
+		Assert.notNull(fragment, "Fragment " + fragmentId 
+				+ " does not exist in Content " + getId());
+		
+		return fragment;
+	}
+
+	// -----------------------------------------------------------------------
 	
 	public static Content load(Long id) {
 		return load(Content.class, id);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static<T extends ContentFragment> T loadFragment(String id) {
+		Content content = loadByFragmentId(id);
+		return (T) content.getFragment(id);
+	}
+
+	public static Content loadByFragmentId(String id) {
+		int i = id.indexOf('_');
+		String contentId = (i != -1) ? id.substring(0, i) : id;
+		Content content = Content.load(Long.valueOf(contentId));
+		Assert.notNull(content, "Could not load content for part: " + id);
+		return content;
+	}
+
 }

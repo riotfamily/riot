@@ -10,9 +10,9 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd
+		http://www.riotfamily.org/schema/common/override-9.0.xsd
 		http://www.riotfamily.org/schema/revolt
-		http://www.riotfamily.org/schema/revolt/revolt-8.0.xsd">
+		http://www.riotfamily.org/schema/revolt/revolt-9.0.xsd">
 
 	<description>
 		Root application context (Riot Hibernate)
@@ -41,7 +41,7 @@
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="packagesToScan">
 			<list>
-				<value>org.riotfamily.</value>
+				<value>org.riotfamily</value>
 			</list> 	
 		</property>
 		<property name="hibernateProperties" value="${hibernate.*}" />
@@ -88,6 +88,6 @@
 
 	<bean class="org.riotfamily.common.hibernate.LifecycleListener" />
 	
-	<bean class="org.riotfamily.common.beans.config.SpringBeanConfigurer" />
+	<bean class="org.riotfamily.common.beans.injection.SpringBeanConfigurer" />
 
 </beans>

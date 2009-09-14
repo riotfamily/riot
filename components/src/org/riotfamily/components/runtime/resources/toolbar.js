@@ -12,22 +12,34 @@ riot.Toolbar = Class.create({
 			preview: new riot.ToolbarButton('preview', '${toolbarButton.preview}'),
 			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}')
 		});
-
+		
 		this.buttons.get('logout').applyHandler = this.logout;
+		this.disablePreviewButton();
 		
 		var buttonsDiv = new Element('div', {id: 'riot-toolbar-buttons'});
 		this.buttons.values().each(function(b) {
 			buttonsDiv.insert(b.element);
 		});
+		
 		document.body.appendChild(this.element = new Element('div', {id: 'riot-toolbar'})
 			.insert(new Element('div', {id: 'riot-toolbar-title'}))
 			.insert(buttonsDiv));
 
+		var cookie = new CookieJar({expires: 604800});
+		var pos = cookie.get('toolbarPos');
+		if (pos) {
+			this.element.setStyle(pos);
+		}
+		
 		new Draggable('riot-toolbar', {
 			handle: 'riot-toolbar-title', 
 			starteffect: null, 
-			endeffect: null 
+			endeffect: null,
 			//scroll: this.element.getStyle('position') == 'absolute' ? 'window' : null
+			onEnd: function(d, ev) {
+				var s = d.element.style;
+				cookie.put('toolbarPos', {top: s.top, left: s.left});
+			}
 		});
 		
 		document.body.appendChild(this.inspectorPanel = new Element('div', {id: 'riot-inspector'}));
@@ -35,13 +47,6 @@ riot.Toolbar = Class.create({
 
 	activate: function() {
 		if (this.edit) { 
-			var dirty = $$('.riot-dirty').any(function(e) {
-				return !riotContainerIds || riotContainerIds.indexOf(
-						parseInt(e.readAttribute('riot:containerId'))) != -1;
-			})
-			
-			if (!dirty || !this.publish)
-						this.disablePreviewButton();
 			this.buttons.values().invoke('activate');
 			this.buttons.get('browse').select();
 		}
@@ -105,7 +110,7 @@ riot.Toolbar = Class.create({
 			location.reload();
 		});
 	}
-})
+});
 
 riot.ToolbarButton = Class.create({
 	initialize: function(handler, title, selector, href) {
@@ -222,7 +227,7 @@ riot.ToolbarButton = Class.create({
 		if (this.selector) {
 			var targets = this.getHandlerTargets();
 			for (var i = 0; i < targets.length; i++) {
-				var target = riot.components.getWrapper(targets[i], this.selector)
+				var target = riot.components.getWrapper(targets[i], this.selector);
 				var method = this.handler + (enable ? 'On' : 'Off');
 				if (target[method]) {
 					target[method]();
@@ -253,4 +258,4 @@ riot.showNotification = function(message) {
 	}
 	el.innerHTML = message;
 	dwr.engine.setActiveReverseAjax(false);
-}
+};

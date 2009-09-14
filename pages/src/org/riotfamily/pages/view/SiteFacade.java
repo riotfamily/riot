@@ -1,3 +1,15 @@
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.pages.view;
 
 import java.util.Locale;
@@ -6,9 +18,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.website.cache.CacheTagUtils;
 
 public class SiteFacade {
 	
@@ -21,7 +33,7 @@ public class SiteFacade {
 	public SiteFacade(Site site, HttpServletRequest request) {
 		this.site = site;
 		this.request = request;
-		TaggingContext.tag(site.getCacheTag());
+		CacheTagUtils.tag(site);
 	}
 		
 	public String getAbsoluteUrl() {
@@ -62,10 +74,6 @@ public class SiteFacade {
 		return site.getName();
 	}
 
-	public String getPathPrefix() {
-		return site.getPathPrefix();
-	}
-
 	public boolean isEnabled() {
 		return site.isEnabled();
 	}
@@ -85,7 +93,7 @@ public class SiteFacade {
 	}
 	
 	public Map<String, Object> getLocal() {
-		return site.getLocalPropertiesMap();
+		return site.getProperties();
 	}
 
 	public String toString() {

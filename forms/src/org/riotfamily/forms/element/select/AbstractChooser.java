@@ -1,35 +1,26 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- * 
- * The Original Code is Riot.
- * 
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- * 
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
- * ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
+import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
@@ -70,7 +61,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 				.attribute("type", "button")
 				.attribute("class", "choose")
 				.attribute("disabled", !isEnabled())
-				.attribute("value", "Choose")
+				.attribute("value", FormatUtils.stripTags(getChooseLabel()))
 				.end();
 		
 		if (!isRequired() && getValue() != null) {
@@ -78,12 +69,20 @@ public abstract class AbstractChooser extends AbstractEditorBase
 					.attribute("type", "button")
 					.attribute("class", "unset")
 					.attribute("disabled", !isEnabled())
-					.attribute("value", "Unset")
+					.attribute("value", FormatUtils.stripTags(getUnsetLabel()))
 					.end();
 		}
 		doc.end();
 	}
 
+	protected String getUnsetLabel() {
+		return MessageUtils.getUILabel(this, "chooser", "unset", "Unset");
+	}
+
+	protected String getChooseLabel() {
+		return MessageUtils.getUILabel(this, "chooser", "choose", "Choose");
+	}
+	
 	protected abstract void renderLabel(Object object, PrintWriter writer);
 	
 	public int getEventTypes() {		
@@ -111,7 +110,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	
 	public String getInitScript() {
 		return String.format("riot.chooser.register('%s', '%s')", 
-				getId(), getChooserUrl());
+				getId(), getFormContext().getContextPath() + getChooserUrl());
 	}
 		
 	protected abstract Object loadBean(String objectId);
@@ -137,6 +136,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	public Object getValue() {
 		return object;
 	}
+
 		
 	protected abstract String getChooserUrl();
 	

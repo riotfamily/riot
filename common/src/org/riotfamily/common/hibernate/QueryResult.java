@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.common.hibernate;
 
 import java.util.Collection;
@@ -30,6 +19,7 @@ import java.util.ListIterator;
 
 import org.hibernate.Query;
 import org.hibernate.type.Type;
+import org.riotfamily.common.util.Generics;
 
 /**
  * Implementation of the {@link List} interface that provides information
@@ -42,17 +32,40 @@ public class QueryResult<T> implements List<T> {
 
 	private List<T> result;
 	
-	private Type[] returnTypes;
+	private List<Class<?>> resultClasses;
 
 	@SuppressWarnings("unchecked")
 	public QueryResult(Query query) {
 		this.result = query.list();
-		returnTypes = query.getReturnTypes();
+		resultClasses = Generics.newArrayList();
+		for (Type type : query.getReturnTypes()) {
+			resultClasses.add(type.getReturnedClass());
+		}
+	}
+
+	public QueryResult(List<T> result, List<Class<?>> classes) {
+		this.result = result;
+		this.resultClasses = classes;
 	}
 	
-	public Type[] getReturnTypes() {
-		return returnTypes;
+	public QueryResult(List<T> result, Class<?> clazz, Class<?>... additionalClasses) {
+		this.result = result;
+		this.resultClasses = Generics.newArrayList();
+		this.resultClasses.add(clazz);
+		if (additionalClasses != null) {
+			for (Class<?> c : additionalClasses) {
+				this.resultClasses.add(c);
+			}
+		}
 	}
+	
+	public List<Class<?>> getResultClasses() {
+		return resultClasses;
+	}
+	
+	// -----------------------------------------------------------------------
+	// Implementation of the List interface
+	// -----------------------------------------------------------------------
 
 	public void add(int index, T element) {
 		result.add(index, element);

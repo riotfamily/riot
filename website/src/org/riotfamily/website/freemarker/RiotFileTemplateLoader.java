@@ -1,37 +1,26 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.website.freemarker;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.CacheContext;
 
 import freemarker.cache.FileTemplateLoader;
 
 /**
- * TemplateLoader that invokes {@link TaggingContext#addInvolvedFile(File)}
+ * TemplateLoader that invokes {@link CachiusContext#addInvolvedFile(File)}
  * to track files involved in the generation of cached content.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -47,7 +36,7 @@ public class RiotFileTemplateLoader extends FileTemplateLoader {
 	public Object findTemplateSource(String name) throws IOException {
 		File file = (File) super.findTemplateSource(name);
 		if (file != null) {
-			TaggingContext.addFile(file);
+			CacheContext.addFile(file);
 		}
 		return file;
 	}

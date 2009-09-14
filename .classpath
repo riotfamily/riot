@@ -31,13 +31,7 @@
 			<attribute name="javadoc_location" value="http://tomcat.apache.org/tomcat-5.5-doc/servletapi/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/spring.jar" sourcepath="lib/spring.src.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.0.x/api/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/c3p0.jar"/>
-	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/yuicompressor.jar"/>
 	<classpathentry kind="lib" path="lib/quartz.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-analyzers.jar"/>
@@ -46,7 +40,6 @@
 	<classpathentry kind="lib" path="lib/lucene-snowball.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
 	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
-	<classpathentry kind="lib" path="lib/spring-webmvc.jar" sourcepath="lib/spring-webmvc.src.zip"/>
 	<classpathentry kind="lib" path="lib/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/texhyphj.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
@@ -55,5 +48,18 @@
 	<classpathentry kind="lib" path="lib/persistence.jar"/>
 	<classpathentry kind="lib" path="lib/poi.jar"/>
 	<classpathentry kind="lib" path="lib/javamail.jar"/>
+	<classpathentry kind="lib" path="lib/xstream.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/spring-aop.jar"/>
+	<classpathentry kind="lib" path="lib/spring-beans.jar" sourcepath="lib/spring-beans.src.zip"/>
+	<classpathentry kind="lib" path="lib/spring-context-support.jar"/>
+	<classpathentry kind="lib" path="lib/spring-context.jar" sourcepath="lib/spring-context.src.zip"/>
+	<classpathentry kind="lib" path="lib/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/spring-expression.jar"/>
+	<classpathentry kind="lib" path="lib/spring-jdbc.jar"/>
+	<classpathentry kind="lib" path="lib/spring-orm.jar" sourcepath="lib/spring-orm.src.zip"/>
+	<classpathentry kind="lib" path="lib/spring-transaction.jar"/>
+	<classpathentry kind="lib" path="lib/spring-web-servlet.jar" sourcepath="lib/spring-web-servlet.src.zip"/>
+	<classpathentry kind="lib" path="lib/spring-web.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

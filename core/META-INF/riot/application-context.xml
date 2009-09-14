@@ -49,14 +49,35 @@
 	<bean id="riotServletPrefix" factory-bean="riotRuntime" factory-method="getServletPrefix" />
 	<bean id="resourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />
 	<bean id="riotVersion" factory-bean="riotRuntime" factory-method="getRiotVersion" />
-	
-	<!--  Security -->
-
-	<bean id="riotAccessControlInterceptor" class="org.riotfamily.core.security.session.AccessControlInterceptor" />
-	
+		
 	<!-- ImageMagick -->
 	
-	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick" />
+	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick">
+		<description>
+			ImageMagick 'convert' command which is used to crop images.
+			
+			SETUP NOTE:
+			===========
+			
+			If the 'convert' binary is in your PATH you don't have to configure
+			anything. If not, you have to specify the location of your 
+			ImageMagick installation.
+			
+			If you used an installer, chances are good that the MAGICK_HOME
+			environment variable is set (in this case you also don't need to 
+			configure anything).
+			
+			If not, please set the location via the imageMagick.home property
+			in your application.properties file.
+			
+			For backwards compatibility you may also set the 
+			imageMagick.convertCommand property, but remember that you also have
+			to specify imageMagick.identifyCommand (which is used to extract
+			meta data).
+		</description>
+		<property name="magickHome" value="${imageMagick.home=}" />
+		<property name="command" value="${imageMagick.convertCommand=}" />
+	</bean>
 	
 	<!--  Scheduling -->
 	
@@ -67,6 +88,14 @@
 		<property name="name" value="startup" />
 		<property name="repeatCount" value="0" />
 		<property name="startDelay" value="0" />
+	</bean>
+	
+	<bean id="minutelyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<description>
+			Quartz trigger that fires every minute.
+		</description>
+		<property name="name" value="minutely" />
+		<property name="cronExpression" value="0 * * * * ?" />
 	</bean>
 	
 	<bean id="dailyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">

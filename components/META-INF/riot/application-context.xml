@@ -9,19 +9,8 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
- 
-	<!-- Note: We use depends-on to get shorter stack-traces when the schema validation fails -->
-	<bean id="valueWrapperFactory" depends-on="sessionFactory" 
-			class="org.riotfamily.components.model.wrapper.HibernateWrapperFactory">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-	
-	<bean id="valueWrapperService" class="org.riotfamily.common.beans.MethodInvokingBean">
-		<property name="staticMethod" value="org.riotfamily.components.model.wrapper.ValueWrapperService.setWrapperFactory" />
-		<property name="argument" ref="valueWrapperFactory" />
-	</bean>
-	
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+ 	
 	<bean id="componentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">
 		<property name="viewNamePrefix" value="components/" />
 		<property name="viewNameSuffix" value=".ftl" />
@@ -41,9 +30,40 @@
 		</property>
 	</bean>
 	
+	<bean class="org.riotfamily.components.index.ContentListener">
+		<description>
+			EntityListern that notifies ContentIndexer beans when a Content
+			object is modified.
+		</description>
+	</bean>
+	
+	<bean class="org.riotfamily.components.index.FileReferenceUpdater">
+		<description>
+			Extracts references to RiotFile objects from (XML-) Content to
+			prevent the MediaCleanUpTask from deleting these files.
+		</description>
+	</bean>
+	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
-	<bean class="org.riotfamily.components.model.ContentContainer" scope="prototype">
-		<property name="cacheService" ref="cacheService" />
+	
+	<bean class="org.riotfamily.components.model.Content" scope="prototype">
+		<property name="marshaller">
+			<bean class="org.riotfamily.components.xstream.XStreamMarshaller">
+				<property name="driver">
+					<bean class="com.thoughtworks.xstream.io.xml.Dom4JDriver">
+						<property name="outputFormat">
+							<bean class="org.dom4j.io.OutputFormat">
+								<property name="suppressDeclaration" value="true" />
+								<property name="encoding" value="UTF-8" />
+								<property name="indent" value="\t" />
+								<property name="indentSize" value="1" />
+								<property name="newlines" value="true" />
+							</bean>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</property>
 	</bean>
 
 </beans>

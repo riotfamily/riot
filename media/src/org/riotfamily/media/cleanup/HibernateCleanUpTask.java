@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.media.cleanup;
 
 import java.util.Collection;
@@ -31,8 +20,12 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.metadata.CollectionMetadata;
+import org.hibernate.type.CollectionType;
+import org.hibernate.type.ComponentType;
+import org.hibernate.type.EntityType;
+import org.hibernate.type.Type;
 import org.riotfamily.common.scheduling.HibernateTask;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotLog;
@@ -128,24 +121,70 @@ public class HibernateCleanUpTask extends HibernateTask {
 		Collection<ClassMetadata> allMeta = getSessionFactory().getAllClassMetadata().values();
 		for (ClassMetadata meta : allMeta) { 
 			for (String name : meta.getPropertyNames()) {
-				if (RiotFile.class.isAssignableFrom(meta.getPropertyType(name).getReturnedClass())) {
+				Type type = meta.getPropertyType(name);
+				if (RiotFile.class.isAssignableFrom(type.getReturnedClass())) {
 					fileQueries.add(String.format(
 							"select %1$s.id from %2$s where %1$s is not null",
 							name, meta.getEntityName()));
 				}
+				else if (type instanceof ComponentType) {
+					handleComponentType((ComponentType) type, name, meta.getEntityName());
+				}
+				else if (type instanceof CollectionType) {
+					CollectionType collectionType = (CollectionType) type;
+					Type elementType = collectionType.getElementType(
+							(SessionFactoryImplementor) getSessionFactory());
+					
+					if (RiotFile.class.isAssignableFrom(elementType.getReturnedClass())) {
+						fileQueries.add(String.format("select file.id from %1$s ref " +
+								"join ref.%2$s as file where file is not null",
+								meta.getEntityName(), name));	
+					}
+					else if (elementType instanceof ComponentType) {
+						handleCollectionComponentType((ComponentType) elementType, 
+								null, name, meta.getEntityName());
+					}
+				}
 			}
 		}
+	}
+	
+	private void handleComponentType(ComponentType componentType, String property, 
+				String entityName) {
 		
-		Collection<CollectionMetadata> allCollMeta = getSessionFactory().getAllCollectionMetadata().values();
-		for (CollectionMetadata meta : allCollMeta) {
-			if (RiotFile.class.isAssignableFrom(meta.getElementType().getReturnedClass())) {
-				String role = meta.getRole();
-				int i = role.lastIndexOf('.');
-				String entityName = role.substring(0, i);
-				String property = role.substring(i + 1);
-				fileQueries.add(String.format("select file.id from %1$s ref " +
-						"join ref.%2$s as file where file is not null",
-						entityName, property));	
+		for (int i = 0; i < componentType.getSubtypes().length; i++) {
+			Type subtype = componentType.getSubtypes()[i];
+			String subProperty = property + "." + componentType.getPropertyNames()[i];
+			if (subtype instanceof EntityType 
+						&& RiotFile.class.isAssignableFrom(subtype.getReturnedClass())) {
+				
+				fileQueries.add(String.format("select %1$s.id from %2$s where %1$s is not null",
+						subProperty, entityName));
+			}
+			else if (subtype.isComponentType()) {
+				handleComponentType((ComponentType) subtype, subProperty, entityName);
+			}
+		}
+	}
+
+	private void handleCollectionComponentType(ComponentType componentType, String property, String collectionProperty, String entityName) {
+		for (int i = 0; i < componentType.getSubtypes().length; i++) {
+			Type subtype = componentType.getSubtypes()[i];
+			
+			String subProperty = property != null ? 
+					property + "." + componentType.getPropertyNames()[i] : 
+					componentType.getPropertyNames()[i];
+
+			if (subtype instanceof EntityType 
+					&& RiotFile.class.isAssignableFrom(subtype.getReturnedClass())) {
+				
+				fileQueries.add(String.format("select file.id from %2$s ref " +
+						"join ref.%3$s as col join col.%1$s file where file is not null",
+						subProperty, entityName, collectionProperty));
+			}
+			else if (subtype.isComponentType()) {
+				handleCollectionComponentType((ComponentType) subtype, 
+						subProperty, collectionProperty, entityName);
 			}
 		}
 	}

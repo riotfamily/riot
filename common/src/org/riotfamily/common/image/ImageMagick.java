@@ -1,26 +1,15 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- * 
- * The Original Code is Riot.
- * 
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2008
- * the Initial Developer. All Rights Reserved.
- * 
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
- * ***** END LICENSE BLOCK ***** */
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.riotfamily.common.image;
 
 import java.io.File;
@@ -29,7 +18,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.riotfamily.common.io.RuntimeCommand;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -45,6 +34,8 @@ public class ImageMagick implements InitializingBean {
 	private static Pattern majorMinorPattern = Pattern.compile("ImageMagick ([0-9]).([0-9])");
 	
 	private static Pattern majorMinorMicroPattern = Pattern.compile("ImageMagick ([0-9]).([0-9]).([0-9])");
+	
+	private String magickHome;
 	
 	private String commandName;
 	
@@ -64,24 +55,35 @@ public class ImageMagick implements InitializingBean {
 		this.commandName = commandName;
 	}
 
+	public void setMagickHome(String magickHome) {
+		this.magickHome = magickHome;
+	}
+	
 	public void setCommand(String command) {
 		this.command = command;
 	}
 	
+	protected boolean isWindows() {
+		String os = System.getProperty("os.name");
+		return os.startsWith("Windows");
+	}
+	
 	private String getDefaultCommand() {
 		StringBuilder cmd = new StringBuilder();
-		String os = System.getProperty("os.name");
-		boolean windows = os.startsWith("Windows");
-		String magickHome = System.getenv("MAGICK_HOME");
-		if (magickHome != null) {
-			cmd.append(magickHome).append(File.separatorChar);
-			if (!windows) {
+		
+		String dir = (magickHome != null) 
+				? magickHome 
+				: System.getenv("MAGICK_HOME");
+		
+		if (dir != null) {
+			cmd.append(dir).append(File.separatorChar);
+			if (!isWindows()) {
 				cmd.append("bin");
 				cmd.append(File.separatorChar);
 			}
 		}
 		cmd.append(commandName);
-		if (windows) {
+		if (isWindows()) {
 			cmd.append(".exe");
 		}
 		return cmd.toString();
@@ -92,8 +94,8 @@ public class ImageMagick implements InitializingBean {
 			if (command == null) {
 				command = getDefaultCommand();
 			}
-			log.info("Looking for ImageMagick binary: " + command);
-			String version = new RuntimeCommand(command, "-version").exec().getOutput();
+			log.info("Looking for ImageMagick binary '%s'", command);
+			String version = IOUtils.exec(command, "-version");
 			log.info(version);
 			
 			Matcher matcher = majorMinorMicroPattern.matcher(version);
@@ -109,9 +111,7 @@ public class ImageMagick implements InitializingBean {
 					minorVersion = Integer.parseInt(matcher.group(2));
 				}
 			}
-			log.info(String.format("Major version: %d minor version: %d " 
-						+ "micro version %d",majorVersion, minorVersion, 
-						microVersion));
+			log.info("Version: %d.%d.%d", majorVersion, minorVersion, microVersion);
 		}
 		catch (NumberFormatException e) {
 			log.warn("Could not determine ImageMagick version");
@@ -146,25 +146,14 @@ public class ImageMagick implements InitializingBean {
 		Assert.state(isAvailable(), "ImageMagick binary '" 
 				+ command + "' not found in path.");
 		
-		String[] cmd = new String[args.length + 1];
-		int i = 0;
-		cmd[i++] = command;
-		for (String arg : args) {
-			cmd[i++] = arg;
-		}
-		return new RuntimeCommand(cmd).exec().getResult();
+		return IOUtils.exec(command, args);
 	}
 	
 	public String invoke(List<String> args) throws IOException {
 		Assert.state(isAvailable(), "ImageMagick binary '" 
 				+ command + "' not found in path.");
 		
-		String[] cmd = new String[args.size() + 1];
-		cmd[0] = command;
-		for (int i = 0; i < args.size(); i++) {
-			cmd[i + 1] = (String) args.get(i);
-		}
-		return new RuntimeCommand(cmd).exec().getResult();
+		return IOUtils.exec(command, args);
 	}	
 	
 }
