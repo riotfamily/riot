@@ -14,6 +14,8 @@ package org.riotfamily.common.mapping;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +29,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 public final class HandlerUrlUtils {
 
+	private static Pattern typePattern = Pattern.compile("\\((.+)\\)\\s*(.+)");
+	
 	private HandlerUrlUtils() {
 	}
 	
@@ -104,10 +108,11 @@ public final class HandlerUrlUtils {
 			Object value = var.getValue();
 			if (value != null) {
 				String name = var.getKey();
-				int i = name.indexOf(':');
-				if (i > 0) {
-					name = name.substring(0, i);
-					value = convert(var.getValue(), name.substring(i+1));
+				Matcher m = typePattern.matcher(name);
+				String type = m.group(1);
+				if (type != null) {
+					name = m.group(2);
+					value = convert(var.getValue(), type);
 				}
 				vars.put(name, value);
 			}

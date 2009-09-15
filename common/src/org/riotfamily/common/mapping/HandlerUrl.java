@@ -24,7 +24,7 @@ import org.springframework.beans.PropertyAccessor;
 public class HandlerUrl implements Comparable<HandlerUrl> {
 	
 	private static Pattern placeholders = Pattern.compile(
-			"((\\*\\*?)|\\{(.+?)\\})");
+			"(?:(\\*\\*?)|\\{(?:\\(.+\\)\\s*)?(.+?)(?::.+?)?\\})");
 	
 	private String path;
 	
@@ -36,12 +36,12 @@ public class HandlerUrl implements Comparable<HandlerUrl> {
 		this.path = path;
 		Matcher m = placeholders.matcher(path);
 		while (m.find()) {
-			String name = m.group(3);
+			String name = m.group(2);
 			if (name != null) {
 				variables.add(name);
 			}
 			else {
-				variables.add(m.group(2));
+				variables.add(m.group(1));
 			}
 			numberOfPlaceholders++;
 		}
@@ -79,9 +79,9 @@ public class HandlerUrl implements Comparable<HandlerUrl> {
 		Matcher m = placeholders.matcher(path);
 		StringBuffer sb = new StringBuffer();
 		while (m.find()) {
-			String name = m.group(3);
+			String name = m.group(2);
 			if (name == null) {
-				name = m.group(2);
+				name = m.group(1);
 			}
 			Object value = pa.getPropertyValue(name);
 			m.appendReplacement(sb, String.valueOf(value));
