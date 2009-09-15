@@ -482,7 +482,7 @@
   - Renders a pager.
   - @see <a href="http://www.riotfamily.org/api/latest/org/riotfamily/website/generic/view/Pager.html">Pager</a>
   -->
-<#macro pager prev="&lt;&lt;" next="&gt;&gt;" gap="...">
+<#macro pager pager prev="&lt;&lt;" next="&gt;&gt;" gap="...">
 	<#if pager.pages gt 1>
 		<#if pager.prevPage?exists>
 			<a class="prev-page" href="${pager.prevPage.link}">${prev}</a>
