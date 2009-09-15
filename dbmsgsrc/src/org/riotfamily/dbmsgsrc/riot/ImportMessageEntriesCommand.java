@@ -53,7 +53,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 	
 	@Override
 	protected String getIcon(String action) {
-		return "import";
+		return "arrow_up";
 	}
 	
 	public Form createForm(CommandContext context, Selection selection) {
