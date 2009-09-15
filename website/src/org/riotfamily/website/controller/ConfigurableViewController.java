@@ -15,6 +15,7 @@ package org.riotfamily.website.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
@@ -78,11 +79,8 @@ public class ConfigurableViewController implements Controller {
 		return mv;
 	}
 	
-	/**
-	 * Can be overwritten by subclasses to populate the model. The default
-	 * implementation does nothing, hence an empty model is passed to the view.
-	 */
 	protected void populateModel(Model model, HttpServletRequest request) {
+		model.addAllAttributes(HandlerUrlUtils.getTypedPathVariables(request));
 	}
-	
+		
 }

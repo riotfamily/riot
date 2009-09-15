@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.web.servlet.HandlerMapping;
@@ -83,14 +84,67 @@ public final class HandlerUrlUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static String getPathVariable(HttpServletRequest request, String name) {
+	public static Map<String, String> getPathVariables(HttpServletRequest request) {
 		Map<String, String> vars = (Map<String, String>) request.getAttribute(
 				HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 		
-		if (vars != null) {
-			return vars.get(name);
+		if (vars == null) {
+			vars = Generics.newHashMap();
 		}
-		return null;
+		return vars;
+	}
+	
+	public static String getPathVariable(HttpServletRequest request, String name) {
+		return getPathVariables(request).get(name);
+	}
+	
+	public static Map<String, Object> getTypedPathVariables(HttpServletRequest request) {
+		Map<String, Object> vars = Generics.newHashMap();
+  		for (Map.Entry<String, String> var : getPathVariables(request).entrySet()) {
+			Object value = var.getValue();
+			if (value != null) {
+				String name = var.getKey();
+				int i = name.indexOf(':');
+				if (i > 0) {
+					name = name.substring(0, i);
+					value = convert(var.getValue(), name.substring(i+1));
+				}
+				vars.put(name, value);
+			}
+		}
+  		return vars;
+	}
+	
+	private static Object convert(String s, String type) {
+		if (type == null || type.equalsIgnoreCase("String")) {
+			return s;
+		}
+		if (type.equalsIgnoreCase("Integer")) {
+			return Integer.valueOf(s);
+		}
+		else if (type.equalsIgnoreCase("Long")) {
+			return Long.valueOf(s);
+		}
+		else if (type.equalsIgnoreCase("Short")) {
+			return Short.valueOf(s);
+		}
+		else if (type.equalsIgnoreCase("Double")) {
+			return Double.valueOf(s);
+		}
+		else if (type.equalsIgnoreCase("Float")) {
+			return Float.valueOf(s);
+		}
+		else if (type.equalsIgnoreCase("Boolean")) {
+			return Boolean.valueOf(s);
+		}
+		else if (type.equalsIgnoreCase("Character")) {
+			return new Character(s.charAt(0));
+		}
+		else {
+			throw new IllegalArgumentException("Unsupported type: " + type 
+					+ " - must be Integer, Long, Short, Double, Float," 
+					+ " Boolean or Character");
+		}
 	}
 
 	public static String getPathWithinMapping(HttpServletRequest request) {
