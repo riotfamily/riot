@@ -188,9 +188,9 @@
 <#---
   - Renders a list of checkboxes for the given options. See also #listOptions.
   -->
-<#macro checkboxes field options labelFirst=false>
+<#macro checkboxes field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="">
 	<#compress>
-		<@listOptions field options ; value, label, checked, id>
+		<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
 			<#if labelFirst>
 				<label for="${id}">${label}</label>
 				<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />		
