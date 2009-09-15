@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:s="http://www.riotfamily.org/schema/core/screen"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.0.xsd
+		http://www.riotfamily.org/schema/core/screen
+		http://www.riotfamily.org/schema/core/screen-9.0.xsd">
 	
 	<override:add ref="formRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/dbmsgsrc/runtime/forms.xml</value>
@@ -58,5 +61,29 @@
 			</list>
 		</property>
 	</override:bean>
+	
+	<override:add ref="systemScreens">
+		<s:list id="messageBundleEntries" icon="database_key">
+			<s:dao>
+				<bean class="org.riotfamily.dbmsgsrc.riot.MessageBundleEntryDao">
+					<constructor-arg ref="sessionFactory" />
+				</bean>
+			</s:dao>
+			<s:columns>
+				<s:column property="code" />
+				<s:column property="defaultMessage.text" />
+				<s:column property="translated" />
+			</s:columns>
+			<s:commands>
+				<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
+				<bean class="org.riotfamily.dbmsgsrc.riot.ImportMessageEntriesCommand">
+					<constructor-arg ref="dbMessageSourceDao" />
+				</bean>
+			</s:commands>
+			<s:form id="messageBundleEntry" />
+		</s:list>
+	</override:add>
   	
 </beans>
