@@ -109,10 +109,12 @@ public final class HandlerUrlUtils {
 			if (value != null) {
 				String name = var.getKey();
 				Matcher m = typePattern.matcher(name);
-				String type = m.group(1);
-				if (type != null) {
-					name = m.group(2);
-					value = convert(var.getValue(), type);
+				if (m.matches()) {
+					String type = m.group(1);
+					if (type != null) {
+						name = m.group(2);
+						value = convert(var.getValue(), type);
+					}
 				}
 				vars.put(name, value);
 			}
