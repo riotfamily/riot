@@ -17,7 +17,7 @@
         <dependency org="apache" name="log4j" rev="1.2.15" conf="build->default" />
         <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="*->default" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default" />
-		<dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="build->default" />
+		<dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="build->default,src" />
 		<dependency org="hibernate" name="hibernate" rev="${dep.hibernate.revision}" conf="build->core" />
 		<dependency org="hibernate" name="hibernate-annotations" rev="${dep.hibernate-annotations.revision}" conf="build->default" />
 		<dependency org="json" name="json-lib" rev="${dep.json-lib.revision}" conf="*->default" />
