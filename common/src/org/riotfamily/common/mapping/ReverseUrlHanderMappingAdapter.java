@@ -100,7 +100,7 @@ public class ReverseUrlHanderMappingAdapter implements ReverseHandlerMappingAdap
 					if (var instanceof String
 							|| ClassUtils.isPrimitiveOrWrapper(var.getClass())) {
 						
-						return getUrl(urls, Collections.singletonList(vars));
+						return getUrl(urls, Collections.singletonList(var));
 					}
 					return getUrl(urls, new BeanWrapperImpl(var));
 				}
