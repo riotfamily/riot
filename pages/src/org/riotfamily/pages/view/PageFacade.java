@@ -15,19 +15,20 @@ package org.riotfamily.pages.view;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.support.EditModeUtils;
+import org.riotfamily.core.security.AccessController;
+import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
 import org.riotfamily.website.cache.CacheTagUtils;
 
 /**
@@ -36,8 +37,6 @@ import org.riotfamily.website.cache.CacheTagUtils;
  */
 public class PageFacade {
 	
-	public static final String TITLE_PROPERTY = "title";
-
 	private Page page;
 
 	private HttpServletRequest request;
@@ -48,47 +47,39 @@ public class PageFacade {
 		this.page = page;
 		this.request = request;
 		this.preview = isPreview(page);
-		CacheTagUtils.tag(page);
+		page.tag();
 	}
 		
 	private boolean isPreview(Page page) {
 		return EditModeUtils.isPreview(request, page.getContentContainer());
 	}
-	public Long getId() {
-		return page.getId();
+	
+	public boolean isRequestable() {
+		return (page.isPublished() && page.getSite().isEnabled()) 
+				|| AccessController.isAuthenticatedUser();
 	}
 	
-	public Site getSite() {
-		return page.getSite();
-	}
+	public String getRelativeUrl() {
+		StringBuilder url = new StringBuilder();
+		url.append(page.getPath());
+		String suffix = SitemapSchema.getDefault().getDefaultSuffix(page.getPageType());
+		if (suffix != null) {
+			url.append(suffix);
+		}
+		return url.toString();
+	}	
 	
-	public Locale getLocale() {
-		return page.getLocale();
-	}
-	
-	public Date getCreationDate() {
-		return page.getCreationDate();
-	}
-	
-	public String getPathComponent() {
-		return page.getPathComponent();
-	}
-
-	public String getPath() {
-		return page.getPath();
-	}
-
 	public String getUrl() {
 		if (!page.getSite().hostNameMatches(request.getServerName())) {
 			return getAbsoluteUrl();
 		}
-		return page.getUrl();
+		return getRelativeUrl();
 	}
 	
 	public String getAbsoluteUrl() {
-		return page.getAbsoluteUrl(request.isSecure(), 
+		return page.getSite().makeAbsolute(request.isSecure(), 
 				ServletUtils.getServerNameAndPort(request),
-				request.getContextPath());
+				request.getContextPath(), getRelativeUrl());
 	}
 
 	public String getSecureUrl() {
@@ -97,22 +88,23 @@ public class PageFacade {
 			
 			return getUrl();
 		}
-		return page.getAbsoluteUrl(true, 
-				ServletUtils.getServerNameAndPort(request),
-				request.getContextPath());
+		return page.getSite().makeAbsolute(true, ServletUtils.getServerNameAndPort(request), 
+				request.getContextPath(), getRelativeUrl());
+	}
+	
+	public Collection<Page> getAncestors() {
+		LinkedList<Page> pages = Generics.newLinkedList();
+		Page page = this.page;
+		while (page != null) {
+			pages.addFirst(page);
+			page = page.getParent();
+		}
+		return pages;
 	}
 		
-	public Page getMasterPage() {
-		return page.getMasterPage();
-	}
-
-	public Page getParent() {
-		return page.getParent();
-	}
-
 	public Collection<Page> getChildPages() {
-		CacheTagUtils.tag(page);
-		return getPublishedPages(page.getChildPages());
+		page.tag();
+		return getPublishedPages(page.getChildren());
 	}
 
 	public List<Page> getSiblings() {
@@ -120,8 +112,8 @@ public class PageFacade {
 		if (parent == null) {
 			return Collections.singletonList(page);
 		}
-		CacheTagUtils.tag(parent);
-		return getPublishedPages(parent.getChildPages());
+		parent.tag();
+		return getPublishedPages(parent.getChildren());
 	}
 	
 	public Page getPreviousSibling() {
@@ -142,23 +134,10 @@ public class PageFacade {
 		return null;
 	}
 	
-	public Collection<Page> getAncestors() {
-		return page.getAncestors();
-	}
-	
-	public String getPageType() {
-		return page.getPageType();
-	}
-
-	public Long getContentId() {
-		return getContent().getId();
-	}
-		
 	public ContentContainer getContentContainer() {
 		ContentContainer container = page.getContentContainer();
 		CacheTagUtils.tag(container);
 		/*
-		ComponentCacheUtils.addContainerTags(container, preview);
 		Page master = page.getMasterPage();
 		if (master != null) {
 			ComponentCacheUtils.addContainerTags(master.getContentContainer(), preview);
@@ -180,21 +159,12 @@ public class PageFacade {
 		return getContent().get(key);
 	}
 
-	public String getTitle() {
-		Object title = get(TITLE_PROPERTY);
-		if (title != null) {
-			return title.toString();
-		}
+	public String getDefaultTitle() {
 		return FormatUtils.xmlToTitleCase(page.getPathComponent());
 	}
 
-	
-	public boolean isPublished() {
-		return page.isPublished();
-	}
-
-	private List<Page> getPublishedPages(Collection<Page> pages) {
-		ArrayList<Page> result = new ArrayList<Page>();
+	private List<Page> getPublishedPages(Collection<? extends Page> pages) {
+		ArrayList<Page> result = Generics.newArrayList();
 		for (Page page : pages) {
 			if (page.isPublished() || isPreview(page)) {
 				result.add(page);

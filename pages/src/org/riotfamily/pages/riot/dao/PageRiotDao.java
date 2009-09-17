@@ -23,7 +23,7 @@ import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.SingleRoot;
 import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.pages.config.SitemapSchema;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
@@ -42,27 +42,27 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 	}
 
 	public Object getParent(Object entity) {
-		Page page = (Page) entity;
+		ContentPage page = (ContentPage) entity;
 		return page.getSite();
 	}
 
 	public boolean canAdd(Object parent) {
-		return parent instanceof Page 
-				&& sitemapSchema.canHaveChildren((Page) parent);
+		return parent instanceof ContentPage 
+				&& sitemapSchema.canHaveChildren((ContentPage) parent);
 	}
 	
 	public boolean canDelete(Object entity) {
-		Page page = (Page) entity;
+		ContentPage page = (ContentPage) entity;
 		return !sitemapSchema.isSystemPage(page);
 	}
 	
 	public void delete(Object entity, Object parent) throws DataAccessException {
-		Page page = (Page) entity;
+		ContentPage page = (ContentPage) entity;
 		page.delete();
 	}
 
 	public Class<?> getEntityClass() {
-		return Page.class;
+		return ContentPage.class;
 	}
 
 	public int getListSize(Object parent, ListParams params)
@@ -72,7 +72,7 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 	}
 
 	public String getObjectId(Object entity) {
-		Page page = (Page) entity;
+		ContentPage page = (ContentPage) entity;
 		return page.getId().toString();
 	}
 		
@@ -83,20 +83,20 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 		return ((Site) parent).getRootPage();
 	}
 	
-	public Collection<Page> list(Object parent, ListParams params)
+	public Collection<ContentPage> list(Object parent, ListParams params)
 			throws DataAccessException {
 
-		Assert.isInstanceOf(Page.class, parent);
-		return ((Page) parent).getChildPagesWithFallback();
+		Assert.isInstanceOf(ContentPage.class, parent);
+		return ((ContentPage) parent).getChildPagesWithFallback();
 	}
 	
 	public Object getParentNode(Object node) {
-		Page page = (Page) node;
+		ContentPage page = (ContentPage) node;
 		return page.getParent();
 	}
 
 	public boolean hasChildren(Object node, Object parent, ListParams params) {
-		Page page = (Page) node;
+		ContentPage page = (ContentPage) node;
 		if (parent instanceof Site) {
 			if (!((Site) parent).equals(page.getSite())) {
 				return false;
@@ -106,26 +106,26 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 	}
 	
 	public Object load(String id) throws DataAccessException {
-		return Page.load(Long.valueOf(id));
+		return ContentPage.load(Long.valueOf(id));
 	}
 
 	public void save(Object entity, Object parent) throws DataAccessException {
-		Page page = (Page) entity;
-		Assert.isInstanceOf(Page.class, parent);
-		((Page) parent).addPage(page);
+		ContentPage page = (ContentPage) entity;
+		Assert.isInstanceOf(ContentPage.class, parent);
+		((ContentPage) parent).addPage(page);
 		page.save();
 	}
 
 	public Object update(Object entity) throws DataAccessException {
-		Page page = (Page) entity;
+		ContentPage page = (ContentPage) entity;
 		return page.merge();
 	}
 
 	public boolean canSwap(Object entity, Object parent, ListParams params,
 			int swapWith) {
 		
-		Page page = (Page) entity;
-		List<Page> siblings = page.getSiblings();
+		ContentPage page = (ContentPage) entity;
+		List<ContentPage> siblings = page.getSiblings();
 		int i = siblings.indexOf(page) + swapWith;
 		return i >= 0 && i < siblings.size();
 	}
@@ -133,15 +133,15 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 	public void swapEntity(Object entity, Object parent, ListParams params,
 			int swapWith) {
 
-		Page page = (Page) entity;
-		List<Page> pages = page.getSiblings();
+		ContentPage page = (ContentPage) entity;
+		List<ContentPage> pages = page.getSiblings();
 		int i = pages.indexOf(page);
 		Collections.swap(pages, i, i+ swapWith);
 		//TODO PageCacheUtils.invalidateNode(cacheService, parent);
 	}
 	
 	public boolean canCut(Object entity) {
-		Page page = (Page) entity;
+		ContentPage page = (ContentPage) entity;
 		return !sitemapSchema.isSystemPage(page);
 	}
 	
@@ -149,14 +149,14 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 	}
 	
 	public boolean canPasteCut(Object entity, Object target) {
-		return target instanceof Page 
-				&& sitemapSchema.isValidChild((Page) target, (Page) entity);
+		return target instanceof ContentPage 
+				&& sitemapSchema.isValidChild((ContentPage) target, (ContentPage) entity);
 	}
 
 	public void pasteCut(Object entity, Object dest) {
-		Page page = (Page) entity;
+		ContentPage page = (ContentPage) entity;
 		page.getParent().removePage(page);
-		((Page) dest).addPage(page);
+		((ContentPage) dest).addPage(page);
 		
 		//FIXME Invalidate cache items
 		//PageCacheUtils.invalidateNode(cacheService, node);

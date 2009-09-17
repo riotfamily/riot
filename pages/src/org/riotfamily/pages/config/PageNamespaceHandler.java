@@ -26,20 +26,25 @@ import org.riotfamily.common.beans.namespace.PropertyValueDecorator;
 public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		register("schema", SitemapSchema.class).setDecorator(
-				new PropertyDecorator("rootPage"));
+		register("schema", SitemapSchema.class)
+				.setFactoryMethod("getDefault")
+				.setDecorator(new PropertyDecorator("rootPage"));
 		
 		ChildDecorator typeDecorator = new ChildDecorator()
-				.register("bean", new PropertyValueDecorator("handler"))
-				.register("ref", new PropertyValueDecorator("handler"))
+				.register("handler", new PropertyDecorator())
 				.register("type", new ListItemDecorator("childTypes"))
 				.register("type-ref", new ListItemDecorator("childTypes"))
 				.register("prop", new MapEntryDecorator("properties", "key"))
 				.register("system-page", new ListItemDecorator("childPages"));
 				
-		register("type", PageType.class).setDecorator(typeDecorator);
+		register("type", ContentPageType.class).setDecorator(typeDecorator);
 		register("root-page", RootPage.class).setDecorator(typeDecorator);
 		register("system-page", SystemPage.class).setDecorator(typeDecorator);
+		
+		register("virtual-page", VirtualPage.class).setDecorator(new ChildDecorator()
+				.register("handler", new PropertyDecorator())
+				.register("adapter", new PropertyDecorator())
+				.register("virtual-page", new PropertyValueDecorator("child")));
 		
 		register("type-ref", PageTypeRef.class);
 	}

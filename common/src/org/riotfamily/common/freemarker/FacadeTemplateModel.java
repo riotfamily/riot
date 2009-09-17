@@ -12,29 +12,94 @@
  */
 package org.riotfamily.common.freemarker;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.Map;
+
+import org.springframework.util.StringUtils;
+
+import freemarker.ext.beans.BeanModel;
 import freemarker.ext.beans.BeansWrapper;
-import freemarker.ext.beans.StringModel;
+import freemarker.ext.beans.InvalidPropertyException;
+import freemarker.template.AdapterTemplateModel;
+import freemarker.template.ObjectWrapper;
+import freemarker.template.TemplateHashModel;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateScalarModel;
 
-public class FacadeTemplateModel extends StringModel {
+public class FacadeTemplateModel implements TemplateHashModel, TemplateScalarModel, AdapterTemplateModel {
 
+	
+	private static class StrictBeanModel extends BeanModel {
+
+		public StrictBeanModel(Object object, BeansWrapper wrapper) {
+			super(object, wrapper);
+		}
+		
+		@Override
+		@SuppressWarnings("unchecked")
+		protected TemplateModel invokeGenericGet(Map keyMap, Class clazz,
+				String key) throws IllegalAccessException,
+				InvocationTargetException, TemplateModelException {
+			
+			//Always return UNKNOWN
+			return super.invokeGenericGet(Collections.EMPTY_MAP, clazz, key);
+		}
+	}
+	
+	private StrictBeanModel strictFacadeModel;
+	
+	private StrictBeanModel strictDelegateModel;
+	
+	private BeanModel genericFacadeModel;
+	
 	private Object delegate;
 	
-	public FacadeTemplateModel(Object facade, Object delegate, 
-			BeansWrapper wrapper) {
-		
-		super(facade, wrapper);
+	public FacadeTemplateModel(Object facade, Object delegate, BeansWrapper wrapper) {
+		BeansWrapper strictWrapper = new BeansWrapper();
+		strictWrapper.setStrict(true);
+		strictWrapper.setOuterIdentity(wrapper);
+		this.strictFacadeModel = new StrictBeanModel(facade, strictWrapper);
+		this.strictDelegateModel = new StrictBeanModel(delegate, strictWrapper);
+		this.genericFacadeModel = new BeanModel(facade, wrapper);
 		this.delegate = delegate;
 	}
 	
-	@Override
+	public TemplateModel get(String key) throws TemplateModelException {
+		TemplateModel result;
+		try {
+			result = strictFacadeModel.get(key);
+		}
+		catch (InvalidPropertyException ex) {
+			try {
+				result = strictDelegateModel.get(key);
+			}
+			catch (InvalidPropertyException e) {
+				result = genericFacadeModel.get(key);
+				if (result == null) {
+					result = genericFacadeModel.get(getFallbackKey(key));
+				}
+			}
+		}
+		return result;
+	}
+	
+	private String getFallbackKey(String key) {
+		return "default" + StringUtils.capitalize(key);
+	}
+
 	@SuppressWarnings("unchecked")
 	public Object getAdaptedObject(Class hint) {
 		return delegate;
 	}
 
-	@Override
-	public Object getWrappedObject() {
-		return delegate;
+	public String getAsString() throws TemplateModelException {
+		return delegate.toString();
+	}
+	
+	public boolean isEmpty() throws TemplateModelException {
+		return false;
 	}
 	
 }

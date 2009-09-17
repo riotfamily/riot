@@ -20,6 +20,10 @@ public class SystemPageSyncListener extends TypedEntityListener<Site> {
 	
 	private SitemapSchema sitemapSchema;
 	
+	public SystemPageSyncListener() {
+		this(SitemapSchema.getDefault());
+	}
+	
 	public SystemPageSyncListener(SitemapSchema sitemapSchema) {
 		this.sitemapSchema = sitemapSchema;
 	}

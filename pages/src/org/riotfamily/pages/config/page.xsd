@@ -37,10 +37,7 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:choice>
-				<xsd:element ref="beans:bean" />
-				<xsd:element ref="beans:ref" />
-			</xsd:choice>
+			<xsd:element name ="handler" type="bean-or-ref" />
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 				<xsd:element name="type" type="type" />
 				<xsd:element name="type-ref" type="type-ref" />
@@ -49,6 +46,13 @@
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="suffix" type="xsd:string" />
 		<xsd:attribute name="label" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="bean-or-ref">
+		<xsd:choice>
+			<xsd:element ref="beans:bean" />
+			<xsd:element ref="beans:ref" />
+		</xsd:choice>
 	</xsd:complexType>
 	
 	<xsd:complexType name="type-ref">
@@ -71,15 +75,15 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:choice>
-				<xsd:element ref="beans:bean" />
-				<xsd:element ref="beans:ref" />
-			</xsd:choice>
+			<xsd:element name ="handler" type="bean-or-ref" />
 			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
-			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-				<xsd:element name="type" type="type" />
-				<xsd:element name="type-ref" type="type-ref" />
-				<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:choice>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="type" type="type" />
+					<xsd:element name="type-ref" type="type-ref" />
+					<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+				</xsd:choice>
+				<xsd:element name="virtual-page" type="virtual-page" minOccurs="0" />
 			</xsd:choice>
 		</xsd:sequence>
 	</xsd:complexType>
@@ -93,21 +97,39 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:choice>
-				<xsd:element ref="beans:bean" />
-				<xsd:element ref="beans:ref" />
-			</xsd:choice>
+			<xsd:element name ="handler" type="bean-or-ref" />
 			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
-			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-				<xsd:element name="type" type="type" />
-				<xsd:element name="type-ref" type="type-ref" />
-				<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:choice>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="type" type="type" />
+					<xsd:element name="type-ref" type="type-ref" />
+					<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+				</xsd:choice>
+				<xsd:element name="virtual-page" type="virtual-page" minOccurs="0" />
 			</xsd:choice>
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="suffix" type="xsd:string" />
 		<xsd:attribute name="label" type="xsd:string" />
 		<xsd:attribute name="path-component" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="virtual-page">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<tool:annotation>
+					<tool:exports type="org.riotfamily.pages.config.VirtualPage" />
+				</tool:annotation>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name ="adapter" type="bean-or-ref" />
+			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:element name ="virtual-page" type="virtual-page" minOccurs="0" />
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="suffix" type="xsd:string" />
+		<xsd:attribute name="label" type="xsd:string" />
 	</xsd:complexType>
 
 </xsd:schema>

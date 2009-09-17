@@ -24,7 +24,7 @@ import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -35,7 +35,7 @@ public class PagePropertiesEditor extends CompositeElement
 
 	private FormRepository repository;
 	
-	private Page masterPage;
+	private ContentPage masterPage;
 	
 	private NestedForm currentForm;
 	
@@ -53,8 +53,8 @@ public class PagePropertiesEditor extends CompositeElement
 		addComponent(currentForm);
 	}
 	
-	private Page getMasterPage(Form form) {
-		Page page = (Page) form.getBackingObject();
+	private ContentPage getMasterPage(Form form) {
+		ContentPage page = (ContentPage) form.getBackingObject();
 		return page.getMasterPage();
 	}
 	

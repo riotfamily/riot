@@ -16,10 +16,10 @@ import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractBatchCommand;
 import org.riotfamily.core.screen.list.command.result.PopupResult;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.view.PageFacade;
 
-public class GotoPageCommand extends AbstractBatchCommand<Page> {
+public class GotoPageCommand extends AbstractBatchCommand<ContentPage> {
 	
 	@Override
 	protected boolean isShowOnForm(CommandContext context) {
@@ -32,7 +32,7 @@ public class GotoPageCommand extends AbstractBatchCommand<Page> {
 	}
 
 	@Override
-	protected CommandResult execute(CommandContext context, Page page, 
+	protected CommandResult execute(CommandContext context, ContentPage page, 
 			int index, int selectionSize) {
 		
 		String url = new PageFacade(page, context.getRequest()).getUrl();

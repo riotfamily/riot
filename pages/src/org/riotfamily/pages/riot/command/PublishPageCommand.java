@@ -16,9 +16,9 @@ import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractBatchCommand;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 
-public class PublishPageCommand extends AbstractBatchCommand<Page> {
+public class PublishPageCommand extends AbstractBatchCommand<ContentPage> {
 
 	@Override
 	protected String getAction(CommandContext context) {
@@ -31,17 +31,20 @@ public class PublishPageCommand extends AbstractBatchCommand<Page> {
 	}
 	
 	@Override
-	protected boolean isEnabled(CommandContext context, Page page, int index,
+	protected boolean isEnabled(CommandContext context, ContentPage page, int index,
 			int selectionSize) {
 		
 		return !page.isPublished() || page.getContentContainer().isDirty();
 	}
 	
 	@Override
-	protected CommandResult execute(CommandContext context, Page page,
+	protected CommandResult execute(CommandContext context, ContentPage page,
 			int index, int selectionSize) {
 
 		page.publish();
+		if (page.getContentContainer().isDirty()) {
+			page.getContentContainer().publish();
+		}
 		return new RefreshListResult();
 	}
 }

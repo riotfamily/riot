@@ -16,12 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.pages.config.SitemapSchema;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -36,10 +34,11 @@ public class PageResolver {
 
 	private static final Object NOT_FOUND = new Object();
 	
-	private RiotLog log = RiotLog.get(PageResolver.class);
-
 	private SitemapSchema sitemapSchema;
 	
+	public PageResolver() {
+		this(SitemapSchema.getDefault());
+	}
 	
 	public PageResolver(SitemapSchema sitemapSchema) {
 		this.sitemapSchema = sitemapSchema;
@@ -80,9 +79,7 @@ public class PageResolver {
 		if (page == null || page == NOT_FOUND) {
 			return null;
 		}
-		Page result = (Page) page;
-		result.refreshIfDetached();
-		return result;
+		return (Page) page;
 	}
 	
 	protected void exposePage(Page page, HttpServletRequest request) {
@@ -113,67 +110,22 @@ public class PageResolver {
 		return site != NOT_FOUND ? (Site) site : null; 
 	}
 
-	/**
-	 * Returns the Page which is requestable at the given URL. This may return
-	 * <code>null</code> in case the given parameters do not match a page.
-	 * 
-	 * @param url url of the requestable page
-	 * @param contextPath of the application in order to strip it
-	 * @param fallbackSite in case the site can't be looked up, this site will
-	 * 			be used to find the page
-	 * @param pathCompleter in order to strip the servlet mapping
-	 * @return the page matching the parameters or null if no page was found
-	 */
-	public Page resolvePage(String url, String contextPath, Site fallbackSite) {
-		
-		String host = ServletUtils.getHost(url);
-		Site site = Site.loadByHostName(host);
-		if (site == null) {
-			log.debug("Could not find site for url '" + url + "'. Using fallback.");
-			site = fallbackSite;
-		}
-		
-		String path = ServletUtils.getPath(url);
-
-		// Strip the contextPath if known
-		if (StringUtils.startsWithIgnoreCase(path, contextPath)) {
-			path = path.substring(contextPath.length());
-		}
-		if (path == null) {
-			log.warn("The path is null. Can't continue.");
-			return null;
-		}
-		path = getLookupPath(path);
-		
-
-		Page page = Page.loadBySiteAndPath(site, path);
-		if (page == null) {
-			log.debug("Haven't found a page for '" + site + path + "'. Trying to find a page through an alias.");
-			PageAlias alias = PageAlias.loadBySiteAndPath(site, path);
-			if (alias != null) {
-				page = alias.getPage();
-			}
-		}
-		
-		log.debug("Page: " + page);
-
-		return page;
-	}	
-
-	
 	private Site resolveSite(HttpServletRequest request) {
 		String hostName = request.getServerName();
 		return Site.loadByHostName(hostName);
 	}
 
-	private Page resolvePage(HttpServletRequest request) {
+	private ContentPage resolvePage(HttpServletRequest request) {
 		Site site = getSite(request);
 		if (site == null) {
 			return null;
 		}
 		String path = ServletUtils.getPathWithinApplication(request);
 		String lookupPath = getLookupPath(path);
-		Page page = Page.loadBySiteAndPath(site, lookupPath);
+		ContentPage page = ContentPage.loadBySiteAndPath(site, lookupPath);
+		if (page == null) {
+			//ContentPage.findByTypesAndSite(sitemapSchema.getVirtualTypes(), site);
+		}
 		if (page == null || !page.isRequestable() 
 				|| !sitemapSchema.suffixMatches(page, path)) {
 			
@@ -195,10 +147,6 @@ public class PageResolver {
 		
 		if (object == null) {
 			object = NOT_FOUND;
-			log.debug("Exposing 'NOT_FOUND' as '" + attributeName + "'");
-		}
-		else {
-			log.debug("Exposing '" + object + "' as '" + attributeName + "'");
 		}
 		request.setAttribute(attributeName, object);
 	}

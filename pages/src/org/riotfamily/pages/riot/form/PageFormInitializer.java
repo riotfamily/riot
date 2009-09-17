@@ -22,7 +22,7 @@ import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.config.PageType;
 import org.riotfamily.pages.config.SitemapSchema;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 import org.springframework.util.Assert;
 
@@ -52,10 +52,10 @@ public class PageFormInitializer implements FormInitializer {
 		String pageType = null;
 		SelectBox sb = null;
 		if (form.isNew())  {
-			Page parentPage = null;
+			ContentPage parentPage = null;
 			Object parent = ScreenContext.get(RequestHolder.getRequest()).getParent();
-			if (parent instanceof Page) {
-				parentPage = (Page) parent;
+			if (parent instanceof ContentPage) {
+				parentPage = (ContentPage) parent;
 				form.setAttribute("pageId", parentPage.getId());
 				form.setAttribute("siteId", parentPage.getSite().getId());
 			}
@@ -63,13 +63,13 @@ public class PageFormInitializer implements FormInitializer {
 				Site site = (Site) parent;
 				form.setAttribute("siteId", site.getId());
 			}
-			List<PageType> pageTypes = sitemapSchema.getChildTypeOptions(parentPage);
+			List<? extends PageType> pageTypes = sitemapSchema.getChildTypeOptions(parentPage);
 			Assert.notEmpty(pageTypes, "Sitemap schema does not allow the creation of pages here");
 			sb = createPageTypeBox(form, pageTypes);
 			pageType = pageTypes.get(0).getName();
 		}
 		else {
-			Page page = (Page) form.getBackingObject();
+			ContentPage page = (ContentPage) form.getBackingObject();
 			form.setAttribute("pageId", page.getId());
 			form.setAttribute("siteId", page.getSite().getId());
 			pageType = page.getPageType();
@@ -83,7 +83,7 @@ public class PageFormInitializer implements FormInitializer {
 		form.addElement(ppe, "contentContainer.previewVersion");
 	}
 	
-	private SelectBox createPageTypeBox(Form form, List<PageType> pageTypes) {
+	private SelectBox createPageTypeBox(Form form, List<? extends PageType> pageTypes) {
 		SelectBox sb = new SelectBox();
 		sb.setRequired(true);
 		sb.setHideIfEmpty(true);

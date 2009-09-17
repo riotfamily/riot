@@ -15,9 +15,12 @@ package org.riotfamily.pages.mapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.pages.config.SitemapSchema;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.view.PageFacade;
 import org.riotfamily.website.controller.HttpErrorController;
 import org.riotfamily.website.controller.RedirectController;
 import org.springframework.orm.hibernate3.HibernateSystemException;
@@ -51,24 +54,27 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			if (site == null) {
 				return null;
 			}
-			return getPageNotFoundHandler(site, path);
+			return getPageNotFoundHandler(site, path, request);
 		}
 		
 		exposePathWithinMapping(path, request);
-		return page.getHandler();
+		return SitemapSchema.getDefault().getPageType(page.getPageType()).getHandler();
 	}
 		
 	/**
 	 * Checks if an alias is registered for the given site and path and returns 
 	 * a RedirectController, or <code>null</code> in case no alias can be found.
+	 * @param request 
 	 */
-	protected Object getPageNotFoundHandler(Site site, String path) {
+	protected Object getPageNotFoundHandler(Site site, String path,
+			HttpServletRequest request) {
+		
 		try {
 			PageAlias alias = PageAlias.loadBySiteAndPath(site, path);
 			if (alias != null) {
-				Page page = alias.getPage();
+				ContentPage page = alias.getPage();
 				if (page != null) {
-					String url = page.getUrl();
+					String url = new PageFacade(page, request).getUrl();
 					return new RedirectController(url, true, false);
 				}
 				else {

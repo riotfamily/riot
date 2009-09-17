@@ -18,19 +18,25 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 public class SitemapSchema {
 
+	private static SitemapSchema defaultSchema = new SitemapSchema();
+	
 	private String defaultSuffix;
 	
 	private RootPage rootPage;
 	
 	private Map<String, PageType> typeMap = Generics.newHashMap();
-		
+	
+	public static SitemapSchema getDefault() {
+		return defaultSchema;
+	}
+	
 	public String getDefaultSuffix() {
 		return defaultSuffix;
 	}
@@ -50,7 +56,7 @@ public class SitemapSchema {
 		}
 	}
 	
-	public PageType getPageType(Page page) {
+	public PageType getPageType(ContentPage page) {
 		return getPageType(page.getPageType());
 	}
 	
@@ -78,10 +84,10 @@ public class SitemapSchema {
 		rootPage.sync(site);
 	}
 
-	public List<PageType> getChildTypeOptions(Page parent) {
-		List<PageType> options = null;
-		if (parent instanceof Page) {
-			options = getPageType((Page) parent).getChildTypes();
+	public List<? extends PageType> getChildTypeOptions(ContentPage parent) {
+		List<? extends PageType> options = null;
+		if (parent instanceof ContentPage) {
+			options = getPageType((ContentPage) parent).getChildTypes();
 		}
 		if (options == null) {
 			options = Collections.emptyList();
@@ -97,19 +103,19 @@ public class SitemapSchema {
 		return defaultSuffix;
 	}
 
-	public boolean isSystemPage(Page page) {
+	public boolean isSystemPage(ContentPage page) {
 		return getPageType(page) instanceof SystemPage;
 	}
 
-	public boolean canHaveChildren(Page parent) {
+	public boolean canHaveChildren(ContentPage parent) {
 		return !getChildTypeOptions(parent).isEmpty();
 	}
 	
-	public boolean isValidChild(Page parent, Page child) {
+	public boolean isValidChild(ContentPage parent, ContentPage child) {
 		return getChildTypeOptions(parent).contains(getPageType(child));
 	}
 	
-	public boolean suffixMatches(Page page, String path) {
+	public boolean suffixMatches(ContentPage page, String path) {
 		String suffix = null;
 		int i = path.lastIndexOf(page.getPathComponent()) + page.getPathComponent().length();
 		if (i < path.length()) {

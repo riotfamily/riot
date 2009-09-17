@@ -13,7 +13,7 @@
 package org.riotfamily.pages.riot.form;
 
 import org.riotfamily.forms.ElementFactory;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -21,10 +21,10 @@ import org.riotfamily.pages.model.Page;
  */
 public class PagePropertyElement extends AbstractLocalizedElement {
 
-	private Page masterPage;
+	private ContentPage masterPage;
 	
 	public PagePropertyElement(ElementFactory elementFactory,
-			LocalizedEditorBinder binder, Page masterPage) {
+			LocalizedEditorBinder binder, ContentPage masterPage) {
 		
 		super(elementFactory, binder);
 		this.masterPage = masterPage;

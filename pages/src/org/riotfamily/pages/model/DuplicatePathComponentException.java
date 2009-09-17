@@ -24,16 +24,16 @@ public class DuplicatePathComponentException extends InvalidPropertyValueExcepti
 
 	private static final String FIELD_NAME = "pathComponent";
 
-	private Page page;
+	private ContentPage page;
 
-	public DuplicatePathComponentException(Page page) {
+	public DuplicatePathComponentException(ContentPage page) {
 		super(FIELD_NAME, CODE_NAME, new String[] { page.getPathComponent() },
 				"There's already another page using the pathComponent.");
 		
 		this.page = page;
 	}
 
-	public Page getPage() {
+	public ContentPage getPage() {
 		return this.page;
 	}
 

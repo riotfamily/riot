@@ -15,7 +15,7 @@ package org.riotfamily.pages.config;
 import java.util.Collections;
 import java.util.List;
 
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 
 public class RootPage extends SystemPage {
@@ -36,7 +36,7 @@ public class RootPage extends SystemPage {
 	}
 	
 	public void sync(Site site) {
-		Page page = site.getRootPage();
+		ContentPage page = site.getRootPage();
 		if (page == null) {
 			page = createPage(site, null);
 			site.setRootPage(page);

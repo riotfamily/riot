@@ -18,7 +18,7 @@ import static org.riotfamily.core.security.policy.AuthorizationPolicy.Permission
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.policy.ReflectionPolicy;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 
 public class MasterPagePolicy extends ReflectionPolicy {
 	
@@ -26,7 +26,7 @@ public class MasterPagePolicy extends ReflectionPolicy {
 		setOrder(Integer.MAX_VALUE - 2);
 	}
 	
-	public Permission translatePage(RiotUser user, Page page, CommandContext context) {
+	public Permission translatePage(RiotUser user, ContentPage page, CommandContext context) {
 		if (context.getParent() == null 
 				|| page.getSite().equals(context.getParent())) {
 			
@@ -36,7 +36,7 @@ public class MasterPagePolicy extends ReflectionPolicy {
 	}
 	
 	public Permission getPermission(RiotUser user, String action, 
-			Page page, CommandContext context) {
+			ContentPage page, CommandContext context) {
 		
 		if (context.getParent() != null 
 				&& !page.getSite().equals(context.getParent())) {

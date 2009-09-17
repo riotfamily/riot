@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.pages.mapping.PageResolver;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.view.PageFacade;
 import org.riotfamily.website.cache.CacheTagUtils;
 import org.riotfamily.website.cache.CacheableController;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,10 +42,11 @@ public class FolderController implements CacheableController {
 			HttpServletResponse response) throws Exception {
 		
 		Page page = PageResolver.getResolvedPage(request);
-		CacheTagUtils.tag(page);
-		for (Page child : page.getChildPages()) {
-			if (child.isRequestable()) {
-				return new ModelAndView(new RedirectView(child.getUrl(), true));
+		page.tag();
+		for (Page child : page.getChildren()) {
+			PageFacade facade = new PageFacade(child, request);
+			if (facade.isRequestable()) {
+				return new ModelAndView(new RedirectView(facade.getUrl(), true));
 			}
 		}
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);

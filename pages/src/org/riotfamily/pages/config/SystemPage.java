@@ -15,10 +15,10 @@ package org.riotfamily.pages.config;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 
-public class SystemPage extends PageType {
+public class SystemPage extends ContentPageType {
 
 	private String pathComponent;
 	
@@ -53,16 +53,16 @@ public class SystemPage extends PageType {
 		this.properties = properties;
 	}
 
-	private void sync(Page parent) {
-		Page page = Page.loadByTypeAndSite(getName(), parent.getSite());
+	private void sync(ContentPage parent) {
+		ContentPage page = ContentPage.loadByTypeAndSite(getName(), parent.getSite());
 		if (page == null) {
 			page = createPage(parent.getSite(), parent);
 		}
 		update(page);
 	}
 	
-	protected Page createPage(Site site, Page parent) {
-		Page page = new Page(getPathComponent(), site);
+	protected ContentPage createPage(Site site, ContentPage parent) {
+		ContentPage page = new ContentPage(getPathComponent(), site);
 		if (properties != null) {
 			page.getContentContainer().getPreviewVersion().putAll(properties);
 		}
@@ -73,7 +73,7 @@ public class SystemPage extends PageType {
 		return page;
 	}
 
-	protected void update(Page page) {
+	protected void update(ContentPage page) {
 		page.setPageType(getName());
 		if (childPages != null) {
 			for (SystemPage child : childPages) {
@@ -83,7 +83,7 @@ public class SystemPage extends PageType {
 	}
 
 	@Override
-	void register(SitemapSchema schema) {
+	public void register(SitemapSchema schema) {
 		super.register(schema);
 		if (childPages != null) {
 			for (SystemPage child : childPages) {

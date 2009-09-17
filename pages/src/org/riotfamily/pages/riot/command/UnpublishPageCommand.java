@@ -16,9 +16,9 @@ import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractBatchCommand;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 
-public class UnpublishPageCommand extends AbstractBatchCommand<Page> {
+public class UnpublishPageCommand extends AbstractBatchCommand<ContentPage> {
 
 	@Override
 	protected String getAction(CommandContext context) {
@@ -31,14 +31,14 @@ public class UnpublishPageCommand extends AbstractBatchCommand<Page> {
 	}
 	
 	@Override
-	protected boolean isEnabled(CommandContext context, Page page, int index,
+	protected boolean isEnabled(CommandContext context, ContentPage page, int index,
 			int selectionSize) {
 		
 		return page.isPublished();
 	}
 	
 	@Override
-	protected CommandResult execute(CommandContext context, Page page,
+	protected CommandResult execute(CommandContext context, ContentPage page,
 			int index, int selectionSize) {
 
 		page.unpublish();

@@ -61,7 +61,7 @@ public class Site extends ActiveRecordBeanSupport {
 	
 	private Set<String> aliases;
 
-	private Page rootPage;
+	private ContentPage rootPage;
 	
 	private Content properties;
 	
@@ -166,11 +166,11 @@ public class Site extends ActiveRecordBeanSupport {
 	}
 	
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	public Page getRootPage() {
+	public ContentPage getRootPage() {
 		return rootPage;
 	}
 
-	public void setRootPage(Page rootPage) {
+	public void setRootPage(ContentPage rootPage) {
 		this.rootPage = rootPage;
 	}
 

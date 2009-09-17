@@ -14,19 +14,21 @@ package org.riotfamily.pages.config;
 
 import org.springframework.util.Assert;
 
-public class PageTypeRef extends PageType {
+public class PageTypeRef extends ContentPageType {
 
 	@Override
-	void register(SitemapSchema schema) {
+	public void register(SitemapSchema schema) {
 		PageType ref = schema.getPageType(getName());
 		Assert.notNull(ref, "Referenced type not found: " + getName());
-		copyFrom(ref);
+		Assert.isInstanceOf(ContentPageType.class, ref, "Referenced type must be a ContentPageType");
+		copyFrom((ContentPageType) ref);
 	}
 	
-	private void copyFrom(PageType ref) {
-		setChildTypes(ref.getChildTypes());
+	private void copyFrom(ContentPageType ref) {
+		setLabel(ref.getLabel());
 		setHandler(ref.getHandler());
 		setSuffixes(ref.getSuffixes());
+		setChildTypes(ref.getChildTypes());
 	}
 	
 }

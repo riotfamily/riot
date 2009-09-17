@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.view.PageFacade;
 import org.riotfamily.website.cache.AbstractCacheableController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -41,7 +42,7 @@ public class SiteListController extends AbstractCacheableController {
 		List<Site> sites = Site.findAll();
 		if (sites.size() == 1) {
 			Site site = sites.get(0);
-			String url = site.getRootPage().getUrl();
+			String url = new PageFacade(site.getRootPage(), request).getUrl();
 			return new ModelAndView(new RedirectView(url, true));
 		}
 		if (!sites.isEmpty()) {

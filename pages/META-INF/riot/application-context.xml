@@ -29,9 +29,8 @@
 	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
 
-	<bean class="org.riotfamily.pages.model.Page" scope="prototype">
+	<bean class="org.riotfamily.pages.model.ContentPage" scope="prototype">
 		<property name="cacheService" ref="cacheService" />
-		<property name="schema" ref="sitemapSchema" />
 	</bean>
 	
 </beans>

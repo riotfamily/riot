@@ -37,7 +37,7 @@ import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 public class PageAlias extends ActiveRecordBeanSupport {
 
 
-	private Page page;
+	private ContentPage page;
 	
 	private Site site;
 	
@@ -46,18 +46,18 @@ public class PageAlias extends ActiveRecordBeanSupport {
 	public PageAlias() {
 	}
 	
-	public PageAlias(Page page, Site site, String path) {
+	public PageAlias(ContentPage page, Site site, String path) {
 		this.page = page;
 		this.site = site;
 		this.path = path;
 	}
 
 	@ManyToOne
-	public Page getPage() {
+	public ContentPage getPage() {
 		return this.page;
 	}
 
-	public void setPage(Page page) {
+	public void setPage(ContentPage page) {
 		this.page = page;
 	}
 	

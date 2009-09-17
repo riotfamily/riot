@@ -14,7 +14,7 @@ package org.riotfamily.pages.riot.ui;
 
 import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.core.screen.list.ListRenderContext;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -24,21 +24,21 @@ import org.riotfamily.pages.model.Site;
 public class PagePublishStatusRenderer extends PublishStatusRenderer {
 
 	protected String getStyleClass(ContentContainerOwner owner, ListRenderContext context) {
-		if (isTranslated((Page) owner, context)) {
+		if (isTranslated((ContentPage) owner, context)) {
 			return super.getStyleClass(owner, context);
 		}
 		return "translatable";
 	}
 
-	private boolean isTranslated(Page page, ListRenderContext context) {
+	private boolean isTranslated(ContentPage page, ListRenderContext context) {
 		Site parentSite = getParentSite(context);
 		return parentSite == null || parentSite.equals(page.getSite());
 	}
 	
 	private Site getParentSite(ListRenderContext context) {
 		Object parent = context.getParent();
-		if (parent instanceof Page) {
-			return ((Page) parent).getSite();
+		if (parent instanceof ContentPage) {
+			return ((ContentPage) parent).getSite();
 		}
 		else if (parent instanceof Site) {
 			return (Site) parent;

@@ -16,10 +16,10 @@ import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractBatchCommand;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 
-public class TranslatePageCommand extends AbstractBatchCommand<Page> {
+public class TranslatePageCommand extends AbstractBatchCommand<ContentPage> {
 
 	@Override
 	public String getAction(CommandContext context) {
@@ -36,11 +36,11 @@ public class TranslatePageCommand extends AbstractBatchCommand<Page> {
 	}
 	
 	@Override
-	protected CommandResult execute(CommandContext context, Page page,
+	protected CommandResult execute(CommandContext context, ContentPage page,
 			int index, int selectionSize) {
 
-		Page parent = (Page) context.getParent();
-		parent.addPage(new Page(page));
+		ContentPage parent = (ContentPage) context.getParent();
+		parent.addPage(new ContentPage(page));
 		return new RefreshListResult();
 	}
 
