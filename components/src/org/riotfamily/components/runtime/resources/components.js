@@ -54,8 +54,11 @@ riot.components = (function() {
 
 	function getContent(el) {
 		if (!el.content) {
-			if (el.hasClassName('riot-component')) {
-				el.content = new Component(el);
+			var c = el.up('.riot-component');
+			if (c && c.readAttribute('riot:contentid')
+					== el.readAttribute('riot:contentid')) {
+				
+				el.content = new Component(c);
 			}
 			else {
 				el.content = new Content(el);
@@ -66,7 +69,7 @@ riot.components = (function() {
 	
 	/**
 	 * Searches the element's ancestors (including the element itself) for an
-	 * element with the class 'riot-component' and returns the expando for that
+	 * element with the class 'riot-content' and returns the expando for that
 	 * element.
 	 */
 	function findContent(el) {
