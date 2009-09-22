@@ -239,14 +239,17 @@ public class Site extends ActiveRecordBeanSupport {
 	// Object identity methods
 	// ----------------------------------------------------------------------
 
+	@Override
 	public String toString() {
 		return getName();
 	}
 	
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;

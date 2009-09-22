@@ -132,8 +132,8 @@ public abstract class ActiveRecord extends ConfigurableBean {
 		
 		if (params != null) {
 			int index = 0;
-			for (Object param: params) {
-				query.setParameter(index ++, param);
+			for (Object param : params) {
+				query.setParameter(index++, param);
 			}
 		}
 

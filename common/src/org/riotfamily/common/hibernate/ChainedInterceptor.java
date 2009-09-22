@@ -23,6 +23,7 @@ import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
+import org.riotfamily.common.util.Generics;
 
 
 /**
@@ -37,10 +38,7 @@ public class ChainedInterceptor implements SessionFactoryAwareInterceptor {
 	private Set<Interceptor> interceptors = Collections.emptySet();
 
 	public void setInterceptors(Set<Interceptor> interceptors) {
-		if (interceptors == null) {
-			interceptors = Collections.emptySet();
-		}
-		this.interceptors = interceptors;
+		this.interceptors = Generics.emptyIfNull(interceptors);
 	}
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {

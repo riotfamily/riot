@@ -13,10 +13,10 @@
 package org.riotfamily.forms.request;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.riotfamily.common.util.Generics;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,12 +29,7 @@ public class SimpleFormRequest implements FormRequest {
 	private Map<String, String> params;
 	
 	public SimpleFormRequest(Map<String, String> params) {
-		if (params != null) {
-			this.params = params;
-		}
-		else {
-			this.params = Collections.emptyMap();
-		}
+		this.params = Generics.emptyIfNull(params);
 	}
 
 	public MultipartFile getFile(String name) {
