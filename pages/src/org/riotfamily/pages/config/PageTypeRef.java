@@ -17,11 +17,12 @@ import org.springframework.util.Assert;
 public class PageTypeRef extends ContentPageType {
 
 	@Override
-	public void register(SitemapSchema schema) {
+	public void register(SitemapSchema schema, PageType parent) {
 		PageType ref = schema.getPageType(getName());
 		Assert.notNull(ref, "Referenced type not found: " + getName());
 		Assert.isInstanceOf(ContentPageType.class, ref, "Referenced type must be a ContentPageType");
 		copyFrom((ContentPageType) ref);
+		setParent(parent);
 	}
 	
 	private void copyFrom(ContentPageType ref) {

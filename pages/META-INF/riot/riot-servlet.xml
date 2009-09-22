@@ -97,8 +97,8 @@
 				<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.CopyCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.PasteCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
-				<bean class="org.riotfamily.pages.riot.command.PublishPageCommand" />
-				<bean class="org.riotfamily.pages.riot.command.UnpublishPageCommand" />
+				<bean class="org.riotfamily.components.riot.command.PublishCommand" />
+				<bean class="org.riotfamily.components.riot.command.UnpublishCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
 				<bean class="org.riotfamily.pages.riot.command.TranslatePageCommand" />
 			</list>

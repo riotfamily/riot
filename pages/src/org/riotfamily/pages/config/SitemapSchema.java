@@ -12,13 +12,14 @@
  */
 package org.riotfamily.pages.config;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.ContentPage;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -29,9 +30,11 @@ public class SitemapSchema {
 	
 	private String defaultSuffix;
 	
-	private RootPage rootPage;
+	private RootPageType rootPage;
 	
 	private Map<String, PageType> typeMap = Generics.newHashMap();
+	
+	private Set<String> virtualParents = Generics.newHashSet();
 	
 	public static SitemapSchema getDefault() {
 		return defaultSchema;
@@ -45,23 +48,37 @@ public class SitemapSchema {
 		this.defaultSuffix = defaultSuffix;
 	}
 
-	public void setRootPage(RootPage rootPage) {
+	public void setRootPage(RootPageType rootPage) {
 		this.rootPage = rootPage;
-		rootPage.register(this);
+		rootPage.register(this, null);
 	}
 	
 	void addType(PageType type) {
 		if (typeMap.put(type.getName(), type) != null) {
 			throw new IllegalArgumentException("Duplicate type: " + type.getName());
 		}
+		if (isVirtualParent(type)) {
+			virtualParents.add(type.getName());
+		}
 	}
 	
-	public PageType getPageType(ContentPage page) {
+	private boolean isVirtualParent(PageType type) {
+		if (type instanceof SystemPageType) {
+			return ((VirtualPageParent) type).getVirtualChildType() != null;
+		}
+		return false;
+	}
+
+	public PageType getPageType(Page page) {
 		return getPageType(page.getPageType());
 	}
 	
 	public PageType getPageType(String name) {
 		return typeMap.get(name);
+	}
+	
+	public Set<String> getVirtualParents() {
+		return virtualParents;
 	}
 	
 	void syncSystemPages() {
@@ -85,14 +102,15 @@ public class SitemapSchema {
 	}
 
 	public List<? extends PageType> getChildTypeOptions(ContentPage parent) {
-		List<? extends PageType> options = null;
-		if (parent instanceof ContentPage) {
-			options = getPageType((ContentPage) parent).getChildTypes();
+		return Generics.emptyIfNull(getPageType(parent).getChildTypes());
+	}
+	
+	public VirtualPageType getVirtualChildType(Page page) {
+		PageType parentType = getPageType(page);
+		if (parentType instanceof VirtualPageParent) {
+			return ((VirtualPageParent) parentType).getVirtualChildType();
 		}
-		if (options == null) {
-			options = Collections.emptyList();
-		}
-		return options;
+		return null;
 	}
 
 	public String getDefaultSuffix(String pageType) {
@@ -104,7 +122,7 @@ public class SitemapSchema {
 	}
 
 	public boolean isSystemPage(ContentPage page) {
-		return getPageType(page) instanceof SystemPage;
+		return getPageType(page) instanceof SystemPageType;
 	}
 
 	public boolean canHaveChildren(ContentPage parent) {
@@ -115,9 +133,9 @@ public class SitemapSchema {
 		return getChildTypeOptions(parent).contains(getPageType(child));
 	}
 	
-	public boolean suffixMatches(ContentPage page, String path) {
+	public boolean suffixMatches(Page page, String path) {
 		String suffix = null;
-		int i = path.lastIndexOf(page.getPathComponent()) + page.getPathComponent().length();
+		int i = page.getPath().length();
 		if (i < path.length()) {
 			suffix = path.substring(i);
 		}
@@ -137,5 +155,5 @@ public class SitemapSchema {
 		return ObjectUtils.nullSafeEquals(s1, s2)
 				|| (!StringUtils.hasText(s1) && !StringUtils.hasText(s2));
 	}
-	
+
 }

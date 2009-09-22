@@ -16,7 +16,7 @@ import org.riotfamily.common.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
 import org.riotfamily.common.servlet.RequestHolder;
-import org.riotfamily.pages.model.ContentPage;
+import org.riotfamily.pages.model.Page;
 import org.springframework.core.Ordered;
 
 import freemarker.template.TemplateModel;
@@ -33,14 +33,14 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered {
 	}
 	
 	public boolean supports(Object obj) {
-		return obj instanceof ContentPage;
+		return obj instanceof Page;
 	}
 
 	public TemplateModel wrapSupportedObject(Object obj, 
 			PluginObjectWrapper wrapper) 
 			throws TemplateModelException {
 		
-		ContentPage page = (ContentPage) obj;
+		Page page = (Page) obj;
 		PageFacade facade = new PageFacade(page, RequestHolder.getRequest());
 		return new FacadeTemplateModel(facade, page, wrapper);
 	}

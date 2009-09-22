@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.config.SitemapSchema;
+import org.riotfamily.pages.config.SystemPageType;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
@@ -115,18 +117,26 @@ public class PageResolver {
 		return Site.loadByHostName(hostName);
 	}
 
-	private ContentPage resolvePage(HttpServletRequest request) {
+	private Page resolvePage(HttpServletRequest request) {
 		Site site = getSite(request);
 		if (site == null) {
 			return null;
 		}
 		String path = ServletUtils.getPathWithinApplication(request);
 		String lookupPath = getLookupPath(path);
-		ContentPage page = ContentPage.loadBySiteAndPath(site, lookupPath);
+		Page page = ContentPage.loadBySiteAndPath(site, lookupPath);
 		if (page == null) {
-			//ContentPage.findByTypesAndSite(sitemapSchema.getVirtualTypes(), site);
+			for (ContentPage parent : ContentPage.findByTypesAndSite(sitemapSchema.getVirtualParents(), site)) {
+				if (lookupPath.startsWith(parent.getPath())) {
+					SystemPageType parentType = (SystemPageType) sitemapSchema.getPageType(parent);
+					String tail = lookupPath.substring(parent.getPath().length());
+					page = parentType.getVirtualChildType().resolve(parent, tail);
+					break;
+				}
+			}
 		}
-		if (page == null || !page.isRequestable() 
+		if (page == null 
+				|| !(page.isPublished() || AccessController.isAuthenticatedUser())
 				|| !sitemapSchema.suffixMatches(page, path)) {
 			
 			return null;

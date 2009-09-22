@@ -10,8 +10,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.model;
+package org.riotfamily.pages.mapping;
 
-public class PageAdapter {
+import java.util.Collection;
+
+import org.riotfamily.pages.config.VirtualPageType;
+import org.riotfamily.pages.model.Page;
+
+public interface ChildPageResolver {
+
+	public Page resolvePage(VirtualPageType type, Page parent, String pathComponent);
+	
+	public Collection<Page> listChildren(VirtualPageType type, Page parent);
+	
+	public Page getPage(VirtualPageType type, Object object);
 
 }

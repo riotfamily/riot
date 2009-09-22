@@ -35,15 +35,16 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 				.register("type", new ListItemDecorator("childTypes"))
 				.register("type-ref", new ListItemDecorator("childTypes"))
 				.register("prop", new MapEntryDecorator("properties", "key"))
-				.register("system-page", new ListItemDecorator("childPages"));
+				.register("system-page", new ListItemDecorator("childPages"))
+				.register("virtual-page", new PropertyValueDecorator("virtualPage"));
 				
 		register("type", ContentPageType.class).setDecorator(typeDecorator);
-		register("root-page", RootPage.class).setDecorator(typeDecorator);
-		register("system-page", SystemPage.class).setDecorator(typeDecorator);
+		register("root-page", RootPageType.class).setDecorator(typeDecorator);
+		register("system-page", SystemPageType.class).setDecorator(typeDecorator);
 		
-		register("virtual-page", VirtualPage.class).setDecorator(new ChildDecorator()
+		register("virtual-page", VirtualPageType.class).setDecorator(new ChildDecorator()
 				.register("handler", new PropertyDecorator())
-				.register("adapter", new PropertyDecorator())
+				.register("resolver", new PropertyDecorator())
 				.register("virtual-page", new PropertyValueDecorator("child")));
 		
 		register("type-ref", PageTypeRef.class);

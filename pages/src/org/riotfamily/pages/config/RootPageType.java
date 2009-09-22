@@ -18,7 +18,7 @@ import java.util.List;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 
-public class RootPage extends SystemPage {
+public class RootPageType extends SystemPageType {
 
 	@Override
 	public String getName() {

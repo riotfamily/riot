@@ -18,11 +18,13 @@ import java.util.Map;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 
-public class SystemPage extends ContentPageType {
+public class SystemPageType extends ContentPageType implements VirtualPageParent {
 
 	private String pathComponent;
 	
-	private List<SystemPage> childPages;
+	private List<SystemPageType> childPages;
+	
+	private VirtualPageType virtualChildType;
 	
 	private Map<String, Object> properties;
 
@@ -37,12 +39,23 @@ public class SystemPage extends ContentPageType {
 		this.pathComponent = pathComponent;
 	}
 
-	public List<SystemPage> getChildPages() {
+	public List<SystemPageType> getChildPages() {
 		return childPages;
 	}
 
-	public void setChildPages(List<SystemPage> childPages) {
+	public void setChildPages(List<SystemPageType> childPages) {
 		this.childPages = childPages;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.riotfamily.pages.config.VirtualPageParent#getVirtualChildType()
+	 */
+	public VirtualPageType getVirtualChildType() {
+		return virtualChildType;
+	}
+
+	public void setVirtualPage(VirtualPageType virtualChildType) {
+		this.virtualChildType = virtualChildType;
 	}
 
 	public Map<String, Object> getProperties() {
@@ -76,19 +89,22 @@ public class SystemPage extends ContentPageType {
 	protected void update(ContentPage page) {
 		page.setPageType(getName());
 		if (childPages != null) {
-			for (SystemPage child : childPages) {
+			for (SystemPageType child : childPages) {
 				child.sync(page);
 			}
 		}
 	}
 
 	@Override
-	public void register(SitemapSchema schema) {
-		super.register(schema);
+	public void register(SitemapSchema schema, PageType parent) {
+		super.register(schema, parent);
 		if (childPages != null) {
-			for (SystemPage child : childPages) {
-				child.register(schema);
+			for (SystemPageType child : childPages) {
+				child.register(schema, this);
 			}
+		}
+		if (virtualChildType != null) {
+			virtualChildType.register(schema, this);
 		}
 	}
 }

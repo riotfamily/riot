@@ -25,5 +25,5 @@ public interface PageType {
 	
 	public List<? extends PageType> getChildTypes();
 	
-	void register(SitemapSchema schema);
+	void register(SitemapSchema schema, PageType parent);
 }

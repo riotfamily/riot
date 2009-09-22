@@ -10,38 +10,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.riot.command;
+package org.riotfamily.components.riot.command;
 
+import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractBatchCommand;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
-import org.riotfamily.pages.model.ContentPage;
 
-public class UnpublishPageCommand extends AbstractBatchCommand<ContentPage> {
+public class PublishCommand extends AbstractBatchCommand<ContentContainerOwner> {
 
 	@Override
 	protected String getAction(CommandContext context) {
-		return "unpublish";
+		return "publish";
 	}
 	
 	@Override
 	protected String getIcon(String action) {
-		return "stop";
+		return "accept";
 	}
 	
 	@Override
-	protected boolean isEnabled(CommandContext context, ContentPage page, int index,
+	protected boolean isEnabled(CommandContext context, ContentContainerOwner owner, int index,
 			int selectionSize) {
 		
-		return page.isPublished();
+		return !owner.isPublished() || owner.getContentContainer().isDirty();
 	}
 	
 	@Override
-	protected CommandResult execute(CommandContext context, ContentPage page,
+	protected CommandResult execute(CommandContext context, ContentContainerOwner owner,
 			int index, int selectionSize) {
 
-		page.unpublish();
+		owner.setPublished(true);
+		if (owner.getContentContainer().isDirty()) {
+			owner.getContentContainer().publish();
+		}
 		return new RefreshListResult();
 	}
 }

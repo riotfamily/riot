@@ -22,6 +22,9 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -33,16 +36,13 @@ import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.IndexColumn;
-import org.riotfamily.cachius.CacheService;
-import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.hibernate.Lifecycle;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentEntity;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.website.cache.CacheTagUtils;
 import org.riotfamily.website.cache.TagCacheItems;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 
 
@@ -55,9 +55,11 @@ import org.springframework.util.StringUtils;
 @Table(name="riot_pages", uniqueConstraints = {@UniqueConstraint(columnNames={"site_id", "path"})})
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 @TagCacheItems
-public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecycle {
+public class ContentPage extends ContentEntity implements Page, Lifecycle {
 
 	public static final String TITLE_PROPERTY = "title";
+	
+	private Long id;
 	
 	private String pageType;
 	
@@ -75,13 +77,16 @@ public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecy
 
 	private String path;
 	
-	private boolean published;
-
 	private Date creationDate;
 
-	private ContentContainer contentContainer;
-	
-	private CacheService cacheService;
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 	
 	public ContentPage() {
 	}
@@ -95,12 +100,6 @@ public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecy
 		this.masterPage = master;
 		this.pageType = master.getPageType();
 		this.pathComponent = master.getPathComponent();
-	}
-	
-	@Required	
-	@Transient
-	public void setCacheService(CacheService cacheService) {
-		this.cacheService = cacheService;
 	}
 	
 	// ----------------------------------------------------------------------
@@ -121,40 +120,19 @@ public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecy
 	}
 	
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.MERGE)
-	@JoinColumn(name = "parent_id", updatable = false, insertable = false)
+	@JoinColumn(name="parent_id", updatable=false, insertable=false)
 	public ContentPage getParent() {
 		return parent;
 	}
 	
-	@OneToMany
+	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="parent_id")
 	@IndexColumn(name="pos")
-	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
+	//@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public List<ContentPage> getChildren() {
 		return children;
 	}
-	
-	@ManyToOne(cascade=CascadeType.ALL)
-	public ContentContainer getContentContainer() {
-		if (contentContainer == null) {
-			contentContainer = new ContentContainer(this);
-		}
-		return contentContainer;
-	}
-	
-	public boolean isPublished() {
-		return this.published;
-	}
-	
-	public void publish() {
-		setPublished(true);
-		invalidateCacheItems();
-	}
-
-	public void tag() {
-		CacheTagUtils.tag(this);
-	}
-	
+		
 	// ----------------------------------------------------------------------
 			
 	public void setPageType(String pageType) {
@@ -176,11 +154,7 @@ public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecy
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
 	}
-	
-	public void setContentContainer(ContentContainer contentContainer) {
-		this.contentContainer = contentContainer;
-	}
-	
+		
 	// ----------------------------------------------------------------------
 	
 	@ManyToOne(cascade=CascadeType.MERGE)
@@ -231,13 +205,9 @@ public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecy
 		return FormatUtils.xmlToTitleCase(pathComponent);
 	}
 	
-	public void setPublished(boolean published) {
-		this.published = published;
-	}
-
 	@Transient
 	public boolean isRequestable() {
-		return (published && site.isEnabled())
+		return (isPublished() && site.isEnabled())
 			|| AccessController.isAuthenticatedUser();
 	}
 		
@@ -278,6 +248,7 @@ public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecy
 		return candidates;
 	}
 	
+	@Override
 	public String toString() {
 		return site + ":" + path;
 	}
@@ -310,17 +281,11 @@ public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecy
 		}
 	}
 	
-	public void unpublish() {
-		setPublished(false);
-		invalidateCacheItems();
-	}
-	
-	private void invalidateCacheItems() {
-		if (cacheService != null) {
-			CacheTagUtils.invalidate(cacheService, this);
-			if (getParent() != null) {
-				CacheTagUtils.invalidate(cacheService, getParent());
-			}
+	@Override
+	public void invalidateCacheItems() {
+		super.invalidateCacheItems();
+		if (getParent() != null) {
+			CacheTagUtils.invalidate(getCacheService(), getParent());
 		}
 	}
 	
@@ -407,6 +372,17 @@ public class ContentPage extends ActiveRecordBeanSupport implements Page, Lifecy
 	
 	public static ContentPage loadByTypeAndSite(String pageType, Site site) {
 		return load("from ContentPage where pageType = ? and site = ?", pageType, site);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<ContentPage> findByTypesAndSite(Collection<String> types, Site site) {
+		if (types == null || types.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return createQuery("from ContentPage where pageType in (:types) and site = :site")
+				.setParameterList("types", types)
+				.setParameter("site", site)
+				.list();
 	}
 
 }

@@ -26,6 +26,8 @@ public abstract class AbstractPageType implements PageType {
 	
 	private List<String> suffixes;
 	
+	private PageType parent;
+	
 	public String getName() {
 		return name;
 	}
@@ -69,11 +71,19 @@ public abstract class AbstractPageType implements PageType {
 		return null;
 	}
 	
-	public void register(SitemapSchema schema) {
+	public PageType getParent() {
+		return parent;
+	}
+
+	public void setParent(PageType parent) {
+		this.parent = parent;
+	}
+
+	public void register(SitemapSchema schema, PageType parent) {
 		schema.addType(this);
 		if (getChildTypes() != null) {
 			for (PageType type : getChildTypes()) {
-				type.register(schema);
+				type.register(schema, this);
 			}
 		}
 	}

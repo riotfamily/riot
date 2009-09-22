@@ -10,28 +10,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.model;
+package org.riotfamily.pages.config;
 
-import java.util.Collection;
+public interface VirtualPageParent {
 
-import org.riotfamily.components.model.ContentContainerOwner;
+	public abstract VirtualPageType getVirtualChildType();
 
-/**
- * A Page is an object that holds a ContentContainer and is part of a hierarchy.
- * Each Page is mapped to an URL by its Site and path.
- */
-public interface Page extends ContentContainerOwner {
-
-	public Page getParent();
-
-	public Collection<? extends Page> getChildren();
-
-	public Site getSite();
-	
-	public String getPath();
-	
-	public String getTitle();
-
-	public String getPageType();
-	
 }

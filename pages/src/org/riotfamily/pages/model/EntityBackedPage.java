@@ -12,26 +12,27 @@
  */
 package org.riotfamily.pages.model;
 
-import java.util.Collection;
-
-import org.riotfamily.components.model.ContentContainerOwner;
+import org.riotfamily.common.hibernate.ActiveRecordUtils;
+import org.riotfamily.components.model.ContentEntity;
+import org.riotfamily.pages.config.VirtualPageType;
 
 /**
- * A Page is an object that holds a ContentContainer and is part of a hierarchy.
- * Each Page is mapped to an URL by its Site and path.
+ * VirtualPage that is backed by a {@link ContentEntity}.
  */
-public interface Page extends ContentContainerOwner {
+public class EntityBackedPage extends VirtualPage {
 
-	public Page getParent();
-
-	public Collection<? extends Page> getChildren();
-
-	public Site getSite();
+	private ContentEntity entity;
 	
-	public String getPath();
+	public EntityBackedPage(VirtualPageType pageType, Page parent,
+			ContentEntity entity, String title) {
+		
+		super(pageType, parent, entity, ActiveRecordUtils.getId(entity).toString(), title);
+		this.entity = entity;
+	}
 	
-	public String getTitle();
+	@Override
+	public void tag() {
+		entity.tag();
+	}
 
-	public String getPageType();
-	
 }

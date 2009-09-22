@@ -72,6 +72,9 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	}
 
 	public void setLiveVersion(Content liveVersion) {
+		if (liveVersion != null) {
+			liveVersion.setContainer(this);
+		}
 		this.liveVersion = liveVersion;
 	}
 	
@@ -85,6 +88,9 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	}
 	
 	public void setPreviewVersion(Content previewVersion) {
+		if (previewVersion != null) {
+			previewVersion.setContainer(this);
+		}
 		this.previewVersion = previewVersion;
 	}
 	
@@ -113,7 +119,7 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 			}
 		}
 		if (owner != null && !owner.isPublished()) {
-			owner.publish();
+			owner.setPublished(true);
 		}
 	}
 	

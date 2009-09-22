@@ -13,6 +13,7 @@
 package org.riotfamily.pages.riot.ui;
 
 import org.riotfamily.components.model.ContentContainerOwner;
+import org.riotfamily.components.riot.ui.PublishStatusRenderer;
 import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;

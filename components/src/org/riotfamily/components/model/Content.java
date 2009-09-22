@@ -100,7 +100,7 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 		return container;
 	}
 
-	private void setContainer(ContentContainer container) {
+	void setContainer(ContentContainer container) {
 		this.container = container;
 	}
 	

@@ -21,13 +21,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.servlet.ServletUtils;
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.config.SitemapSchema;
+import org.riotfamily.pages.config.VirtualPageType;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.website.cache.CacheTagUtils;
 
@@ -102,8 +102,12 @@ public class PageFacade {
 		return pages;
 	}
 		
-	public Collection<Page> getChildPages() {
+	public List<Page> getChildren() {
 		page.tag();
+		VirtualPageType type = SitemapSchema.getDefault().getVirtualChildType(page);
+		if (type != null) {
+			return getPublishedPages(type.listChildren(page));
+		}
 		return getPublishedPages(page.getChildren());
 	}
 
@@ -112,8 +116,7 @@ public class PageFacade {
 		if (parent == null) {
 			return Collections.singletonList(page);
 		}
-		parent.tag();
-		return getPublishedPages(parent.getChildren());
+		return new PageFacade(parent, request).getChildren();
 	}
 	
 	public Page getPreviousSibling() {
@@ -159,10 +162,6 @@ public class PageFacade {
 		return getContent().get(key);
 	}
 
-	public String getDefaultTitle() {
-		return FormatUtils.xmlToTitleCase(page.getPathComponent());
-	}
-
 	private List<Page> getPublishedPages(Collection<? extends Page> pages) {
 		ArrayList<Page> result = Generics.newArrayList();
 		for (Page page : pages) {
@@ -173,10 +172,12 @@ public class PageFacade {
 		return result;
 	}
 	
+	@Override
 	public String toString() {
 		return page.toString();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof PageFacade) {
 			PageFacade other = (PageFacade) o; 
@@ -185,6 +186,7 @@ public class PageFacade {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return page.hashCode() + (preview ? 1 : 0);
 	}

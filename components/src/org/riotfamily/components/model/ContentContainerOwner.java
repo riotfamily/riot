@@ -18,6 +18,10 @@ public interface ContentContainerOwner {
 	
 	public boolean isPublished();
 	
-	public void publish();
+	public void setPublished(boolean published);
+	
+	public void tag();
+	
+	public void invalidateCacheItems();
 
 }
