@@ -14,7 +14,7 @@
  * FlashInfo is (c) 2006 Paul Brooks Andrus and is released under the MIT
  * License: http://www.opensource.org/licenses/mit-license.php
  */
-package org.riotfamily.common.util;
+package org.riotfamily.media.service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+
+import org.riotfamily.common.util.RiotLog;
 
 
 
