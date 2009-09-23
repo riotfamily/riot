@@ -17,6 +17,10 @@ import java.util.Collection;
 import org.riotfamily.pages.config.VirtualPageType;
 import org.riotfamily.pages.model.Page;
 
+/**
+ * Interface used by the {@link PageResolver} if the path is mapped to a 
+ * {@link VirtualPageType}.
+ */
 public interface ChildPageResolver {
 
 	public Page resolvePage(VirtualPageType type, Page parent, String pathComponent);

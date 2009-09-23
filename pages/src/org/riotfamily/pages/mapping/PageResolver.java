@@ -126,14 +126,7 @@ public class PageResolver {
 		String lookupPath = getLookupPath(path);
 		Page page = ContentPage.loadBySiteAndPath(site, lookupPath);
 		if (page == null) {
-			for (ContentPage parent : ContentPage.findByTypesAndSite(sitemapSchema.getVirtualParents(), site)) {
-				if (lookupPath.startsWith(parent.getPath())) {
-					SystemPageType parentType = (SystemPageType) sitemapSchema.getPageType(parent);
-					String tail = lookupPath.substring(parent.getPath().length());
-					page = parentType.getVirtualChildType().resolve(parent, tail);
-					break;
-				}
-			}
+			page = resolveVirtualChildPage(site, lookupPath);
 		}
 		if (page == null 
 				|| !(page.isPublished() || AccessController.isAuthenticatedUser())
@@ -144,6 +137,17 @@ public class PageResolver {
 		return page;
 	}
 	
+	private Page resolveVirtualChildPage(Site site, String lookupPath) {
+		for (ContentPage parent : ContentPage.findByTypesAndSite(sitemapSchema.getVirtualParents(), site)) {
+			if (lookupPath.startsWith(parent.getPath())) {
+				SystemPageType parentType = (SystemPageType) sitemapSchema.getPageType(parent);
+				String tail = lookupPath.substring(parent.getPath().length());
+				return parentType.getVirtualChildType().resolve(parent, tail);
+			}
+		}
+		return null;
+	}
+
 	public String getLookupPath(HttpServletRequest request) {
 		return getLookupPath(ServletUtils.getPathWithinApplication(request));
 	}

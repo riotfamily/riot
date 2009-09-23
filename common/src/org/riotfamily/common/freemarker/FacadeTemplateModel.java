@@ -16,13 +16,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.util.StringUtils;
-
 import freemarker.ext.beans.BeanModel;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.InvalidPropertyException;
 import freemarker.template.AdapterTemplateModel;
-import freemarker.template.ObjectWrapper;
 import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
@@ -77,18 +74,11 @@ public class FacadeTemplateModel implements TemplateHashModel, TemplateScalarMod
 			}
 			catch (InvalidPropertyException e) {
 				result = genericFacadeModel.get(key);
-				if (result == null) {
-					result = genericFacadeModel.get(getFallbackKey(key));
-				}
 			}
 		}
 		return result;
 	}
 	
-	private String getFallbackKey(String key) {
-		return "default" + StringUtils.capitalize(key);
-	}
-
 	@SuppressWarnings("unchecked")
 	public Object getAdaptedObject(Class hint) {
 		return delegate;

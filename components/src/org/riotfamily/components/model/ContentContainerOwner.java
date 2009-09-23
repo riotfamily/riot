@@ -12,6 +12,9 @@
  */
 package org.riotfamily.components.model;
 
+/**
+ * Interface for objects own a {@link ContentContainer}.
+ */
 public interface ContentContainerOwner {
 
 	public ContentContainer getContentContainer();

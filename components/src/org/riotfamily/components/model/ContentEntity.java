@@ -22,6 +22,9 @@ import org.riotfamily.common.hibernate.ActiveRecord;
 import org.riotfamily.website.cache.CacheTagUtils;
 import org.springframework.beans.factory.annotation.Required;
 
+/**
+ * Base class for entities that act as {@link ContentContainerOwner}s.
+ */
 @MappedSuperclass
 public abstract class ContentEntity extends ActiveRecord
 		implements ContentContainerOwner {
