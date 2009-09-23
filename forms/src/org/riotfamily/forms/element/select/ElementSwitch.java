@@ -35,6 +35,8 @@ public class ElementSwitch extends Container
 	
 	private SwitchCase activeCase;
 	
+	private boolean permanent = false;
+	
 	public ElementSwitch() {
 		selectBox = new SelectBox();
 		selectBox.setRequired(true);
@@ -53,6 +55,10 @@ public class ElementSwitch extends Container
 	@Override
 	public boolean isCompositeElement() {		
 		return false;
+	}
+	
+	public void setPermanent(boolean permanent) {
+		this.permanent = permanent;
 	}
 		
 	public void addElement(Element element) {
@@ -106,6 +112,9 @@ public class ElementSwitch extends Container
 	public void setValue(Object value) {
 		if (value == null) {
 			value = options.get(0);
+		}
+		else if (permanent) {
+			selectBox.setEnabled(false);
 		}
 		selectBox.setValue(value);
 		activateCase(value);
