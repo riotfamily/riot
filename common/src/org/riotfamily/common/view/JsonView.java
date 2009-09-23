@@ -13,11 +13,13 @@
 package org.riotfamily.common.view;
 
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.springframework.web.servlet.view.AbstractView;
@@ -37,17 +39,18 @@ public class JsonView extends AbstractView {
 	
 	private String headerName = JSON_HEADER;
 	
-	public JsonView() {
-		this(false);
-	}
+	private Object jsonModel;
 	
-	public JsonView(boolean sendAsHeader) {
-		this.sendAsHeader = sendAsHeader;
+	private boolean useMergedOutputModel = true;
+	
+	public JsonView() {
 		setContentType(DEFAULT_CONTENT_TYPE);
 	}
 	
-	public void setSendAsHeader(boolean sendAsHeader) {
-		this.sendAsHeader = sendAsHeader;
+	public JsonView(Object obj) {
+		this();
+		jsonModel = obj;
+		useMergedOutputModel = false;
 	}
 	
 	public void setHeaderName(String headerName) {
@@ -57,6 +60,11 @@ public class JsonView extends AbstractView {
 	public void setCharacterEncoding(String characterEncoding) {
 		this.characterEncoding = characterEncoding;
 	}
+	
+	public JsonView sendAsHeader() {
+		sendAsHeader = true;
+		return this;
+	}
 
 	protected void renderMergedOutputModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
@@ -64,14 +72,24 @@ public class JsonView extends AbstractView {
 
 		response.setContentType(getContentType());
 		response.setCharacterEncoding(characterEncoding);
-		JSONObject jsonObject = JSONObject.fromObject(model);
+		
+		if (useMergedOutputModel) {
+			jsonModel = model;
+		}
+		String jsonString = null;
+		if (jsonModel instanceof Collection<?> || jsonModel.getClass().isArray()) {
+			jsonString = JSONArray.fromObject(jsonModel).toString();
+		}
+		else {
+			jsonString = JSONObject.fromObject(jsonModel).toString();
+		}
 		if (sendAsHeader) {
-			response.setHeader(headerName, jsonObject.toString());
+			response.setHeader(headerName, jsonString);
 		}
 		else {
 			PrintWriter out = response.getWriter();
 			out.write('(');
-			out.write(jsonObject.toString());
+			out.write(jsonString);
 			out.write(')');
 		}
 	}
