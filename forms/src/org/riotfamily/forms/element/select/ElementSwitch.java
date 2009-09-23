@@ -35,6 +35,8 @@ public class ElementSwitch extends Container
 	
 	private SwitchCase activeCase;
 	
+	private String labelMessageKey;
+	
 	private boolean permanent = false;
 	
 	public ElementSwitch() {
@@ -49,12 +51,19 @@ public class ElementSwitch extends Container
 
 	@Override
 	protected void afterBindingSet() {
-		selectBox.setLabelMessageKey(getEditorBinding().getProperty() + ".");
+		if (labelMessageKey == null) {
+			labelMessageKey = getEditorBinding().getProperty() + ".";
+		}
+		selectBox.setLabelMessageKey(labelMessageKey);
 	}
 	
 	@Override
 	public boolean isCompositeElement() {		
 		return false;
+	}
+	
+	public void setLabelMessageKey(String labelMessageKey) {
+		this.labelMessageKey = labelMessageKey;
 	}
 	
 	public void setPermanent(boolean permanent) {
