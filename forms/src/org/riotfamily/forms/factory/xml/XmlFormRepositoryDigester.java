@@ -20,7 +20,8 @@ import java.util.List;
 import org.riotfamily.common.ui.ObjectRenderer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.common.xml.XmlUtils;
@@ -77,7 +78,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 	public static final String NAMESPACE = "http://www.riotfamily.org/schema/forms/form-config";
 
-	private RiotLog log = RiotLog.get(XmlFormRepositoryDigester.class);
+	private Logger log = LoggerFactory.getLogger(XmlFormRepositoryDigester.class);
 
 	private ConfigurableListableBeanFactory beanFactory;
 

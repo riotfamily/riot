@@ -1,2 +1,0 @@
-http\://www.riotfamily.org/schema/website/generic=org.riotfamily.website.generic.config.GenericNamespaceHandler
-http\://www.riotfamily.org/schema/website/txt2img=org.riotfamily.website.txt2img.Txt2ImgNamespaceHandler

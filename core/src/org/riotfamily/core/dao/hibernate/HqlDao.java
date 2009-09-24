@@ -18,10 +18,11 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.hibernate.HibernateUtils;
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.core.screen.list.ListParamsImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -29,7 +30,7 @@ import org.springframework.util.Assert;
  */
 public class HqlDao extends AbstractHqlDao implements Swapping {
 
-	private RiotLog log = RiotLog.get(HqlDao.class);
+	private Logger log = LoggerFactory.getLogger(HqlDao.class);
 
 	private Class<?> entityClass;
 	
@@ -65,7 +66,8 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
         this.polymorph = polymorph;
     }
 
-    protected String getSelect() {
+    @Override
+	protected String getSelect() {
     	return select;
     }
     
@@ -73,7 +75,8 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
 		this.select = select;
 	}
     
-    public String getWhere() {
+    @Override
+	public String getWhere() {
         return where;
     }
 
@@ -103,7 +106,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
     	hql.append(" as this");
     	HibernateUtils.appendHql(
     		hql, "where", getWhereClause(parent, new ListParamsImpl()));
-    	log.debug(hql);
+    	log.debug(hql.toString());
         return hql.toString();
     }
 
@@ -118,6 +121,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
     	}
     }
 
+	@Override
 	protected String getOrderBy(ListParams params) {
         if (positionProperty != null) {
         	return positionProperty;	

@@ -19,7 +19,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
@@ -36,7 +37,7 @@ import org.springframework.util.StringUtils;
 
 public class ImportMessageEntriesCommand extends DialogCommand {
 
-	private static final RiotLog log = RiotLog.get(ImportMessageEntriesCommand.class);
+	private static final Logger log = LoggerFactory.getLogger(ImportMessageEntriesCommand.class);
 
 	private String bundle = DbMessageSource.DEFAULT_BUNDLE;
 	

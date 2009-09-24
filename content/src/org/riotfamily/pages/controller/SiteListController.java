@@ -18,9 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.CacheContext;
+import org.riotfamily.common.cache.AbstractCacheableController;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.view.PageFacade;
-import org.riotfamily.website.cache.AbstractCacheableController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 

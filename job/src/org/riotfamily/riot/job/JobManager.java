@@ -15,7 +15,8 @@ package org.riotfamily.riot.job;
 import java.util.Date;
 import java.util.Map;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.riot.job.dao.JobDao;
 import org.riotfamily.riot.job.model.JobDetail;
 import org.riotfamily.riot.job.model.JobLogEntry;
@@ -31,7 +32,7 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 
 	private static final String THREAD_NAME_PREFIX = "JobThread";
 	
-	private RiotLog log = RiotLog.get(JobManager.class);
+	private Logger log = LoggerFactory.getLogger(JobManager.class);
 	
 	private Map<String, Job> jobs;
 	

@@ -15,10 +15,10 @@ package org.riotfamily.pages.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.cache.controller.CacheableController;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.view.PageFacade;
-import org.riotfamily.website.cache.controller.CacheableController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 

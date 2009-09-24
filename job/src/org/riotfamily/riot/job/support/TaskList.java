@@ -15,12 +15,13 @@ package org.riotfamily.riot.job.support;
 import java.util.HashSet;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.riot.job.model.JobDetail;
 
 public class TaskList {
 
-	private RiotLog log = RiotLog.get(TaskList.class);
+	private Logger log = LoggerFactory.getLogger(TaskList.class);
 	
 	private HashSet<JobTask> activeTasks = Generics.newHashSet();
 	

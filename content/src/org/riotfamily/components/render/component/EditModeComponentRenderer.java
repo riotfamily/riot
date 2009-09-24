@@ -16,14 +16,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.forms.factory.FormRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditModeComponentRenderer implements ComponentRenderer {
 
-	private RiotLog log = RiotLog.get(this);
+	private Logger log = LoggerFactory.getLogger(EditModeComponentRenderer.class);
 	
 	private FormRepository formRepository;
 	

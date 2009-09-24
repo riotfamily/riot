@@ -30,7 +30,8 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.riotfamily.common.servlet.CapturingResponseWrapper;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.components.config.ContentFormRepository;
 import org.riotfamily.components.meta.ComponentMetaData;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
@@ -58,7 +59,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class ComponentEditorImpl implements ComponentEditor,
 		MessageSourceAware {
 
-	private RiotLog log = RiotLog.get(ComponentEditorImpl.class);
+	private Logger log = LoggerFactory.getLogger(ComponentEditorImpl.class);
 
 	private ComponentRenderer renderer;
 

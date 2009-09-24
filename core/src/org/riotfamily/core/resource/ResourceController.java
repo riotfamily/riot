@@ -21,8 +21,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.mapping.HandlerUrlUtils;
+import org.riotfamily.common.performance.Compressor;
 import org.riotfamily.common.servlet.ServletUtils;
-import org.riotfamily.website.performance.Compressor;
 import org.springframework.core.io.Resource;
 
 /**

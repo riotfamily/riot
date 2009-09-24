@@ -15,7 +15,8 @@ package org.riotfamily.common.io;
 import java.io.File;
 import java.util.Iterator;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -30,7 +31,7 @@ import org.riotfamily.common.util.RiotLog;
  */
 public class RecursiveFileIterator implements Iterator<File> {
 
-	private RiotLog log = RiotLog.get(RecursiveFileIterator.class);
+	private Logger log = LoggerFactory.getLogger(RecursiveFileIterator.class);
 	
 	private File dir;
 	

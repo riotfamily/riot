@@ -19,10 +19,11 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.hibernate.HibernateUtils;
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Order;
 import org.riotfamily.core.dao.Searchable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -31,7 +32,7 @@ import org.springframework.util.StringUtils;
 public abstract class AbstractHqlDao extends AbstractHibernateRiotDao 
 		implements Searchable {
 
-	private RiotLog log = RiotLog.get(AbstractHqlDao.class);
+	private Logger log = LoggerFactory.getLogger(AbstractHqlDao.class);
 
 	private String[] searchableProperties;
 	
@@ -92,7 +93,8 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     /**
      * Returns the total number of items.
      */
-    public final int getListSize(Object parent, ListParams params) {
+    @Override
+	public final int getListSize(Object parent, ListParams params) {
         Query query = getSession().createQuery(buildCountHql(parent, params));
         setQueryParameters(query, parent, params);
         Number size = (Number) query.uniqueResult();
@@ -131,7 +133,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     	hql.append("select count(*) from ");
     	hql.append(getFrom(params));
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
-    	log.debug(hql);
+    	log.debug(hql.toString());
         return hql.toString();
     }
 
@@ -146,7 +148,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     	hql.append(getFrom(params));
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
-    	log.debug(hql);
+    	log.debug(hql.toString());
         return hql.toString();
     }
 

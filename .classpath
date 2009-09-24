@@ -58,5 +58,6 @@
 	<classpathentry kind="lib" path="lib/spring-transaction.jar"/>
 	<classpathentry kind="lib" path="lib/spring-web-servlet.jar" sourcepath="lib/spring-web-servlet.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-web.jar" sourcepath="lib/spring-web.src.zip"/>
+	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

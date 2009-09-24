@@ -12,7 +12,8 @@
  */
 package org.riotfamily.common.servlet;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -27,12 +28,13 @@ public class AdvancedMappingExceptionResolver
 
 	private String rootCaseAttribute = "rootCause";
 	
-	private RiotLog log = RiotLog.get(this);
+	private Logger log = LoggerFactory.getLogger(AdvancedMappingExceptionResolver.class);
 	
 	public void setRootCaseAttribute(String rootCaseAttribute) {
 		this.rootCaseAttribute = rootCaseAttribute;
 	}
 
+	@Override
 	protected ModelAndView getModelAndView(String viewName, Exception ex) {
 		log.error("Unhandled exception", ex);
 		ModelAndView mv = super.getModelAndView(viewName, ex);

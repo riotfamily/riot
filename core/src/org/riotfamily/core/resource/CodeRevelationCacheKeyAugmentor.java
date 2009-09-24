@@ -14,8 +14,8 @@ package org.riotfamily.core.resource;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.cache.CacheKeyAugmentor;
 import org.riotfamily.common.i18n.CodeRevealingMessageSource;
-import org.riotfamily.website.cache.CacheKeyAugmentor;
 
 /**
  * CacheKeyAugmentor that adds a String to the cacheKey if message code 

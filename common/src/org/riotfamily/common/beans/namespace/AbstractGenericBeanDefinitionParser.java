@@ -12,7 +12,8 @@
  */
 package org.riotfamily.common.beans.namespace;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -44,7 +45,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	/** Constant for the id attribute */
 	public static final String ID_ATTRIBUTE = "id";
 
-	private RiotLog log = RiotLog.get(AbstractGenericBeanDefinitionParser.class);
+	private Logger log = LoggerFactory.getLogger(AbstractGenericBeanDefinitionParser.class);
 	
 	private Class<?> beanClass;
 

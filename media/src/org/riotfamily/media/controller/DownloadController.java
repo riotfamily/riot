@@ -20,14 +20,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.mapping.HandlerUrlUtils;
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.media.store.FileStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 public class DownloadController implements Controller {
 
-	private RiotLog log = RiotLog.get(this);
+	private Logger log = LoggerFactory.getLogger(DownloadController.class);
 	
 	private	FileStore fileStore;
 	

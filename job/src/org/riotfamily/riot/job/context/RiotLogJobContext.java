@@ -12,23 +12,24 @@
  */
 package org.riotfamily.riot.job.context;
 
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.riot.job.JobContext;
 import org.riotfamily.riot.job.JobInterruptedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RiotLogJobContext implements JobContext {
 	
-	private RiotLog log;
+	private Logger log;
 	
 	private int stepsTotal;
 	
 	private int stepsCompleted;
 	
 	public RiotLogJobContext() {
-		log = RiotLog.get(RiotLogJobContext.class);
+		log = LoggerFactory.getLogger(RiotLogJobContext.class);
 	}
 
-	public RiotLogJobContext(RiotLog log) {
+	public RiotLogJobContext(Logger log) {
 		this.log = log;
 	}
 

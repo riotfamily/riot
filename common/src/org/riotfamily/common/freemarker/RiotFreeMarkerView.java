@@ -23,7 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.collection.GuardedMap;
 import org.riotfamily.common.servlet.RequestHolder;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.common.view.ModelPostProcessor;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
@@ -49,7 +50,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	public static final String MODEL_ATTRIBUTE = 
 			RiotFreeMarkerView.class.getName() + ".model";
 
-	private RiotLog log = RiotLog.get(RiotFreeMarkerView.class);
+	private Logger log = LoggerFactory.getLogger(RiotFreeMarkerView.class);
 	
 	private boolean allowModelOverride = true;
 	

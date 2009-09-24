@@ -28,7 +28,8 @@ import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
 import org.riotfamily.common.scheduling.HibernateTask;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.store.FileStore;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -38,7 +39,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 public class HibernateCleanUpTask extends HibernateTask {
 
-	private RiotLog log = RiotLog.get(HibernateCleanUpTask.class);
+	private Logger log = LoggerFactory.getLogger(HibernateCleanUpTask.class);
 	
 	private FileStore fileStore;
 	

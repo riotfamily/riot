@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
@@ -36,7 +37,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class OpenSessionInViewFilterPlugin extends FilterPlugin {
 
-	private RiotLog log = RiotLog.get(OpenSessionInViewFilterPlugin.class);
+	private Logger log = LoggerFactory.getLogger(OpenSessionInViewFilterPlugin.class);
 	
 	private SessionFactory sessionFactory;
 

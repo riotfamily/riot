@@ -18,7 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
@@ -33,7 +34,7 @@ import org.springframework.util.ObjectUtils;
  */
 public abstract class AbstractMessageSource implements HierarchicalMessageSource {
 
-	private RiotLog log = RiotLog.get(AbstractMessageSource.class);
+	private Logger log = LoggerFactory.getLogger(AbstractMessageSource.class);
 	
 	private MessageSource parentMessageSource;
 

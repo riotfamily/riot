@@ -20,7 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.components.model.Component;
 
 /**
@@ -38,7 +39,7 @@ public abstract class AbstractComponentRenderer implements ComponentRenderer {
 	
 	public static final String LIST_SIZE = "listSize";
 
-	protected RiotLog log = RiotLog.get(AbstractComponentRenderer.class);
+	protected Logger log = LoggerFactory.getLogger(AbstractComponentRenderer.class);
 
 	public final void render(Component component, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {

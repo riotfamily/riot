@@ -139,7 +139,7 @@
 		<constructor-arg ref="messageSource" />
 	</bean>
 	
-    <bean id="cacheableHandlerAdapter" class="org.riotfamily.website.cache.controller.CacheableControllerHandlerAdapter">
+    <bean id="cacheableHandlerAdapter" class="org.riotfamily.common.cache.controller.CacheableControllerHandlerAdapter">
     	<description>
     		HandlerAdapter that handles CacheableControllers.
     	</description>
@@ -153,7 +153,7 @@
 		</description>
 	</bean>
 
-	<bean id="freemarkerConfig" class="org.riotfamily.website.cache.freemarker.WebsiteFreeMarkerConfigurer">
+	<bean id="freemarkerConfig" class="org.riotfamily.common.cache.freemarker.WebsiteFreeMarkerConfigurer">
 		<description>
 			FreeMarker configuration.
 		</description>
@@ -171,8 +171,8 @@
 		</property>
 		<property name="macroLibraries">
 			<props>
-				<prop key="c">classpath:org/riotfamily/website/view/common.ftl</prop>
-				<prop key="template">classpath:org/riotfamily/website/template/template.ftl</prop>
+				<prop key="c">classpath:org/riotfamily/common/view/common.ftl</prop>
+				<prop key="template">classpath:org/riotfamily/common/template/template.ftl</prop>
 				<prop key="riot">classpath:org/riotfamily/core/view/riot.ftl</prop>
 			</props>
 		</property>
@@ -186,13 +186,13 @@
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
 
-	<bean id="commonMacroHelper" class="org.riotfamily.website.view.CommonMacroHelperFactory">
+	<bean id="commonMacroHelper" class="org.riotfamily.common.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
 		<property name="handlerUrlResolver" ref="handlerUrlResolver" />
 		<property name="compressResources" value="${riot.resources.compress=true}" />
 	</bean>
 		
-	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory" />
+	<bean id="templateMacroHelper" class="org.riotfamily.common.template.TemplateMacroHelperFactory" />
 		
 	<!-- Security -->
 
@@ -409,7 +409,7 @@
 		<property name="compressors">
 			<map>
 				<entry key="text/css">
-					<bean class="org.riotfamily.website.performance.YUICssCompressor">
+					<bean class="org.riotfamily.common.performance.YUICssCompressor">
 						<property name="enabled" value="${riot.resources.compress=true}" />
 					</bean>
 				</entry>
@@ -418,14 +418,14 @@
 		</property>
 	</bean>
 	
-	<bean id="minifyScriptController" name="/resources/{version}/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
+	<bean id="minifyScriptController" name="/resources/{version}/joined.js" class="org.riotfamily.common.performance.MinifyScriptController">
 		<description>
 			Controller to compress (minify) JavaScript files.
 		</description>
 		<constructor-arg ref="javaScriptCompressor" />
 	</bean>
 	
-	<bean id="minifyCssController" name="/resources/{version}/joined.css" class="org.riotfamily.website.performance.MinifyCssController">
+	<bean id="minifyCssController" name="/resources/{version}/joined.css" class="org.riotfamily.common.performance.MinifyCssController">
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>

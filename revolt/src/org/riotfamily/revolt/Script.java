@@ -17,7 +17,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
 
@@ -27,7 +28,7 @@ import org.springframework.util.Assert;
  */
 public class Script {
 
-	private RiotLog log = RiotLog.get(Script.class);
+	private Logger log = LoggerFactory.getLogger(Script.class);
 	
 	private List<String> statements = new ArrayList<String>();
 

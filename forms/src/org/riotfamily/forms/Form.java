@@ -26,7 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
@@ -56,7 +57,7 @@ public class Form implements BeanEditor {
 	
 	private static final String BUTTON_CONTAINER_ATTR = "buttons";
 
-	private RiotLog log = RiotLog.get(Form.class);
+	private Logger log = LoggerFactory.getLogger(Form.class);
 
 	private String id = DEFAULT_ID;
 

@@ -17,7 +17,8 @@ import java.util.List;
 
 import org.htmlparser.util.ParserException;
 import org.riotfamily.common.event.ContentChangedEvent;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -28,7 +29,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
  */
 public class Crawler implements InitializingBean, ApplicationListener, Runnable {
 
-	private RiotLog log = RiotLog.get(Crawler.class);
+	private Logger log = LoggerFactory.getLogger(Crawler.class);
 
 	private String startPage;
 
@@ -166,7 +167,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 		        	pageData.parse();
 	        	}
 	        	catch (ParserException e) {
-	        		log.error(e);
+	        		log.error("Error parsing page", e);
 	        	}
 	        }
 	        for (PageHandler handler : pageHandlers) {
@@ -204,7 +205,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 		            }
 	        	}
 	        	catch (ParserException e) {
-	        		log.error(e);
+	        		log.error("Error parsing page", e);
 	        	}
 	        }
 	        else if (pageData.isRedirect()) {

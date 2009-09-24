@@ -14,12 +14,13 @@ package org.riotfamily.core.screen.list.service;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.core.screen.Screenlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScreenletRenderer extends ListServiceHandler {
 
-	RiotLog log = RiotLog.get(ScreenletRenderer.class);
+	Logger log = LoggerFactory.getLogger(ScreenletRenderer.class);
 	
 	ScreenletRenderer(ListService service, String key,
 			HttpServletRequest request) {

@@ -25,9 +25,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
+import org.riotfamily.common.cache.TagCacheItems;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.website.cache.TagCacheItems;
 
 /**
  * Entity that holds references to multiple Content versions.

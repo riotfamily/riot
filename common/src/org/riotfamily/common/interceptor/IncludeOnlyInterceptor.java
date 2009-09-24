@@ -16,7 +16,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -27,7 +28,7 @@ import org.springframework.web.util.WebUtils;
  */
 public class IncludeOnlyInterceptor extends PathMatchingInterceptor {
 
-	private RiotLog log = RiotLog.get(IncludeOnlyInterceptor.class);
+	private Logger log = LoggerFactory.getLogger(IncludeOnlyInterceptor.class);
 	
 	protected boolean doPreHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {

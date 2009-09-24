@@ -15,7 +15,8 @@ package org.riotfamily.common.view;
 import java.util.Locale;
 import java.util.Map;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -47,7 +48,7 @@ public class SuffixViewResolver extends AbstractCachingViewResolver
 	 */
 	public static final String FORWARD_URL_PREFIX = "forward:";
 	
-	private RiotLog log = RiotLog.get(SuffixViewResolver.class);
+	private Logger log = LoggerFactory.getLogger(SuffixViewResolver.class);
 	
 	private Map<String, ViewResolver> resolvers;
 

@@ -19,7 +19,8 @@ import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PageLoader implementation that uses the Jakarta Commons HttpClient.
@@ -28,7 +29,7 @@ import org.riotfamily.common.util.RiotLog;
  */
 public class CommonsHttpClientPageLoader implements PageLoader {
 
-	private RiotLog log = RiotLog.get(CommonsHttpClientPageLoader.class);
+	private Logger log = LoggerFactory.getLogger(CommonsHttpClientPageLoader.class);
 
     private HttpClient client = new HttpClient();
 

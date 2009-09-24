@@ -24,11 +24,12 @@ import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.cache.AbstractCacheableController;
+import org.riotfamily.common.cache.controller.Compressible;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.servlet.ServletUtils;
-import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.website.cache.AbstractCacheableController;
-import org.riotfamily.website.cache.controller.Compressible;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -43,7 +44,7 @@ import org.springframework.web.servlet.ModelAndView;
 public abstract class AbstractResourceController extends AbstractCacheableController
 		implements Compressible {
 
-	private RiotLog log = RiotLog.get(AbstractResourceController.class);
+	private Logger log = LoggerFactory.getLogger(AbstractResourceController.class);
 	
 	private FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 	

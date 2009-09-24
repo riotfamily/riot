@@ -14,7 +14,8 @@ package org.riotfamily.riot.job.support;
 
 import java.util.Date;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.riot.job.Job;
 import org.riotfamily.riot.job.JobInterruptedException;
 import org.riotfamily.riot.job.context.TaskJobContext;
@@ -27,7 +28,7 @@ import org.springframework.dao.DataAccessException;
 
 public class JobTask implements Runnable {
 	
-	private RiotLog log = RiotLog.get(JobTask.class);
+	private Logger log = LoggerFactory.getLogger(JobTask.class);
 	
 	private Job job;
 
@@ -39,7 +40,7 @@ public class JobTask implements Runnable {
 
 	private TaskList taskList;
 	
-	private RiotLog jobLog;
+	private Logger jobLog;
 	
 	private Thread thread;
 	
@@ -55,7 +56,7 @@ public class JobTask implements Runnable {
 		this.uiUpdater = uiUpdater;
 		this.taskList = taskList;
 		
-		jobLog = RiotLog.get(job.getClass());
+		jobLog = LoggerFactory.getLogger(job.getClass());
 	}
 
 	public void interrupt() {

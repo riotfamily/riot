@@ -12,7 +12,8 @@
  */
 package org.riotfamily.forms;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ErrorUtils {
@@ -22,8 +23,8 @@ public class ErrorUtils {
 	private ErrorUtils() {
 	}
 	
-	private static RiotLog getLog() {
-		return RiotLog.get(ErrorUtils.class);
+	private static Logger getLog() {
+		return LoggerFactory.getLogger(ErrorUtils.class);
 	}
 	
 	public static void reject(Editor editor, String errorCode, Object[] args) {

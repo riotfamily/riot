@@ -16,7 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.riotfamily.common.beans.property.IntArrayPropertyEditor;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.Editor;
@@ -42,7 +43,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 public class ConfigurableElementFactory implements ContainerElementFactory, 
 		EditorElementFactory {
 
-	private RiotLog log = RiotLog.get(ConfigurableElementFactory.class);
+	private Logger log = LoggerFactory.getLogger(ConfigurableElementFactory.class);
 	
 	/** The class to create */
 	private Class<? extends Element> elementClass;

@@ -14,6 +14,6 @@
     </publications>
     <dependencies>
 	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="*->default" />
-	    <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="*->default" />
+	    <dependency org="slf4j" name="slf4j" rev="1.5.8" conf="*->default" />
     </dependencies>
 </ivy-module>

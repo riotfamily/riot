@@ -21,9 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.riotfamily.common.servlet.ServletUtils;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.MDC;
 
 public class DiagnosticContextFilter extends HttpFilterBean {
+
+	private static final String MDC_IS_CLEARED_ON_EACH_REQUEST = 
+		"MDC is cleared on each request";
 
 	private static final String URL = "URL";
 	
@@ -40,30 +43,31 @@ public class DiagnosticContextFilter extends HttpFilterBean {
 			HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
-		RiotLog.clear();
-		RiotLog.setClearMdcDeferred(true);
-
+		MDC.clear();
+		MDC.put(MDC_IS_CLEARED_ON_EACH_REQUEST, "true");
+		
 		String ip = request.getRemoteAddr();
 		String url = ServletUtils.getRequestUrlWithQueryString(request);
 		String referer = ServletUtils.getReferer(request);
 		String userAgent = ServletUtils.getUserAgent(request);
 		HttpSession session = request.getSession(false);
 
-		RiotLog.put(IP, ip);
-		RiotLog.put(URL, url);
+		MDC.put(IP, ip);
+		MDC.put(URL, url);
 		if (referer != null) {
-			RiotLog.put(REFERER, referer);
+			MDC.put(REFERER, referer);
 		}
 		if (userAgent != null) {
-			RiotLog.put(USER_AGENT, userAgent);
+			MDC.put(USER_AGENT, userAgent);
 		}
 		if (session != null) {
-			RiotLog.put(SESSION_ID, session.getId());
+			MDC.put(SESSION_ID, session.getId());
 		}
-
-		RiotLog.push(" [" + ip + " => " + url + "]");
-
 		chain.doFilter(request, response);
+	}
+
+	public static boolean isPresent() {
+		return MDC.get(MDC_IS_CLEARED_ON_EACH_REQUEST) != null;
 	}
 
 	

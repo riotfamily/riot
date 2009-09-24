@@ -19,7 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -29,7 +30,7 @@ import org.springframework.util.Assert;
  */
 public class ImageMagick implements InitializingBean {
 
-	private RiotLog log = RiotLog.get(ImageMagick.class);
+	private Logger log = LoggerFactory.getLogger(ImageMagick.class);
 	
 	private static Pattern majorMinorPattern = Pattern.compile("ImageMagick ([0-9]).([0-9])");
 	
@@ -111,7 +112,7 @@ public class ImageMagick implements InitializingBean {
 					minorVersion = Integer.parseInt(matcher.group(2));
 				}
 			}
-			log.info("Version: %d.%d.%d", majorVersion, minorVersion, microVersion);
+			log.info(String.format("Version: %d.%d.%d", majorVersion, minorVersion, microVersion));
 		}
 		catch (NumberFormatException e) {
 			log.warn("Could not determine ImageMagick version");

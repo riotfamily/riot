@@ -36,13 +36,13 @@ import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.IndexColumn;
+import org.riotfamily.common.cache.CacheTagUtils;
+import org.riotfamily.common.cache.TagCacheItems;
 import org.riotfamily.common.hibernate.Lifecycle;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.components.model.ContentEntity;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.website.cache.CacheTagUtils;
-import org.riotfamily.website.cache.TagCacheItems;
 import org.springframework.util.StringUtils;
 
 

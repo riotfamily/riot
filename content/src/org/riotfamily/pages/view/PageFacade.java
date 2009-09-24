@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.cache.CacheTagUtils;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.components.model.Content;
@@ -29,7 +30,6 @@ import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.config.VirtualPageType;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.website.cache.CacheTagUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

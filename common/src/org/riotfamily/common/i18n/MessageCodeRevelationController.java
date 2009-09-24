@@ -15,7 +15,8 @@ package org.riotfamily.common.i18n;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -34,7 +35,7 @@ import org.springframework.web.servlet.mvc.Controller;
 public class MessageCodeRevelationController implements Controller, 
 		BeanFactoryAware {
 
-	private RiotLog log = RiotLog.get(
+	private Logger log = LoggerFactory.getLogger(
 			MessageCodeRevelationController.class);
 	
 	private CodeRevealingMessageSource messageSource;

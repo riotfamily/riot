@@ -13,7 +13,8 @@
 package org.riotfamily.common.beans.override;
 
 import org.riotfamily.common.beans.override.OverrideNamespaceHandler.BeanReplacement;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -34,7 +35,7 @@ import org.springframework.core.PriorityOrdered;
  */
 public class BeanOverrideProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
-	private RiotLog log = RiotLog.get(BeanOverrideProcessor.class);
+	private Logger log = LoggerFactory.getLogger(BeanOverrideProcessor.class);
 	
 	private String ref;
 

@@ -35,12 +35,13 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.common.view.Pager;
 import org.riotfamily.search.ResultHighlighter.HighlightingContext;
 import org.riotfamily.search.analysis.AnalyzerFactory;
 import org.riotfamily.search.analysis.DefaultAnalyzerFactory;
 import org.riotfamily.search.index.DocumentBuilder;
-import org.riotfamily.website.view.Pager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -52,7 +53,7 @@ import org.springframework.web.util.WebUtils;
 
 public class SearchController implements Controller, InitializingBean {
 
-	private RiotLog log = RiotLog.get(this);
+	private Logger log = LoggerFactory.getLogger(SearchController.class);
 	
 	private static final String RESULT_MODEL_KEY = "result";
 

@@ -14,12 +14,13 @@ package org.riotfamily.core.resource;
 
 import java.io.IOException;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 public class ResourceMapping {
 
-	private RiotLog log = RiotLog.get(ResourceMapping.class);
+	private Logger log = LoggerFactory.getLogger(ResourceMapping.class);
 	
 	private String path;
 	

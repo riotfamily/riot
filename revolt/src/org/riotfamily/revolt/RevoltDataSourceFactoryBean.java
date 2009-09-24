@@ -16,12 +16,13 @@ import java.util.Collection;
 
 import javax.sql.DataSource;
 
-import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.DialectResolver;
 import org.riotfamily.revolt.support.LogTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
@@ -34,10 +35,10 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
-public class RevoltDataSourceFactoryBean implements FactoryBean, 
+public class RevoltDataSourceFactoryBean implements FactoryBean<DataSource>, 
 		ApplicationContextAware, InitializingBean {
 
-	private RiotLog log = RiotLog.get(RevoltDataSourceFactoryBean.class);
+	private Logger log = LoggerFactory.getLogger(RevoltDataSourceFactoryBean.class);
 	
 	private DataSource dataSource;
 
@@ -81,8 +82,8 @@ public class RevoltDataSourceFactoryBean implements FactoryBean,
 	//---------------------------------------------------------------------
 	
 	public void setApplicationContext(ApplicationContext applicationContext) {
-		evolutions = SpringUtils.listBeansOfTypeIncludingAncestors(
-			applicationContext, EvolutionHistory.class);
+		evolutions = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+				applicationContext, EvolutionHistory.class).values();
 	}
 	
 	//---------------------------------------------------------------------
@@ -107,6 +108,7 @@ public class RevoltDataSourceFactoryBean implements FactoryBean,
 			if (automatic && !script.isManualExecutionOnly()) {
 				new TransactionTemplate(new DataSourceTransactionManager(dataSource)).execute(
 					new TransactionCallbackWithoutResult() {
+						@Override
 						protected void doInTransactionWithoutResult(TransactionStatus status) {
 							script.execute(dataSource);
 						}
@@ -116,7 +118,7 @@ public class RevoltDataSourceFactoryBean implements FactoryBean,
 			else {
 				String instructions = getInstructions();
 				if (instructions != null) {
-					log.fatal(instructions);
+					log.error(instructions);
 					throw new FatalBeanException("Database not up-to-date. " 
 							+ "See instructions above.");
 				}
@@ -128,11 +130,11 @@ public class RevoltDataSourceFactoryBean implements FactoryBean,
 	// Implementation of FactoryBean interface
 	//---------------------------------------------------------------------
 	
-	public Object getObject() throws Exception {
+	public DataSource getObject() throws Exception {
 		return dataSource;
 	}
 
-	public Class<?> getObjectType() {
+	public Class<DataSource> getObjectType() {
 		return DataSource.class;
 	}
 

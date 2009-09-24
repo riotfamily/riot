@@ -23,7 +23,8 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -32,7 +33,7 @@ import org.riotfamily.common.util.RiotLog;
  */
 public class FlashInfo {
 
-	protected RiotLog log = RiotLog.get(getClass());
+	protected Logger log = LoggerFactory.getLogger(getClass());
 
 	public static String COMPRESSED = "compressed";
 

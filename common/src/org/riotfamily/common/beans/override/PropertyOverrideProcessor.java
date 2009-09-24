@@ -12,7 +12,8 @@
  */
 package org.riotfamily.common.beans.override;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -31,7 +32,7 @@ import org.springframework.core.PriorityOrdered;
 public class PropertyOverrideProcessor implements BeanFactoryPostProcessor, 
 		PriorityOrdered {
 
-	private RiotLog log = RiotLog.get(PropertyOverrideProcessor.class);
+	private Logger log = LoggerFactory.getLogger(PropertyOverrideProcessor.class);
 	
 	private String ref;
 

@@ -26,9 +26,9 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
+import org.riotfamily.common.cache.TagCacheItems;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.website.cache.TagCacheItems;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 

@@ -19,7 +19,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -35,7 +36,7 @@ import org.riotfamily.common.util.RiotLog;
  */
 public class SessionReferenceRemover implements HttpSessionBindingListener {
 
-	private RiotLog log = RiotLog.get(SessionReferenceRemover.class);
+	private Logger log = LoggerFactory.getLogger(SessionReferenceRemover.class);
 	
 	private static final String SESSION_KEY = 
 			SessionReferenceRemover.class.getName();

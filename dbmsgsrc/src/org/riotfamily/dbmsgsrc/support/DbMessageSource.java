@@ -17,9 +17,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.exception.ConstraintViolationException;
+import org.riotfamily.common.cache.CacheTagUtils;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
-import org.riotfamily.website.cache.CacheTagUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;

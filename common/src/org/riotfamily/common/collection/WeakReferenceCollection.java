@@ -18,7 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -29,7 +30,7 @@ import org.riotfamily.common.util.RiotLog;
  */
 public class WeakReferenceCollection<T> extends AbstractCollection<T> {
 
-	private RiotLog log = RiotLog.get(WeakReferenceCollection.class);
+	private Logger log = LoggerFactory.getLogger(WeakReferenceCollection.class);
 	
 	private Collection<WeakReference<T>> references = new ArrayList<WeakReference<T>>();
 	

@@ -15,7 +15,8 @@ package org.riotfamily.components.render.list;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -23,7 +24,7 @@ import org.riotfamily.components.render.component.ComponentRenderer;
 
 public class DefaultRenderStrategy implements RenderStrategy {
 	
-	protected RiotLog log = RiotLog.get(getClass());
+	protected Logger log = LoggerFactory.getLogger(getClass());
 	
 	private ComponentRenderer renderer;
 	

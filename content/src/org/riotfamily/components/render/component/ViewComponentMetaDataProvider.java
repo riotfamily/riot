@@ -17,17 +17,18 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.freemarker.RiotFreeMarkerView;
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.components.meta.ComponentMetaData;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.meta.FreeMarkerMetaDataExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 
 import freemarker.template.Template;
 
 public class ViewComponentMetaDataProvider implements ComponentMetaDataProvider {
 
-	private RiotLog log = RiotLog.get(this);
+	private Logger log = LoggerFactory.getLogger(ViewComponentMetaDataProvider.class);
 	
 	private ViewComponentRenderer renderer;
 	

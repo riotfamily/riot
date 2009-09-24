@@ -26,7 +26,8 @@ import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanNameAware;
@@ -49,7 +50,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean 
 		implements BeanNameAware {
 
-	private RiotLog log = RiotLog.get(ScheduledTaskSchedulerFactoryBean.class);
+	private Logger log = LoggerFactory.getLogger(ScheduledTaskSchedulerFactoryBean.class);
 	
 	private List<ScheduledTask> tasks;
 	
@@ -130,7 +131,7 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 	
 	public static class ScheduledTaskQueueJob implements StatefulJob {
 		
-		private RiotLog log = RiotLog.get(ScheduledTaskQueueJob.class);
+		private Logger log = LoggerFactory.getLogger(ScheduledTaskQueueJob.class);
 		
 		private List<ScheduledTask> tasks = Generics.newArrayList();
 		

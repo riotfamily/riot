@@ -7,8 +7,6 @@
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
-		<config>website/META-INF/riot/application-context.xml</config>
-		<config>website/META-INF/riot/website-servlet.xml</config>
 		<config>media/META-INF/riot/application-context.xml</config>
 		<config>media/META-INF/riot/riot-servlet.xml</config>
 		<config>statistics/META-INF/riot/riot-servlet.xml</config>
@@ -17,6 +15,11 @@
 		<config>core/META-INF/riot/application-context.xml</config>
 		<config>dbmsgsrc/META-INF/riot/riot-servlet.xml</config>
 		<config>dbmsgsrc/META-INF/riot/website-servlet.xml</config>
+		<config>common/META-INF/riot/application-context.xml</config>
+		<config>common/META-INF/riot/website-servlet.xml</config>
+		<config>content/META-INF/riot/application-context.xml</config>
+		<config>content/META-INF/riot/riot-servlet.xml</config>
+		<config>content/META-INF/riot/website-servlet.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -24,7 +27,6 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>website/META-INF/riot/application-context.xml</config>
 				<config>media/META-INF/riot/application-context.xml</config>
 				<config>media/META-INF/riot/riot-servlet.xml</config>
 				<config>core/META-INF/riot/riot-servlet.xml</config>
@@ -37,8 +39,6 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>website/META-INF/riot/application-context.xml</config>
-				<config>website/META-INF/riot/website-servlet.xml</config>
 				<config>media/META-INF/riot/application-context.xml</config>
 				<config>core/META-INF/riot/website-servlet.xml</config>
 				<config>core/META-INF/riot/application-context.xml</config>
