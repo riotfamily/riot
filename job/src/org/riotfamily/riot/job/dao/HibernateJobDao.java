@@ -18,38 +18,35 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.riotfamily.riot.job.model.JobDetail;
 import org.riotfamily.riot.job.model.JobLogEntry;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class HibernateJobDao implements JobDao {
-	
-	private HibernateHelper hibernate;
+public class HibernateJobDao extends HibernateDaoSupport implements JobDao {
 	
 	public HibernateJobDao(SessionFactory sessionFactory) {		
-		this.hibernate = new HibernateHelper(sessionFactory);
+		setSessionFactory(sessionFactory);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection<JobDetail> getJobDetails() {
-		Query query = hibernate.createQuery("from JobDetail job " +
-				"order by job.endDate desc");
-		return hibernate.list(query);
+		return getSession().createQuery("from JobDetail job " +
+				"order by job.endDate desc").list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Collection<JobDetail> getPendingJobDetails() {
-		Query query = hibernate.createQuery("from JobDetail job where " +
+		return getSession().createQuery("from JobDetail job where " +
 				"job.state != " + JobDetail.CANCELED + " and " +
 				"job.state != " + JobDetail.COMPLETED + 
-				"order by job.startDate desc");
-		
-		return hibernate.list(query);
+				"order by job.startDate desc").list();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void deleteObsoleteJobDetails() {
-		Query query = hibernate.createQuery("from JobDetail job where " +
+		Query query = getSession().createQuery("from JobDetail job where " +
 				"job.startDate < :date");
 		
 		Calendar cal = Calendar.getInstance();
@@ -58,10 +55,11 @@ public class HibernateJobDao implements JobDao {
 		
 		List<JobDetail> details = query.list();
 		for (JobDetail detail : details) {
-			hibernate.delete(detail);
+			getSession().delete(detail);
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public JobDetail getPendingJobDetail(String type, String objectId) {
 		StringBuffer hql = new StringBuffer();
 		hql.append("from JobDetail job where")
@@ -74,19 +72,19 @@ public class HibernateJobDao implements JobDao {
 			hql.append(" and job.objectId = :objectId");
 		}
 		hql.append(" order by job.startDate desc");
-		Query query = hibernate.createQuery(hql.toString());
+		Query query = getSession().createQuery(hql.toString())
+				.setParameter("type", type)
+				.setParameter("objectId", objectId)
+				.setMaxResults(1);
 		
-		hibernate.setParameter(query, "type", type);
-		hibernate.setParameter(query, "objectId", objectId);
-		query.setMaxResults(1);
-		
-		List<JobDetail> jobs = hibernate.list(query);
+		List<JobDetail> jobs = query.list();
 		if (jobs.isEmpty()) {
 			return null;
 		}
 		return jobs.get(0);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public JobDetail getLastCompletedJobDetail(String type, String objectId) {
 		StringBuffer hql = new StringBuffer();
 		hql.append("from JobDetail job where")
@@ -97,13 +95,12 @@ public class HibernateJobDao implements JobDao {
 			hql.append(" and job.objectId = :objectId");
 		}
 		hql.append(" order by job.startDate desc");
-		Query query = hibernate.createQuery(hql.toString());
+		Query query = getSession().createQuery(hql.toString())
+				.setParameter("type", type)
+				.setParameter("objectId", objectId)
+				.setMaxResults(1);
 		
-		hibernate.setParameter(query, "type", type);
-		hibernate.setParameter(query, "objectId", objectId);
-		query.setMaxResults(1);
-		
-		List<JobDetail> jobs = hibernate.list(query);
+		List<JobDetail> jobs = query.list();
 		if (jobs.isEmpty()) {
 			return null;
 		}
@@ -111,11 +108,11 @@ public class HibernateJobDao implements JobDao {
 	}
 	
 	public int getAverageStepTime(String type) {
-		Query query = hibernate.createQuery("select avg(averageStepTime) from " +
-				"JobDetail where stepsCompleted > 0 and " + "type = :type");
-			
-		query.setParameter("type", type);
-		Number time = hibernate.uniqueResult(query);
+		Query query = getSession().createQuery("select avg(averageStepTime) from " +
+				"JobDetail where stepsCompleted > 0 and " + "type = :type")
+				.setParameter("type", type);
+		
+		Number time = (Number) query.uniqueResult();
 		if (time == null) {
 			return 0;
 		}
@@ -123,27 +120,28 @@ public class HibernateJobDao implements JobDao {
 	}
 	
 	public JobDetail getJobDetail(Long id) {
-		return hibernate.get(JobDetail.class, id);
+		return (JobDetail) getSession().get(JobDetail.class, id);
 	}
 	
 	public void saveJobDetail(JobDetail job) {
-		hibernate.save(job);
+		getSession().save(job);
 	}
 
 	public void updateJobDetail(JobDetail job) {
-		hibernate.update(job);
+		getSession().update(job);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection<JobLogEntry> getLogEntries(Long jobId) {
-		Query query = hibernate.createQuery("from JobLogEntry e where " +
+		Query query = getSession().createQuery("from JobLogEntry e where " +
 				"e.job.id = :jobId order by e.date desc");
 		
 		query.setParameter("jobId", jobId);
-		return hibernate.list(query);
+		return query.list();
 	}
 
 	public void log(JobLogEntry entry) {
-		hibernate.save(entry);
+		getSession().save(entry);
 	}
 
 }

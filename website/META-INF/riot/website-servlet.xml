@@ -63,7 +63,7 @@
 	
 	<bean id="cacheKeyAugmentor" class="org.riotfamily.website.cache.NoOpCacheKeyAugmentor" />
 	
-	<bean id="cacheableHandlerAdapter" class="org.riotfamily.website.cache.CacheableControllerHandlerAdapter">
+	<bean id="cacheableHandlerAdapter" class="org.riotfamily.website.cache.controller.CacheableControllerHandlerAdapter">
 		<description>
 			HandlerAdapter that handles CacheableControllers.
 		</description>
@@ -117,7 +117,7 @@
 		</description>
 	</bean>
 		
-	<bean id="freemarkerConfig" class="org.riotfamily.website.freemarker.WebsiteFreeMarkerConfigurer">
+	<bean id="freemarkerConfig" class="org.riotfamily.website.cache.freemarker.WebsiteFreeMarkerConfigurer">
 		<description>
 			FreeMarker configuration.
 		</description>
@@ -140,7 +140,7 @@
 		<property name="whitespaceStripping" value="true" />
 	</bean>
 	
-	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.riot.hibernate.cachius.TaggingObjectWrapperPlugin">
+	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.website.cache.freemarker.TaggingObjectWrapperPlugin">
 		<description>
 			ObjectWrapperPlugin that tags cache items whenever a class with the
  			@TagCacheItems annotation is accessed by a FreeMarker template.
@@ -148,7 +148,7 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="queryResultObjectWrapperPlugin" class="org.riotfamily.riot.hibernate.cachius.QueryResultObjectWrapperPlugin">
+	<bean id="queryResultObjectWrapperPlugin" class="org.riotfamily.website.cache.freemarker.TypedListObjectWrapperPlugin">
 		<description>
 			ObjectWrapperPlugin that tags cache items whenever a QueryResult
 			for items with a @TagCacheItems annotation is accessed by a 

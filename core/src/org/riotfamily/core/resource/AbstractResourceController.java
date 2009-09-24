@@ -28,7 +28,7 @@ import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.website.cache.AbstractCacheableController;
-import org.riotfamily.website.cache.Compressible;
+import org.riotfamily.website.cache.controller.Compressible;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.ModelAndView;
 

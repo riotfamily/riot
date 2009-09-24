@@ -27,7 +27,6 @@ import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
-import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
@@ -39,14 +38,8 @@ public class ImportMessagesCommand extends DialogCommand {
 
 	private static final RiotLog log = RiotLog.get(ImportMessagesCommand.class);
 	
-	private DbMessageSourceDao dao;
-	
 	private String bundle = DbMessageSource.DEFAULT_BUNDLE;
 	
-	public ImportMessagesCommand(DbMessageSourceDao dao) {
-		this.dao = dao;
-	}
-
 	public void setBundle(String bundle) {
 		this.bundle = bundle;
 	}
@@ -95,10 +88,10 @@ public class ImportMessagesCommand extends DialogCommand {
 					String code = row.getCell(1).getRichStringCellValue().getString();
 					String translation = row.getCell(3).getRichStringCellValue().getString();
 					if (StringUtils.hasText(translation)) {
-						MessageBundleEntry entry = dao.findEntry(bundle, code);
+						MessageBundleEntry entry = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 						if (entry != null) {
 							entry.addTranslation(site.getLocale(), translation);
-							dao.saveEntry(entry);					
+							entry.save();					
 						}
 						else {
 							log.info("Message Code does not exist - " + code);

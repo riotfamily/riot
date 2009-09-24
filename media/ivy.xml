@@ -14,7 +14,6 @@
     </publications>
     <dependencies>
 	    <dependency org="riotfamily" name="riot-core" rev="${dep.riot.revision}" conf="*->@" />
-        <dependency org="riotfamily" name="riot-hibernate" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="riotfamily" name="swfobject-js" rev="1.5" conf="runtime->default" />
         <dependency org="json" name="json-lib" rev="${dep.json-lib.revision}" conf="*->default,src" />
     </dependencies>

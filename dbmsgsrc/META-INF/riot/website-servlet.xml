@@ -9,7 +9,6 @@
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 		
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.DbMessageSource">
-		<constructor-arg ref="dbMessageSourceDao" />
 		<constructor-arg ref="transactionManager" />
 	</override:bean>
 

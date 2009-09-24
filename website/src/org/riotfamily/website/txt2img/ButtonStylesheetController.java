@@ -15,8 +15,8 @@ package org.riotfamily.website.txt2img;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.website.cache.CacheableController;
-import org.riotfamily.website.cache.Compressible;
+import org.riotfamily.website.cache.controller.CacheableController;
+import org.riotfamily.website.cache.controller.Compressible;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ButtonStylesheetController implements CacheableController, Compressible {

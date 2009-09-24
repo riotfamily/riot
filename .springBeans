@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.2.4.RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.2.7.200909212115-CI-R3412-B471]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
-		<config>pages/META-INF/riot/riot-servlet.xml</config>
-		<config>pages/META-INF/riot/application-context.xml</config>
-		<config>pages/META-INF/riot/website-servlet.xml</config>
-		<config>riot-hibernate/META-INF/riot/riot-servlet.xml</config>
-		<config>riot-hibernate/META-INF/riot/application-context.xml</config>
-		<config>components/META-INF/riot/application-context.xml</config>
-		<config>components/META-INF/riot/riot-servlet.xml</config>
-		<config>components/META-INF/riot/website-servlet.xml</config>
 		<config>website/META-INF/riot/application-context.xml</config>
 		<config>website/META-INF/riot/website-servlet.xml</config>
 		<config>media/META-INF/riot/application-context.xml</config>
@@ -23,7 +15,6 @@
 		<config>core/META-INF/riot/riot-servlet.xml</config>
 		<config>core/META-INF/riot/website-servlet.xml</config>
 		<config>core/META-INF/riot/application-context.xml</config>
-		<config>dbmsgsrc/META-INF/riot/application-context.xml</config>
 		<config>dbmsgsrc/META-INF/riot/riot-servlet.xml</config>
 		<config>dbmsgsrc/META-INF/riot/website-servlet.xml</config>
 	</configs>
@@ -33,18 +24,11 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
 				<config>website/META-INF/riot/application-context.xml</config>
-				<config>components/META-INF/riot/application-context.xml</config>
-				<config>pages/META-INF/riot/application-context.xml</config>
-				<config>riot-hibernate/META-INF/riot/riot-servlet.xml</config>
-				<config>components/META-INF/riot/riot-servlet.xml</config>
-				<config>pages/META-INF/riot/riot-servlet.xml</config>
 				<config>media/META-INF/riot/application-context.xml</config>
 				<config>media/META-INF/riot/riot-servlet.xml</config>
 				<config>core/META-INF/riot/riot-servlet.xml</config>
 				<config>core/META-INF/riot/application-context.xml</config>
-				<config>dbmsgsrc/META-INF/riot/application-context.xml</config>
 				<config>dbmsgsrc/META-INF/riot/riot-servlet.xml</config>
 			</configs>
 		</configSet>
@@ -53,17 +37,11 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
 				<config>website/META-INF/riot/application-context.xml</config>
-				<config>components/META-INF/riot/application-context.xml</config>
-				<config>pages/META-INF/riot/application-context.xml</config>
 				<config>website/META-INF/riot/website-servlet.xml</config>
-				<config>components/META-INF/riot/website-servlet.xml</config>
-				<config>pages/META-INF/riot/website-servlet.xml</config>
 				<config>media/META-INF/riot/application-context.xml</config>
 				<config>core/META-INF/riot/website-servlet.xml</config>
 				<config>core/META-INF/riot/application-context.xml</config>
-				<config>dbmsgsrc/META-INF/riot/application-context.xml</config>
 				<config>dbmsgsrc/META-INF/riot/website-servlet.xml</config>
 			</configs>
 		</configSet>

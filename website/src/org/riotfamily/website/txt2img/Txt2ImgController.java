@@ -31,7 +31,7 @@ import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.website.cache.AbstractCacheableController;
-import org.riotfamily.website.cache.Compressible;
+import org.riotfamily.website.cache.controller.Compressible;
 import org.riotfamily.website.performance.YUIJavaScriptCompressor;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

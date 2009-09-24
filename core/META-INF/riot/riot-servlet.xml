@@ -32,7 +32,7 @@
 	<bean class="org.riotfamily.common.servlet.ReloadableDispatcherServletConfig">
 		<property name="reloadable" value="${riot-servlet.reloadable=true}" />
 	</bean>
-
+	  	
 	<!-- I18N -->
 	
 	<util:list id="messageBasenames">
@@ -72,6 +72,9 @@
     </bean>
     
     <util:list id="handlerInterceptors">
+    	<bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
 		<ref bean="loginInterceptor" />
 		<bean class="org.riotfamily.common.interceptor.RequestHolderInterceptor" />
 	</util:list>
@@ -136,7 +139,7 @@
 		<constructor-arg ref="messageSource" />
 	</bean>
 	
-    <bean id="cacheableHandlerAdapter" class="org.riotfamily.website.cache.CacheableControllerHandlerAdapter">
+    <bean id="cacheableHandlerAdapter" class="org.riotfamily.website.cache.controller.CacheableControllerHandlerAdapter">
     	<description>
     		HandlerAdapter that handles CacheableControllers.
     	</description>
@@ -150,7 +153,7 @@
 		</description>
 	</bean>
 
-	<bean id="freemarkerConfig" class="org.riotfamily.website.freemarker.WebsiteFreeMarkerConfigurer">
+	<bean id="freemarkerConfig" class="org.riotfamily.website.cache.freemarker.WebsiteFreeMarkerConfigurer">
 		<description>
 			FreeMarker configuration.
 		</description>
@@ -224,15 +227,15 @@
 		<description>
 			A RiotUserDao-based AuthenticationService		
 		</description>
-	 	<property name="userDao">
-	 		<bean class="org.riotfamily.core.security.auth.StaticRiotUserDao">
-	 			<property name="username" value="admin" />
-	 			<property name="password" value="admin" />
-	 		</bean>
-	 	</property>
+	 	<property name="userDao" ref="riotUserDao" />
 	</bean>
 	
-	<bean id="sessionMetaDataStore" class="org.riotfamily.core.security.session.TransientSessionMetaDataStore">
+	<bean id="riotUserDao" class="org.riotfamily.core.security.auth.HibernateUserDao">
+		<constructor-arg ref="sessionFactory" />
+		<property name="entityClass" value="org.riotfamily.core.security.auth.User" />
+	</bean>
+	
+	<bean id="sessionMetaDataStore" class="org.riotfamily.core.security.session.PersistentSessionMetaDataStore">
 		<description>
 			Persistence service for SessionMetaData (last login date, last IP, etc.)		
 		</description>
@@ -306,6 +309,7 @@
 	<bean id="formRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository" primary="true">
 		<property name="priorityConfigLocations">
 			<list>
+				<value>classpath:/org/riotfamily/core/runtime/forms.xml</value>
 				<value>/WEB-INF/riot-config/forms.xml</value>
 			</list>
 		</property>

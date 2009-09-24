@@ -1,0 +1,91 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.5.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+
+	<override:put ref="freemarkerConfig" property="macroLibraries">
+		<entry key="inplace" value="classpath:org/riotfamily/components/view/inplace.ftl" />
+		<entry key="pages" value="classpath:org/riotfamily/pages/view/pages.ftl" />
+	</override:put>
+	
+	<bean class="org.riotfamily.components.view.ContentMapObjectWrapperPlugin">
+		<description>
+			ObjectWrapperPlugin that wraps ContentMaps with a MapModel 
+			(instead of a SimpleHash) so that getOwner(), getId() etc. can be 
+			accessed by a template.
+		</description>
+	</bean>
+	
+	<bean id="inplaceMacroHelper" class="org.riotfamily.components.view.InplaceMacroHelperFactory">
+		<constructor-arg ref="componentListRenderer" />
+		<property name="toolbarScripts">
+			<list>
+				<value>riot-js/resources.js</value>
+				<value>toolbar-loader.js</value>
+			</list>
+		</property>
+	</bean>
+	
+	<override:bean ref="cacheKeyAugmentor" class="org.riotfamily.components.cache.EditModeCacheKeyAugmentor" />
+
+	<!-- Initialize the ComponentRenderer --> 
+ 	<bean class="org.riotfamily.components.render.component.ViewComponentRendererInitializer">
+ 		<constructor-arg ref="componentRenderer" />
+ 	</bean>
+ 	
+ 	<!-- Pages -->
+ 	
+ 	<bean id="pageHandlerMapping" class="org.riotfamily.pages.mapping.PageHandlerMapping">
+		<constructor-arg ref="pageResolver" />
+		<property name="interceptors">
+			<list>
+				<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
+			</list>
+		</property>
+		<property name="order" value="2" />
+	</bean>
+	
+	<bean id="viewNameTranslator" class="org.riotfamily.pages.view.PageRequestToViewNameTranslator">
+		<property name="defaultPageType" value="default" />
+		<property name="prefix" value="pages/" />
+		<property name="suffix" value=".ftl" />
+		<property name="noPageTranslator" ref="noPageViewNameTranslator" />
+	</bean>
+	
+	<bean id="noPageViewNameTranslator" class="org.riotfamily.pages.view.SiteRequestToViewNameTranslator">
+		<property name="suffix" value=".ftl" />
+	</bean>
+	
+	<bean id="noSiteHandlerMapping" class="org.riotfamily.pages.mapping.NoSiteHandlerMapping">
+		<constructor-arg ref="pageResolver" />
+	</bean>
+			
+	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
+	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
+	<bean id="pageFacadeObjectWrapperPlugin" class="org.riotfamily.pages.view.PageFacadeObjectWrapperPlugin" />
+		 
+	<override:add ref="inplaceMacroHelper" property="dynamicToolbarScripts" append="true">
+		<bean class="org.riotfamily.pages.view.PageToolbarScript" />
+	</override:add>
+
+	<bean id="currentSite" class="org.riotfamily.pages.view.CurrentSiteMacroHelperFactory">
+		<constructor-arg ref="pageResolver" />
+	</bean>
+
+	<bean id="currentPage" class="org.riotfamily.pages.view.CurrentPageMacroHelperFactory">
+		<constructor-arg ref="pageResolver" />
+	</bean>
+	
+	<bean id="contentMap" class="org.riotfamily.pages.view.PageContentMapExposer">
+		<constructor-arg ref="pageResolver" />
+	</bean>
+
+</beans>

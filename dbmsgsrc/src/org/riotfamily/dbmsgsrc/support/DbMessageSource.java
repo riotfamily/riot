@@ -17,7 +17,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.website.cache.CacheTagUtils;
@@ -30,8 +29,6 @@ import org.springframework.util.StringUtils;
 public class DbMessageSource extends AbstractMessageSource {
 
 	public static final String DEFAULT_BUNDLE = "default";
-
-	private DbMessageSourceDao dao;
 	
 	private TransactionTemplate transactionTemplate;
 	
@@ -41,8 +38,7 @@ public class DbMessageSource extends AbstractMessageSource {
 	
 	private boolean escapeSingleQuotes = true;
 	
-	public DbMessageSource(DbMessageSourceDao dao, PlatformTransactionManager tx) {
-		this.dao = dao;
+	public DbMessageSource(PlatformTransactionManager tx) {
 		this.transactionTemplate = new TransactionTemplate(tx); 
 	}
 	
@@ -69,19 +65,19 @@ public class DbMessageSource extends AbstractMessageSource {
 	}
 	
 	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
-		MessageBundleEntry result = dao.findEntry(bundle, code);
+		MessageBundleEntry result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 		if (result == null) {
 			try {
-				result = (MessageBundleEntry) transactionTemplate.execute(new TransactionCallback() {
-					public Object doInTransaction(TransactionStatus status) {
+				result = transactionTemplate.execute(new TransactionCallback<MessageBundleEntry>() {
+					public MessageBundleEntry doInTransaction(TransactionStatus status) {
 						MessageBundleEntry entry = new MessageBundleEntry(bundle, code, defaultMessage);
-						dao.saveEntry(entry);
+						entry.save();
 						return entry;
 					}
 				});
 			}
 			catch (ConstraintViolationException e) {
-				return result = dao.findEntry(bundle, code);
+				return result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 			}
 		}
 		return result;
@@ -134,7 +130,7 @@ public class DbMessageSource extends AbstractMessageSource {
 	protected String getMessageFromParent(String code, Object[] args, Locale locale) {
 		String s = super.getMessageFromParent(code, args, locale);
 		if (s == null) {
-			MessageBundleEntry entry = dao.findEntry(bundle, code);
+			MessageBundleEntry entry = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 			Message message = entry.getDefaultMessage();
 			if (message != null) {
 				if (args != null) {

@@ -27,7 +27,6 @@ import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
-import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
@@ -39,14 +38,8 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 
 	private static final RiotLog log = RiotLog.get(ImportMessageEntriesCommand.class);
 
-	private DbMessageSourceDao dao;
-	
 	private String bundle = DbMessageSource.DEFAULT_BUNDLE;
 	
-	public ImportMessageEntriesCommand(DbMessageSourceDao dao) {
-		this.dao = dao;
-	}
-
 	public void setBundle(String bundle) {
 		this.bundle = bundle;
 	}
@@ -56,6 +49,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 		return "arrow_up";
 	}
 	
+	@Override
 	public Form createForm(CommandContext context, Selection selection) {
 		Form form = new Form(Upload.class);
 		form.setId("importMessageEntriesForm");
@@ -99,16 +93,16 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 						comment = row.getCell(3).getRichStringCellValue().getString();
 					}
 					if (StringUtils.hasText(defaultMessage) || StringUtils.hasText(comment)) {
-						MessageBundleEntry entry = dao.findEntry(bundle, code);
+						MessageBundleEntry entry = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 						if (entry != null) {							
 							entry.getDefaultMessage().setText(defaultMessage);
 							entry.setComment(comment);
-							dao.saveEntry(entry);					
+							entry.save();					
 						}
 						else if (addNewMessages) {
 							entry = new MessageBundleEntry(bundle, code, defaultMessage);
 							entry.setComment(comment);
-							dao.saveEntry(entry);
+							entry.save();
 						}
 						else {
 							log.info("Message Code does not exist and creation not allowed - " + code);
@@ -155,9 +149,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 
 		public void setAddNewMessages(boolean addNewMessages) {
 			this.addNewMessages = addNewMessages;
-		}
-
-		
-		
+		}		
 	}
+
 }

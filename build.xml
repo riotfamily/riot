@@ -91,21 +91,16 @@
 		<javadoc destdir="${build.dir}/api" classpathref="classpath" breakiterator="true">
 			<packageset dir="common/src" />
 			<packageset dir="cachius/src" />
-			<packageset dir="components/src" />
+			<packageset dir="content/src" />
 			<packageset dir="forms/src" />
 			<packageset dir="riot/src" />
-			<packageset dir="riot-hibernate/src" />
-			<packageset dir="pages/src" />
 			<packageset dir="website/src" />
 
 			<group title="Core" packages="org.riotfamily.riot*" />
 			<group title="Website" packages="org.riotfamily.website*" />
-			<group title="Components" packages="org.riotfamily.components*" />
-			<group title="Pages" packages="org.riotfamily.pages*" />
 			<group title="Common" packages="org.riotfamily.common*" />
 			<group title="Cachius" packages="org.riotfamily.cachius*" />
 			<group title="Forms" packages="org.riotfamily.forms*" />
-			<group title="Hibernate" packages="org.riotfamily.riot.hibernate*" />
 
 			<link href="http://java.sun.com/j2ee/1.4/docs/api" />
 			<link href="http://java.sun.com/j2se/1.4.2/docs/api" />

@@ -5,9 +5,6 @@
 	<classpathentry kind="src" path="forms/src"/>
 	<classpathentry kind="src" path="website/src"/>
 	<classpathentry kind="src" path="core/src"/>
-	<classpathentry kind="src" path="riot-hibernate/src"/>
-	<classpathentry kind="src" path="components/src"/>
-	<classpathentry kind="src" path="pages/src"/>
 	<classpathentry kind="src" path="media/src"/>
 	<classpathentry kind="src" path="job/src"/>
 	<classpathentry kind="src" path="revolt/src"/>
@@ -15,6 +12,7 @@
 	<classpathentry kind="src" path="dbmsgsrc/src"/>
 	<classpathentry kind="src" path="crawler/src"/>
 	<classpathentry kind="src" path="search/src"/>
+	<classpathentry kind="src" path="content/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/dwr.jar"/>

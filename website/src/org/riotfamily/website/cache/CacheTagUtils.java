@@ -13,9 +13,11 @@
 package org.riotfamily.website.cache;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.cachius.CacheService;
+import org.riotfamily.common.collection.TypedList;
 import org.riotfamily.common.hibernate.ActiveRecord;
 import org.riotfamily.common.hibernate.ActiveRecordUtils;
 import org.springframework.util.ClassUtils;
@@ -55,6 +57,24 @@ public final class CacheTagUtils {
 		tag(clazz);
 	}
 	
+	public static void tagIfSupported(Class<?> clazz) {
+		if (clazz.isAnnotationPresent(TagCacheItems.class)) {
+			tag(clazz);
+		}
+	}
+	
+	public static void tagIfSupported(Collection<?> c) {
+		if (c instanceof TypedList<?>) {
+			tagIfSupported(((TypedList<?>) c).getItemClass());
+		}
+	}
+	
+	public static void tagIfSupported(Object obj) {
+		if (obj instanceof ActiveRecord && obj.getClass().isAnnotationPresent(TagCacheItems.class)) {
+			tag((ActiveRecord) obj);
+		}
+	}
+	
 	public static void invalidate(CacheService cacheService, Class<?> clazz) {
 		if (cacheService != null) {
 		    cacheService.invalidateTaggedItems(getTag(clazz));
@@ -71,5 +91,5 @@ public final class CacheTagUtils {
 	public static void invalidate(CacheService cacheService, ActiveRecord record) {
 		invalidate(cacheService, record.getClass(), ActiveRecordUtils.getId(record));
 	}
-		
+
 }

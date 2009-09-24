@@ -15,9 +15,9 @@ package org.riotfamily.dbmsgsrc.riot;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.hibernate.AbstractHqlDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
-import org.riotfamily.riot.hibernate.dao.AbstractHqlDao;
 import org.springframework.dao.DataAccessException;
 
 public class MessageBundleEntryDao extends AbstractHqlDao {

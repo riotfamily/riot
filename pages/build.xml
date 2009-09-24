@@ -1,7 +1,0 @@
-<project name="riot-pages" default="compile">
-
-	<property name="module.title" value="Riot Pages" />
-	
-	<import file="../module-build.xml" />
-	
-</project>

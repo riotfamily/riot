@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.servlet.CapturingResponseWrapper;
 import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.website.cache.AbstractCacheableController;
-import org.riotfamily.website.cache.Compressible;
+import org.riotfamily.website.cache.controller.Compressible;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;

@@ -15,6 +15,7 @@ package org.riotfamily.website.cache;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.website.cache.controller.CacheableController;
 import org.springframework.beans.factory.BeanNameAware;
 
 
