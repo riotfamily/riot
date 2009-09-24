@@ -6,7 +6,7 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.DbMessageSource">
 		<constructor-arg ref="transactionManager" />
