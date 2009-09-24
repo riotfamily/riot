@@ -3,10 +3,8 @@
 	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="src" path="cachius/src"/>
 	<classpathentry kind="src" path="forms/src"/>
-	<classpathentry kind="src" path="website/src"/>
 	<classpathentry kind="src" path="core/src"/>
 	<classpathentry kind="src" path="media/src"/>
-	<classpathentry kind="src" path="job/src"/>
 	<classpathentry kind="src" path="revolt/src"/>
 	<classpathentry kind="src" path="statistics/src"/>
 	<classpathentry kind="src" path="dbmsgsrc/src"/>
