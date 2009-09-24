@@ -20,12 +20,12 @@ import java.util.Map.Entry;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.riotfamily.common.beans.reload.BeanConfigurationWatcher;
+import org.riotfamily.common.beans.reload.ConfigurableBean;
+import org.riotfamily.common.beans.reload.ConfigurationEventListener;
 import org.riotfamily.common.util.Generics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.riotfamily.common.xml.BeanConfigurationWatcher;
-import org.riotfamily.common.xml.ConfigurableBean;
-import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.common.xml.DocumentReader;
 import org.riotfamily.common.xml.ValidatingDocumentReader;
 import org.riotfamily.forms.Element;

@@ -20,9 +20,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.mapping.HandlerUrlUtils;
-import org.riotfamily.common.performance.Compressor;
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
+import org.riotfamily.common.web.performance.Compressor;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.core.io.Resource;
 
 /**

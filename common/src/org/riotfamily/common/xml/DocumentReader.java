@@ -23,7 +23,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 
 /**
- * Convinience class to read a XML document from a 
+ * Convenience class to read a XML document from a 
  * {@link org.springframework.core.io.Resource resource}.
  */
 public class DocumentReader {

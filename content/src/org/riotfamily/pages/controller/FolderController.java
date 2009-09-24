@@ -15,7 +15,7 @@ package org.riotfamily.pages.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.cache.controller.CacheableController;
+import org.riotfamily.common.web.cache.controller.CacheableController;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.view.PageFacade;

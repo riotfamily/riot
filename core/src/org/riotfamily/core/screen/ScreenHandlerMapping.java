@@ -14,8 +14,8 @@ package org.riotfamily.core.screen;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.mapping.ReverseHandlerMapping;
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.mvc.mapping.ReverseHandlerMapping;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 

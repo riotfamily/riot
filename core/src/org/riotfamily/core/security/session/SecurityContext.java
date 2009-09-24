@@ -12,7 +12,7 @@
  */
 package org.riotfamily.core.security.session;
 
-import org.riotfamily.common.filter.DiagnosticContextFilter;
+import org.riotfamily.common.web.filter.DiagnosticContextFilter;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.slf4j.MDC;
 

@@ -15,8 +15,8 @@ package org.riotfamily.pages.mapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.controller.HttpErrorController;
-import org.riotfamily.common.controller.RedirectController;
+import org.riotfamily.common.web.controller.HttpErrorController;
+import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
@@ -41,6 +41,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		this.pageResolver = pageResolver;
 	}
 
+	@Override
 	protected Object getHandlerInternal(HttpServletRequest request)
 			throws Exception {
 

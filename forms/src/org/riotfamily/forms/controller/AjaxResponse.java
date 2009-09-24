@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 
-import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.riotfamily.forms.DHTMLElement;

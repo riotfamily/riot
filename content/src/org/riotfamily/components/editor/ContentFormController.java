@@ -16,7 +16,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.mapping.HandlerUrlUtils;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentFragment;
 import org.riotfamily.forms.Form;

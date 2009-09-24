@@ -12,7 +12,7 @@
  */
 package org.riotfamily.search.site;
 
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.crawler.LinkFilter;
 import org.riotfamily.pages.model.Site;
 

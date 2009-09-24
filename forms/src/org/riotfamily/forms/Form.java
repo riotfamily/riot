@@ -23,9 +23,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.DocumentWriter;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.TagWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.riotfamily.forms.event.Button;

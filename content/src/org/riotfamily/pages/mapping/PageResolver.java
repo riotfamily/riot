@@ -14,8 +14,8 @@ package org.riotfamily.pages.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.config.SystemPageType;

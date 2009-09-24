@@ -14,8 +14,8 @@ package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.HashUtils;
+import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.TemplateUtils;

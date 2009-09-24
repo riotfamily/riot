@@ -12,7 +12,7 @@
  */
 package org.riotfamily.crawler;
 
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

@@ -15,7 +15,7 @@ package org.riotfamily.core.screen.list.command.impl.dialog;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.mapping.HandlerUrlUtils;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
 import org.riotfamily.forms.controller.FormContextFactory;

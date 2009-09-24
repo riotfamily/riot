@@ -17,7 +17,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.util.DocumentWriter;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;

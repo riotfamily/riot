@@ -18,8 +18,8 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.dao.RiotDaoException;
 import org.riotfamily.forms.Form;

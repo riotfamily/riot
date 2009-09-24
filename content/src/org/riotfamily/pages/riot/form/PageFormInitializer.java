@@ -14,7 +14,7 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.List;
 
-import org.riotfamily.common.servlet.RequestHolder;
+import org.riotfamily.common.web.support.RequestHolder;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;

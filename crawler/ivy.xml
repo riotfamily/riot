@@ -13,7 +13,7 @@
     	<artifact type="source" ext="src.zip" />
     </publications>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-core" rev="${dep.riot.revision}" conf="*->@" />
+	    <dependency org="riotfamily" name="riot-content" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="apache" name="commons-httpclient" rev="3.0.1" conf="*->default" />
 		<dependency org="htmlparser" name="htmlparser" rev="1.6" conf="*->default" />
 		<dependency org="opensymphony" name="quartz" rev="${dep.quartz.revision}" conf="*->default" />

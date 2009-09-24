@@ -15,7 +15,7 @@ package org.riotfamily.pages.view;
 import org.riotfamily.common.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
-import org.riotfamily.common.servlet.RequestHolder;
+import org.riotfamily.common.web.support.RequestHolder;
 import org.riotfamily.pages.model.Page;
 import org.springframework.core.Ordered;
 

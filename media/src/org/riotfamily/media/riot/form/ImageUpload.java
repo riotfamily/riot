@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.util.TagWriter;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;

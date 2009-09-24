@@ -19,8 +19,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.view.ViewResolutionException;
-import org.riotfamily.common.view.ViewResolverHelper;
+import org.riotfamily.common.web.mvc.view.ViewResolutionException;
+import org.riotfamily.common.web.mvc.view.ViewResolverHelper;
 import org.riotfamily.components.model.Component;
 import org.springframework.web.servlet.View;
 

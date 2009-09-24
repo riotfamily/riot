@@ -19,8 +19,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.AccessType;
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.common.cache.CacheTagUtils;
 import org.riotfamily.common.hibernate.ActiveRecord;
+import org.riotfamily.common.web.cache.CacheTagUtils;
 import org.springframework.beans.factory.annotation.Required;
 
 /**

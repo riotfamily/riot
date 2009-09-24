@@ -14,7 +14,7 @@ package org.riotfamily.pages.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.controller.ConfigurableViewController;
+import org.riotfamily.common.web.controller.ConfigurableViewController;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.springframework.ui.Model;

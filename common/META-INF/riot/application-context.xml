@@ -68,7 +68,7 @@
 	
 	<util:list id="hibernateInterceptors">
 		<ref bean="entityListenerInterceptor" />
-		<bean class="org.riotfamily.common.cache.CacheTagInterceptor">
+		<bean class="org.riotfamily.common.web.cache.CacheTagInterceptor">
 	    	<description>
 	    		EntityListener that invalidates tagged cache items whenever an 
 	    		entity with @TagCacheItems annotation is modified or deleted.
@@ -114,9 +114,9 @@
         </constructor-arg>
     </bean>
     
-    <bean id="resourceStamper" class="org.riotfamily.common.performance.ResourceStamper" />
+    <bean id="resourceStamper" class="org.riotfamily.common.web.performance.ResourceStamper" />
     
-    <bean id="javaScriptCompressor" class="org.riotfamily.common.performance.YUIJavaScriptCompressor">
+    <bean id="javaScriptCompressor" class="org.riotfamily.common.web.performance.YUIJavaScriptCompressor">
     	<property name="enabled" value="${riot.resources.compress=true}" />
     	<property name="linebreak" value="1000" />
     </bean>

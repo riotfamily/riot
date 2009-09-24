@@ -14,7 +14,7 @@ package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.util.DocumentWriter;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;

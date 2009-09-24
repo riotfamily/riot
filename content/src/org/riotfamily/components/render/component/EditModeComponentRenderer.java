@@ -15,7 +15,7 @@ package org.riotfamily.components.render.component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.forms.factory.FormRepository;

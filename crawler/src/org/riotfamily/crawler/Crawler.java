@@ -16,7 +16,7 @@ package org.riotfamily.crawler;
 import java.util.List;
 
 import org.htmlparser.util.ParserException;
-import org.riotfamily.common.event.ContentChangedEvent;
+import org.riotfamily.components.event.ContentChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

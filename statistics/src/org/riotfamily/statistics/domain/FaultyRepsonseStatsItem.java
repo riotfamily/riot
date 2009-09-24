@@ -16,7 +16,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.util.StringUtils;
 
 public class FaultyRepsonseStatsItem extends StatsItem {

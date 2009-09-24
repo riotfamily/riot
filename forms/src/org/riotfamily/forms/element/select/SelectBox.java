@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 
-import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.MessageUtils;
 
 

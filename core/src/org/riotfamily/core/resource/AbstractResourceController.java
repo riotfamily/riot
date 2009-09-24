@@ -24,10 +24,10 @@ import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.cache.AbstractCacheableController;
-import org.riotfamily.common.cache.controller.Compressible;
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.cache.AbstractCacheableController;
+import org.riotfamily.common.web.cache.controller.Compressible;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;

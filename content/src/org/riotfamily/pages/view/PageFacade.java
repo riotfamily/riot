@@ -20,9 +20,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.cache.CacheTagUtils;
-import org.riotfamily.common.servlet.ServletUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.cache.CacheTagUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.support.EditModeUtils;

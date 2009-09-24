@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.mapping.HandlerUrlUtils;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.media.store.FileStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

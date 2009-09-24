@@ -29,7 +29,7 @@
 		<property name="contextOverride" value="true" />
 	</bean>
 	
-	<bean class="org.riotfamily.common.servlet.ReloadableDispatcherServletConfig">
+	<bean class="org.riotfamily.common.web.mvc.servlet.ReloadableDispatcherServletConfig">
 		<property name="reloadable" value="${riot-servlet.reloadable=true}" />
 	</bean>
 	  	
@@ -54,7 +54,7 @@
 
 	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
 	
-	<bean class="org.riotfamily.common.view.FlashScopeFilterPlugin">
+	<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeFilterPlugin">
 		<property name="filterName" value="riot-filter" />
 	</bean>
 
@@ -76,7 +76,7 @@
 			<property name="sessionFactory" ref="sessionFactory" />
 		</bean>
 		<ref bean="loginInterceptor" />
-		<bean class="org.riotfamily.common.interceptor.RequestHolderInterceptor" />
+		<bean class="org.riotfamily.common.web.mvc.interceptor.RequestHolderInterceptor" />
 	</util:list>
 			
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">
@@ -106,11 +106,11 @@
 		<property name="interceptors" ref="handlerInterceptors" />
 	</bean>
     
-    <bean class="org.riotfamily.common.mapping.ReverseUrlHanderMappingAdapter">
+    <bean class="org.riotfamily.common.web.mvc.mapping.ReverseUrlHanderMappingAdapter">
     	<property name="servletPrefix" ref="riotServletPrefix" />
     </bean>
     
-    <bean id="handlerUrlResolver" class="org.riotfamily.common.mapping.HandlerUrlResolver">
+    <bean id="handlerUrlResolver" class="org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver">
 		<property name="parent">
 			<bean class="org.riotfamily.common.beans.factory.WebApplicationContextBeanImporter">
 				<property name="servletName" value="website" />
@@ -128,7 +128,7 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="exceptionResolver" class="org.riotfamily.common.servlet.AdvancedMappingExceptionResolver">
+	<bean id="exceptionResolver" class="org.riotfamily.common.web.mvc.mapping.AdvancedMappingExceptionResolver">
 		<description>
 			Exception resolver that outputs a nicely formatted error message.		
 		</description>
@@ -139,7 +139,7 @@
 		<constructor-arg ref="messageSource" />
 	</bean>
 	
-    <bean id="cacheableHandlerAdapter" class="org.riotfamily.common.cache.controller.CacheableControllerHandlerAdapter">
+    <bean id="cacheableHandlerAdapter" class="org.riotfamily.common.web.cache.controller.CacheableControllerHandlerAdapter">
     	<description>
     		HandlerAdapter that handles CacheableControllers.
     	</description>
@@ -153,7 +153,7 @@
 		</description>
 	</bean>
 
-	<bean id="freemarkerConfig" class="org.riotfamily.common.cache.freemarker.WebsiteFreeMarkerConfigurer">
+	<bean id="freemarkerConfig" class="org.riotfamily.common.web.cache.freemarker.WebsiteFreeMarkerConfigurer">
 		<description>
 			FreeMarker configuration.
 		</description>
@@ -171,8 +171,8 @@
 		</property>
 		<property name="macroLibraries">
 			<props>
-				<prop key="c">classpath:org/riotfamily/common/view/common.ftl</prop>
-				<prop key="template">classpath:org/riotfamily/common/template/template.ftl</prop>
+				<prop key="c">classpath:org/riotfamily/common/web/macro/common.ftl</prop>
+				<prop key="template">classpath:org/riotfamily/common/web/template/template.ftl</prop>
 				<prop key="riot">classpath:org/riotfamily/core/view/riot.ftl</prop>
 			</props>
 		</property>
@@ -182,17 +182,17 @@
 		</property>
 	</bean>
 	
-    <bean id="viewResolver" class="org.riotfamily.common.freemarker.RiotFreeMarkerViewResolver">
+    <bean id="viewResolver" class="org.riotfamily.common.web.mvc.view.RiotFreeMarkerViewResolver">
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
 
-	<bean id="commonMacroHelper" class="org.riotfamily.common.view.CommonMacroHelperFactory">
+	<bean id="commonMacroHelper" class="org.riotfamily.common.web.macro.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
 		<property name="handlerUrlResolver" ref="handlerUrlResolver" />
 		<property name="compressResources" value="${riot.resources.compress=true}" />
 	</bean>
 		
-	<bean id="templateMacroHelper" class="org.riotfamily.common.template.TemplateMacroHelperFactory" />
+	<bean id="templateMacroHelper" class="org.riotfamily.common.web.template.TemplateMacroHelperFactory" />
 		
 	<!-- Security -->
 
@@ -409,7 +409,7 @@
 		<property name="compressors">
 			<map>
 				<entry key="text/css">
-					<bean class="org.riotfamily.common.performance.YUICssCompressor">
+					<bean class="org.riotfamily.common.web.performance.YUICssCompressor">
 						<property name="enabled" value="${riot.resources.compress=true}" />
 					</bean>
 				</entry>
@@ -418,14 +418,14 @@
 		</property>
 	</bean>
 	
-	<bean id="minifyScriptController" name="/resources/{version}/joined.js" class="org.riotfamily.common.performance.MinifyScriptController">
+	<bean id="minifyScriptController" name="/resources/{version}/joined.js" class="org.riotfamily.common.web.performance.MinifyScriptController">
 		<description>
 			Controller to compress (minify) JavaScript files.
 		</description>
 		<constructor-arg ref="javaScriptCompressor" />
 	</bean>
 	
-	<bean id="minifyCssController" name="/resources/{version}/joined.css" class="org.riotfamily.common.performance.MinifyCssController">
+	<bean id="minifyCssController" name="/resources/{version}/joined.css" class="org.riotfamily.common.web.performance.MinifyCssController">
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>

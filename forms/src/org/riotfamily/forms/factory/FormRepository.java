@@ -12,7 +12,7 @@
  */
 package org.riotfamily.forms.factory;
 
-import org.riotfamily.common.xml.ConfigurationEventListener;
+import org.riotfamily.common.beans.reload.ConfigurationEventListener;
 import org.riotfamily.forms.Form;
 
 /**

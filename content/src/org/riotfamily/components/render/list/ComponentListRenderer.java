@@ -18,7 +18,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.servlet.CapturingResponseWrapper;
+import org.riotfamily.common.web.support.CapturingResponseWrapper;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;

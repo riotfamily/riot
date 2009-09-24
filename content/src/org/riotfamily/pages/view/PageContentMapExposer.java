@@ -17,7 +17,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.view.ModelPostProcessor;
+import org.riotfamily.common.web.mvc.view.ModelPostProcessor;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.support.EditModeUtils;

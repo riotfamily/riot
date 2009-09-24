@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.view.FlashScopeView;
+import org.riotfamily.common.web.mvc.view.FlashScopeView;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.RiotDaoException;

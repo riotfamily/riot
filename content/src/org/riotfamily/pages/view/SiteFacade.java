@@ -18,8 +18,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.cache.CacheTagUtils;
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.cache.CacheTagUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
@@ -101,6 +101,7 @@ public class SiteFacade {
 		return site.getProperties();
 	}
 
+	@Override
 	public String toString() {
 		return site.toString();
 	}

@@ -15,7 +15,7 @@ package org.riotfamily.forms.element;
 import java.io.PrintWriter;
 import java.util.regex.Pattern;
 
-import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.util.DocumentWriter;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.request.FormRequest;

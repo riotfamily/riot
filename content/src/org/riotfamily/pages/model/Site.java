@@ -32,7 +32,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.springframework.util.ObjectUtils;
 

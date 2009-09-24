@@ -19,7 +19,7 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.TagWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.riotfamily.components.model.Component;

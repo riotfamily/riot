@@ -12,7 +12,7 @@
  */
 package org.riotfamily.components.render.component;
 
-import org.riotfamily.common.view.ViewResolverHelper;
+import org.riotfamily.common.web.mvc.view.ViewResolverHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 

@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.riotfamily.common.filter.FilterPlugin;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.filter.FilterPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.riotfamily.statistics.domain.FaultyRepsonseStatsItem;
