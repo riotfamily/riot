@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 import org.springframework.web.servlet.view.AbstractView;
 
@@ -40,6 +41,8 @@ public class JsonView extends AbstractView {
 	private String headerName = JSON_HEADER;
 	
 	private Object jsonModel;
+	
+	private JsonConfig jsonConfig = new JsonConfig();
 	
 	private boolean useMergedOutputModel = true;
 	
@@ -65,6 +68,11 @@ public class JsonView extends AbstractView {
 		sendAsHeader = true;
 		return this;
 	}
+	
+	public JsonView setConfig(JsonConfig jsonConfig) {
+		this.jsonConfig = jsonConfig;
+		return this;
+	}
 
 	protected void renderMergedOutputModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
@@ -78,10 +86,10 @@ public class JsonView extends AbstractView {
 		}
 		String jsonString = null;
 		if (jsonModel instanceof Collection<?> || jsonModel.getClass().isArray()) {
-			jsonString = JSONArray.fromObject(jsonModel).toString();
+			jsonString = JSONArray.fromObject(jsonModel, jsonConfig).toString();
 		}
 		else {
-			jsonString = JSONObject.fromObject(jsonModel).toString();
+			jsonString = JSONObject.fromObject(jsonModel, jsonConfig).toString();
 		}
 		if (sendAsHeader) {
 			response.setHeader(headerName, jsonString);
