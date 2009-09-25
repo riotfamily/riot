@@ -49,6 +49,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 				new SimpleDateFormat("yyyy-MM-dd"), false));
 	}
 	
+	@Override
 	public abstract Class<?> getPropertyType(String path);
 	
 	public Map<String, EditorBinding> getBindings() {
@@ -132,10 +133,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 	public void initEditors() {
 		for (EditorBinding binding : bindings.values()) {
 			Editor editor = binding.getEditor();
-			Object value = null;
-			if (isEditingExistingBean()) {
-				value = getPropertyValue(binding.getProperty());
-			}
+			Object value = getPropertyValue(binding.getProperty());
 			editor.setValue(value);
 		}
 	}
