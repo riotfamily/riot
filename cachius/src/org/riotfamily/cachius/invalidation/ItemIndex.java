@@ -6,9 +6,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.riotfamily.cachius.CacheItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemIndex {
 
+	private Logger log = LoggerFactory.getLogger(ItemIndex.class);
+	
 	private ConcurrentHashMap<String, List<CacheItem>> taggedItems =
 			new ConcurrentHashMap<String, List<CacheItem>>();
 	
@@ -47,6 +51,7 @@ public class ItemIndex {
 	}
 	
 	public void invalidate(String tag) {
+		log.debug("Invalidating items tagged with {}", tag);
 		if (tag != null) {
 			List<CacheItem> items = taggedItems.get(tag);
 			if (items != null) {

@@ -13,7 +13,7 @@
     	<artifact type="source" ext="src.zip" />
     </publications>
     <dependencies>
-		<dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="build,runtime->default" />
+		<dependency org="slf4j" name="slf4j" rev="1.5.8" conf="*->default" />
 		<dependency org="sun" name="servlet-api" rev="2.4" conf="build->default" />
     </dependencies>
 </ivy-module>

@@ -7,12 +7,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.riotfamily.cachius.persistence.Deleteable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Container that holds information about the liveness as well as the actual data.
  */
 public class CacheItem implements Serializable {
 
+	private Logger log = LoggerFactory.getLogger(CacheItem.class);
+	
 	private Serializable data;
 	
 	/** Time of the last modification */
@@ -65,10 +69,6 @@ public class CacheItem implements Serializable {
 	public void setData(Serializable data) {
 		this.data = data;
 	}
-
-	public void setTimeToLive(long ttl) {
-		setExpires(ttl == -1 ? -1 : (System.currentTimeMillis() + ttl));
-	}
     
     public void setExpires(long expires) {
 		this.expires = expires;
@@ -95,19 +95,21 @@ public class CacheItem implements Serializable {
 	
 	public boolean isExpired() {
 		long now = System.currentTimeMillis();
-    	return (expires == -1 && invalidated) 
-    		|| (expires >= 0 && now >= expires);
+    	return expires > 0 && now >= expires;
     }
 	
 	public boolean isUpToDate(CacheHandler handler) {
 		if (data == null) {
+			log.trace("Stale data - data is null");
 			return false;
 		}
 		if (isExpired() || (isInvalidated() && !serveStaleUntilExpired)) {
 			// Expired or invalidated, ask handler
 			if (handler.getLastModified() > lastModified) {
+				log.trace("Item has expired and must be updated");
 				return false;
 			}
+			log.trace("Item has expired but data is still up-to-date");
 		}
 		return !anyFileModified();
 	}
@@ -136,6 +138,7 @@ public class CacheItem implements Serializable {
     	if (involvedFiles != null) {
     		for (File file : involvedFiles) {
     			if (file.lastModified() > lastModified) {
+    				log.trace("Involved file was modified: {}", file.getName());
     				return true;
     			}
     		}

@@ -7,10 +7,14 @@ import org.riotfamily.cachius.invalidation.DefaultItemInvalidator;
 import org.riotfamily.cachius.invalidation.ItemIndex;
 import org.riotfamily.cachius.invalidation.ItemInvalidator;
 import org.riotfamily.cachius.persistence.DiskStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class CacheService {
 
+	private Logger log = LoggerFactory.getLogger(CacheService.class);
+	
 	private CacheManager cacheManager;
 	
 	private DiskStore diskStore;
@@ -58,7 +62,7 @@ public class CacheService {
         	CacheItem item = entry.getItem();
         	if (item.isUpToDate(handler)) {
         		//stats.addHit();
-        		//log.debug("Serving cached content: " + entry.getKey());
+        		log.debug("Serving cached content: {}", entry.getKey());
         		serveData(handler, entry);
         	}
         	else {
@@ -92,7 +96,7 @@ public class CacheService {
 		try {
 			oldItem = entry.getItem();
 			if (oldItem.isUpToDate(handler)) {
-				//log.debug("Item has already been updated by another thread");
+				log.debug("Item has already been updated by another thread");
 				serveData(handler, entry);
 				return;
 			}
@@ -107,7 +111,7 @@ public class CacheService {
 			}
 		}
 		
-		//log.debug("Performing non-blocking update ...");
+		log.debug("Updating {} (non-blocking)", entry.getKey());
 		
 		// Create a new CacheItem and capture the content ...
 		CacheItem newItem = new CacheItem();
@@ -137,12 +141,12 @@ public class CacheService {
 		try {
 			CacheItem oldItem = entry.getItem();
 			if (oldItem.isUpToDate(handler)) {
-				//log.debug("Item has already been updated by another thread");
+				log.debug("Item has already been updated by another thread");
 				serveData(handler, entry);
 			}
 			else {
 				// Item is stale and must be revalidated
-				//log.debug("Performing blocking update ...");
+				log.debug("Updating {} (blocking)", entry.getKey());
 				CacheItem newItem = new CacheItem();
 				updateInContext(handler, newItem);
 				replaceItemAndServeData(entry, handler, oldItem, newItem);
