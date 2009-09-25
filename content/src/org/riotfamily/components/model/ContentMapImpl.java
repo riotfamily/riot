@@ -53,6 +53,10 @@ public class ContentMapImpl extends DirtyCheckMap<String, Object>
 		return owner.getCompositeId(this);
 	}
 	
+	public String getPath() {
+		return null;
+	}
+	
 	public Content getContent() {
 		return owner;
 	}

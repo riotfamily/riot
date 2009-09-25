@@ -181,6 +181,11 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	}
 
 	@Transient
+	public String getPath() {
+		return null;
+	}
+
+	@Transient
 	public Content getContent() {
 		return this;
 	}

@@ -27,16 +27,25 @@ public class ComponentList extends DirtyCheckList<Component>
 	
 	private Content owner;
 
-	public ComponentList(Content owner) {
-		this(owner, owner.nextFragmentId());
+	private String path;
+	
+	public ComponentList(ContentMap parent, String key) {
+		super(new ArrayList<Component>());
+		this.owner = parent.getContent();
+		this.fragmentId = owner.nextFragmentId();
+		Assert.notNull(owner, "owner must not be null");
+		Assert.notNull(fragmentId, "fragmentId must not be null");
+		this.path = parent.getPath() != null ? parent.getPath() + " " + key : key;
+		owner.registerfragment(this);
 	}
 	
-	public ComponentList(Content owner, String fragmentId) {
+	public ComponentList(Content owner, String fragmentId, String path) {
 		super(new ArrayList<Component>());
 		Assert.notNull(owner, "owner must not be null");
 		Assert.notNull(fragmentId, "fragmentId must not be null");
 		this.owner = owner;
 		this.fragmentId = fragmentId;
+		this.path = path;
 		owner.registerfragment(this);
 	}
 
@@ -47,6 +56,10 @@ public class ComponentList extends DirtyCheckList<Component>
 	
 	public String getFragmentId() {
 		return fragmentId;
+	}
+	
+	public String getPath() {
+		return path;
 	}
 	
 	public String getCompositeId() {

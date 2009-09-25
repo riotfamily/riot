@@ -48,9 +48,17 @@ public class ComponentConverter extends ContentMapConverter {
 		
 		ComponentList list = (ComponentList) context.get("list");
 		String id = reader.getAttribute("id");
+		String type = reader.getAttribute("type");
+		
+		String parentPath = (String) context.get("path");
+		String path = parentPath + " " + type;
+		context.put("path", path);
+		
 		Component component = new Component(list, id);
-		component.setType(reader.getAttribute("type"));
+		component.setType(type);
         populateMap(reader, context, component);
+        
+        context.put("path", parentPath);
         return component;
     }
 }

@@ -48,8 +48,10 @@ public class ComponentListConverter extends CollectionConverter {
 			UnmarshallingContext context) {
 		
 		Content owner = (Content) context.get("content");
+		String path = (String) context.get("path");
 		String id = reader.getAttribute("id");
-		ComponentList list = new ComponentList(owner, id);
+		
+		ComponentList list = new ComponentList(owner, id, path);
 		ComponentList parentList = (ComponentList) context.get("list");
 		context.put("list", list);
         populateCollection(reader, context, list);

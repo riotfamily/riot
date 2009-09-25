@@ -76,5 +76,10 @@ public class Component extends ContentMapImpl {
 	public int getPosition() {
 		return list.indexOf(this);
 	}
+	
+	@Override
+	public String getPath() {
+		return list.getPath() + " " + type;
+	}
 
 }

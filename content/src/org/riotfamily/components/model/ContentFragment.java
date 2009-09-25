@@ -21,6 +21,8 @@ public interface ContentFragment {
 	
 	public String getCompositeId();
 	
+	public String getPath();
+	
 	public Content getContent();
 		
 }

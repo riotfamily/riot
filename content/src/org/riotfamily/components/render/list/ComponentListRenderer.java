@@ -23,7 +23,6 @@ import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.core.security.AccessController;
@@ -59,11 +58,11 @@ public class ComponentListRenderer {
 		this.metaDataProvider = metaDataProvider;
 	}
 	
-	private ComponentList createList(final Content content, String key, 
+	private ComponentList createList(final ContentMap contentMap, String key, 
 			ComponentListConfig config) {
 		
-		final ComponentList list = new ComponentList(content);
-		content.put(key, list);
+		final ComponentList list = new ComponentList(contentMap, key);
+		contentMap.put(key, list);
 		if (config.getInitialTypes() != null) {
 			for (String type : config.getInitialTypes()) {
 				Component component = new Component(list);
@@ -76,8 +75,9 @@ public class ComponentListRenderer {
 			}
 		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
+			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				content.save();
+				contentMap.getContent().save();
 			}
 		});
 		return list;
@@ -94,7 +94,7 @@ public class ComponentListRenderer {
 		list = (ComponentList) contentMap.get(key);
 		if (EditModeUtils.isEditMode(request)) {
 			if (list == null) {
-				list = createList(contentMap.getContent(), key, config);
+				list = createList(contentMap, key, config);
 			}
 			if (AccessController.isGranted("edit", 
 					contentMap.getContent().getContainer().getOwner())) {

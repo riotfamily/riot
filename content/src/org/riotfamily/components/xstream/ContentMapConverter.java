@@ -69,11 +69,15 @@ public class ContentMapConverter extends AbstractCollectionConverter {
             reader.moveDown();
             String key = reader.getAttribute("key");
 
+            String parentPath = (String) context.get("path");
+    		String path = parentPath != null ? parentPath + " " + key : key;
+    		context.put("path", path);
+    		
             reader.moveDown();
-            Object value = readItem(reader, context, map);
+            map.put(key, readItem(reader, context, map));
             reader.moveUp();
 
-            map.put(key, value);
+            context.put("path", parentPath);
 
             reader.moveUp();
         }
