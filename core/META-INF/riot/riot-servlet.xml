@@ -323,7 +323,7 @@
 		<property name="resourcePath" ref="resourcePath" />
 	</bean>
 	
-	<bean id="imageCropper" class="org.riotfamily.common.image.ImageMagickCropper">
+	<bean id="imageCropper" class="org.riotfamily.media.processing.ImageMagickCropper">
 		<constructor-arg ref="imageMagick" />
 	</bean>
 	

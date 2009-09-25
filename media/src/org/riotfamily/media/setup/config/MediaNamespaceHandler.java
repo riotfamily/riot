@@ -25,17 +25,10 @@ import org.riotfamily.media.setup.RiotVideoFactoryBean;
 public class MediaNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		register("file", RiotFileFactoryBean.class)
-				.addReference("processor");
-		
-		register("image", RiotImageFactoryBean.class)
-				.addReference("processor");
-		
-		register("swf", RiotSwfFactoryBean.class)
-				.addReference("processor");
-		
-		register("video", RiotVideoFactoryBean.class)
-				.addReference("processor");
+		register("file", RiotFileFactoryBean.class);
+		register("image", RiotImageFactoryBean.class);
+		register("swf", RiotSwfFactoryBean.class);
+		register("video", RiotVideoFactoryBean.class);
 	}
 	
 }

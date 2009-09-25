@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.common.image;
+package org.riotfamily.media.processing;
 
 import java.io.File;
 import java.io.IOException;

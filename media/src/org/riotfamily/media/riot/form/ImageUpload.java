@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.common.web.support.ServletUtils;
@@ -37,6 +36,7 @@ import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
+import org.riotfamily.media.processing.ImageCropper;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.multipart.MultipartFile;
 

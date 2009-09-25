@@ -52,7 +52,7 @@
 		
 	<!-- ImageMagick -->
 	
-	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick">
+	<bean id="imageMagick" class="org.riotfamily.media.processing.ImageMagick">
 		<description>
 			ImageMagick 'convert' command which is used to crop images.
 			

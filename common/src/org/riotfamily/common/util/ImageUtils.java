@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.common.image;
+package org.riotfamily.common.util;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -31,7 +31,6 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.util.FormatUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 

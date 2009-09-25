@@ -21,8 +21,7 @@
 	<xsd:element name="video" type="mediaType" />
 	
 	<xsd:complexType name="mediaType">
-		<xsd:attribute name="resource" type="xsd:string"/>
-		<xsd:attribute name="processor" type="xsd:string"/>
+		<xsd:attribute name="resource" type="xsd:string" />
 	</xsd:complexType>
 	
 </xsd:schema>

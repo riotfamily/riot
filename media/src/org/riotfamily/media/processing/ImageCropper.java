@@ -12,28 +12,15 @@
  */
 package org.riotfamily.media.processing;
 
-import java.util.List;
-
-import org.riotfamily.media.model.RiotFile;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
- * @deprecated
  */
-public class BatchProcessor implements FileProcessor {
+public interface ImageCropper {
 
-	private List<FileProcessor> processors;
+	public void cropImage(File source, File dest, int width, int height,
+			int x, int y, int scaledWidth) throws IOException;
 	
-	public void setProcessors(List<FileProcessor> processors) {
-		this.processors = processors;
-	}
-
-	public void process(RiotFile data) {
-		if (processors != null) {
-			for (FileProcessor processor : processors) {
-				processor.process(data);
-			}
-		}
-	}
 }

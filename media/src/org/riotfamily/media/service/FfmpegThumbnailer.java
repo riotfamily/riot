@@ -16,9 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.riotfamily.common.image.ImageMagick;
-import org.riotfamily.common.image.ImageMagickThumbnailer;
-import org.riotfamily.common.image.Thumbnailer;
+import org.riotfamily.media.processing.ImageMagick;
+import org.riotfamily.media.processing.ImageMagickThumbnailer;
+import org.riotfamily.media.processing.Thumbnailer;
 
 public class FfmpegThumbnailer implements Thumbnailer {
 

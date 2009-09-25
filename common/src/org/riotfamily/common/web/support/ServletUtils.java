@@ -29,8 +29,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.image.ImageUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.ImageUtils;
 import org.riotfamily.common.xml.DocumentReader;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;

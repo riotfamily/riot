@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
-import org.riotfamily.common.image.ImageUtils;
+import org.riotfamily.common.util.ImageUtils;
 
 
 /**

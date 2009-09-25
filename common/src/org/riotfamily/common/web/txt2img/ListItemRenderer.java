@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.riotfamily.common.image.ImageUtils;
+import org.riotfamily.common.util.ImageUtils;
 import org.springframework.core.io.Resource;
 
 /**
