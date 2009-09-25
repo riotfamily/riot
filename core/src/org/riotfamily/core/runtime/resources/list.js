@@ -293,13 +293,17 @@ var RiotList = Class.create({
 					alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
 				}
 				else {
-					if (win.focusLost) {
-						win.close();
-						win = window.open(result.url, result.windowName || 'commandPopup');
+					try {
+						if (win.focusLost) {
+							win.close();
+							win = window.open(result.url, result.windowName || 'commandPopup');
+						}
+						win.focus();
+						win.onblur = function() {
+							this.focusLost = true;
+						}
 					}
-					win.focus();
-					win.onblur = function() {
-						this.focusLost = true;
+					catch (e) {
 					}
 				}
 			}
