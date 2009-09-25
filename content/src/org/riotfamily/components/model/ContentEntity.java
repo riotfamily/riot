@@ -58,11 +58,11 @@ public abstract class ContentEntity extends ActiveRecord
 		this.contentContainer = contentContainer;
 	}
 
+	@AccessType("field")
 	public boolean isPublished() {
 		return published;
 	}
 
-	@AccessType("field")
 	public void setPublished(boolean published) {
 		this.published = published;
 		invalidateCacheItems();
