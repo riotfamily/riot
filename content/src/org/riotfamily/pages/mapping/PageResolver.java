@@ -122,7 +122,7 @@ public class PageResolver {
 		if (site == null) {
 			return null;
 		}
-		String path = ServletUtils.getPathWithinApplication(request);
+		String path = FormatUtils.stripTrailingSlash(ServletUtils.getPathWithinApplication(request));
 		String lookupPath = getLookupPath(path);
 		Page page = ContentPage.loadBySiteAndPath(site, lookupPath);
 		if (page == null) {
