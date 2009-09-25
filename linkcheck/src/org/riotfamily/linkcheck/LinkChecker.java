@@ -12,13 +12,13 @@
  */
 package org.riotfamily.linkcheck;
 
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.crawler.DefaultLinkExtractor;
 import org.riotfamily.crawler.Href;
 import org.riotfamily.crawler.LinkExtractor;
+import org.riotfamily.crawler.LinkFilter;
 import org.riotfamily.crawler.PageData;
 import org.riotfamily.crawler.PageHandler;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +29,10 @@ public class LinkChecker implements PageHandler {
 
 	private HttpStatusChecker statusChecker = new HttpStatusChecker();
 	
-	private LinkExtractor linkExtractor = new LinkCheckLinkExtractor();
-	
+	private LinkExtractor linkExtractor = new DefaultLinkExtractor();
+
+	private LinkFilter linkFilter = new LinkCheckLinkFilter();
+
 	private HashSet<Link> brokenLinks;
 	
 	private HashSet<String> checkedUrls;
@@ -48,17 +50,16 @@ public class LinkChecker implements PageHandler {
 		hrefsToCheck.remove(pageData.getHref());
 		if (pageData.getStatusCode() >= 400) {
 			Link link = new Link(pageData);
-			log.info("Broken link: " + link);
+			log.info("Broken link: %s", link);
 			brokenLinks.add(link);
 		}
 		else {
-			Collection<String> links = linkExtractor.extractLinks(pageData);
-			Iterator<String> it = links.iterator();
-			while (it.hasNext()) {
-				String link = it.next();
-				Href href = new Href(pageData.getUrl(), link);
-				if (!checkedUrls.contains(href.getResolvedUri())) {
-					hrefsToCheck.add(href);
+			for (String link : linkExtractor.extractLinks(pageData)) {
+				if (linkFilter.accept(pageData.getUrl(), link)) {
+					Href href = new Href(pageData.getUrl(), link);
+					if (!checkedUrls.contains(href.getResolvedUri())) {
+						hrefsToCheck.add(href);
+					}
 				}
 			}
 		}
@@ -67,12 +68,10 @@ public class LinkChecker implements PageHandler {
 	@Transactional
 	public void crawlerFinished() {
 		log.info("Checking links that have not been crawled ...");
-		Iterator<Href> it = hrefsToCheck.iterator();
-		while (it.hasNext()) {
-			Href href = it.next();
+		for (Href href : hrefsToCheck) {
 			Link link = new Link(href);
 			if (!statusChecker.isOkay(link)) {
-				log.debug("Broken link: " + link);
+				log.info("Broken link: %s", link);
 				brokenLinks.add(link);	
 			}
 		}
@@ -80,6 +79,8 @@ public class LinkChecker implements PageHandler {
 		Link.deleteAll();
 		Link.saveAll(brokenLinks);
 		
+		log.info("Finished checking all links");
+
 		checkedUrls = null;
 		hrefsToCheck = null;
 		brokenLinks = null;
@@ -90,13 +91,13 @@ public class LinkChecker implements PageHandler {
 			Link.deleteBrokenLinksFrom(pageData.getUrl());
 			Link.deleteBrokenLinksTo(pageData.getUrl());
 			HashSet<Link> brokenLinks = new HashSet<Link>();
-			Collection<String> links = linkExtractor.extractLinks(pageData);
-			Iterator<String> it = links.iterator();
-			while (it.hasNext()) {
-				String uri = it.next();
-				Link link = new Link(pageData.getUrl(), uri);
-				if (!statusChecker.isOkay(link)) {
-					brokenLinks.add(link);
+			for (String uri : linkExtractor.extractLinks(pageData)) {
+				if (linkFilter.accept(pageData.getUrl(), uri)) {
+					Link link = new Link(pageData.getUrl(), uri);
+					if (!statusChecker.isOkay(link)) {
+						log.info("Broken link: %s", link);
+						brokenLinks.add(link);
+					}
 				}
 			}
 			Link.saveAll(brokenLinks);

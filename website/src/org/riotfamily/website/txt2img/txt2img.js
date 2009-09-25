@@ -33,7 +33,11 @@ var Txt2ImgConfig = Class.create({
 		this.pixelImage = new Image();
 		this.pixelImage.src = pixelUrl;
 		this.selectors = selectors;
-		this.createHoverRules();
+		try {
+			this.createHoverRules();
+		}
+		catch(exception) {
+		}
 		document.observe('dom:loaded', this.insertImages.bind(this));
 		document.observe('component:updated', this.insertImages.bind(this));
 	},
@@ -123,7 +127,8 @@ var Txt2ImgReplacement = Class.create({
 			var transform = this.el.getStyle('text-transform') || '';
 			var width = 0;
 			var display = this.el.getStyle('display');
-			if (display == 'block' || display == 'inline-block') {
+			var isFloating = this.el.getStyle('float') != 'none';
+			if ((display == 'block' && !isFloating) || display == 'inline-block') {
 				width = this.el.offsetWidth - parseInt(this.el.getStyle('padding-left'))
 						- parseInt(this.el.getStyle('padding-right'));
 			}

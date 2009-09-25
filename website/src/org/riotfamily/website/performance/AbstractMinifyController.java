@@ -49,16 +49,34 @@ import org.springframework.web.servlet.mvc.LastModified;
  */
 public abstract class AbstractMinifyController extends AbstractCacheableController 
 		implements LastModified, Compressible {
-	
+
+	private boolean reloadable;
+
 	private long startUpTime = System.currentTimeMillis();
-	
+
 	/**
-	 * Returns the server start-up time.
+	 * If set to <code>true</code>, the output will not be cached, 
+	 * not compressed or obfuscated and no expires header will be sent. 
 	 */
-	public long getLastModified(HttpServletRequest request) {
-		return startUpTime;
+	public void setReloadable(boolean reloadable) {
+		this.reloadable = reloadable;
 	}
 
+	/**
+	 * Returns the server start-up time, or the current time if running in
+	 * {@link #setReloadable(boolean) development mode}.
+	 */
+	public long getLastModified(HttpServletRequest request) {
+		return reloadable ? System.currentTimeMillis() : startUpTime;
+	}
+
+	/**
+	 * The cache is bypassed in {@link #setReloadable(boolean) development mode}.
+	 */
+	protected boolean bypassCache(HttpServletRequest request) {
+		return reloadable;
+	}
+	
 	/**
 	 * Adds the query-string to the cache-key. 
 	 */

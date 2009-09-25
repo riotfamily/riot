@@ -94,12 +94,7 @@ public abstract class AbstractConditionalElement extends AbstractElement
 	}
 	
 	protected void renderInternal(PrintWriter writer) {
-		if (isEditable()) {
-			editor.setEnabled(true);
-			editor.render(writer);
-		}
-		else if (!hide) {
-			editor.setEnabled(false);
+		if (!hide || isEditable()) {
 			editor.render(writer);
 		}
 	}
@@ -113,6 +108,11 @@ public abstract class AbstractConditionalElement extends AbstractElement
 
 	public boolean isCompositeElement() {
 		return editor.isCompositeElement();
+	}
+	
+	@Override
+	public final boolean isEnabled() {
+		return isEditable();
 	}
 	
 	protected abstract boolean isEditable();

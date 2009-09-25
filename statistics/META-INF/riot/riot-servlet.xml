@@ -28,7 +28,7 @@
         <property name="monitoredUrl" value="${riot.statistics.request.monitoredUrl=/status/application}" />
         
         <!-- Response status codes which should be monitored -->
-        <property name="faultStatusCodes" value="${riot.statistics.request.faultStatusCodes=404,500}" />
+        <property name="faultStatusCodes" value="${riot.statistics.request.faultStatusCodes=404,410,500}" />
     </bean>
 
 	<bean id="requestTimestampRenderer" class="org.riotfamily.common.ui.DateRenderer">

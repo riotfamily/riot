@@ -437,6 +437,11 @@
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
+		<constructor-arg>
+			<bean class="org.riotfamily.website.performance.YUICssCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>
+		</constructor-arg>
 	</bean>
 	
 	<!-- Misc -->

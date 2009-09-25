@@ -110,6 +110,12 @@
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
+		<constructor-arg>
+			<bean class="org.riotfamily.website.performance.YUICssCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>			
+		</constructor-arg>
+		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	
 	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.website.performance.MinifyScriptController">
@@ -117,6 +123,7 @@
 			Controller to compress (minify) JavaScript files.
 		</description>
 		<constructor-arg ref="javaScriptCompressor" />
+		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	
 	<bean id="clientErrorLogController" name="/riot-utils/error.*" class="org.riotfamily.website.controller.ClientErrorLogController">

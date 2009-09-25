@@ -157,7 +157,7 @@ var RElement = {
 		var a = el.ancestors().concat([el]).concat(el.descendants());
 		for (var i = 0; i < a.length; i++) {
 			var e = a[i];
-			if (!e.riot_onclick) {
+			if (typeof e.riot_onclick == 'undefined') {
 				if (e.tagName == 'A' && e.href) {
 					e.riot_onclick = e.onclick || null;
 					e.onclick = function() { return false; }
@@ -178,7 +178,7 @@ var RElement = {
 			var e = a[i];
 			if (typeof e.riot_onclick != 'undefined') {
 				e.onclick = e.riot_onclick;
-				e.riot_onclick = null;
+				delete e.riot_onclick;
 			}
 		}
 		return el;
