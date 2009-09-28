@@ -15,7 +15,6 @@ package org.riotfamily.common.web.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
@@ -80,7 +79,6 @@ public class ConfigurableViewController implements Controller {
 	}
 	
 	protected void populateModel(Model model, HttpServletRequest request) {
-		model.addAllAttributes(HandlerUrlUtils.getTypedPathVariables(request));
 	}
 		
 }

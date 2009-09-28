@@ -14,8 +14,6 @@ package org.riotfamily.common.web.mvc.mapping;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,8 +27,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 public final class HandlerUrlUtils {
 
-	private static Pattern typePattern = Pattern.compile("\\((.+)\\)\\s*(.+)");
-	
 	private HandlerUrlUtils() {
 	}
 	
@@ -102,58 +98,6 @@ public final class HandlerUrlUtils {
 		return getPathVariables(request).get(name);
 	}
 	
-	public static Map<String, Object> getTypedPathVariables(HttpServletRequest request) {
-		Map<String, Object> vars = Generics.newHashMap();
-  		for (Map.Entry<String, String> var : getPathVariables(request).entrySet()) {
-			Object value = var.getValue();
-			if (value != null) {
-				String name = var.getKey();
-				Matcher m = typePattern.matcher(name);
-				if (m.matches()) {
-					String type = m.group(1);
-					if (type != null) {
-						name = m.group(2);
-						value = convert(var.getValue(), type);
-					}
-				}
-				vars.put(name, value);
-			}
-		}
-  		return vars;
-	}
-	
-	private static Object convert(String s, String type) {
-		if (type == null || type.equalsIgnoreCase("String")) {
-			return s;
-		}
-		if (type.equalsIgnoreCase("Integer")) {
-			return Integer.valueOf(s);
-		}
-		else if (type.equalsIgnoreCase("Long")) {
-			return Long.valueOf(s);
-		}
-		else if (type.equalsIgnoreCase("Short")) {
-			return Short.valueOf(s);
-		}
-		else if (type.equalsIgnoreCase("Double")) {
-			return Double.valueOf(s);
-		}
-		else if (type.equalsIgnoreCase("Float")) {
-			return Float.valueOf(s);
-		}
-		else if (type.equalsIgnoreCase("Boolean")) {
-			return Boolean.valueOf(s);
-		}
-		else if (type.equalsIgnoreCase("Character")) {
-			return new Character(s.charAt(0));
-		}
-		else {
-			throw new IllegalArgumentException("Unsupported type: " + type 
-					+ " - must be Integer, Long, Short, Double, Float," 
-					+ " Boolean or Character");
-		}
-	}
-
 	public static String getPathWithinMapping(HttpServletRequest request) {
 		return (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 	}

@@ -24,7 +24,7 @@ import org.springframework.beans.PropertyAccessor;
 public class HandlerUrl implements Comparable<HandlerUrl> {
 	
 	private static Pattern placeholders = Pattern.compile(
-			"(?:(\\*\\*?)|\\{(?:\\(.+\\)\\s*)?(.+?)(?::.+?)?\\})");
+			"(?:(\\*\\*?)|\\{(.+?)(?::.+?)?\\})");
 	
 	private String path;
 	
