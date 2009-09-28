@@ -86,7 +86,7 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource {
 	private String getEditorUrl(String code) {
 		MessageBundleEntry entry = dbMessageSource.getEntry(code, null);
 		if (entry != null) {
-			return getContextPath() + handlerUrlResolver.getUrlForHandler(null,
+			return getContextPath() + handlerUrlResolver.getUrlForHandler(
 					"popupFormController", "riotMessageBundleEntry", entry.getId());
 
 		}
