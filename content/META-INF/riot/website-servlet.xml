@@ -38,7 +38,7 @@
 
 	<!-- Initialize the ComponentRenderer --> 
  	<bean class="org.riotfamily.components.render.component.ViewComponentRendererInitializer">
- 		<constructor-arg ref="componentRenderer" />
+ 		<constructor-arg ref="viewComponentRenderer" />
  	</bean>
  	
  	<!-- Pages -->

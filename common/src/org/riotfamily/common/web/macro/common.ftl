@@ -27,25 +27,21 @@
 <#---
   - Includes the given path using a RequestDispatcher. 
   - @param path The path to include
-  - @param dynamic Set to true if the current template block should not get
-  -                cached because the included controller delivers dynamic
-  -                content
   -->
-<#macro include path dynamic=false>
-    <#if dynamic><@preventCaching /></#if>
-	${commonMacroHelper.include(path)}
+<#macro include path dynamic=true>
+	${commonMacroHelper.include(path, dynamic)}
 </#macro>
 
 <#---
   - Performs a request using a RequestDispatcher and returns the captured output.
   - @param path The path to capture
-  - @param dynamic Set to true if the current template block should not get
-  -                cached because the included controller delivers dynamic
-  -                content
   -->
-<#function capture path="" dynamic=false>
-	<#if dynamic><@preventCaching /></#if>
+<#function capture path="">
 	<#return commonMacroHelper.capture(path) />
+</#function>
+
+<#function handle handlerName attributes...>
+	<#return commonMacroHelper.include(commonMacroHelper.getUrlForHandler(handlerName, attributes), true) />
 </#function>
 
 <#---

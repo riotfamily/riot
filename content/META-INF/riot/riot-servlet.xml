@@ -15,7 +15,7 @@
     	http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
 	
 	<bean id="editModeRenderStrategy" class="org.riotfamily.components.render.list.EditModeRenderStrategy">
-		<constructor-arg ref="componentRenderer" />
+		<constructor-arg ref="viewComponentRenderer" />
 		<constructor-arg ref="componentMetaDataProvider" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="componentListRenderer" />
@@ -25,7 +25,7 @@
 	  - Service bean to edit components. Exposed via DWR.
 	  -->
 	<bean id="componentEditor" class="org.riotfamily.components.editor.ComponentEditorImpl">
-		<constructor-arg ref="componentRenderer" />
+		<constructor-arg ref="viewComponentRenderer" />
 		<constructor-arg ref="componentMetaDataProvider" />
 		<constructor-arg ref="contentFormRepository" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />

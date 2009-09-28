@@ -77,4 +77,8 @@ public class CacheContext {
 			item.serveStaleUntilExpired();
 		}
 	}
+
+	public static boolean exists() {
+		return currentItem.get() != null;
+	}
 }

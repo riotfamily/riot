@@ -10,14 +10,15 @@
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd">
- 	
-	<bean id="componentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">
+
+	
+	<bean id="viewComponentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">
 		<property name="viewNamePrefix" value="components/" />
 		<property name="viewNameSuffix" value=".ftl" />
 	</bean>
-	
+	 	
 	<bean id="componentMetaDataProvider" class="org.riotfamily.components.render.component.ViewComponentMetaDataProvider">
-		<constructor-arg ref="componentRenderer" />
+		<constructor-arg ref="viewComponentRenderer" />
 	</bean>
 	
 	<bean id="componentListRenderer" class="org.riotfamily.components.render.list.ComponentListRenderer">
@@ -25,7 +26,7 @@
 		<property name="metaDataProvider" ref="componentMetaDataProvider" />
 		<property name="liveModeRenderStrategy">
 			<bean class="org.riotfamily.components.render.list.DefaultRenderStrategy">
-				<constructor-arg ref="componentRenderer" />
+				<constructor-arg ref="viewComponentRenderer" />
 			</bean>
 		</property>
 	</bean>

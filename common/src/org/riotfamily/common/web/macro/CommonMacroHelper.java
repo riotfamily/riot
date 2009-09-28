@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.ui.ObjectGroup;
 import org.riotfamily.common.util.FormatUtils;
@@ -283,8 +284,10 @@ public class CommonMacroHelper {
 		return null;
 	}
 
-	public String include(String url) throws ServletException, IOException {
-		//request.getRequestDispatcher(url).include(request, response);
+	public String include(String url, boolean dynamic) throws ServletException, IOException {
+		if (dynamic && CacheContext.exists()) {
+			return "(@include " + url + ")";
+		}
 		return capture(url);
 	}
 	
