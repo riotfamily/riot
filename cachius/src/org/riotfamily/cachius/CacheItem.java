@@ -100,7 +100,7 @@ public class CacheItem implements Serializable {
 	
 	public boolean isUpToDate(CacheHandler handler) {
 		if (data == null) {
-			log.trace("Stale data - data is null");
+			log.trace("Item is new and must be updated");
 			return false;
 		}
 		if (isExpired() || (isInvalidated() && !serveStaleUntilExpired)) {
