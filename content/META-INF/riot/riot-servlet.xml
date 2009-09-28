@@ -52,7 +52,7 @@
 	  -->
 	<bean id="componentFormController"
 		name="/components/form/{contentId}/{formId}"
-		class="org.riotfamily.components.editor.ContentFormController">
+		class="org.riotfamily.components.riot.form.ContentFormController">
 		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="transactionManager" />
