@@ -16,4 +16,6 @@ public interface ReverseHandlerMapping {
 
 	public String getUrlForHandler(String handlerName, Object... vars);
 	
+	public String getUrlForHandler(Class<?> handlerClass, Object... vars);
+	
 }

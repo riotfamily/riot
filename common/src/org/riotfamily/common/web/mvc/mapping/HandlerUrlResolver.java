@@ -73,6 +73,19 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 		return reverseMappings;
 	}
 	
+	public String getUrlForHandler(Class<?> handlerClass, Object... vars) {
+		for (ReverseHandlerMapping mapping : getMappings()) {
+			String url = mapping.getUrlForHandler(handlerClass, vars);
+			if (url != null) {
+				return url;
+			}
+		}
+		if (parent != null) {
+			return parent.getUrlForHandler(handlerClass, vars);
+		}
+		return null;
+	}
+	
 	public String getUrlForHandler(String handlerName, Object... vars) {
 		for (ReverseHandlerMapping mapping : getMappings()) {
 			String url = mapping.getUrlForHandler(handlerName, vars);

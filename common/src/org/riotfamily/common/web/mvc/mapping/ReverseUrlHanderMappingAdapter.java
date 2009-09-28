@@ -45,7 +45,9 @@ public class ReverseUrlHanderMappingAdapter implements ReverseHandlerMappingAdap
 	
 	private class ReverseUrlHandlerMapping implements ReverseHandlerMapping {
 		
-		private Map<String, List<HandlerUrl>> urlMap = Generics.newHashMap();
+		private Map<String, List<HandlerUrl>> urlsForName = Generics.newHashMap();
+		
+		private Map<Class<?>, List<HandlerUrl>> urlsForClass = Generics.newHashMap();
 		
 		private ApplicationContext context;
 		
@@ -56,17 +58,26 @@ public class ReverseUrlHanderMappingAdapter implements ReverseHandlerMappingAdap
 			for (Map.Entry<String,?> entry : handlers.entrySet()) {
 				String url = entry.getKey();
 				Object handler = entry.getValue();
-				String handlerName = getHandlerName(handler);
-				List<HandlerUrl> urls = urlMap.get(handlerName);
-				if (urls == null) {
-					urls = Generics.newLinkedList();
-					urlMap.put(handlerName, urls);
+				
+				if (!(handler instanceof String)) {
+					Class<?> handlerClass = handler.getClass();
+					register(handlerClass, url, urlsForClass);
 				}
-				urls.add(new HandlerUrl(url));
-				Collections.sort(urls);
+				
+				String handlerName = getHandlerName(handler);
+				register(handlerName, url, urlsForName);
 			}
 		}
 
+		private <T> void register(T key, String url, Map<T, List<HandlerUrl>> map) {
+			List<HandlerUrl> urls = map.get(key);
+			if (urls == null) {
+				urls = Generics.newLinkedList();
+				map.put(key, urls);
+			}
+			urls.add(new HandlerUrl(url));
+			Collections.sort(urls);
+		}
 	
 		private String getHandlerName(Object handler) {
 			if (handler instanceof String) {
@@ -83,8 +94,15 @@ public class ReverseUrlHanderMappingAdapter implements ReverseHandlerMappingAdap
 			return null;
 		}
 		
+		public String getUrlForHandler(Class<?> handlerClass, Object... vars) {
+			return fillIn(urlsForClass.get(handlerClass), vars);
+		}
+		
 		public String getUrlForHandler(String name, Object... vars) {
-			List<HandlerUrl> urls = urlMap.get(name);
+			return fillIn(urlsForName.get(name), vars);
+		}
+		
+		private String fillIn(List<HandlerUrl> urls, Object... vars) {
 			if (urls != null) {
 				if (vars != null && vars.length == 1) {
 					Object var = vars[0];

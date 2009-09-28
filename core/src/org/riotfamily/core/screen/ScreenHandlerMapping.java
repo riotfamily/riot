@@ -91,4 +91,8 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 		}
 		return null;
 	}
+
+	public String getUrlForHandler(Class<?> handlerClass, Object... vars) {
+		throw new UnsupportedOperationException();
+	}
 }
