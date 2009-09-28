@@ -90,28 +90,21 @@
 	
 	<bean class="org.riotfamily.common.beans.injection.SpringBeanConfigurer" />
 	
-	<!--<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
-		<description>
-			A Cachius cache instance to cache web content.		
-		</description>
-		<property name="cacheDir" value="${riot.websiteCache.cacheDir=}" />
-		<property name="cacheDirName" value="website-cache" />
-		<property name="capacity" value="${riot.websiteCache.capacity=10000}" />
-		<property name="restore" value="${riot.websiteCache.restore=true}" />
-		<property name="enabled" value="${riot.websiteCache.enabled=true}" />
-    </bean>-->
+	<util:list id="cacheRegions">
+		<bean class="org.riotfamily.cachius.Region">
+			<constructor-arg value="default" />
+			<property name="capacity"  value="10000" />
+		</bean>
+	</util:list>
 	
-	<bean id="cacheManager" class="org.riotfamily.cachius.CacheManager">
-	</bean>
-	   
     <bean id="cacheService" class="org.riotfamily.cachius.CacheService">
 	 	<description>
 			A Cachius CacheService instance to cache and serve content.		
 		</description>
-        <constructor-arg ref="cacheManager" />
         <constructor-arg>
         	<bean class="org.riotfamily.cachius.persistence.SimpleDiskStore" />
         </constructor-arg>
+        <constructor-arg ref="cacheRegions" />
     </bean>
     
     <bean id="resourceStamper" class="org.riotfamily.common.web.performance.ResourceStamper" />

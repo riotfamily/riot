@@ -1,5 +1,9 @@
 package org.riotfamily.cachius;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
@@ -9,27 +13,41 @@ import org.riotfamily.cachius.invalidation.ItemInvalidator;
 import org.riotfamily.cachius.persistence.DiskStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 
-public class CacheService {
+public class CacheService implements DisposableBean {
 
 	private Logger log = LoggerFactory.getLogger(CacheService.class);
-	
-	private CacheManager cacheManager;
+
+	private Map<String, Cache> caches = new HashMap<String, Cache>();
 	
 	private DiskStore diskStore;
-	
+
 	private ItemIndex index = new ItemIndex();
 	
 	private ItemInvalidator invalidator = new DefaultItemInvalidator();
+
+	public CacheService(DiskStore diskStore) {
+		this(diskStore, Collections.singletonList(new Region("default")));
+	}
 	
-	public CacheService(CacheManager cacheManager, DiskStore diskStore) {
-		this.cacheManager = cacheManager;
+	public CacheService(DiskStore diskStore, List<Region> regions) {
 		this.diskStore = diskStore;
+		for (Region region : regions) {
+			caches.put(region.getName(), new Cache(region, index));
+		}
 	}
 
-	protected Cache getCache(String region) {
-		return cacheManager.getCache(region);
+	public Cache getCache(String region) {
+		if (region == null) {
+			region = "default";
+		}
+		Cache cache = caches.get(region);
+		if (cache == null) {
+			throw new IllegalArgumentException("No such cache region: " + region);
+		}
+		return cache;
 	}
 
 	private CacheEntry getCacheEntry(CacheHandler handler) {
@@ -221,6 +239,12 @@ public class CacheService {
 
 	public void invalidateTaggedItems(String tag) {
 		invalidator.invalidate(index, tag);
+	}
+
+	public void destroy() throws Exception {
+		for (Cache cache : caches.values()) {
+			cache.destroy();
+		}
 	}
     
 }

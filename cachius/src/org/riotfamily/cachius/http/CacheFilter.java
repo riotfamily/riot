@@ -11,14 +11,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.CacheManager;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.persistence.SimpleDiskStore;
 
 public class CacheFilter implements Filter {
 
-	private CacheService cacheService = new CacheService(
-			new CacheManager(), new SimpleDiskStore());
+	private CacheService cacheService = new CacheService(new SimpleDiskStore());
 	
 	public void init(FilterConfig config) throws ServletException {
 	}
@@ -57,6 +55,7 @@ public class CacheFilter implements Filter {
 			this.filterChain = filterChain;
 		}
 		
+		@Override
 		protected void handleRequest(HttpServletRequest request, 
 				HttpServletResponse response) 
 				throws IOException, ServletException {
