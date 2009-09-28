@@ -76,6 +76,15 @@
 			HandlerAdapter that handles regular (non-cacheable) Controllers.
 		</description>
 	</bean>
+		
+	<bean id="annotationMethodHandlerAdapter" class="org.riotfamily.common.web.cache.annotation.CacheAnnotationHandlerAdapter">
+		<description>
+			HandlerAdapter that handles @RequestMapping annotated beans
+			and supports the @Cache annotation.
+		</description>
+		<constructor-arg ref="cacheService" />
+		<constructor-arg ref="cacheKeyAugmentor" />
+	</bean>
 	
 	<bean class="org.riotfamily.common.web.mvc.mapping.ReverseUrlHanderMappingAdapter" />
 	
