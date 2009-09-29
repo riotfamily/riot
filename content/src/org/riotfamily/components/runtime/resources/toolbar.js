@@ -50,6 +50,7 @@ riot.Toolbar = Class.create({
 			this.buttons.values().invoke('activate');
 			this.buttons.get('browse').select();
 		}
+		this.element.fire('toolbar:loaded');
 	},
 
 	enablePreviewButton: function() {

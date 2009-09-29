@@ -6,6 +6,6 @@ function riotPageChooser(field_name, url, type, win) {
     return false;
 }
 
-Resources.waitFor('riot.fixedTinyMCESettings', function() {
+riot.Resources.waitFor('riot.fixedTinyMCESettings', function() {
 	riot.fixedTinyMCESettings.file_browser_callback = 'riotPageChooser';
 });

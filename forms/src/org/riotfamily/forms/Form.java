@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.util.DocumentWriter;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.TagWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
@@ -40,6 +38,8 @@ import org.riotfamily.forms.resource.LoadingCodeGenerator;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.validation.Validator;
 
@@ -290,7 +290,7 @@ public class Form implements BeanEditor {
 	 * Returns the previously registered element with the given id.
 	 */
 	public Element getElementById(String id) {
-		return (Element) elementMap.get(id);
+		return elementMap.get(id);
 	}
 
 	/**
@@ -334,14 +334,14 @@ public class Form implements BeanEditor {
 		formContext.setWriter(writer);
 		DocumentWriter doc = new DocumentWriter(writer);
 		doc.start("script").body();
-		writer.write("if (!window.Resources) document.write('" 
+		writer.write("if (!(window.riot && riot.Resources)) document.write('" 
 				+ "<script src=\"" + formContext.getContextPath()
 				+ formContext.getResourcePath() + "riot-js/resources.js"
 				+ "\"></scr'+'ipt>');\n");
 		doc.end();
 		doc.start("script").body();
-		writer.write("Resources.basePath='" + formContext.getContextPath() 
-				+ formContext.getResourcePath()	+ "';\n");
+		writer.write("riot.Resources.setBasePath('" + formContext.getContextPath() 
+				+ formContext.getResourcePath()	+ "');\n");
 		
 		LoadingCodeGenerator.renderLoadingCode(getResources(), writer);
 		doc.end();
@@ -359,7 +359,7 @@ public class Form implements BeanEditor {
 		}
 		
 		if (!propagations.isEmpty()) {
-			writer.print("Resources.waitFor('propagate', function() {");
+			writer.print("riot.Resources.waitFor('propagate', function() {");
 			for (EventPropagation p : propagations) { 
 				writer.print("propagate('");
 				writer.print(p.getTriggerId());
@@ -399,7 +399,7 @@ public class Form implements BeanEditor {
 					ResourceElement resEle = (ResourceElement) dhtml;
 					FormResource res = resEle.getResource();
 					if (res != null) {
-						script.print("Resources.execWhenLoaded(['");
+						script.print("riot.Resources.execWhenLoaded(['");
 						script.print(res.getUrl());
 						script.print("'], function() {");
 						script.print(initScript);

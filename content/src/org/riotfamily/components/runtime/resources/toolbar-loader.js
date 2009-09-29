@@ -1,41 +1,47 @@
-var riot = {
-	contextPath: '${contextPath}',
-	resourcePath: '${contextPath}${resourcePath}',
-	path: '${contextPath}${riotServletPrefix}',
-	language: '${language}' || 'en'
-};
-
-Resources.basePath = riot.resourcePath;
-Resources.loadStyleSheet('style/toolbar.css');
-Resources.loadStyleSheet('style/edit-mode.css');
-Resources.loadStyleSheet('riot-js/window/dialog.css');
-
-Resources.loadScriptSequence([
-	{src: riot.path + '/engine.js', test: 'dwr.engine'},
-	{src: riot.path + '/util.js', test: 'dwr.util'},
-	{src: riot.path + '/interface/ComponentEditor.js', test: 'ComponentEditor', onload: loadToolbarScripts}
-]);
-
-function loadToolbarScripts() {
-	var scripts = Resources.getRequiredSources([	
-		{src: 'prototype/prototype.js', test: 'Prototype'},
-		{src: 'riot-js/util.js', test: 'RElement'},
-		{src: 'scriptaculous/effects.js', test: 'Effect'},
-		{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
-		{src: 'riot-js/cookiejar.js', test: 'CookieJar'},
-		{src: 'toolbar.js'},
-		{src: 'riot-js/effects.js'},
-		{src: 'riot-js/window/dialog.js'},
-		{src: 'inplace.js'},
-		{src: 'components.js'}
-	]);
-	var src = riot.resourcePath + 'joined.js?files=' + scripts.join(',') + '&lang=' + riot.language;
-	Resources.loadScript(src, 'riot.toolbar', toolbarScriptsLoaded);
-}
-
-function toolbarScriptsLoaded() {
-    if (window.onToolbarLoaded) {
-    	onToolbarLoaded(riot.toolbar);
-    }
-    riot.toolbar.activate();
-}
+(function() {
+	Object.extend(riot, {
+		contextPath: '${contextPath}',
+		resourcePath: '${contextPath}${resourcePath}',
+		path: '${contextPath}${riotServletPrefix}',
+		language: '${language}' || 'en'
+	});
+	
+	riot.Resources.setBasePath(riot.resourcePath)
+		.loadStyleSheet('style/toolbar.css')
+		.loadStyleSheet('style/edit-mode.css')
+		.loadStyleSheet('riot-js/window/dialog.css')
+		.loadScriptSequence([
+			{src: riot.path + '/engine.js', test: 'dwr.engine'},
+			{src: riot.path + '/util.js', test: 'dwr.util'},
+			{src: riot.path + '/interface/ComponentEditor.js', test: 'ComponentEditor', onload: loadToolbarScripts}
+		]);
+	
+	function loadToolbarScripts() {
+		var scripts = [	
+   			{src: 'prototype/prototype.js', test: 'Prototype'},
+			{src: 'riot-js/util.js', test: 'RElement'},
+			{src: 'scriptaculous/effects.js', test: 'Effect'},
+			{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
+			{src: 'riot-js/cookiejar.js', test: 'CookieJar'},
+			{src: 'toolbar.js', test: 'riot.toolbar'},
+			{src: 'riot-js/effects.js', test: 'Effect.Remove'},
+			{src: 'riot-js/window/dialog.js', test: 'riot.window'},
+			{src: 'inplace.js', test: 'riot.InplaceEditor'},
+			{src: 'components.js', test: 'riot.components', onload: activateToolbar}
+		]; 
+					
+		if (location.hash.indexOf('debug-scripts') != -1) {
+			riot.Resources.loadScriptSequence(scripts);
+		}
+		else {
+			var files = riot.Resources.getRequiredSources(scripts);
+			var src = riot.resourcePath + 'joined.js?files=' + files.join(',') + '&lang=' + riot.language;
+			riot.Resources.loadScript(src, 'riot.toolbar', activateToolbar);
+		}
+	}
+	
+	function activateToolbar() {
+		riot.toolbar.activate();
+	}
+	
+})();
