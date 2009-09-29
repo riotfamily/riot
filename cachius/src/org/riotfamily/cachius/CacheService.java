@@ -13,10 +13,9 @@ import org.riotfamily.cachius.invalidation.ItemInvalidator;
 import org.riotfamily.cachius.persistence.DiskStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 
 
-public class CacheService implements DisposableBean {
+public class CacheService {
 
 	private Logger log = LoggerFactory.getLogger(CacheService.class);
 
