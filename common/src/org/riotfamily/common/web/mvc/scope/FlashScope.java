@@ -31,9 +31,9 @@ import org.riotfamily.common.web.support.ServletUtils;
  */
 public class FlashScope {
 
-	private static final String SESSION_ATTRIBUTE = FlashScope.class.getName();
+	private static final String ATTRIBUTE_NAME = FlashScope.class.getName();
 
-	private Map<String, Map<String, ?>> models = Generics.newHashMap();
+	private Map<String, FlashModel> models = Generics.newHashMap();
 		
 	/**
 	 * Stores a model map in the HTTP session for later retrieval by the next 
@@ -42,20 +42,22 @@ public class FlashScope {
 	 * @param model The model to store
 	 * @param url The URL of the next request  
 	 */
-	public static void store(HttpServletRequest request, Map<?, ?> model, String url) {
+	public static void store(HttpServletRequest request, Map<String, ?> model, String url) {
 		FlashScope flashScope = getFlashScope(request, true);
-		flashScope.models.put(url, (Map<String, ?>) model);
+		flashScope.models.put(url, new FlashModel(model));
+	}
+
+	public static FlashModel getFlashModel(HttpServletRequest request) {
+		return (FlashModel) request.getAttribute(ATTRIBUTE_NAME);
 	}
 	
 	static void expose(HttpServletRequest request) {
 		FlashScope flashScope = getFlashScope(request, false);
 		if (flashScope != null) {
 			String url = ServletUtils.getRequestUrlWithQueryString(request);
-			Map<String, ?> model = flashScope.models.remove(url);
+			FlashModel model = flashScope.models.remove(url);
 			if (model != null) {
-				for (Map.Entry<String, ?> entry : model.entrySet()) {
-					request.setAttribute(entry.getKey(), entry.getValue());
-				}
+				request.setAttribute(ATTRIBUTE_NAME, model);
 			}
 		}
 	}
@@ -64,10 +66,10 @@ public class FlashScope {
 		FlashScope flashScope = null;
 		HttpSession session = request.getSession(create);
 		if (session != null) {
-			flashScope = (FlashScope) session.getAttribute(SESSION_ATTRIBUTE);
+			flashScope = (FlashScope) session.getAttribute(ATTRIBUTE_NAME);
 			if (flashScope == null && create) {
 				flashScope = new FlashScope();
-				session.setAttribute(SESSION_ATTRIBUTE, flashScope);
+				session.setAttribute(ATTRIBUTE_NAME, flashScope);
 			}
 		}
 		return flashScope;
