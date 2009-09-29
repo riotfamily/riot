@@ -19,7 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.filter.FilterPlugin;
+import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.core.security.auth.RiotUser;
 
 /**

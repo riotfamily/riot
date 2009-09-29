@@ -18,9 +18,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.servlet.DummyHttpServletResponse;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.view.ViewResolverHelper;
+import org.riotfamily.common.web.mvc.view.ViewResolverHelper;
+import org.riotfamily.common.web.support.DummyHttpServletResponse;
 import org.riotfamily.forms.TemplateUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

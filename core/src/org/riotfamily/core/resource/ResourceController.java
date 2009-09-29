@@ -20,8 +20,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.servlet.ServletUtils;
-import org.riotfamily.website.performance.Compressor;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
+import org.riotfamily.common.web.performance.Compressor;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.core.io.Resource;
 
 /**
@@ -33,6 +34,11 @@ public class ResourceController extends AbstractResourceController {
 
 	public void setCompressors(Map<String, Compressor> compressors) {
 		this.compressors = compressors;
+	}
+	
+	@Override
+	protected String getResourcePath(HttpServletRequest request) {
+		return "/" + HandlerUrlUtils.getPathWithinMapping(request);
 	}
 	
 	protected Reader getReader(Resource res, String path, String contentType,

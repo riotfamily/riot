@@ -22,7 +22,8 @@ import org.springframework.core.io.Resource;
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class MimetypesFileTypeMapFactoryBean implements FactoryBean {
+public class MimetypesFileTypeMapFactoryBean
+		implements FactoryBean<MimetypesFileTypeMap> {
 
 	private Resource location;
 	
@@ -45,7 +46,7 @@ public class MimetypesFileTypeMapFactoryBean implements FactoryBean {
 		this.types = types;
 	}
 
-	public Object getObject() throws Exception {
+	public MimetypesFileTypeMap getObject() throws Exception {
 		if (map == null) {
 			if (location != null) {
 				map = new MimetypesFileTypeMap(location.getInputStream());
@@ -62,7 +63,7 @@ public class MimetypesFileTypeMapFactoryBean implements FactoryBean {
 		return map;
 	}
 
-	public Class<?> getObjectType() {
+	public Class<MimetypesFileTypeMap> getObjectType() {
 		return MimetypesFileTypeMap.class;
 	}
 

@@ -29,7 +29,8 @@ import java.net.SocketException;
 import java.util.List;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.FileCopyUtils;
 
 public class IOUtils {
@@ -39,8 +40,8 @@ public class IOUtils {
 	private IOUtils() {
 	}
 	
-	private static RiotLog getLog() {
-		return RiotLog.get(IOUtils.class);
+	private static Logger getLog() {
+		return LoggerFactory.getLogger(IOUtils.class);
 	}
 	
 	/**

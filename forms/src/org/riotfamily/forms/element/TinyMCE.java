@@ -19,8 +19,8 @@ import java.util.Map;
 import net.sf.json.JSONFunction;
 import net.sf.json.JSONObject;
 
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;

@@ -12,19 +12,19 @@
  */
 package org.riotfamily.common.xml;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public class RiotSaxErrorHandler implements ErrorHandler {
 
-	private final RiotLog logger;
+	private final Logger logger;
 
 	/**
 	 * Create a new RiotSaxErrorHandler for the given logger.
 	 */
-	public RiotSaxErrorHandler(RiotLog logger) {
+	public RiotSaxErrorHandler(Logger logger) {
 		this.logger = logger;
 	}
 

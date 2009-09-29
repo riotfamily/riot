@@ -23,7 +23,8 @@ import javax.servlet.ServletContext;
 import org.riotfamily.common.io.RecursiveFileIterator;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.RandomStringGenerator;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.common.util.RandomStringGenerator.Chars;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -38,7 +39,7 @@ import org.springframework.web.context.ServletContextAware;
 public class DefaultFileStore implements FileStore, ServletContextAware, 
 		InitializingBean {
 
-	private RiotLog log = RiotLog.get(DefaultFileStore.class);
+	private Logger log = LoggerFactory.getLogger(DefaultFileStore.class);
 	
 	private String uriPrefix;
 	

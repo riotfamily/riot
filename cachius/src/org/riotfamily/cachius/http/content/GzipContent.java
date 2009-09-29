@@ -28,7 +28,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.support.IOUtils;
+import org.riotfamily.cachius.http.support.IOUtils;
+
 
 public class GzipContent extends BinaryContent {
 
@@ -68,7 +69,9 @@ public class GzipContent extends BinaryContent {
 		if (responseCanBeZipped(request)) {
 			serveZipped(request, response);
 		}
-		super.serve(request, response);
+		else {
+			super.serve(request, response);
+		}
 	}
 	
 	protected void serveZipped(HttpServletRequest request,
@@ -89,13 +92,12 @@ public class GzipContent extends BinaryContent {
 	 * {@link #clientAcceptsGzip(HttpServletRequest) the client accepts gzip 
 	 * encoded content}, the {@link #userAgentHasGzipBugs(HttpServletRequest) 
 	 * user-agent has no known gzip-related bugs} and the request is not an 
-	 * {@link WebUtils#isIncludeRequest(javax.servlet.ServletRequest)
-	 * include request}.
+	 * include request.
 	 */
 	protected boolean responseCanBeZipped(HttpServletRequest request) {
 		return clientAcceptsGzip(request) 
 				&& !userAgentHasGzipBugs(request)
-				; //&& !WebUtils.isIncludeRequest(getRequest());
+				&& request.getAttribute("javax.servlet.include.request_uri") == null;
 	}
 	
 	/**

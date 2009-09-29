@@ -24,11 +24,12 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.crawler.PageData;
 import org.riotfamily.crawler.PageHandler;
 import org.riotfamily.search.analysis.AnalyzerFactory;
 import org.riotfamily.search.analysis.DefaultAnalyzerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -41,7 +42,7 @@ import org.springframework.web.util.WebUtils;
 public class Indexer implements PageHandler,
 		ServletContextAware, InitializingBean {
 
-	private RiotLog log = RiotLog.get(Indexer.class);
+	private Logger log = LoggerFactory.getLogger(Indexer.class);
 
 	private Directory indexDir;
 
@@ -128,7 +129,7 @@ public class Indexer implements PageHandler,
 			tempWriter.setUseCompoundFile(compound);
 		}
 		catch (IOException e) {
-			log.error(e);
+			log.error("Error", e);
 		}
 	}
 
@@ -178,7 +179,7 @@ public class Indexer implements PageHandler,
 			indexWriter.close();
 		}
 		catch (IOException e) {
-			log.error(e);
+			log.error("Error", e);
 		}
 		tempWriter = null;
 	}

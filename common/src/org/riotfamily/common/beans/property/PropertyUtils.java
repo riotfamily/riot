@@ -17,8 +17,6 @@ import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.BeanUtils;
@@ -33,15 +31,12 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * Utility class to access bean properties via relection.
+ * Utility class to access bean properties via reflection.
  */
 public final class PropertyUtils {
 
 	private static DefaultPropertyEditorRegistry registry =
 			new DefaultPropertyEditorRegistry();
-
-	private static Pattern expressionPattern = Pattern.compile(
-			"\\$\\{(.*?)\\}");
 
 	private PropertyUtils() {
 	}
@@ -128,21 +123,6 @@ public final class PropertyUtils {
 	 */
 	public static void setProperties(Object bean, Map<String, ?> properties) {
 		new BeanWrapperImpl(bean).setPropertyValues(new MutablePropertyValues(properties));
-	}
-
-	/**
-	 * @since 6.4
-	 */
-	public static String evaluate(String expression, Object bean) {
-		Matcher matcher = expressionPattern.matcher(expression);
-		StringBuffer sb = new StringBuffer();
-		while (matcher.find()) {
-			String property = matcher.group(1);
-			Object value = getProperty(bean, property);
-			matcher.appendReplacement(sb, convertToString(value));
-		}
-		matcher.appendTail(sb);
-		return sb.toString();
 	}
 
 	@SuppressWarnings("unchecked")

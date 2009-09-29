@@ -15,6 +15,9 @@ package org.riotfamily.common.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 /**
@@ -61,8 +64,8 @@ public final class EmailValidationUtils {
 	private EmailValidationUtils() {
     }
 
-	private static RiotLog getLog() {
-		return RiotLog.get(EmailValidationUtils.class);
+	private static Logger getLog() {
+		return LoggerFactory.getLogger(EmailValidationUtils.class);
 	}
 	
     /**

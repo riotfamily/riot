@@ -19,14 +19,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.media.store.FileStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 public class DownloadController implements Controller {
 
-	private RiotLog log = RiotLog.get(this);
+	private Logger log = LoggerFactory.getLogger(DownloadController.class);
 	
 	private	FileStore fileStore;
 	
@@ -37,7 +39,7 @@ public class DownloadController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		String uri = (String) request.getAttribute("uri");
+		String uri = "/" + HandlerUrlUtils.getPathWithinMapping(request);
 		if (uri != null) {
 			File file = fileStore.retrieve(uri);
 			log.debug("Serving file "+uri+" with content-disposition: attachment");

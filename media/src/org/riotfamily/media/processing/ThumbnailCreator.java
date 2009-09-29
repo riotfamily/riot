@@ -15,21 +15,17 @@ package org.riotfamily.media.processing;
 import java.io.File;
 import java.io.IOException;
 
-import org.riotfamily.common.image.ImageMagick;
-import org.riotfamily.common.image.ImageMagickThumbnailer;
-import org.riotfamily.common.image.Thumbnailer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
-import org.springframework.beans.factory.InitializingBean;
+import org.riotfamily.media.processing.ImageMagick;
+import org.riotfamily.media.processing.ImageMagickThumbnailer;
+import org.riotfamily.media.processing.Thumbnailer;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
- * @deprecated
  */
-public class ThumbnailCreator extends AbstractFileProcessor 
-		implements InitializingBean {
+public class ThumbnailCreator {
 
 	private Thumbnailer thumbnailer;
 	

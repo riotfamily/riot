@@ -15,7 +15,7 @@ package org.riotfamily.forms.element.select;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.TagWriter;
 
 
 /**

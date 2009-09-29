@@ -15,7 +15,7 @@ package org.riotfamily.core.view;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.core.security.AccessController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;

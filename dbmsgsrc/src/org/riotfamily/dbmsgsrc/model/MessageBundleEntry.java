@@ -18,9 +18,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -31,17 +28,17 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
+import org.hibernate.criterion.Restrictions;
+import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.util.Generics;
 import org.springframework.util.StringUtils;
 
 @Entity
 @Table(name="riot_dbmsgsrc_entries")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="messages")
-public class MessageBundleEntry {
+public class MessageBundleEntry extends ActiveRecordBeanSupport {
 
 	public static final Locale C_LOCALE = new Locale("c");
-	
-	private Long id;
 	
 	private String bundle;
 	
@@ -61,15 +58,6 @@ public class MessageBundleEntry {
 		if (StringUtils.hasText(defaultMessage)) {
 			setDefaultMessage(new Message(C_LOCALE, defaultMessage));
 		}
-	}
-
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 	
 	@NaturalId
@@ -151,6 +139,20 @@ public class MessageBundleEntry {
 			return false;
 		}
 		return messages.size() > 1;
+	}
+
+	// ------------------------------------------------------------------------
+	// Active record methods
+	// ------------------------------------------------------------------------
+	
+	public static MessageBundleEntry loadByBundleAndCode(String bundle, String code) {
+		return (MessageBundleEntry) getSession().createCriteria(MessageBundleEntry.class)
+			.setCacheable(true)
+			.setCacheRegion("messages")
+			.add(Restrictions.naturalId()
+				.set("bundle", bundle)
+				.set("code", code))
+				.uniqueResult();
 	}
 
 }

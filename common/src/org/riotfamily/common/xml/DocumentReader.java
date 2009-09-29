@@ -12,7 +12,8 @@
  */
 package org.riotfamily.common.xml;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.xml.DefaultDocumentLoader;
 import org.springframework.beans.factory.xml.DocumentLoader;
 import org.springframework.core.io.Resource;
@@ -22,14 +23,14 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 
 /**
- * Convinience class to read a XML document from a 
+ * Convenience class to read a XML document from a 
  * {@link org.springframework.core.io.Resource resource}.
  */
 public class DocumentReader {
 
 	protected static final int VALIDATION_MODE_NONE = 0;
 		
-	private RiotLog log = RiotLog.get(DocumentReader.class);
+	private Logger log = LoggerFactory.getLogger(DocumentReader.class);
 		
 	private Resource resource;
 	

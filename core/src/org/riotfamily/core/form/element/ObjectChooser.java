@@ -14,7 +14,7 @@ package org.riotfamily.core.form.element;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.mapping.HandlerUrlUtils;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenRepository;

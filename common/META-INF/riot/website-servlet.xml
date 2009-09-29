@@ -1,0 +1,244 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<description>
+		Website servlet (Riot Website)
+	</description>
+	
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<description>
+			Default MessageSource for the website servlet that reads properties
+			from /WEB-INF/i18n/messages.
+		</description>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="fallbackToSystemLocale" value="false" />
+		<property name="cacheSeconds" value="1" />
+        <property name="basename" value="/WEB-INF/i18n/messages" />
+    </bean>
+	
+	<bean id="configurer" class="org.riotfamily.common.beans.config.ProfileConfigurer">
+		<description>
+			Configurer that fills in placeholders from application.properties
+		</description>
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="contextOverride" value="true" />
+	</bean>
+	
+	<bean id="expiresHeaderFilterPlugin" class="org.riotfamily.common.web.performance.ExpiresHeaderFilterPlugin">
+		<description>
+			FilterPlugin that sets a far-future expires header for all stamped URLs.
+		</description>
+		<property name="filterName" value="website-filter" />
+	</bean>
+
+	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.common.web.filter.OpenSessionInViewFilterPlugin">
+		<description>
+			FilterPlugin that binds a Hibernate Session to the thread for the 
+			entire processing of the request just like Spring's OpenSessionInViewFilter.
+		</description>
+		<constructor-arg ref="sessionFactory" />
+		<property name="filterName" value="website-filter" />
+	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<description>
+			MultipartResolver that uses Jakarta Commons FileUpload to handle uploads.
+		</description>
+	</bean>
+	
+	<bean class="org.riotfamily.common.web.mvc.servlet.ReloadableDispatcherServletConfig">
+		<property name="reloadable" value="${website-servlet.reloadable=false}" />
+	</bean>
+	
+	<bean name="riotAccessControlFilterPlugin" class="org.riotfamily.core.security.session.AccessControlFilterPlugin">
+		<property name="filterName" value="website-filter" />
+	</bean>
+	
+	<bean id="cacheKeyAugmentor" class="org.riotfamily.common.web.cache.NoOpCacheKeyAugmentor" />
+	
+	<bean id="cacheableHandlerAdapter" class="org.riotfamily.common.web.cache.controller.CacheableControllerHandlerAdapter">
+		<description>
+			HandlerAdapter that handles CacheableControllers.
+		</description>
+		<constructor-arg ref="cacheService" />
+		<constructor-arg ref="cacheKeyAugmentor" />
+	</bean>
+	
+	<bean id="simpleControllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter">
+		<description>
+			HandlerAdapter that handles regular (non-cacheable) Controllers.
+		</description>
+	</bean>
+		
+	<bean id="annotationMethodHandlerAdapter" class="org.riotfamily.common.web.cache.annotation.CacheAnnotationHandlerAdapter">
+		<description>
+			HandlerAdapter that handles @RequestMapping annotated beans
+			and supports the @Cache annotation.
+		</description>
+		<constructor-arg ref="cacheService" />
+		<constructor-arg ref="cacheKeyAugmentor" />
+	</bean>
+	
+	<bean class="org.riotfamily.common.web.mvc.mapping.ReverseUrlHanderMappingAdapter" />
+	
+	<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeFilterPlugin">
+		<property name="filterName" value="website-filter" />
+	</bean>
+	
+	<bean id="cssTemplateController" name="/**/*.css" 
+			class="org.riotfamily.common.web.css.CssTemplateController">
+
+		<description>
+			Controller to serve CSS files.
+		</description>		
+		<property name="addContextPathToUrls" value="true" />
+		<property name="stamper" ref="resourceStamper" />
+		<property name="compressor">
+			<bean class="org.riotfamily.common.web.performance.YUICssCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>			
+		</property>
+	</bean>
+	
+	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.common.web.performance.MinifyCssController">
+		<description>
+			Controller to compress (minify) CSS files.
+		</description>
+		<constructor-arg>
+			<bean class="org.riotfamily.common.web.performance.YUICssCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>			
+		</constructor-arg>
+		<property name="reloadable" value="${riot.resources.reloadable=false}" />
+	</bean>
+	
+	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.common.web.performance.MinifyScriptController">
+		<description>
+			Controller to compress (minify) JavaScript files.
+		</description>
+		<constructor-arg ref="javaScriptCompressor" />
+		<property name="reloadable" value="${riot.resources.reloadable=false}" />
+	</bean>
+	
+	<bean id="clientErrorLogController" name="/riot-utils/error.*" class="org.riotfamily.common.web.controller.ClientErrorLogController">
+		<description>
+			Controller to log client-side JavaScript errors.
+		</description>
+	</bean>
+		
+	<bean id="freemarkerConfig" class="org.riotfamily.common.web.cache.freemarker.WebsiteFreeMarkerConfigurer">
+		<description>
+			FreeMarker configuration.
+		</description>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="templateLoaderPaths">
+		    <list>
+		        <value>/WEB-INF/view</value>
+		    </list>
+		</property>
+		<property name="freemarkerSettings" value="${website-servlet.freemarker.(*)}" />
+		<property name="useTemplateCache" value="${website-servlet.useTemplateCache=true}" />
+		<property name="macroLibraries">
+			<props>
+				<prop key="c">classpath:org/riotfamily/common/web/macro/common.ftl</prop>
+				<prop key="form">classpath:org/riotfamily/common/web/macro/form.ftl</prop>
+				<prop key="template">classpath:org/riotfamily/common/web/template/template.ftl</prop>
+				<prop key="txt2img">classpath:org/riotfamily/common/web/txt2img/txt2img.ftl</prop>
+			</props>
+		</property>
+		<property name="whitespaceStripping" value="true" />
+	</bean>
+	
+	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.common.web.cache.freemarker.TaggingObjectWrapperPlugin">
+		<description>
+			ObjectWrapperPlugin that tags cache items whenever a class with the
+ 			@TagCacheItems annotation is accessed by a FreeMarker template.
+		</description>
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="queryResultObjectWrapperPlugin" class="org.riotfamily.common.web.cache.freemarker.TypedListObjectWrapperPlugin">
+		<description>
+			ObjectWrapperPlugin that tags cache items whenever a QueryResult
+			for items with a @TagCacheItems annotation is accessed by a 
+			FreeMarker template.
+		</description>
+	</bean>
+	
+	<bean class="org.riotfamily.common.freemarker.MapEntityObjectWrapperPlugin">
+		<description>
+			ObjectWrapperPlugin that wraps Entities that implement the 
+			java.util.Map interface with a MapModel (instead of a SimpleHash).
+		</description>
+	</bean>
+    
+    <bean class="org.riotfamily.common.hibernate.ActiveRecordClassExposer">
+    	<description>
+    		ConfigurationPostProcessor that provides convenient access to the 
+    		static methods of ActiveRecord classes from within FreeMarker templates.
+    	</description>
+    	<constructor-arg ref="sessionFactory" />
+    </bean>
+    
+	<bean id="viewResolver" class="org.riotfamily.common.web.mvc.view.RiotFreeMarkerViewResolver">
+		<property name="exposeRequestAttributes" value="true" />
+	</bean>
+	
+	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver" />
+	
+	<bean id="commonMacroHelper" class="org.riotfamily.common.web.macro.CommonMacroHelperFactory">
+		<property name="stamper" ref="resourceStamper" />
+		<property name="handlerUrlResolver" ref="handlerUrlResolver" />
+		<property name="hyphenator" ref="riotHyphenator" />
+		<property name="compressResources" value="${riot.resources.compress=true}" />
+	</bean>
+	
+	<bean id="formMacroHelper" class="org.riotfamily.common.web.macro.FormMacroHelperFactory" />
+	
+	<bean id="buttonService" class="org.riotfamily.common.web.txt2img.ButtonService">
+		<constructor-arg ref="cacheService" />
+		<constructor-arg ref="resourceStamper" />
+		<property name="reloadable" value="${riot.resources.reloadable=false}" />
+	</bean>
+	
+	<bean id="txt2ImgMacroHelper" class="org.riotfamily.common.web.txt2img.Txt2ImgMacroHelperFactory">
+		<constructor-arg ref="buttonService" />
+	</bean>
+	
+	<bean id="templateMacroHelper" class="org.riotfamily.common.web.template.TemplateMacroHelperFactory" />
+		
+	<bean id="riotHyphenator" class="org.riotfamily.common.util.RiotHyphenator">
+		<property name="baseDir" value="/WEB-INF/hyphenation" />
+	</bean>
+	
+	<bean id="txt2ImgController" name="/riot-utils/txt2img.{type}" class="org.riotfamily.common.web.txt2img.Txt2ImgController">
+		<property name="compressor">
+			<bean class="org.riotfamily.common.web.performance.YUIJavaScriptCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>			
+		</property>
+	</bean>
+	
+	<bean id="txt2imgButtonController" name="/riot-utils/imagebtn/{style}.*" class="org.riotfamily.common.web.txt2img.ButtonController">
+		<constructor-arg ref="buttonService" />
+	</bean>
+	
+	<bean id="txt2imgButtonCssController" name="/riot-utils/imagebtn/buttons.css" class="org.riotfamily.common.web.txt2img.ButtonStylesheetController">
+		<constructor-arg ref="buttonService" />
+	</bean>
+		
+	<bean id="countryFlagController" name="/riot-utils/country/{locale}.gif" class="org.riotfamily.common.web.controller.CountryFlagController">
+		<constructor-arg ref="fileTypeMap" />
+		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/icons/flags/" />
+		<property name="defaultFlag" value="europeanunion" />
+		<property name="suffix" value=".gif" />
+	</bean>
+
+</beans>

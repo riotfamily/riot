@@ -12,7 +12,8 @@
  */
 package org.riotfamily.core.security.policy;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.core.security.auth.RiotUser;
 
 /**
@@ -23,7 +24,7 @@ import org.riotfamily.core.security.auth.RiotUser;
  */
 public class LoggingPolicy implements AuthorizationPolicy {
 	
-    private RiotLog log = RiotLog.get(LoggingPolicy.class);
+    private Logger log = LoggerFactory.getLogger(LoggingPolicy.class);
     
 	private int order = Integer.MIN_VALUE;
 	

@@ -19,11 +19,9 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.common.servlet.ServletUtils;
-import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.common.util.TagWriter;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;
@@ -38,6 +36,7 @@ import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
+import org.riotfamily.media.processing.ImageCropper;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,9 +45,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class ImageUpload extends FileUpload {
 
-	@SuppressWarnings("unused")
-	private RiotLog log = RiotLog.get(this);	
-	
 	public enum Alpha {
 		ALLOWED, REQUIRED, FORBIDDEN
 		
@@ -86,6 +82,7 @@ public class ImageUpload extends FileUpload {
 		this.cropper = cropper;	
 	}
 
+	@Override
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
@@ -162,10 +159,12 @@ public class ImageUpload extends FileUpload {
 		this.alpha = alpha != null ? Alpha.valueOf(alpha.toUpperCase()) : null;
 	}
 
+	@Override
 	protected RiotFile createRiotFile(MultipartFile multipartFile) throws IOException {
 		return new RiotImage(multipartFile);
 	}
 	
+	@Override
 	protected void validateFile(RiotFile file) {
 		RiotImage image = (RiotImage) file;
 		if (validFormats != null) {
@@ -244,6 +243,7 @@ public class ImageUpload extends FileUpload {
 			return PREVIEW_RESOURCE;
 		}
 
+		@Override
 		protected void renderInternal(PrintWriter writer) {
 			int w = crop && maxWidth > 0 ? maxWidth : previewWidth;
 			int h = (maxHeight > 0 ? maxHeight : previewHeight) + 50;

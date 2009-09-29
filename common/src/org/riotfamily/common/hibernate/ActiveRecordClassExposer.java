@@ -19,7 +19,8 @@ import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.freemarker.ConfigurationPostProcessor;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 
 import freemarker.ext.beans.BeansWrapper;
@@ -47,7 +48,7 @@ import freemarker.template.TemplateModel;
  */
 public class ActiveRecordClassExposer implements ConfigurationPostProcessor {
 
-	RiotLog log = RiotLog.get(this);
+	Logger log = LoggerFactory.getLogger(ActiveRecordClassExposer.class);
 	
 	private SessionFactory sessionFactory;
 	

@@ -14,7 +14,6 @@ package org.riotfamily.common.hibernate;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -153,6 +152,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			interceptions.set(i.nested());
 			try {
 				template.execute(new HibernateCallbackWithoutResult() {
+					@Override
 					public void doWithoutResult(Session session) throws Exception {
 						for (Object entity : i.getDeletedEntities()) {
 							for (EntityListener listener : getListeners(entity)) {
@@ -253,24 +253,15 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		
 		public List<Object> getSavedEntities() {
-			if (savedEntities == null) {
-				return Collections.emptyList();
-			}
-			return savedEntities;
+			return Generics.emptyIfNull(savedEntities);
 		}
 		
 		public List<Update> getUpdates() {
-			if (updates == null) {
-				return Collections.emptyList();
-			}
-			return updates;
+			return Generics.emptyIfNull(updates);
 		}
 		
 		public List<Object> getDeletedEntities() {
-			if (deletedEntities == null) {
-				return Collections.emptyList();
-			}
-			return deletedEntities;
+			return Generics.emptyIfNull(deletedEntities);
 		}
 		
 		public boolean isEmpty() {

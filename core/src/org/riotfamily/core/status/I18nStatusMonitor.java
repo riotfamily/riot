@@ -16,8 +16,8 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.screen.ScreenContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;

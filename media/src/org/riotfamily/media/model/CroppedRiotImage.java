@@ -21,7 +21,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-import org.riotfamily.common.image.ImageCropper;
+import org.riotfamily.media.processing.ImageCropper;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

@@ -12,24 +12,29 @@
  */
 package org.riotfamily.media.setup;
 
-import java.io.IOException;
-
-import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class RiotImageFactoryBean extends AbstractRiotFileFactoryBean {
-		
-	public Class<?> getObjectType() {
+public class RiotImageFactoryBean extends AbstractFactoryBean<RiotImage> {
+	
+	private Resource resource;
+
+	public RiotImageFactoryBean(Resource resource) {
+		this.resource = resource;
+	}
+
+	@Override
+	public Class<RiotImage> getObjectType() {
 		return RiotImage.class;
 	}
 	
-	protected RiotFile createRiotFile(Resource resource) throws IOException {
+	@Override
+	protected RiotImage createInstance() throws Exception {
 		return new RiotImage(resource.getFile());
 	}
-	
 }

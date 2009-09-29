@@ -14,7 +14,7 @@ package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.util.DocumentWriter;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.DHTMLElement;

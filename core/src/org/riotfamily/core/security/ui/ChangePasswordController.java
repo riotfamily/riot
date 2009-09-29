@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.view.NamedHandlerRedirectView;
+import org.riotfamily.common.web.mvc.view.NamedHandlerRedirectView;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUserDao;
 import org.riotfamily.forms.Form;

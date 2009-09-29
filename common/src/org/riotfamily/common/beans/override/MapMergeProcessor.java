@@ -14,7 +14,8 @@ package org.riotfamily.common.beans.override;
 
 import java.util.Map;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -33,7 +34,7 @@ import org.springframework.util.StringUtils;
  */
 public class MapMergeProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
-	private RiotLog log = RiotLog.get(MapMergeProcessor.class);
+	private Logger log = LoggerFactory.getLogger(MapMergeProcessor.class);
 			
 	private String ref;
 	

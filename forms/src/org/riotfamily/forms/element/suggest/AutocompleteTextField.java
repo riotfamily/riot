@@ -18,8 +18,8 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.DocumentWriter;
+import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.element.AbstractTextElement;

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.util.DocumentWriter;
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.util.StringUtils;

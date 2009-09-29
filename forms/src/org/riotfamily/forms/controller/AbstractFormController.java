@@ -19,7 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
@@ -42,7 +43,7 @@ public abstract class AbstractFormController implements Controller {
 	
 	private static final String EXCLUSIVE_PARAM = "_exclusive";
 	
-	protected RiotLog log = RiotLog.get(getClass());
+	protected Logger log = LoggerFactory.getLogger(getClass());
 	
 	private FormContextFactory formContextFactory;
 	

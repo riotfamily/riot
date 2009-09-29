@@ -22,7 +22,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -37,7 +38,7 @@ import org.springframework.util.StringUtils;
  */
 public class RiotSessionFactoryBean extends AnnotationSessionFactoryBean {
 
-	private RiotLog log = RiotLog.get(RiotSessionFactoryBean.class);
+	private Logger log = LoggerFactory.getLogger(RiotSessionFactoryBean.class);
 	
 	private boolean validate = false;
 	

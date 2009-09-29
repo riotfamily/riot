@@ -1,5 +1,9 @@
 package org.riotfamily.cachius;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
@@ -7,25 +11,43 @@ import org.riotfamily.cachius.invalidation.DefaultItemInvalidator;
 import org.riotfamily.cachius.invalidation.ItemIndex;
 import org.riotfamily.cachius.invalidation.ItemInvalidator;
 import org.riotfamily.cachius.persistence.DiskStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 
-public class CacheService {
+public class CacheService implements DisposableBean {
 
-	private CacheManager cacheManager;
+	private Logger log = LoggerFactory.getLogger(CacheService.class);
+
+	private Map<String, Cache> caches = new HashMap<String, Cache>();
 	
 	private DiskStore diskStore;
-	
+
 	private ItemIndex index = new ItemIndex();
 	
 	private ItemInvalidator invalidator = new DefaultItemInvalidator();
+
+	public CacheService(DiskStore diskStore) {
+		this(diskStore, Collections.singletonList(new Region("default")));
+	}
 	
-	public CacheService(CacheManager cacheManager, DiskStore diskStore) {
-		this.cacheManager = cacheManager;
+	public CacheService(DiskStore diskStore, List<Region> regions) {
 		this.diskStore = diskStore;
+		for (Region region : regions) {
+			caches.put(region.getName(), new Cache(region, index));
+		}
 	}
 
-	protected Cache getCache(String region) {
-		return cacheManager.getCache(region);
+	public Cache getCache(String region) {
+		if (region == null) {
+			region = "default";
+		}
+		Cache cache = caches.get(region);
+		if (cache == null) {
+			throw new IllegalArgumentException("No such cache region: " + region);
+		}
+		return cache;
 	}
 
 	private CacheEntry getCacheEntry(CacheHandler handler) {
@@ -58,7 +80,7 @@ public class CacheService {
         	CacheItem item = entry.getItem();
         	if (item.isUpToDate(handler)) {
         		//stats.addHit();
-        		//log.debug("Serving cached content: " + entry.getKey());
+        		log.debug("Serving cached content: {}", entry.getKey());
         		serveData(handler, entry);
         	}
         	else {
@@ -92,7 +114,7 @@ public class CacheService {
 		try {
 			oldItem = entry.getItem();
 			if (oldItem.isUpToDate(handler)) {
-				//log.debug("Item has already been updated by another thread");
+				log.debug("Item has already been updated by another thread");
 				serveData(handler, entry);
 				return;
 			}
@@ -107,7 +129,7 @@ public class CacheService {
 			}
 		}
 		
-		//log.debug("Performing non-blocking update ...");
+		log.debug("Updating {} (non-blocking)", entry.getKey());
 		
 		// Create a new CacheItem and capture the content ...
 		CacheItem newItem = new CacheItem();
@@ -137,12 +159,12 @@ public class CacheService {
 		try {
 			CacheItem oldItem = entry.getItem();
 			if (oldItem.isUpToDate(handler)) {
-				//log.debug("Item has already been updated by another thread");
+				log.debug("Item has already been updated by another thread");
 				serveData(handler, entry);
 			}
 			else {
 				// Item is stale and must be revalidated
-				//log.debug("Performing blocking update ...");
+				log.debug("Updating {} (blocking)", entry.getKey());
 				CacheItem newItem = new CacheItem();
 				updateInContext(handler, newItem);
 				replaceItemAndServeData(entry, handler, oldItem, newItem);
@@ -217,6 +239,12 @@ public class CacheService {
 
 	public void invalidateTaggedItems(String tag) {
 		invalidator.invalidate(index, tag);
+	}
+
+	public void destroy() throws Exception {
+		for (Cache cache : caches.values()) {
+			cache.destroy();
+		}
 	}
     
 }

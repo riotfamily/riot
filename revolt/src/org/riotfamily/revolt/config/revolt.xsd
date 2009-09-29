@@ -7,7 +7,7 @@
 		xmlns="http://www.riotfamily.org/schema/revolt">
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans"
-		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.5.xsd" />
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" />
 
 	<xsd:attributeGroup name="column-attributes">
 		<xsd:attribute name="name" type="xsd:string" use="required" />

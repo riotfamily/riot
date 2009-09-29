@@ -12,7 +12,8 @@
  */
 package org.riotfamily.common.beans.namespace;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -44,13 +45,15 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	/** Constant for the id attribute */
 	public static final String ID_ATTRIBUTE = "id";
 
-	private RiotLog log = RiotLog.get(AbstractGenericBeanDefinitionParser.class);
+	private Logger log = LoggerFactory.getLogger(AbstractGenericBeanDefinitionParser.class);
 	
 	private Class<?> beanClass;
 
 	private BeanDefinitionDecorator decorator;
 	
 	private int autowireMode = AbstractBeanDefinition.AUTOWIRE_NO;
+	
+	private String factoryMethod;
 	
 	private boolean enabled = true;
 
@@ -90,6 +93,14 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	 */
 	public AbstractGenericBeanDefinitionParser setAutowireMode(int autowireMode) {
 		this.autowireMode = autowireMode;
+		return this;
+	}
+	
+	/**
+	 * Sets the name of the factory method. Default is <code>null</code>.
+	 */
+	public AbstractGenericBeanDefinitionParser setFactoryMethod(String factoryMethod) {
+		this.factoryMethod = factoryMethod;
 		return this;
 	}
 	
@@ -153,7 +164,8 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 			// Default-lazy-init applies to custom bean definitions as well.
 			builder.setLazyInit(true);
 		}
-		builder.setAutowireMode(autowireMode );
+		builder.setAutowireMode(autowireMode);
+		builder.setFactoryMethod(factoryMethod);
 		doParse(element, parserContext, builder);
 		return builder.getBeanDefinition();
 	}

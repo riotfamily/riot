@@ -7,7 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.support.IOUtils;
+import org.riotfamily.cachius.http.support.IOUtils;
+
 
 public class BinaryContent implements Content {
 

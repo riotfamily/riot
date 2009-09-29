@@ -29,6 +29,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -65,8 +67,8 @@ public final class FormatUtils {
 	private FormatUtils() {
 	}
 	
-	private static RiotLog getLog() {
-		return RiotLog.get(FormatUtils.class);
+	private static Logger getLog() {
+		return LoggerFactory.getLogger(FormatUtils.class);
 	}
 
 	public static String formatNumber(Number number, String pattern, Locale locale) {

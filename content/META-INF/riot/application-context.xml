@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+
+	
+	<bean id="viewComponentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">
+		<property name="viewNamePrefix" value="components/" />
+		<property name="viewNameSuffix" value=".ftl" />
+	</bean>
+	 	
+	<bean id="componentMetaDataProvider" class="org.riotfamily.components.render.component.ViewComponentMetaDataProvider">
+		<constructor-arg ref="viewComponentRenderer" />
+	</bean>
+	
+	<bean id="componentListRenderer" class="org.riotfamily.components.render.list.ComponentListRenderer">
+		<constructor-arg ref="transactionManager" />
+		<property name="metaDataProvider" ref="componentMetaDataProvider" />
+		<property name="liveModeRenderStrategy">
+			<bean class="org.riotfamily.components.render.list.DefaultRenderStrategy">
+				<constructor-arg ref="viewComponentRenderer" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean class="org.riotfamily.components.index.ContentListener">
+		<description>
+			EntityListern that notifies ContentIndexer beans when a Content
+			object is modified.
+		</description>
+	</bean>
+	
+	<bean class="org.riotfamily.components.index.FileReferenceUpdater">
+		<description>
+			Extracts references to RiotFile objects from (XML-) Content to
+			prevent the MediaCleanUpTask from deleting these files.
+		</description>
+	</bean>
+	
+	<bean id="sitemapSchema" class="org.riotfamily.common.beans.factory.SingletonLookupFactoryBean">
+		<constructor-arg value="org.riotfamily.pages.config.SitemapSchema" />
+	</bean>
+	
+	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
+		<constructor-arg ref="sitemapSchema" />
+	</bean>
+	
+	<bean class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+	
+	<bean class="org.riotfamily.pages.config.SystemPageSyncListener">
+		<constructor-arg ref="sitemapSchema" />
+	</bean>
+	
+	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
+
+	<bean class="org.riotfamily.components.model.Content" scope="prototype">
+		<property name="marshaller">
+			<bean class="org.riotfamily.components.xstream.XStreamMarshaller">
+				<property name="driver">
+					<bean class="com.thoughtworks.xstream.io.xml.Dom4JDriver">
+						<property name="outputFormat">
+							<bean class="org.dom4j.io.OutputFormat">
+								<property name="suppressDeclaration" value="true" />
+								<property name="encoding" value="UTF-8" />
+								<property name="indent" value="\t" />
+								<property name="indentSize" value="1" />
+								<property name="newlines" value="true" />
+							</bean>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="org.riotfamily.components.model.ContentEntity" scope="prototype">
+		<property name="cacheService" ref="cacheService" />
+	</bean>
+
+</beans>

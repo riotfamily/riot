@@ -132,6 +132,10 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 
 	public void setCommands(Collection<?> commands) {
 		this.commandMap = Generics.newLinkedHashMap();
+		addCommands(commands);
+	}
+	
+	private void addCommands(Collection<?> commands) {
 		if (commands != null) {
 			for (Object command : commands) {
 				if (command instanceof Command) {
@@ -139,7 +143,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 					this.commandMap.put(id, (Command) command);
 				}
 				else if (command instanceof Collection<?>) {
-					setCommands((Collection<?>) command);
+					addCommands((Collection<?>) command);
 				}
 				else {
 					throw new IllegalArgumentException(

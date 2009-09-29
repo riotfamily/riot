@@ -15,8 +15,8 @@ package org.riotfamily.core.security.session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.interceptor.OncePerRequestInterceptor;
-import org.riotfamily.common.mapping.HandlerUrlUtils;
+import org.riotfamily.common.web.mvc.interceptor.OncePerRequestInterceptor;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.security.auth.RiotUser;
 
 /**

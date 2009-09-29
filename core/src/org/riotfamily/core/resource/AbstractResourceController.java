@@ -25,13 +25,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.servlet.ServletUtils;
-import org.riotfamily.common.util.RiotLog;
-import org.riotfamily.website.cache.AbstractCacheableController;
-import org.riotfamily.website.cache.Compressible;
+import org.riotfamily.common.web.cache.AbstractCacheableController;
+import org.riotfamily.common.web.cache.controller.Compressible;
+import org.riotfamily.common.web.support.ServletUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.LastModified;
 
 /**
  * Controller that serves an internal resource.
@@ -41,10 +41,10 @@ import org.springframework.web.servlet.mvc.LastModified;
  * <code>request.getPathInfo()</code> is used.
  * </p>
  */
-public class AbstractResourceController extends AbstractCacheableController
-		implements LastModified, Compressible {
+public abstract class AbstractResourceController extends AbstractCacheableController
+		implements Compressible {
 
-	private RiotLog log = RiotLog.get(AbstractResourceController.class);
+	private Logger log = LoggerFactory.getLogger(AbstractResourceController.class);
 	
 	private FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 	
@@ -52,30 +52,8 @@ public class AbstractResourceController extends AbstractCacheableController
     
     private List<ResourceFilter> filters;
     
-	private long lastModified = System.currentTimeMillis();
-	
 	private boolean checkForModifications = false;
-	
-	private String pathAttribute;
-	
-	private String pathParameter;
-	
 		        
-	/**
-	 * Sets the name of the request attribute that will contain the 
-	 * resource path. 
-	 */
-	public void setPathAttribute(String pathAttribute) {
-		this.pathAttribute = pathAttribute;
-	}
-	
-	/**
-	 * Sets the name of the request parameter that will contain the 
-	 * resource path.
-	 */
-	public void setPathParameter(String pathParameter) {
-		this.pathParameter = pathParameter;
-	}
 	
     public void setFileTypeMap(FileTypeMap fileTypeMap) {
 		this.fileTypeMap = fileTypeMap;
@@ -115,40 +93,8 @@ public class AbstractResourceController extends AbstractCacheableController
 		return fileTypeMap.getContentType(resource.getFilename());
 	}
 	
-	protected String getResourcePath(HttpServletRequest request) {
-		if (pathAttribute != null) {
-    		return "/" + request.getAttribute(pathAttribute); 
-    	}
-		else if (pathParameter != null) {
-			return "/" + request.getParameter(pathParameter);
-		}
-   		return request.getPathInfo();
-	}
-	
-	public long getLastModified(HttpServletRequest request) {
-		/*
-		if (checkForModifications) {
-			String path = getResourcePath(request);
-			long mtime = getLastModified(path);
-			return mtime >= 0 ? mtime : lastModified;
-		}
-		return lastModified;
-		*/
-		return System.currentTimeMillis();
-	}
-	
-	protected long getLastModified(String path) {
-		try {
-			Resource res = lookupResource(path);
-			if (res != null) {
-				return res.getFile().lastModified();
-			}
-		}
-		catch (IOException e) {
-		}
-		return -1;
-	}
-	
+	protected abstract String getResourcePath(HttpServletRequest request);
+		
 	public long getTimeToLive() {
 		return checkForModifications ? 0 : CACHE_ETERNALLY;
 	}

@@ -12,8 +12,9 @@
  */
 package org.riotfamily.core.security.session;
 
-import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.common.web.filter.DiagnosticContextFilter;
 import org.riotfamily.core.security.auth.RiotUser;
+import org.slf4j.MDC;
 
 /**
  * Class that associates a RiotUser with the current thread.
@@ -27,7 +28,9 @@ public class SecurityContext {
 	
 	public static void bindUserToCurrentThread(RiotUser user) {
 		threadLocal.set(user);
-		RiotLog.put("RiotUser", (user != null) ? user.getUserId() : null);
+		if (user != null) {
+			MDC.put("RiotUser", user.getUserId());
+		}
 	}
 	
 	public static RiotUser getCurrentUser() {
@@ -36,7 +39,9 @@ public class SecurityContext {
 	
 	public static void resetUser() {
 		threadLocal.set(null);
-		RiotLog.remove("RiotUser");
+		if (!DiagnosticContextFilter.isPresent()) {
+			MDC.remove("RiotUser");
+		}
 	}
 	
 }

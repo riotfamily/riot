@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.riotfamily.org/schema/pages/page"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:tool="http://www.springframework.org/schema/tool"
+	attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.riotfamily.org/schema/pages/page">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" />
+		
+	<xsd:import namespace="http://www.springframework.org/schema/tool"
+		schemaLocation="http://www.springframework.org/schema/tool/spring-tool-3.0.xsd" />
+
+	<xsd:element name="schema">
+		<xsd:complexType>
+			<xsd:annotation>
+				<xsd:appinfo>
+					<tool:annotation>
+						<tool:exports type="org.riotfamily.pages.config.SitemapSchema" />
+					</tool:annotation>
+				</xsd:appinfo>
+			</xsd:annotation>
+			<xsd:sequence>
+				<xsd:element name="root-page" type="root-page" />
+			</xsd:sequence>
+			<xsd:attribute name="default-suffix" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+		
+	<xsd:complexType name="type">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<tool:annotation>
+					<tool:exports type="org.riotfamily.pages.config.PageType" />
+				</tool:annotation>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="type" type="type" />
+				<xsd:element name="type-ref" type="type-ref" />
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="suffix" type="xsd:string" />
+		<xsd:attribute name="label" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="bean-or-ref">
+		<xsd:choice>
+			<xsd:element ref="beans:bean" />
+			<xsd:element ref="beans:ref" />
+		</xsd:choice>
+	</xsd:complexType>
+	
+	<xsd:complexType name="type-ref">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<tool:annotation>
+					<tool:exports type="org.riotfamily.pages.config.PageTypeRef" />
+				</tool:annotation>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:attribute name="name" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="root-page">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<tool:annotation>
+					<tool:exports type="org.riotfamily.pages.config.RootPage" />
+				</tool:annotation>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:choice>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="type" type="type" />
+					<xsd:element name="type-ref" type="type-ref" />
+					<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+				</xsd:choice>
+				<xsd:element name="virtual-page" type="virtual-page" minOccurs="0" />
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="system-page">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<tool:annotation>
+					<tool:exports type="org.riotfamily.pages.config.SystemPage" />
+				</tool:annotation>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:choice>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="type" type="type" />
+					<xsd:element name="type-ref" type="type-ref" />
+					<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+				</xsd:choice>
+				<xsd:element name="virtual-page" type="virtual-page" minOccurs="0" />
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="suffix" type="xsd:string" />
+		<xsd:attribute name="label" type="xsd:string" />
+		<xsd:attribute name="path-component" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="virtual-page">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<tool:annotation>
+					<tool:exports type="org.riotfamily.pages.config.VirtualPage" />
+				</tool:annotation>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name ="resolver" type="bean-or-ref" />
+			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:element name ="virtual-page" type="virtual-page" minOccurs="0" />
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="suffix" type="xsd:string" />
+		<xsd:attribute name="label" type="xsd:string" />
+	</xsd:complexType>
+
+</xsd:schema>

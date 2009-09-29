@@ -68,7 +68,9 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware,
 	}
 
 	public void setParentScreen(RiotScreen parentScreen) {
-		this.parentScreen = parentScreen;
+		if (this.parentScreen == null) {
+			this.parentScreen = parentScreen;
+		}
 	}
 	
 	public Collection<RiotScreen> getChildScreens() {

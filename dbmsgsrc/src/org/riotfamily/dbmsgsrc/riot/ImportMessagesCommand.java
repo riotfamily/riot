@@ -19,7 +19,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
@@ -27,7 +28,6 @@ import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
-import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
@@ -37,16 +37,10 @@ import org.springframework.util.StringUtils;
 
 public class ImportMessagesCommand extends DialogCommand {
 
-	private static final RiotLog log = RiotLog.get(ImportMessagesCommand.class);
-	
-	private DbMessageSourceDao dao;
+	private static final Logger log = LoggerFactory.getLogger(ImportMessagesCommand.class);
 	
 	private String bundle = DbMessageSource.DEFAULT_BUNDLE;
 	
-	public ImportMessagesCommand(DbMessageSourceDao dao) {
-		this.dao = dao;
-	}
-
 	public void setBundle(String bundle) {
 		this.bundle = bundle;
 	}
@@ -95,10 +89,10 @@ public class ImportMessagesCommand extends DialogCommand {
 					String code = row.getCell(1).getRichStringCellValue().getString();
 					String translation = row.getCell(3).getRichStringCellValue().getString();
 					if (StringUtils.hasText(translation)) {
-						MessageBundleEntry entry = dao.findEntry(bundle, code);
+						MessageBundleEntry entry = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 						if (entry != null) {
 							entry.addTranslation(site.getLocale(), translation);
-							dao.saveEntry(entry);					
+							entry.save();					
 						}
 						else {
 							log.info("Message Code does not exist - " + code);

@@ -17,9 +17,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.security.AccessController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -45,7 +45,7 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 	
 	@Override
 	public String getTitle(ScreenContext context) {
-		if (context.getObject() != null) {
+		if (context.getObject() != null && getParentScreen() instanceof ListScreen) {
 			return ScreenUtils.getLabel(context.getObject(), this);
 		}
 		return super.getTitle(context);

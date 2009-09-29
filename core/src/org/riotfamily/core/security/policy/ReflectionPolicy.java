@@ -21,7 +21,8 @@ import java.util.Map;
 import org.riotfamily.common.collection.TypeComparatorUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
@@ -40,7 +41,7 @@ import org.springframework.util.StringUtils;
  */
 public class ReflectionPolicy implements AssertionPolicy {
 
-	private RiotLog log = RiotLog.get(ReflectionPolicy.class);
+	private Logger log = LoggerFactory.getLogger(ReflectionPolicy.class);
 	
 	private Object delegate = this;
 	

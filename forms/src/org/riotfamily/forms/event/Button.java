@@ -15,9 +15,9 @@ package org.riotfamily.forms.event;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.request.FormRequest;

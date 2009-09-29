@@ -21,7 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.riotfamily.common.beans.property.SqlDateEditor;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistrySupport;
@@ -36,7 +37,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		implements EditorBinder {
 
-	private RiotLog log = RiotLog.get(AbstractEditorBinder.class);
+	private Logger log = LoggerFactory.getLogger(AbstractEditorBinder.class);
 
 	/** List of {@link EditorBinding editor bindings} */
 	private Map<String, EditorBinding> bindings = new LinkedHashMap<String, EditorBinding>();
@@ -48,6 +49,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 				new SimpleDateFormat("yyyy-MM-dd"), false));
 	}
 	
+	@Override
 	public abstract Class<?> getPropertyType(String path);
 	
 	public Map<String, EditorBinding> getBindings() {
@@ -131,10 +133,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 	public void initEditors() {
 		for (EditorBinding binding : bindings.values()) {
 			Editor editor = binding.getEditor();
-			Object value = null;
-			if (isEditingExistingBean()) {
-				value = getPropertyValue(binding.getProperty());
-			}
+			Object value = getPropertyValue(binding.getProperty());
 			editor.setValue(value);
 		}
 	}

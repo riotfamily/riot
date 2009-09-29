@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,7 +41,7 @@ import freemarker.template.TemplateExceptionHandler;
 public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer 
 		implements ApplicationContextAware {
 
-	private RiotLog log = RiotLog.get(RiotFreeMarkerConfigurer.class);
+	private Logger log = LoggerFactory.getLogger(RiotFreeMarkerConfigurer.class);
 	
 	private TemplateExceptionHandler exceptionHandler = 
 			new ErrorPrintingExceptionHandler();

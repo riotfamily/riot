@@ -15,11 +15,10 @@ package org.riotfamily.dbmsgsrc.support;
 import java.util.Set;
 
 import org.riotfamily.common.i18n.CodeRevealingMessageSource;
-import org.riotfamily.common.mapping.HandlerUrlResolver;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
-import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -32,11 +31,10 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource {
 
 	private HandlerUrlResolver handlerUrlResolver;
 	
-	public RiotDbMessageSource(DbMessageSourceDao dao, 
-			PlatformTransactionManager tx, 
+	public RiotDbMessageSource(PlatformTransactionManager tx, 
 			HandlerUrlResolver handlerUrlResolver) {
 		
-		dbMessageSource = new DbMessageSource(dao, tx);
+		dbMessageSource = new DbMessageSource(tx);
 		dbMessageSource.setBundle("riot");
 		super.setParentMessageSource(dbMessageSource);
 		this.handlerUrlResolver = handlerUrlResolver;
@@ -88,7 +86,7 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource {
 	private String getEditorUrl(String code) {
 		MessageBundleEntry entry = dbMessageSource.getEntry(code, null);
 		if (entry != null) {
-			return getContextPath() + handlerUrlResolver.getUrlForHandler(null,
+			return getContextPath() + handlerUrlResolver.getUrlForHandler(
 					"popupFormController", "riotMessageBundleEntry", entry.getId());
 
 		}

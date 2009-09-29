@@ -18,7 +18,8 @@ import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.riotfamily.common.util.RiotLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -33,7 +34,7 @@ import org.springframework.util.Assert;
  */
 public class ThreadBoundHibernateTemplate extends HibernateTemplate {
 
-	private RiotLog log = RiotLog.get(ThreadBoundHibernateTemplate.class);
+	private Logger log = LoggerFactory.getLogger(ThreadBoundHibernateTemplate.class);
 	
 	public ThreadBoundHibernateTemplate() {
 		super();

@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import net.sf.json.JSONObject;
 
-import org.riotfamily.common.image.ImageMagick;
+import org.riotfamily.media.processing.ImageMagick;
 
 public class ImageMagickIdentify extends ImageMagick {
 

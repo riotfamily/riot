@@ -20,9 +20,7 @@ import java.util.List;
 import org.riotfamily.common.ui.ObjectRenderer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.ElementFactory;
@@ -57,6 +55,8 @@ import org.riotfamily.forms.factory.ConfigurableElementFactory;
 import org.riotfamily.forms.factory.ContainerElementFactory;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -73,11 +73,11 @@ import org.w3c.dom.NamedNodeMap;
 /**
  * Strategy for parsing a DOM that follows the form-config schema.
  */
-public class XmlFormRepositoryDigester implements DocumentDigester {
+public class XmlFormRepositoryDigester {
 
 	public static final String NAMESPACE = "http://www.riotfamily.org/schema/forms/form-config";
 
-	private RiotLog log = RiotLog.get(XmlFormRepositoryDigester.class);
+	private Logger log = LoggerFactory.getLogger(XmlFormRepositoryDigester.class);
 
 	private ConfigurableListableBeanFactory beanFactory;
 
@@ -154,10 +154,10 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				formElement, "bean-class");
 
 		Class<?> beanClass = getBeanClass(beanClassName);
-		FormInitializer initializer = (FormInitializer) getOrCreate(
+		FormInitializer initializer = getOrCreate(
 				formElement, "initializer", FormInitializer.class);
 
-		Validator validator = (Validator) getOrCreate(formElement,
+		Validator validator = getOrCreate(formElement,
 				"validator", Validator.class);
 				
 		FormFactory formFactory = formRepository.createFormFactory(
@@ -267,7 +267,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 	
 	private void initMapEditor(Element ele, MutablePropertyValues pvs) {
-		ObjectRenderer renderer = (ObjectRenderer) getOrCreate(
+		ObjectRenderer renderer = getOrCreate(
 				ele, "label-renderer", ObjectRenderer.class);
 		
 		if (renderer != null) {
@@ -387,7 +387,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			ArrayList<Object> values = Generics.newArrayList();
 			Iterator<Element> it = DomUtils.getChildElementsByTagName(ele, "option").iterator();
 			while (it.hasNext()) {
-				Element e = (Element) it.next();
+				Element e = it.next();
 				String beanName = XmlUtils.getAttribute(e, "ref");
 				if (beanName != null) {
 					values.add(beanFactory.getBean(beanName));

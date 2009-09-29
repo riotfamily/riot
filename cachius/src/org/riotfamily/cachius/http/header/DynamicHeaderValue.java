@@ -35,7 +35,7 @@ public abstract class DynamicHeaderValue implements HeaderValue {
 		if (insertAt + skip < value.length()) {
 			sb.append(value, insertAt + skip, value.length());
 		}
-		return value;
+		return sb.toString();
 	}
 
 	protected abstract void appendDynamicValue(StringBuilder sb, HttpServletRequest request);

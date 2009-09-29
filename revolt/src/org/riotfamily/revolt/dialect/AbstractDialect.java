@@ -15,10 +15,11 @@ package org.riotfamily.revolt.dialect;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.support.TypeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -26,7 +27,7 @@ import org.riotfamily.revolt.support.TypeMap;
  */
 public abstract class AbstractDialect implements Dialect {
 
-	private RiotLog log = RiotLog.get(AbstractDialect.class);
+	private Logger log = LoggerFactory.getLogger(AbstractDialect.class);
 	
 	private HashMap<String, String> nativeTypes = new HashMap<String, String>();
 	
@@ -65,7 +66,7 @@ public abstract class AbstractDialect implements Dialect {
 	}
 
 	protected final String getColumnType(Column column) {
-		String type = (String) nativeTypes.get(column.getType());
+		String type = nativeTypes.get(column.getType());
 		if (type == null) {
 			throw new TypeNotSupportedException(column.getType());
 		}

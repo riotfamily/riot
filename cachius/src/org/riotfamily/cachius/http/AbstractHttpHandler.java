@@ -17,6 +17,8 @@ public abstract class AbstractHttpHandler implements CacheHandler {
 	private HttpServletResponse response;
 	
 	private Directives directives;
+
+	private int gzipThreshold = 200;
 	
 	public AbstractHttpHandler(HttpServletRequest request,
 			HttpServletResponse response) {
@@ -32,6 +34,10 @@ public abstract class AbstractHttpHandler implements CacheHandler {
 		this.directives = directives;
 	}
 
+	public void setGzipThreshold(int gzipThreshold) {
+		this.gzipThreshold = gzipThreshold;
+	}
+	
 	protected HttpServletRequest getRequest() {
 		return request;
 	}
@@ -66,7 +72,7 @@ public abstract class AbstractHttpHandler implements CacheHandler {
 		ResponseData data = new ResponseData(response.getCharacterEncoding());
 		SessionIdEncoder sessionIdEncoder = new SessionIdEncoder(request);
 		CachiusResponse cachiusResponse = new CachiusResponse(data, diskStore, 
-				sessionIdEncoder, isCompressible(), directives);
+				sessionIdEncoder, isCompressible(), gzipThreshold , directives);
 		
 		handleRequest(request, cachiusResponse);
 		cachiusResponse.stopCapturing();

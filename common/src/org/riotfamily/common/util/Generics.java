@@ -133,6 +133,34 @@ public final class Generics {
 		return new ThreadLocal<V>();
 	}
 
+	public static <V> List<V> emptyIfNull(List<V> list) {
+		if (list == null) {
+			return Collections.emptyList();
+		}
+		return list;
+	}
+	
+	public static <V> Set<V> emptyIfNull(Set<V> set) {
+		if (set == null) {
+			return Collections.emptySet();
+		}
+		return set;
+	}
+	
+	public static <V> Collection<V> emptyIfNull(Collection<V> collection) {
+		if (collection == null) {
+			return Collections.emptyList();
+		}
+		return collection;
+	}
+	
+	public static <K, V> Map<K, V> emptyIfNull(Map<K, V> map) {
+		if (map == null) {
+			return Collections.emptyMap();
+		}
+		return map;
+	}
+	
 	public static Class<?> getClass(Type type) {
 		if (type instanceof Class) {
 			return (Class<?>) type;

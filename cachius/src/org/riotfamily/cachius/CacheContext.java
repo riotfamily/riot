@@ -53,7 +53,7 @@ public class CacheContext {
 	public static void expireIn(long millis) {
 		CacheItem item = currentItem.get();
 		if (item != null) {
-			item.setTimeToLive(millis);
+			item.setExpires(System.currentTimeMillis() + millis);
 		}
 	}
 	
@@ -76,5 +76,9 @@ public class CacheContext {
 		if (item != null) {
 			item.serveStaleUntilExpired();
 		}
+	}
+
+	public static boolean exists() {
+		return currentItem.get() != null;
 	}
 }

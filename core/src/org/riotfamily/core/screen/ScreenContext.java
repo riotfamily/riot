@@ -16,8 +16,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.mapping.HandlerUrlUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.dao.Hierarchy;
 import org.riotfamily.core.dao.RiotDao;
 
@@ -69,7 +69,7 @@ public class ScreenContext {
 	}
 	
 	public String getObjectId() {
-		if (objectId == null && object != null) {
+		if (objectId == null && object != null && dao != null) {
 			objectId = dao.getObjectId(object);
 		}
 		return objectId;

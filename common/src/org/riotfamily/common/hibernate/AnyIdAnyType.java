@@ -108,6 +108,7 @@ public class AnyIdAnyType extends AbstractType implements
 		return resolveAny(entityName, id, session);
 	}
 
+	@Override
 	public Object hydrate(ResultSet rs, String[] names,
 			SessionImplementor session, Object owner)
 			throws HibernateException, SQLException {
@@ -160,12 +161,14 @@ public class AnyIdAnyType extends AbstractType implements
 		return false;
 	}
 
+	@Override
 	public boolean isSame(Object x, Object y, EntityMode entityMode)
 			throws HibernateException {
 		
 		return x == y;
 	}
 
+	@Override
 	public int compare(Object x, Object y, EntityMode entityMode) {
 		return 0; // TODO: entities CAN be compared, by PK and entity name, fix this!
 	}
@@ -189,6 +192,7 @@ public class AnyIdAnyType extends AbstractType implements
 		throw new UnsupportedOperationException("object is a multicolumn type");
 	}
 
+	@Override
 	public Object resolve(Object value, SessionImplementor session, Object owner)
 			throws HibernateException {
 
@@ -196,6 +200,7 @@ public class AnyIdAnyType extends AbstractType implements
 		return resolveAny(holder.entityName, holder.id, session);
 	}
 
+	@Override
 	public Object semiResolve(Object value, SessionImplementor session,
 			Object owner) throws HibernateException {
 		
@@ -253,6 +258,7 @@ public class AnyIdAnyType extends AbstractType implements
 		}
 	}
 
+	@Override
 	public Object assemble(Serializable cached, SessionImplementor session,
 			Object owner) throws HibernateException {
 
@@ -261,6 +267,7 @@ public class AnyIdAnyType extends AbstractType implements
 				false, false);
 	}
 
+	@Override
 	public Serializable disassemble(Object value, SessionImplementor session,
 			Object owner) throws HibernateException {
 		return value == null ? null : new ObjectTypeCacheEntry(session
@@ -269,6 +276,7 @@ public class AnyIdAnyType extends AbstractType implements
 						.bestGuessEntityName(value), value, session));
 	}
 
+	@Override
 	public boolean isAnyType() {
 		return true;
 	}
@@ -344,6 +352,7 @@ public class AnyIdAnyType extends AbstractType implements
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean isComponentType() {
 		return true;
 	}
@@ -354,6 +363,7 @@ public class AnyIdAnyType extends AbstractType implements
 		return ForeignKeyDirection.FOREIGN_KEY_FROM_PARENT;
 	}
 
+	@Override
 	public boolean isAssociationType() {
 		return true;
 	}
@@ -367,6 +377,7 @@ public class AnyIdAnyType extends AbstractType implements
 				"any types do not have a unique referenced persister");
 	}
 
+	@Override
 	public boolean isModified(Object old, Object current, boolean[] checkable,
 			SessionImplementor session) throws HibernateException {
 		if (current == null) {

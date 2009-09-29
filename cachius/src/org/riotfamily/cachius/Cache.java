@@ -5,22 +5,26 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.riotfamily.cachius.invalidation.ItemIndex;
+
 public class Cache {
+	
+	private Region region;
+	
+	private ItemIndex index;
 	
 	private ConcurrentHashMap<String, CacheEntry> map =
 			new ConcurrentHashMap<String, CacheEntry>();
 	
-	private transient AtomicInteger size = new AtomicInteger();
+	private AtomicInteger size = new AtomicInteger();
 	
-	private transient int capacity;
-	
-	private double evictionFactor = 0.2;
-	
-	private transient volatile long lastOverflow = System.currentTimeMillis();
+	private CleanUpThread cleanUpThread = new CleanUpThread();
 
-	private transient volatile long averageOverflowInterval;
-
-	private transient CleanUpThread cleanUpThread = new CleanUpThread();
+	public Cache(Region region, ItemIndex index) {
+		this.region = region;
+		this.index = index;
+		cleanUpThread.start();
+	}
 
 	/**
 	 * Returns the CacheItem with the given key or creates a new one, if no
@@ -60,7 +64,7 @@ public class Cache {
 	private void removeEntry(CacheEntry entry) {
 		map.remove(entry.getKey());
 		size.decrementAndGet();
-		//removeFromIndex(entry.getItem());
+		index.remove(entry.getItem());
 		entry.delete();
 	}
 	
@@ -68,7 +72,7 @@ public class Cache {
 	 * Notifies the clean-up thread when the capacity is exceeded.
 	 */
 	private void checkCapacity() {
-		if (size.get() >= capacity) {
+		if (size.get() >= region.getCapacity()) {
 			synchronized (cleanUpThread) {
 				cleanUpThread.notify();
 			}
@@ -80,16 +84,8 @@ public class Cache {
 	 * number of items removed is <code>capacity * evictionFactor</code>.
 	 */
 	private void cleanup() {
-		//log.info("Cache capacity exceeded. Performing cleanup ...");
-		long timeSinceLastOverflow = System.currentTimeMillis() - lastOverflow;
-		if (averageOverflowInterval == 0) {
-			averageOverflowInterval = timeSinceLastOverflow;
-		}
-		else {
-			averageOverflowInterval = (averageOverflowInterval + timeSinceLastOverflow) / 2;
-		}
 		TreeSet<CacheEntry> entries = new TreeSet<CacheEntry>(map.values());
-		int i = (int) Math.ceil(capacity * evictionFactor);
+		int i = region.getItemsToEvict();
 		Iterator<CacheEntry> it = entries.iterator();
 		while (it.hasNext() && i > 0) {
 			removeEntry(it.next());
@@ -97,7 +93,7 @@ public class Cache {
 		}
 	}
 	
-	public void shutdown() {
+	public void destroy() {
 		cleanUpThread.shutdown();
 	}
 	
@@ -108,6 +104,7 @@ public class Cache {
 
 		private boolean running = true;
 
+		@Override
 		public void run() {
 			while (running) {
 				synchronized (this) {

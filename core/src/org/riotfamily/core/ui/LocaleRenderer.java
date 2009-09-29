@@ -15,8 +15,8 @@ package org.riotfamily.core.ui;
 import java.io.PrintWriter;
 import java.util.Locale;
 
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.ui.RenderContext;
+import org.riotfamily.common.util.TagWriter;
 import org.springframework.util.StringUtils;
 
 public class LocaleRenderer extends CountryFlagRenderer {

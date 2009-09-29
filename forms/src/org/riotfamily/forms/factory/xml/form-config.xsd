@@ -327,6 +327,8 @@
 							</xsd:complexType>
 						</xsd:element>
 					</xsd:sequence>
+					<xsd:attribute name="label-message-key" type="xsd:string" />
+					<xsd:attribute name="permanent"  type="xsd:boolean" default="false" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

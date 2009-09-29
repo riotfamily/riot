@@ -15,6 +15,7 @@ package org.riotfamily.core.screen.list.command.impl.dialog;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
 import org.riotfamily.forms.controller.FormContextFactory;
@@ -45,11 +46,11 @@ public class DialogFormController extends AjaxFormController {
 	/**
 	 * Returns the name of the session attribute under which the form is stored.
 	 * This implementation expects that the controller is mapped via a handler
-	 * mapping which exposes a request attribute called 'formKey' that contains
+	 * mapping which exposes a path variable called 'formKey' that contains
 	 * the name of the session attribute.
 	 */
 	protected String getSessionAttribute(HttpServletRequest request) {
-		return (String) request.getAttribute("formKey");
+		return HandlerUrlUtils.getPathVariable(request, "formKey");
 	}
 	
 	/**

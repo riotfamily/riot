@@ -1,4 +1,7 @@
-<ivy-module version="1.3">
+<ivy-module version="2.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
     <info organisation="riotfamily" module="revolt" revision="${riot.revision}" />
     <configurations>
     	<conf name="build" />
@@ -11,6 +14,6 @@
     </publications>
     <dependencies>
 	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="*->default" />
-	    <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="*->default" />
+	    <dependency org="slf4j" name="slf4j" rev="1.5.8" conf="*->default" />
     </dependencies>
 </ivy-module>
