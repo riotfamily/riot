@@ -15,7 +15,6 @@ package org.riotfamily.pages.riot.form;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.pages.model.Site;
 
 /**
  * FormInitializer that imports form fields defined in content-forms.xml.
@@ -32,9 +31,10 @@ public class SiteFormInitializer implements FormInitializer {
 	}
 
 	public void initForm(Form form) {
-		Site site = (Site) form.getBackingObject();
-		SitePropertiesEditor spe = new SitePropertiesEditor(repository, site.getMasterSite());
-		form.addElement(spe, "properties");
+		ContentForm editor = ContentForm.createIfExists("site", repository);
+		if (editor != null) {
+			form.addElement(editor, "properties");
+		}
 	}
 
 }

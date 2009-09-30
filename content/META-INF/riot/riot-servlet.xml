@@ -142,7 +142,7 @@
 		<constructor-arg ref="contentFormRepository" />
 	</bean>
 
-	<bean id="sitePropertiesFormInitializer" class="org.riotfamily.pages.riot.form.SiteFormInitializer">
+	<bean id="siteFormInitializer" class="org.riotfamily.pages.riot.form.SiteFormInitializer">
 		<constructor-arg ref="contentFormRepository" />
 	</bean>
 
@@ -205,7 +205,6 @@
 				<bean class="org.riotfamily.components.riot.command.PublishCommand" />
 				<bean class="org.riotfamily.components.riot.command.UnpublishCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
-				<bean class="org.riotfamily.pages.riot.command.TranslatePageCommand" />
 			</list>
 		</property>
 		<property name="itemScreen">

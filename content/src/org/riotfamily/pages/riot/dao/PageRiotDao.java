@@ -90,7 +90,7 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 			throws DataAccessException {
 
 		Assert.isInstanceOf(ContentPage.class, parent);
-		return ((ContentPage) parent).getChildPagesWithFallback();
+		return ((ContentPage) parent).getChildren();
 	}
 	
 	public Object getParentNode(Object node) {
@@ -105,7 +105,7 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 				return false;
 			}
 		}
-		return page.getChildPagesWithFallback().size() > 0;
+		return page.getChildren().size() > 0;
 	}
 	
 	public Object load(String id) throws DataAccessException {
@@ -160,11 +160,6 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 		ContentPage page = (ContentPage) entity;
 		page.getParent().removePage(page);
 		((ContentPage) dest).addPage(page);
-		
-		//FIXME Invalidate cache items
-		//PageCacheUtils.invalidateNode(cacheService, node);
-		//PageCacheUtils.invalidateNode(cacheService, parentNode);
-		//PageCacheUtils.invalidateNode(cacheService, newParent);
 	}
 	
 	public boolean canCopy(Object entity) {
