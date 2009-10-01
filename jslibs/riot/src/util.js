@@ -3,39 +3,6 @@
  * Author: Felix Gnass
  */
 
-var RBuilder = {};
-RBuilder.node = function(tag, options) {
-	var e = Element.extend(document.createElement(tag));
-	for (var attr in options) {
-		if (attr == 'style') {
-			Element.setStyle(e, options.style);
-		}
-		else if (attr == 'parent') {
-			$(options[attr]).appendChild(e);
-		}
-		else {
-			if (attr == 'class') attr = 'className';
-			e[attr] = options[attr];
-		}
-	}
-	for (var i = 2; i < arguments.length; i++) {
-		var arg = arguments[i];
-		if (!arg) continue;
-		if(arg.constructor == Array) arg.each(append); else append(arg);
-	}
-
-	function append(arg) {
-        if(arg == null) return;
-        switch(typeof arg) {
-            case 'number': arg = '' + arg;  // fall through
-            case 'string': arg = document.createTextNode(arg);
-        }
-        e.appendChild(arg);
-    }
-
-	return e;
-}
-
 var StyleUtils = {
 	sides: ['top', 'right', 'bottom', 'left'],
 	borderProps: ['style', 'width', 'color'],

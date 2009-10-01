@@ -132,11 +132,10 @@ riot.ToolbarButton = Class.create({
 	},
 	
 	createElement: function() {
-		return RBuilder.node('a', {
+		return new Element('a', {
 			id: 'riot-toolbar-button-' + this.handler,
-			className: this.getClassName(),
 			title: this.title
-		});
+		}).addClassName(this.getClassName());
 	},
 	
 	getClassName: function() {

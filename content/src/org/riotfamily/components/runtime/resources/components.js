@@ -22,7 +22,6 @@ riot.components = (function() {
 				el.textEditor = new riot.RichtextEditor(el, content, {useInnerHtmlAsDefault: true, config: el.readAttribute('riot:config')});
 			}
 			if (editorType == 'richtext-chunks') {
-				//TODO Check if content is a component!
 				el.textEditor = new riot.RichtextEditor(el, content, {split: true, useInnerHtmlAsDefault: true, config: el.readAttribute('riot:config')});
 			}
 		}

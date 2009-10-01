@@ -5,10 +5,10 @@ riot.stopEvent = function(ev) {
 
 riot.outline = {
 	elements: {
-		top: RBuilder.node('div', {className: 'riot-highlight riot-highlight-top'}).hide(),
-		right: RBuilder.node('div', {className: 'riot-highlight riot-highlight-right'}).hide(),
-		bottom: RBuilder.node('div', {className: 'riot-highlight riot-highlight-bottom'}).hide(),
-		left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide()
+		top: new Element('div').addClassName('riot-highlight riot-highlight-top').hide(),
+		right: new Element('div').addClassName('riot-highlight riot-highlight-right').hide(),
+		bottom: new Element('div').addClassName('riot-highlight riot-highlight-bottom').hide(),
+		left: new Element('div').addClassName('riot-highlight riot-highlight-left').hide()
 	},
 	
 	show: function(el, onclick, excludes) {
