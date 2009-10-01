@@ -23,25 +23,32 @@ import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class PageContentMapExposer implements ModelPostProcessor {
+public class PageContextExposer implements ModelPostProcessor {
 
 	private PageResolver pageResolver;
 	
-	public PageContentMapExposer(PageResolver pageResolver) {
+	public PageContextExposer(PageResolver pageResolver) {
 		this.pageResolver = pageResolver;
 	}
 
 	public void postProcess(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
+
+		Site site = pageResolver.getSite(request);
+		if (site != null) {
+			model.put("currentSite", site);
+		}
 		
-		if (!model.containsKey("contentMap")) {
-			Page page = pageResolver.getPage(request);
-			if (page != null) {
+		Page page = pageResolver.getPage(request);
+		if (page != null) {
+			model.put("currentPage", page);
+			if (!model.containsKey("contentMap")) {
 				ContentContainer container = page.getContentContainer();
 				boolean preview = EditModeUtils.isPreview(request, container);
 				ContentMap contentMap = container.getContent(preview);
