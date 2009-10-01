@@ -28,7 +28,6 @@ import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
@@ -65,14 +64,14 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	
 	public AbstractGenericBeanDefinitionParser(String className) {
 		try {
-			beanClass = ClassUtils.forName(className);
+			beanClass = Class.forName(className);
 		}
 		catch (ClassNotFoundException e) {
 			throw new FatalBeanException("Can't find the bean class", e);
 		}
 		catch (NoClassDefFoundError e) {
 			enabled = false;
-			log.warn("Turning of support for " + className 
+			log.warn("Turning off support for " + className 
 					+ " elements due to a missing dependency: " 
 					+ e.getMessage());
 		}

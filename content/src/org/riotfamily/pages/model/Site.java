@@ -22,6 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
@@ -30,6 +31,9 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.pages.config.SitemapSchema;
+import org.riotfamily.pages.config.SitemapSchemaRepository;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -42,6 +46,8 @@ import org.springframework.util.ObjectUtils;
 public class Site extends ActiveRecordBeanSupport {
 
 	private String name;
+	
+	private String schemaName;
 	
 	private String hostName;
 	
@@ -56,7 +62,31 @@ public class Site extends ActiveRecordBeanSupport {
 	private ContentPage rootPage;
 	
 	private Content properties;
+
+	private SitemapSchemaRepository schemaRepository;
 	
+	@Required
+	@Transient
+	public void setSchemaRepository(SitemapSchemaRepository schemaRepository) {
+		this.schemaRepository = schemaRepository;
+	}
+	
+	@Transient
+	public SitemapSchema getSchema() {
+		return schemaRepository.getSchema(schemaName);
+	}
+
+	public String getSchemaName() {
+		if (schemaName == null) {
+			schemaName = schemaRepository.getDefaultSchema().getName(); 
+		}
+		return schemaName;
+	}
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
+
 	public boolean isEnabled() {
 		return this.enabled;
 	}
@@ -259,6 +289,5 @@ public class Site extends ActiveRecordBeanSupport {
 		}
 		return null;
 	}
-	
-	
+
 }

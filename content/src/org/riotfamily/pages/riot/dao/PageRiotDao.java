@@ -22,7 +22,6 @@ import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.SingleRoot;
 import org.riotfamily.core.dao.Swapping;
-import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 import org.springframework.dao.DataAccessException;
@@ -35,25 +34,22 @@ import org.springframework.util.Assert;
 public class PageRiotDao implements SingleRoot,	Constraints, Swapping, 
 		CutAndPaste, CopyAndPaste {
 
-	private SitemapSchema sitemapSchema;
-	
-	public PageRiotDao(SitemapSchema sitemapSchema) {
-		this.sitemapSchema = sitemapSchema;
-	}
-
 	public Object getParent(Object entity) {
 		ContentPage page = (ContentPage) entity;
 		return page.getSite();
 	}
 
 	public boolean canAdd(Object parent) {
-		return parent instanceof ContentPage 
-				&& sitemapSchema.canHaveChildren((ContentPage) parent);
+		if (parent instanceof ContentPage) {
+			ContentPage parentPage = (ContentPage) parent;
+			return parentPage.canHaveChildren();
+		}
+		return false;  
 	}
 	
 	public boolean canDelete(Object entity) {
 		ContentPage page = (ContentPage) entity;
-		return !sitemapSchema.isSystemPage(page);
+		return !page.isSystemPage();
 	}
 	
 	public void delete(Object entity, Object parent) throws DataAccessException {
@@ -140,20 +136,22 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 		List<ContentPage> pages = page.getSiblings();
 		int i = pages.indexOf(page);
 		Collections.swap(pages, i, i+ swapWith);
-		//TODO PageCacheUtils.invalidateNode(cacheService, parent);
 	}
 	
 	public boolean canCut(Object entity) {
 		ContentPage page = (ContentPage) entity;
-		return !sitemapSchema.isSystemPage(page);
+		return !page.isSystemPage();
 	}
 	
 	public void cut(Object entity, Object parent) {
 	}
 	
 	public boolean canPasteCut(Object entity, Object target) {
-		return target instanceof ContentPage 
-				&& sitemapSchema.isValidChild((ContentPage) target, (ContentPage) entity);
+		if (target instanceof ContentPage) {
+			ContentPage targetPage = (ContentPage) target;
+			return targetPage.isValidChild((ContentPage) entity);
+		}
+		return false;
 	}
 
 	public void pasteCut(Object entity, Object dest) {

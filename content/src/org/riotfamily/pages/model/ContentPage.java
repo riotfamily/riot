@@ -231,6 +231,25 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	}
 	
 	// ----------------------------------------------------------------------
+	// Schema methods
+	// ----------------------------------------------------------------------
+	
+	@Transient
+	public boolean isSystemPage() {
+		return site.getSchema().isSystemPage(this);
+	}
+
+	@Transient
+	public boolean canHaveChildren() {
+		return site.getSchema().canHaveChildren(this);
+	}
+
+	@Transient
+	public boolean isValidChild(ContentPage child) {
+		return site.getSchema().isValidChild(this, child);
+	}
+
+	// ----------------------------------------------------------------------
 	// Materialized path methods
 	// ----------------------------------------------------------------------
 	

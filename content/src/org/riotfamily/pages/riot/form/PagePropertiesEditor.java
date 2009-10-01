@@ -105,7 +105,6 @@ public class PagePropertiesEditor extends CompositeElement
 		public PropertiesForm(String pageType) {
 			String id = pageType + "-page";
 			setRequired(true);
-			setIndent(false);
 			setEditorBinder(binder);
 			setStyleClass(id);
 			

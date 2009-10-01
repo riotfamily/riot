@@ -17,16 +17,20 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 public class SitemapSchema {
 
-	private static SitemapSchema defaultSchema = new SitemapSchema();
+	private String name;
+	
+	private String label;
 	
 	private String defaultSuffix;
 	
@@ -36,10 +40,26 @@ public class SitemapSchema {
 	
 	private Set<String> virtualParents = Generics.newHashSet();
 	
-	public static SitemapSchema getDefault() {
-		return defaultSchema;
+
+	public String getName() {
+		return name;
 	}
-	
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getLabel() {
+		if (label == null) {
+			label = FormatUtils.xmlToTitleCase(name);
+		}
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	public String getDefaultSuffix() {
 		return defaultSuffix;
 	}
@@ -103,6 +123,12 @@ public class SitemapSchema {
 
 	public List<? extends PageType> getChildTypeOptions(ContentPage parent) {
 		return Generics.emptyIfNull(getPageType(parent).getChildTypes());
+	}
+	
+	public VirtualPageType getVirtualPageType(String name) {
+		PageType pageType = getPageType(name);
+		Assert.isInstanceOf(VirtualPageType.class, pageType);
+		return (VirtualPageType) pageType;
 	}
 	
 	public VirtualPageType getVirtualChildType(Page page) {

@@ -24,6 +24,8 @@
 			<xsd:sequence>
 				<xsd:element name="root-page" type="root-page" />
 			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" default="default" />
+			<xsd:attribute name="label" type="xsd:string" />
 			<xsd:attribute name="default-suffix" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>

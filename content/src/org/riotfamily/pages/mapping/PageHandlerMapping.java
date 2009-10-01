@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
-import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -59,7 +58,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		}
 		
 		exposePathWithinMapping(path, request);
-		return SitemapSchema.getDefault().getPageType(page.getPageType()).getHandler();
+		return page.getSite().getSchema().getPageType(page.getPageType()).getHandler();
 	}
 		
 	/**
