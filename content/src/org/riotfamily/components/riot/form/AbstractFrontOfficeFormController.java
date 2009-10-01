@@ -70,10 +70,12 @@ public abstract class AbstractFrontOfficeFormController
 		this.successViewName = successViewName;
 	}
 
+	@Override
 	protected String getFormId(HttpServletRequest request) {
-		return HandlerUrlUtils.getPathVariable(request, "formId");
+		return HandlerUrlUtils.getPathWithinMapping(request);
 	}
 
+	@Override
 	protected String getSessionAttribute(HttpServletRequest request) {
 		return SESSION_ATTRIBUTE;
 	}
@@ -84,6 +86,7 @@ public abstract class AbstractFrontOfficeFormController
 		form.addButton("save");
 	}
 	
+	@Override
 	protected ModelAndView showForm(final Form form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
@@ -93,6 +96,7 @@ public abstract class AbstractFrontOfficeFormController
 		return new ModelAndView(viewName, "form", sw.toString());
 	}
 
+	@Override
 	public final ModelAndView handleFormSubmission(Form form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
