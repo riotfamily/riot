@@ -81,6 +81,7 @@ public abstract class AbstractPageType implements PageType {
 
 	public void register(SitemapSchema schema, PageType parent) {
 		schema.addType(this);
+		setParent(parent);
 		if (getChildTypes() != null) {
 			for (PageType type : getChildTypes()) {
 				type.register(schema, this);
