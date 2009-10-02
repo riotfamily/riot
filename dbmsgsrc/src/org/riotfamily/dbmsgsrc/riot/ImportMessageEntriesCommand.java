@@ -68,7 +68,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 		Upload upload = (Upload) input;
 		try {
 			RiotUser user = AccessController.getCurrentUser();
-			log.info("Global messages uploaded by %s", user.getUserId());
+			log.info("Global messages uploaded by {}", user.getUserId());
 			updateMessages(upload.getData(), upload.isAddNewMessages());
 		}
 		catch (OfficeXmlFileException e) {
@@ -111,7 +111,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 					}
 				}
 				else {
-					log.info("Skipping invalid row %s" , i);
+					log.info("Skipping invalid row {}" , i);
 				}
 			}
 		}

@@ -52,7 +52,7 @@ public class EditModeComponentRenderer implements ComponentRenderer {
 		String formId = metaDataProvider.getMetaData(type).getForm();
 		if (formId != null) {
 			if (!formRepository.containsForm(formId)) {
-				log.error("The configured component form [%s] does not exist", formId);
+				log.error("The configured component form [{}] does not exist", formId);
 				formId = null;
 			}
 		}

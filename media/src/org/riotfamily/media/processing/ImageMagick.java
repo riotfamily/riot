@@ -95,7 +95,7 @@ public class ImageMagick implements InitializingBean {
 			if (command == null) {
 				command = getDefaultCommand();
 			}
-			log.info("Looking for ImageMagick binary '%s'", command);
+			log.info("Looking for ImageMagick binary '{}'", command);
 			String version = IOUtils.exec(command, "-version");
 			log.info(version);
 			

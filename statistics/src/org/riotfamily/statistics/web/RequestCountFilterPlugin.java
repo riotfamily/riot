@@ -133,7 +133,7 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 					addCriticalRequest(reqStats);
 				}
 			}
-			log.warn("Response time slow for URL %s (%s s)", 
+			log.warn("Response time slow for URL {} ({} s)", 
 					reqStats.getName(), reqStats.getResponseTime() / 1000);
 		}
 	}

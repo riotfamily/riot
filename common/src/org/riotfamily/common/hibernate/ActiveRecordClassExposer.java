@@ -74,8 +74,8 @@ public class ActiveRecordClassExposer implements ConfigurationPostProcessor {
 			if (ActiveRecord.class.isAssignableFrom(mappedClass)) {
 				String key = ClassUtils.getShortName(mappedClass);
 				if (config.getSharedVariable(key) != null) {
-					log.warn("Another shared variable with the name '%s'" +
-							" already exist. Use statics[\"%s\"] in your" +
+					log.warn("Another shared variable with the name '{}'" +
+							" already exist. Use statics[\"{}\"] in your" +
 							" FreeMarker templates to access the static" +
 							" methods of your ActiveRecord class.", 
 							key, mappedClass.getName());
