@@ -72,12 +72,16 @@ public class TextRenderer implements InitializingBean {
 	
 	private boolean antiAlias = true;
 	
-	private boolean resample = true;
+	private boolean subpixel = false;
+	
+	private Boolean resample;
+	
+	private Boolean fractional;
 	
 	private int internalFontSize = 120;
 	
 	private int scale = 1;
-	
+
 	/**
 	 * Sets the font to use. The resource must either point to a Type 1
 	 * or a TrueType font or a directory containing fonts. In case a directory
@@ -182,6 +186,14 @@ public class TextRenderer implements InitializingBean {
 		this.antiAlias = antiAlias;
 	}
 	
+	public void setSubpixel(boolean subpixel) {
+		this.subpixel = subpixel;
+	}
+	
+	public void setFractional(boolean fractional) {
+		this.fractional = fractional;
+	}
+	
 	/**
 	 * Sets the interline spacing in pixels. If not set, 
 	 * {@link TextLayout#getLeading()} is used.
@@ -254,6 +266,15 @@ public class TextRenderer implements InitializingBean {
 	}
 	
 	public void afterPropertiesSet() {
+		if (subpixel) {
+			resample = false;
+		}
+		if (resample == null) {
+			resample = fontSize < 22;
+		}
+		if (fractional == null) {
+			fractional = !resample;
+		}
 		if (resample) {
 			scale = Math.round(internalFontSize / fontSize);
 			fontSize *= scale;
@@ -375,18 +396,23 @@ public class TextRenderer implements InitializingBean {
 	
 	protected Graphics2D createGraphics(BufferedImage image) {
         Graphics2D graphics = image.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias 
+        
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, resample
         		? RenderingHints.VALUE_ANTIALIAS_ON
         		: RenderingHints.VALUE_ANTIALIAS_OFF);
         
-        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAlias 
-        		? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-        		: RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+        Object aa = RenderingHints.VALUE_TEXT_ANTIALIAS_OFF;
+        if (antiAlias) {
+        	aa = subpixel 
+        		? RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB
+        		: RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
+        }
+        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, aa);
         
-        graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, antiAlias 
+        graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, fractional 
         		? RenderingHints.VALUE_FRACTIONALMETRICS_ON
         		: RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-        
+
         return graphics;
 	}
 	
@@ -397,4 +423,13 @@ public class TextRenderer implements InitializingBean {
 				BufferedImage.TYPE_INT_ARGB);
 	}
 	
+	/*
+	public static void main(String[] args) throws Exception {
+		TextRenderer tr = new TextRenderer();
+		tr.setSubpixel(true);
+		tr.setFractional(false);
+		tr.afterPropertiesSet();
+		ImageUtils.write(tr.generate("Hello World", 500, "#fff"), new File("/Users/flx/Desktop/test.png"));
+	}
+	*/
 }
