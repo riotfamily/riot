@@ -21,7 +21,10 @@
 	
 	<tx:annotation-driven />
 	
-	<dwr:configuration />
+	<dwr:configuration>
+		<dwr:convert type="exception" class="java.lang.Exception" />
+	</dwr:configuration>
+	
 	<dwr:annotation-config />
 	
 	<bean id="configurer" class="org.riotfamily.common.beans.config.ProfileConfigurer">
