@@ -19,7 +19,7 @@
 	/>
 	
 	<script language="JavaScript" type="text/javascript">
-		Resources.basePath='${c.url(runtime.resourcePath)}';
+		riot.Resources.setBasePath('${c.url(runtime.resourcePath)}');
 	</script>
 	
 </head>
