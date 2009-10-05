@@ -24,8 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.SocketException;
 
-import org.springframework.util.FileCopyUtils;
-
 public class IOUtils {
 	
 	public static final int BUFFER_SIZE = 4096;
@@ -35,7 +33,7 @@ public class IOUtils {
 		
 	/**
 	 * Copies the content of the given InputStream to an OutputStream.
-	 * Unlike {@link FileCopyUtils#copy(InputStream, OutputStream)} this method
+	 * Unlike FileCopyUtils.copy(InputStream, OutputStream) this method
 	 * does not close the OutputStream (only the InputStream).
 	 * @param in the stream to copy from
 	 * @param out the stream to copy to

@@ -18,6 +18,7 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.mapping.ChildPageResolver;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -73,7 +74,12 @@ public class VirtualPageType extends AbstractPageType {
 		return child.resolve(page, path, i+1);
 	}
 
+	public Page resolve(Site site, Object arg) {
+		return resolver.getPage(this, site, arg);
+	}
+	
 	public Collection<Page> listChildren(Page parent) {
 		return Generics.emptyIfNull(resolver.listChildren(this, parent));
 	}
+
 }

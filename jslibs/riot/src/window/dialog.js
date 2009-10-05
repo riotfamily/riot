@@ -189,6 +189,10 @@ riot.window = (function() {
 					if (doc.document) {
 						doc = doc.document;
 					}
+					if (!doc.body) {
+						setTimeout(this.resize.bind(this), 100);
+						return;
+					}
 					el = doc.body;
 				}
 

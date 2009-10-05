@@ -71,7 +71,7 @@ public class HibernateCleanUpTask extends HibernateTask {
 			referencedIds.addAll(session.createQuery(hql).list());
 		}
 
-		log.info("Deleting [%s] orphaned files ...", fileIds.size() - referencedIds.size());
+		log.info("Deleting [{}] orphaned files ...", fileIds.size() - referencedIds.size());
 		
 		for (Long id : fileIds) {
 			if (!referencedIds.contains(id)) {

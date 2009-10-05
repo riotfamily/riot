@@ -22,7 +22,6 @@ import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.SingleRoot;
 import org.riotfamily.core.dao.Swapping;
-import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 import org.springframework.dao.DataAccessException;
@@ -35,25 +34,22 @@ import org.springframework.util.Assert;
 public class PageRiotDao implements SingleRoot,	Constraints, Swapping, 
 		CutAndPaste, CopyAndPaste {
 
-	private SitemapSchema sitemapSchema;
-	
-	public PageRiotDao(SitemapSchema sitemapSchema) {
-		this.sitemapSchema = sitemapSchema;
-	}
-
 	public Object getParent(Object entity) {
 		ContentPage page = (ContentPage) entity;
 		return page.getSite();
 	}
 
 	public boolean canAdd(Object parent) {
-		return parent instanceof ContentPage 
-				&& sitemapSchema.canHaveChildren((ContentPage) parent);
+		if (parent instanceof ContentPage) {
+			ContentPage parentPage = (ContentPage) parent;
+			return parentPage.canHaveChildren();
+		}
+		return false;  
 	}
 	
 	public boolean canDelete(Object entity) {
 		ContentPage page = (ContentPage) entity;
-		return !sitemapSchema.isSystemPage(page);
+		return !page.isSystemPage();
 	}
 	
 	public void delete(Object entity, Object parent) throws DataAccessException {
@@ -90,7 +86,7 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 			throws DataAccessException {
 
 		Assert.isInstanceOf(ContentPage.class, parent);
-		return ((ContentPage) parent).getChildPagesWithFallback();
+		return ((ContentPage) parent).getChildren();
 	}
 	
 	public Object getParentNode(Object node) {
@@ -105,7 +101,7 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 				return false;
 			}
 		}
-		return page.getChildPagesWithFallback().size() > 0;
+		return page.getChildren().size() > 0;
 	}
 	
 	public Object load(String id) throws DataAccessException {
@@ -140,31 +136,28 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 		List<ContentPage> pages = page.getSiblings();
 		int i = pages.indexOf(page);
 		Collections.swap(pages, i, i+ swapWith);
-		//TODO PageCacheUtils.invalidateNode(cacheService, parent);
 	}
 	
 	public boolean canCut(Object entity) {
 		ContentPage page = (ContentPage) entity;
-		return !sitemapSchema.isSystemPage(page);
+		return !page.isSystemPage();
 	}
 	
 	public void cut(Object entity, Object parent) {
 	}
 	
 	public boolean canPasteCut(Object entity, Object target) {
-		return target instanceof ContentPage 
-				&& sitemapSchema.isValidChild((ContentPage) target, (ContentPage) entity);
+		if (target instanceof ContentPage) {
+			ContentPage targetPage = (ContentPage) target;
+			return targetPage.isValidChild((ContentPage) entity);
+		}
+		return false;
 	}
 
 	public void pasteCut(Object entity, Object dest) {
 		ContentPage page = (ContentPage) entity;
 		page.getParent().removePage(page);
 		((ContentPage) dest).addPage(page);
-		
-		//FIXME Invalidate cache items
-		//PageCacheUtils.invalidateNode(cacheService, node);
-		//PageCacheUtils.invalidateNode(cacheService, parentNode);
-		//PageCacheUtils.invalidateNode(cacheService, newParent);
 	}
 	
 	public boolean canCopy(Object entity) {

@@ -28,6 +28,7 @@ import org.riotfamily.common.web.mvc.view.ViewResolverHelper;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.core.Ordered;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter;
@@ -150,10 +151,10 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 			}
 			
 			Long expireIn = null;
-			if (!annotation.ttl().isEmpty()) {
+			if (StringUtils.hasText(annotation.ttl())) {
 				expireIn = FormatUtils.parseMillis(annotation.ttl());	
 			}
-			if (!annotation.cron().isEmpty()) {
+			if (StringUtils.hasText(annotation.cron())) {
 				CronExpression cron = new CronExpression(annotation.cron());
 				long delta = cron.getNextValidTimeAfter(new Date()).getTime() 
 						- System.currentTimeMillis();

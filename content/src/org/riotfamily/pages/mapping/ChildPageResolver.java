@@ -16,6 +16,7 @@ import java.util.Collection;
 
 import org.riotfamily.pages.config.VirtualPageType;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * Interface used by the {@link PageResolver} if the path is mapped to a 
@@ -27,6 +28,6 @@ public interface ChildPageResolver {
 	
 	public Collection<Page> listChildren(VirtualPageType type, Page parent);
 	
-	public Page getPage(VirtualPageType type, Object object);
+	public Page getPage(VirtualPageType type, Site site, Object object);
 
 }

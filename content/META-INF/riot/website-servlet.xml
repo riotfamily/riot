@@ -76,15 +76,7 @@
 		<bean class="org.riotfamily.pages.view.PageToolbarScript" />
 	</override:add>
 
-	<bean id="currentSite" class="org.riotfamily.pages.view.CurrentSiteMacroHelperFactory">
-		<constructor-arg ref="pageResolver" />
-	</bean>
-
-	<bean id="currentPage" class="org.riotfamily.pages.view.CurrentPageMacroHelperFactory">
-		<constructor-arg ref="pageResolver" />
-	</bean>
-	
-	<bean id="contentMap" class="org.riotfamily.pages.view.PageContentMapExposer">
+	<bean class="org.riotfamily.pages.view.PageContextExposer">
 		<constructor-arg ref="pageResolver" />
 	</bean>
 

@@ -3,6 +3,10 @@
   - @namespace pages
   -->
  
+<#function resolve type arg site=currentSite>
+	<#return beans.pageResolver.getVirtualPage(site, type, arg) />
+</#function>
+
 <#---
   - Renders an HTML link to the given Page. The link text will be inplace 
   - editable if the page is the current page.

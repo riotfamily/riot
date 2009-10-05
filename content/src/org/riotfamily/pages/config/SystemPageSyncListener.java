@@ -18,19 +18,9 @@ import org.riotfamily.pages.model.Site;
 
 public class SystemPageSyncListener extends TypedEntityListener<Site> {
 	
-	private SitemapSchema sitemapSchema;
-	
-	public SystemPageSyncListener() {
-		this(SitemapSchema.getDefault());
-	}
-	
-	public SystemPageSyncListener(SitemapSchema sitemapSchema) {
-		this.sitemapSchema = sitemapSchema;
-	}
-
 	@Override
 	protected void entitySaved(Site site, Session session) throws Exception {
-		sitemapSchema.syncSystemPages(site);
+		site.getSchema().syncSystemPages(site);
 	}
 
 }

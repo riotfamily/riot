@@ -45,24 +45,22 @@
 		</description>
 	</bean>
 	
-	<bean id="sitemapSchema" class="org.riotfamily.common.beans.factory.SingletonLookupFactoryBean">
-		<constructor-arg value="org.riotfamily.pages.config.SitemapSchema" />
-	</bean>
+	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository" />
 	
-	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
-		<constructor-arg ref="sitemapSchema" />
-	</bean>
+	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver" />
 	
 	<bean class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
-	<bean class="org.riotfamily.pages.config.SystemPageSyncListener">
-		<constructor-arg ref="sitemapSchema" />
-	</bean>
+	<bean class="org.riotfamily.pages.config.SystemPageSyncListener" />
 	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
 
+	<bean class="org.riotfamily.pages.model.Site" scope="prototype">
+		<property name="schemaRepository" ref="sitemapSchemaRepository" />
+	</bean>
+	
 	<bean class="org.riotfamily.components.model.Content" scope="prototype">
 		<property name="marshaller">
 			<bean class="org.riotfamily.components.xstream.XStreamMarshaller">

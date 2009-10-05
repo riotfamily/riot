@@ -27,7 +27,6 @@ import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.config.VirtualPageType;
 import org.riotfamily.pages.model.Page;
 
@@ -66,7 +65,7 @@ public class PageFacade {
 	public String getRelativeUrl() {
 		StringBuilder url = new StringBuilder();
 		url.append(page.getPath());
-		String suffix = SitemapSchema.getDefault().getDefaultSuffix(page.getPageType());
+		String suffix = page.getSite().getSchema().getDefaultSuffix(page.getPageType());
 		if (suffix != null) {
 			url.append(suffix);
 		}
@@ -108,7 +107,7 @@ public class PageFacade {
 		
 	public List<PageFacade> getChildren() {
 		CacheTagUtils.tagIfSupported(page);
-		VirtualPageType type = SitemapSchema.getDefault().getVirtualChildType(page);
+		VirtualPageType type = page.getSite().getSchema().getVirtualChildType(page);
 		if (type != null) {
 			Collection<Page> children = type.listChildren(page);
 			CacheTagUtils.tagIfSupported(children);

@@ -12,10 +12,8 @@
  */
 package org.riotfamily.pages.model;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -23,7 +21,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -34,6 +31,9 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.pages.config.SitemapSchema;
+import org.riotfamily.pages.config.SitemapSchemaRepository;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -47,14 +47,12 @@ public class Site extends ActiveRecordBeanSupport {
 
 	private String name;
 	
+	private String schemaName;
+	
 	private String hostName;
 	
 	private Locale locale;
-	
-	private Site masterSite;
-	
-	private Set<Site> derivedSites;
-	
+		
 	private boolean enabled = true;
 
 	private long position;
@@ -64,7 +62,31 @@ public class Site extends ActiveRecordBeanSupport {
 	private ContentPage rootPage;
 	
 	private Content properties;
+
+	private SitemapSchemaRepository schemaRepository;
 	
+	@Required
+	@Transient
+	public void setSchemaRepository(SitemapSchemaRepository schemaRepository) {
+		this.schemaRepository = schemaRepository;
+	}
+	
+	@Transient
+	public SitemapSchema getSchema() {
+		return schemaRepository.getSchema(schemaName);
+	}
+
+	public String getSchemaName() {
+		if (schemaName == null) {
+			schemaName = schemaRepository.getDefaultSchema().getName(); 
+		}
+		return schemaName;
+	}
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
+
 	public boolean isEnabled() {
 		return this.enabled;
 	}
@@ -125,24 +147,6 @@ public class Site extends ActiveRecordBeanSupport {
 				|| (this.aliases != null && this.aliases.contains(hostName));
 	}
 				
-	@ManyToOne(cascade=CascadeType.MERGE)
-	public Site getMasterSite() {
-		return this.masterSite;
-	}
-
-	public void setMasterSite(Site masterSite) {
-		this.masterSite = masterSite;
-	}
-		
-	@OneToMany(mappedBy="masterSite")
-	public Set<Site> getDerivedSites() {
-		return this.derivedSites;
-	}
-
-	public void setDerivedSites(Set<Site> derivedSites) {
-		this.derivedSites = derivedSites;
-	}
-
 	@Column(name="pos")
 	public long getPosition() {
 		if (position == 0) {
@@ -187,26 +191,9 @@ public class Site extends ActiveRecordBeanSupport {
 	}
 
 	public Object getProperty(String key) {
-		Object value = getProperties().get(key);
-		if (value == null && masterSite != null) {
-			value = masterSite.getProperty(key);
-		}
-		return value;
+		return getProperties().get(key);
 	}
 		
-	@Transient
-	public Map<String, Object> getPropertiesMap() {
-		Map<String, Object> mergedProperties;
-		if (masterSite != null) {
-			mergedProperties = masterSite.getPropertiesMap();
-		}
-		else {
-			mergedProperties = new HashMap<String, Object>();
-		}
-		mergedProperties.putAll(getProperties());
-		return mergedProperties;
-	}
-	
 	/**
 	 */
 	public String makeAbsolute(boolean secure, String defaultHost, 
@@ -260,8 +247,7 @@ public class Site extends ActiveRecordBeanSupport {
 		Site other = (Site) obj;
 		
 		return ObjectUtils.nullSafeEquals(this.hostName, other.getHostName())
-				&& ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
-				&& ObjectUtils.nullSafeEquals(this.masterSite, other.getMasterSite());
+				&& ObjectUtils.nullSafeEquals(this.locale, other.getLocale());
 	}
 	
 	// ----------------------------------------------------------------------
@@ -303,6 +289,5 @@ public class Site extends ActiveRecordBeanSupport {
 		}
 		return null;
 	}
-	
-	
+
 }

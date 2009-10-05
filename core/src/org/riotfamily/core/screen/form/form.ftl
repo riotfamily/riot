@@ -26,12 +26,10 @@
 	
 		<script type="text/javascript" language="JavaScript">
 			var form = $$('form')[0];
-			
-			<#if focus??>
-				focusElement($('${focus}'));
-			<#else>
-				focusElement(form);
-			</#if>
+
+			riot.Resources.waitFor('focusElement', function() {
+				focusElement(<#if focus??>$('${focus}')<#else>form</#if>);
+			});
 			
 			if (document.addEventListener && typeof document.activeElement == 'undefined') {
 			    document.addEventListener("focus", function(e) {

@@ -6,24 +6,19 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config-9.0.xsd">
 
-	<form id="site" bean-class="org.riotfamily.pages.model.Site" 
-			initializer="sitePropertiesFormInitializer">
+	<form id="site" bean-class="org.riotfamily.pages.model.Site"
+			initializer="siteFormInitializer">
 			
-		<group label-key="site.general">
-			<textfield bind="name" max-length="255" />
-			<textfield bind="locale" required="true" max-length="8" />
-			<selectbox bind="masterSite">
-				<options ref="siteRiotDao" />
-			</selectbox>
-		</group>
-		<group label-key="site.mapping">
-			<textfield bind="hostName" />
-			<textfield bind="pathPrefix" />
-			<checkbox bind="enabled" default="checked" />
-		</group>
+		<textfield bind="name" max-length="255" />
+		<textfield bind="locale" required="true" max-length="8" />
+		<textfield bind="hostName" />
+		<checkbox bind="enabled" default="checked" />
 		<list bind="aliases" sortable="false">
 			<textfield />
 		</list>
+		<selectbox bind="schema" value-property="name" label-property="label" required="true">
+			<options ref="sitemapSchemaRepository" />
+		</selectbox>
 	</form>
 	
 	<form id="page" bean-class="org.riotfamily.pages.model.ContentPage"

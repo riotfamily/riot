@@ -16,6 +16,7 @@ import org.riotfamily.components.model.Content;
 import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
+import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.MapEditorBinder;
@@ -24,7 +25,6 @@ import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.pages.model.ContentPage;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -35,29 +35,25 @@ public class PagePropertiesEditor extends CompositeElement
 
 	private FormRepository repository;
 	
-	private ContentPage masterPage;
+	private Form form;
 	
 	private NestedForm currentForm;
 	
 	private Object initialValue;
 	
-	private LocalizedEditorBinder binder;
+	private EditorBinder binder;
 	
 	public PagePropertiesEditor(FormRepository repository, Form form, 
 			String pageType) {
 		
 		this.repository = repository;
-		this.masterPage = getMasterPage(form);
-		this.binder = new LocalizedEditorBinder(new MapEditorBinder(Content.class));
+		this.form = form;
+		this.binder = new MapEditorBinder(Content.class);
 		this.currentForm = new PropertiesForm(pageType);
 		addComponent(currentForm);
 	}
-	
-	private ContentPage getMasterPage(Form form) {
-		ContentPage page = (ContentPage) form.getBackingObject();
-		return page.getMasterPage();
-	}
-	
+		
+	@Override
 	public String getLabel() {
 		return null;
 	}
@@ -109,24 +105,18 @@ public class PagePropertiesEditor extends CompositeElement
 		public PropertiesForm(String pageType) {
 			String id = pageType + "-page";
 			setRequired(true);
-			setIndent(false);
 			setEditorBinder(binder);
 			setStyleClass(id);
 			
-			addPagePropertyElements("all-pages");
+			addPagePropertyElements("page");
 			addPagePropertyElements(id);
-			
-			if (masterPage == null) {
-				addPagePropertyElements("master-pages");
-				addPagePropertyElements("master-" + id);
-			}
 		}
 		
 		private void addPagePropertyElements(String id) {
 			if (repository.containsForm(id)) {
 				FormFactory factory = repository.getFormFactory(id);
 				for (ElementFactory ef : factory.getChildFactories()) {
-					addElement(new PagePropertyElement(ef, binder, masterPage));
+					addElement(ef.createElement(this, form, true));
 				}
 			}
 		}

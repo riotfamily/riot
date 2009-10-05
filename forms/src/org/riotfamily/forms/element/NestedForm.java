@@ -42,19 +42,18 @@ public class NestedForm extends TemplateElement implements
 	
 	private boolean present;
 	
-	private boolean indent = true;
+	private boolean indent;
 	
 	public NestedForm() {
 		super("form");
+		setIndent(true);
 		addComponent("elements", elements);
 		addComponent("toggleButton", new ToggleButton());
 	}
 	
 	public void setIndent(boolean indent) {
 		this.indent = indent;
-		if (!indent) {
-			setStyleClass("noindent");
-		}
+		setStyleClass(indent ? null : "noindent");
 		setTemplate(TemplateUtils.getTemplatePath(NestedForm.class, 
 				indent ? null : "_noindent"));
 	}	
@@ -82,6 +81,7 @@ public class NestedForm extends TemplateElement implements
 	 * Invoked by {@link AbstractEditorBase#setEditorBinding} when the nested 
 	 * form is bound to a property.
 	 */
+	@Override
 	protected void afterBindingSet() {
 		if (editorBinder == null) {
 			setBeanClass(getEditorBinding().getPropertyType());
@@ -92,12 +92,14 @@ public class NestedForm extends TemplateElement implements
 		return editorBinder.getEditor(property);
 	}
 	
+	@Override
 	protected void afterFormContextSet() {
 		super.afterFormContextSet();
 		editorBinder.registerPropertyEditors(
 				getFormContext().getPropertyEditorRegistrars());
 	}
 	
+	@Override
 	public String getLabel() {
 		return indent ? super.getLabel() : null;
 	}
@@ -113,6 +115,7 @@ public class NestedForm extends TemplateElement implements
 		}
 	}
 	
+	@Override
 	public void processRequest(FormRequest request) {
 		if (present || isRequired()) {
 			super.processRequest(request);

@@ -84,6 +84,11 @@
 		</description>
 		<constructor-arg ref="cacheService" />
 		<constructor-arg ref="cacheKeyAugmentor" />
+		<property name="customArgumentResolvers">
+			<list>
+				<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeArgumentResolver" />
+			</list>
+		</property>
 	</bean>
 	
 	<bean class="org.riotfamily.common.web.mvc.mapping.ReverseUrlHanderMappingAdapter" />

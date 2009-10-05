@@ -27,7 +27,6 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
 		register("schema", SitemapSchema.class)
-				.setFactoryMethod("getDefault")
 				.setDecorator(new PropertyDecorator("rootPage"));
 		
 		ChildDecorator typeDecorator = new ChildDecorator()

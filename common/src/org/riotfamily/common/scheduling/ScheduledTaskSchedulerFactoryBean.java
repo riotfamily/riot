@@ -142,7 +142,7 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 		}
 
 		public void addTask(ScheduledTask task) {
-			log.info(String.format("Adding %s to %s trigger", task.getClass(), triggerName));
+			log.info("Adding {} to {} trigger", task.getClass(), triggerName);
 			tasks.add(task);
 		}
 		

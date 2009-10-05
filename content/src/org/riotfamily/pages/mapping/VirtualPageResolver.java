@@ -23,10 +23,10 @@ public abstract class VirtualPageResolver<T extends ContentContainerOwner>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Page getPage(VirtualPageType type, Object object) {
+	public Page getPage(VirtualPageType type, Site site, Object object) {
 		T entity = (T) object;
 		ContentPage parent = ContentPage.loadByTypeAndSite(
-				type.getParent().getName(), getSite(entity));
+				type.getParent().getName(), site);
 		
 		return new VirtualPage(type, parent, entity, getPathComponent(entity),
 				getTitle(entity));
@@ -48,8 +48,6 @@ public abstract class VirtualPageResolver<T extends ContentContainerOwner>
 	
 	protected abstract T load(String pathComponent);
 
-	protected abstract Site getSite(T entity);
-	
 	protected abstract String getPathComponent(T entity);
 	
 	protected abstract String getTitle(T entity);

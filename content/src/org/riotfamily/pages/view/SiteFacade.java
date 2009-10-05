@@ -12,15 +12,10 @@
  */
 package org.riotfamily.pages.view;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.cache.CacheTagUtils;
 import org.riotfamily.common.web.support.ServletUtils;
-import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
 public class SiteFacade {
@@ -29,8 +24,6 @@ public class SiteFacade {
 
 	private HttpServletRequest request;
 	
-	private Map<String, Object> properties = null;
-
 	public SiteFacade(Site site, HttpServletRequest request) {
 		this.site = site;
 		this.request = request;
@@ -46,59 +39,12 @@ public class SiteFacade {
 				ServletUtils.getServerNameAndPort(request), 
 				request.getContextPath(), path);
 	}
-
-	public Set<String> getAliases() {
-		return site.getAliases();
-	}
-
-	public Set<Site> getDerivedSites() {
-		return site.getDerivedSites();
-	}
-
-	public String getHostName() {
-		return site.getHostName();
-	}
-
-	public Long getId() {
-		return site.getId();
-	}
-
-	public Locale getLocale() {
-		return site.getLocale();
-	}
-
-	public Site getMasterSite() {
-		return site.getMasterSite();
-	}
-
-	public String getName() {
-		return site.getName();
-	}
-
-	public boolean isEnabled() {
-		return site.isEnabled();
-	}
-	
-	public Page getRootPage() {
-		return site.getRootPage();
-	}
-	
-	public Map<String, Object> getProperties() {
-		if (properties == null) {
-			properties = site.getPropertiesMap();
-		}
-		return properties;
-	}
-	
+		
 	/**
 	 * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
 	 */
 	public Object get(String key) {
 		return site.getProperty(key);
-	}
-	
-	public Map<String, Object> getLocal() {
-		return site.getProperties();
 	}
 
 	@Override

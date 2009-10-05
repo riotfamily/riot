@@ -5,10 +5,10 @@ riot.stopEvent = function(ev) {
 
 riot.outline = {
 	elements: {
-		top: RBuilder.node('div', {className: 'riot-highlight riot-highlight-top'}).hide(),
-		right: RBuilder.node('div', {className: 'riot-highlight riot-highlight-right'}).hide(),
-		bottom: RBuilder.node('div', {className: 'riot-highlight riot-highlight-bottom'}).hide(),
-		left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide()
+		top: new Element('div').addClassName('riot-highlight riot-highlight-top').hide(),
+		right: new Element('div').addClassName('riot-highlight riot-highlight-right').hide(),
+		bottom: new Element('div').addClassName('riot-highlight riot-highlight-bottom').hide(),
+		left: new Element('div').addClassName('riot-highlight riot-highlight-left').hide()
 	},
 	
 	show: function(el, onclick, excludes) {
@@ -328,8 +328,8 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	show: function($super) {
 		tinyMCE_GZ = {loaded: true};
 		var $this = this;
-		Resources.loadScript('tiny_mce/tiny_mce_src.js', 'tinymce');
-		Resources.waitFor('tinymce.WindowManager', function() {
+		riot.Resources.loadScript('tiny_mce/tiny_mce_src.js', 'tinymce');
+		riot.Resources.waitFor('tinymce.WindowManager', function() {
 			$super();
 			$this.initEditor();
 		});
@@ -536,7 +536,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	var margin = editorWidth - contentWidth;
 	if (margin > 0) {
 		body.style.marginRight = (margin - 5) + 'px';
-		body.style.backgroundImage = 'url(' + Resources.resolveUrl(bgImage) + ')';
+		body.style.backgroundImage = 'url(' + riot.Resources.resolveUrl(bgImage) + ')';
 		body.style.backgroundRepeat = 'repeat-y';
 		body.style.backgroundPosition = (contentWidth + 5) + 'px';
 		body.style.backgroundAttachment = 'fixed';

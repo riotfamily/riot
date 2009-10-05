@@ -63,13 +63,13 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 	private void render(Collection<FormResource> resources, PrintWriter writer) {
 		loadResources(resources);
 		for (StylesheetResource stylesheet : stylesheets) {
-			writer.print("Resources.loadStyleSheet('");
+			writer.print("riot.Resources.loadStyleSheet('");
 			writer.print(stylesheet.getUrl());
 			writer.print("');");
 		}
 		
 		if (!scripts.isEmpty()) {
-			writer.print("Resources.loadScriptSequence([");
+			writer.print("riot.Resources.loadScriptSequence([");
 			Iterator<ScriptResource> it = scripts.iterator();
 			while (it.hasNext()) {
 				ScriptResource script = it.next();

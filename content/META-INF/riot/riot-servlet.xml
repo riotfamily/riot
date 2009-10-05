@@ -51,7 +51,7 @@
 	  - Controller that renders forms to edit component properties.
 	  -->
 	<bean id="componentFormController"
-		name="/components/form/{contentId}/{formId}"
+		name="/components/form/{contentId}/**"
 		class="org.riotfamily.components.riot.form.ContentFormController">
 		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="contentFormRepository" />
@@ -138,11 +138,10 @@
 	<!--  Pages -->
 	
 	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
-		<constructor-arg ref="sitemapSchema" />
 		<constructor-arg ref="contentFormRepository" />
 	</bean>
 
-	<bean id="sitePropertiesFormInitializer" class="org.riotfamily.pages.riot.form.SiteFormInitializer">
+	<bean id="siteFormInitializer" class="org.riotfamily.pages.riot.form.SiteFormInitializer">
 		<constructor-arg ref="contentFormRepository" />
 	</bean>
 
@@ -155,9 +154,7 @@
 
 	<bean id="siteRiotDao" class="org.riotfamily.pages.riot.dao.SiteRiotDao" />
 
- 	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao">
- 		<constructor-arg ref="sitemapSchema" />
- 	</bean>
+ 	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao" />
 	
 	<bean id="locales" class="org.riotfamily.pages.riot.form.SiteLocalesOptionsModel" />
 
@@ -205,7 +202,6 @@
 				<bean class="org.riotfamily.components.riot.command.PublishCommand" />
 				<bean class="org.riotfamily.components.riot.command.UnpublishCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
-				<bean class="org.riotfamily.pages.riot.command.TranslatePageCommand" />
 			</list>
 		</property>
 		<property name="itemScreen">

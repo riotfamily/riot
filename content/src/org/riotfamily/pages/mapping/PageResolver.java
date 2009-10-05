@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.config.SystemPageType;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
@@ -36,16 +35,6 @@ public class PageResolver {
 
 	private static final Object NOT_FOUND = new Object();
 	
-	private SitemapSchema sitemapSchema;
-	
-	public PageResolver() {
-		this(SitemapSchema.getDefault());
-	}
-	
-	public PageResolver(SitemapSchema sitemapSchema) {
-		this.sitemapSchema = sitemapSchema;
-	}
-
 	/**
 	 * Returns the first Site that matches the given request. The PathCompleter
 	 * is used to strip the servlet mapping from the request URI.
@@ -82,6 +71,10 @@ public class PageResolver {
 			return null;
 		}
 		return (Page) page;
+	}
+	
+	public Page getVirtualPage(Site site, String type, Object arg) {
+		return site.getSchema().getVirtualPageType(type).resolve(site, arg);
 	}
 	
 	protected void exposePage(Page page, HttpServletRequest request) {
@@ -130,7 +123,7 @@ public class PageResolver {
 		}
 		if (page == null 
 				|| !(page.isPublished() || AccessController.isAuthenticatedUser())
-				|| !sitemapSchema.suffixMatches(page, path)) {
+				|| !site.getSchema().suffixMatches(page, path)) {
 			
 			return null;
 		}
@@ -138,9 +131,9 @@ public class PageResolver {
 	}
 	
 	private Page resolveVirtualChildPage(Site site, String lookupPath) {
-		for (ContentPage parent : ContentPage.findByTypesAndSite(sitemapSchema.getVirtualParents(), site)) {
+		for (ContentPage parent : ContentPage.findByTypesAndSite(site.getSchema().getVirtualParents(), site)) {
 			if (lookupPath.startsWith(parent.getPath())) {
-				SystemPageType parentType = (SystemPageType) sitemapSchema.getPageType(parent);
+				SystemPageType parentType = (SystemPageType) site.getSchema().getPageType(parent);
 				String tail = lookupPath.substring(parent.getPath().length());
 				return parentType.getVirtualChildType().resolve(parent, tail);
 			}

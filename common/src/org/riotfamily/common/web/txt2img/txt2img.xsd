@@ -9,7 +9,8 @@
 		<xsd:attribute name="font" type="xsd:string" use="required" />
 		<xsd:attribute name="size" type="xsd:positiveInteger" use="required" />
 		<xsd:attribute name="anti-alias" type="xsd:boolean" default="true" />
-		<xsd:attribute name="resample" type="xsd:boolean" default="true" />
+		<xsd:attribute name="resample" type="xsd:boolean" />
+		<xsd:attribute name="fractional" type="xsd:boolean" />
 		<xsd:attribute name="color" type="xsd:string" />
 		<xsd:attribute name="padding-top" type="xsd:integer" />
 		<xsd:attribute name="padding-right" type="xsd:integer" />

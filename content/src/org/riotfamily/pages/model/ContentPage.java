@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -67,10 +66,6 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	
 	private List<ContentPage> children;
 	
-	private ContentPage masterPage;
-	
-	private Set<ContentPage> translations;
-	
 	private Site site;
 
 	private String pathComponent;
@@ -94,12 +89,6 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	public ContentPage(String pathComponent, Site site) {
 		this.pathComponent = pathComponent;
 		this.site = site;
-	}
-
-	public ContentPage(ContentPage master) {
-		this.masterPage = master;
-		this.pageType = master.getPageType();
-		this.pathComponent = master.getPathComponent();
 	}
 	
 	// ----------------------------------------------------------------------
@@ -157,25 +146,6 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		
 	// ----------------------------------------------------------------------
 	
-	@ManyToOne(cascade=CascadeType.MERGE)
-	public ContentPage getMasterPage() {
-		return masterPage;
-	}
-
-	public void setMasterPage(ContentPage masterPage) {
-		this.masterPage = masterPage;
-	}
-		
-	@OneToMany(mappedBy="masterPage", cascade={CascadeType.MERGE, CascadeType.PERSIST})
-	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-	public Set<ContentPage> getTranslations() {
-		return translations;
-	}
-
-	public void setTranslations(Set<ContentPage> translations) {
-		this.translations = translations;
-	}
-
 	@Transient
 	public Locale getLocale() {
 		return site.getLocale();
@@ -218,36 +188,7 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		}
 		return parent.getChildren();
 	}
-	
-	@Transient
-	public Collection<ContentPage> getChildPagesWithFallback() {
-		List<ContentPage> pages = Generics.newArrayList();
-		pages.addAll(getChildren());
-		pages.addAll(getTranslationCandidates());
-		return pages;
-	}
-	
-	@Transient
-	public Collection<ContentPage> getTranslationCandidates() {
-		List<ContentPage> candidates = Generics.newArrayList();
-		ContentPage master = getMasterPage();
-		if (master != null) {
-			for (ContentPage page : master.getChildren()) {
-				boolean translated = false;
-				for (ContentPage child : getChildren()) {
-					if (page.equals(child.getMasterPage())) {
-						translated = true;
-						break;
-					}
-				}
-				if (!translated) {
-					candidates.add(page);
-				}
-			}			
-		}
-		return candidates;
-	}
-	
+		
 	@Override
 	public String toString() {
 		return site + ":" + path;
@@ -289,6 +230,25 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		}
 	}
 	
+	// ----------------------------------------------------------------------
+	// Schema methods
+	// ----------------------------------------------------------------------
+	
+	@Transient
+	public boolean isSystemPage() {
+		return site.getSchema().isSystemPage(this);
+	}
+
+	@Transient
+	public boolean canHaveChildren() {
+		return site.getSchema().canHaveChildren(this);
+	}
+
+	@Transient
+	public boolean isValidChild(ContentPage child) {
+		return site.getSchema().isValidChild(this, child);
+	}
+
 	// ----------------------------------------------------------------------
 	// Materialized path methods
 	// ----------------------------------------------------------------------

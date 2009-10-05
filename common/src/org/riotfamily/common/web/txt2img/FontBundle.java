@@ -49,7 +49,7 @@ public class FontBundle {
 				name = matcher.group(2);
 			}
 		}
-		log.debug("Adding font [%s] with name '%s'", font.getName(), name);
+		log.debug("Adding font [{}] with name '{}'", font.getName(), name);
 		Assert.isNull(fonts.put(name, font), "Duplicate name " + name);
 	}
 	

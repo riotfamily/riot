@@ -82,13 +82,13 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-    <bean id="activeRecordInitializer" class="org.riotfamily.common.hibernate.ActiveRecordInitializer">
+    <bean id="activeRecordInitializer" class="org.riotfamily.common.hibernate.ActiveRecordInitializer" depends-on="beanConfigurer">
     	<constructor-arg ref="sessionFactory" />
     </bean>
 
 	<bean class="org.riotfamily.common.hibernate.LifecycleListener" />
 	
-	<bean class="org.riotfamily.common.beans.injection.SpringBeanConfigurer" />
+	<bean id="beanConfigurer" class="org.riotfamily.common.beans.injection.SpringBeanConfigurer" />
 	
 	<util:list id="cacheRegions">
 		<bean class="org.riotfamily.cachius.Region">
@@ -97,7 +97,7 @@
 		</bean>
 	</util:list>
 	
-    <bean id="cacheService" class="org.riotfamily.cachius.CacheService">
+    <bean id="cacheService" class="org.riotfamily.cachius.CacheService" destroy-method="destroy">
 	 	<description>
 			A Cachius CacheService instance to cache and serve content.		
 		</description>

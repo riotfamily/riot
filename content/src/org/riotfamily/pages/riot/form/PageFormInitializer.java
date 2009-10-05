@@ -21,7 +21,6 @@ import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.config.PageType;
-import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 import org.springframework.util.Assert;
@@ -37,14 +36,9 @@ import org.springframework.util.Assert;
  */
 public class PageFormInitializer implements FormInitializer {
 
-	private SitemapSchema sitemapSchema;
-	
 	private FormRepository repository;
 
-	public PageFormInitializer(SitemapSchema sitemapSchema, 
-			FormRepository repository) {
-		
-		this.sitemapSchema = sitemapSchema;
+	public PageFormInitializer(FormRepository repository) {
 		this.repository = repository;
 	}
 
@@ -54,16 +48,21 @@ public class PageFormInitializer implements FormInitializer {
 		if (form.isNew())  {
 			ContentPage parentPage = null;
 			Object parent = ScreenContext.get(RequestHolder.getRequest()).getParent();
+			Site site;
 			if (parent instanceof ContentPage) {
 				parentPage = (ContentPage) parent;
+				site = parentPage.getSite();
 				form.setAttribute("pageId", parentPage.getId());
-				form.setAttribute("siteId", parentPage.getSite().getId());
-			}
-			else if (parent instanceof Site) {
-				Site site = (Site) parent;
 				form.setAttribute("siteId", site.getId());
 			}
-			List<? extends PageType> pageTypes = sitemapSchema.getChildTypeOptions(parentPage);
+			else if (parent instanceof Site) {
+				site = (Site) parent;
+				form.setAttribute("siteId", site.getId());
+			}
+			else {
+				site = Site.loadDefaultSite();
+			}
+			List<? extends PageType> pageTypes = site.getSchema().getChildTypeOptions(parentPage);
 			Assert.notEmpty(pageTypes, "Sitemap schema does not allow the creation of pages here");
 			sb = createPageTypeBox(form, pageTypes);
 			pageType = pageTypes.get(0).getName();
