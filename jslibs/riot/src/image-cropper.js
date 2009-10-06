@@ -12,6 +12,12 @@ var Cropper = {
 		if (className) e.className = className;
 		if (parent) parent.appendChild(e);
 		return Element.extend(e);
+	},
+	appendButton: function(parent, className, label, handler) {
+		var e = new Element('input', {type: 'button', value: label}).addClassName(className);
+		e.onclick = handler;
+		if (parent) parent.insert(e);
+		return e;
 	}
 };
 Cropper.Pos = Class.create();
@@ -117,14 +123,11 @@ Cropper.UI.prototype = {
 			}
 
 			// Buttons:
-			e = this.cropButton = Cropper.appendDiv(this.controls, 'cropButton');
-			e.innerHTML = o.cropLabel || 'Crop';
-			e.onclick = this.crop.bind(this);
+			e = this.cropButton = Cropper.appendButton(this.controls, 
+					'crop', o.cropLabel || 'Crop', this.crop.bind(this));
 
-			e = this.undoButton = Cropper.appendDiv(this.controls).hide();
-			e.className = 'undoButton';
-			e.innerHTML = o.undoLabel || 'Undo';
-			e.onclick = this.undo.bind(this);
+			e = this.undoButton = Cropper.appendButton(this.controls, 
+					'undo', o.undoLabel || 'Undo', this.undo.bind(this)).hide();
 		}
 
 		this.elementPos = Cropper.elementPos(this.element);
@@ -388,10 +391,12 @@ Cropper.UI.prototype = {
 		if (enabled && !this.cropEnabled) {
 			this.cropEnabled = true;
 			this.controls.removeClassName('no-crop');
+			if (this.cropButton) this.cropButton.disabled = false;
 		}
 		else if (!enabled && this.cropEnabled) {
 			this.cropEnabled = false;
 			this.controls.addClassName('no-crop');
+			if (this.cropButton) this.cropButton.disabled = true;
 		}
 	},
 
