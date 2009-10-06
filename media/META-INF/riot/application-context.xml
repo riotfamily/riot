@@ -16,6 +16,11 @@
 		<property name="storagePath" value="${riot.media.storagePath=}" />
 	</bean>
 	
+	<bean id="imageMagick" class="org.riotfamily.media.processing.ImageMagick">
+		<property name="magickHome" value="${imageMagick.home=}" />
+		<property name="command" value="${imageMagick.convertCommand=}" />
+	</bean>
+	
 	<bean id="imageMagickIdentify" class="org.riotfamily.media.service.ImageMagickIdentify">
 		<description>
 			ImageMagick 'identify' command which is used to extract meta data from images.
