@@ -22,7 +22,9 @@
 	<tx:annotation-driven />
 	
 	<dwr:configuration>
-		<dwr:convert type="exception" class="java.lang.Exception" />
+		<dwr:convert type="exception" class="java.lang.Exception">
+			<dwr:exclude method="stackTrace"/>
+		</dwr:convert>
 	</dwr:configuration>
 	
 	<dwr:annotation-config />
