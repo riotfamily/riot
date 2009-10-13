@@ -1,10 +1,10 @@
-#Thu Sep 24 13:16:06 CEST 2009
+#Thu Oct 01 21:02:26 CEST 2009
 eclipse.preferences.version=1
 org.springframework.ide.eclipse.core.builders.enable.aopreferencemodelbuilder=true
 org.springframework.ide.eclipse.core.builders.enable.beanmetadatabuilder=true
 org.springframework.ide.eclipse.core.enable.project.preferences=true
 org.springframework.ide.eclipse.core.validator.enable.org.springframework.ide.eclipse.beans.core.beansvalidator=true
-org.springframework.ide.eclipse.core.validator.enable.org.springframework.ide.eclipse.core.springvalidator=false
+org.springframework.ide.eclipse.core.validator.enable.org.springframework.ide.eclipse.core.springvalidator=true
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.beanAlias-org.springframework.ide.eclipse.beans.core.beansvalidator=true
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.beanClass-org.springframework.ide.eclipse.beans.core.beansvalidator=true
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.beanConstructorArgument-org.springframework.ide.eclipse.beans.core.beansvalidator=true
@@ -18,4 +18,4 @@ org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.i
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.parsingProblems-org.springframework.ide.eclipse.beans.core.beansvalidator=true
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.requiredProperty-org.springframework.ide.eclipse.beans.core.beansvalidator=false
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.toolAnnotation-org.springframework.ide.eclipse.beans.core.beansvalidator=false
-org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.core.springClasspath-org.springframework.ide.eclipse.core.springvalidator=false
+org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.core.springClasspath-org.springframework.ide.eclipse.core.springvalidator=true

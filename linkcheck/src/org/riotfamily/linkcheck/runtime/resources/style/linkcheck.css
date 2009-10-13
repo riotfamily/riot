@@ -1,0 +1,12 @@
+a.broken-link {
+	border-bottom: 1px dashed #cb0038;
+}
+.broken-link-marker {
+	width: 17px;
+	height: 18px;
+	background: url(images/broken-link.png) no-repeat center center;
+}
+* html .broken-link-marker {
+	background-image: none:
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader (src='${resourcePath}/images/broken-link.png', sizingMethod='scale');
+}

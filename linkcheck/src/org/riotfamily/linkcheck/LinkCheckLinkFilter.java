@@ -1,6 +1,6 @@
 package org.riotfamily.linkcheck;
 
-import org.riotfamily.common.servlet.ServletUtils;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.crawler.LinkFilter;
 
 public class LinkCheckLinkFilter implements LinkFilter {

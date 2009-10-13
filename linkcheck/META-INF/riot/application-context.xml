@@ -4,9 +4,18 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+		
+	<override:add ref="sessionFactory" property="annotatedClasses">
+		<value>org.riotfamily.linkcheck.BrokenLink</value>
+	</override:add>	
 
+	<bean id="linkChecker" class="org.riotfamily.linkcheck.LinkChecker"/>
+	 
+	<override:add ref="crawler" property="pageHandlers">
+		<ref bean="linkChecker"/>
+	</override:add>	
 
 </beans>
