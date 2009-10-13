@@ -31,16 +31,16 @@
 			var riotComponentFormParams = {};
 			${inplaceMacroHelper.initScript}
 			<#nested />
-			function onToolbarLoaded(toolbar) {
-				toolbar.edit = ${inplaceMacroHelper.isEditGranted()?string};
-				toolbar.publish = ${inplaceMacroHelper.isPublishGranted()?string};
+			document.observe('toolbar:loaded', function(event) {
+				riot.toolbar.edit = ${inplaceMacroHelper.isEditGranted()?string};
+				riot.toolbar.publish = ${inplaceMacroHelper.isPublishGranted()?string};
 				<#if contentMap??>
 					riot.components.registerContainer(${contentMap.container.id});
 				 	<#if contentMap.content.dirty>
-						toolbar.enablePreviewButton();
+						riot.toolbar.enablePreviewButton();
 					</#if>
 				</#if>
-			}
+			});
 		</script>
 	<#elseif inplaceMacroHelper.liveMode>
 		<script type="text/javascript" language="JavaScript">
