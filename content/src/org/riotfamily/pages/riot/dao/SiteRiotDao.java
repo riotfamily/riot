@@ -49,7 +49,6 @@ public class SiteRiotDao extends RiotDaoAdapter implements Swapping {
 	}
 
 	public Object update(Object entity) throws DataAccessException {
-		Site site = (Site) entity;
 		return ((Site) entity).merge();
 	}
 
