@@ -72,7 +72,12 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 			if (params.getPageSize() > 0) {
 				int end = params.getOffset() + params.getPageSize();
 				if (end >= list.size()) {
-					end = list.size() - 1;
+					if (list.size() > 0) {
+						end = list.size() - 1;
+					}
+					else {
+						end = 0;
+					}
 				}
 				return list.subList(params.getOffset(), end);
 			}

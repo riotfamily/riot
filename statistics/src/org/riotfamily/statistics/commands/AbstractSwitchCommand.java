@@ -16,34 +16,43 @@ import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
-import org.riotfamily.core.screen.list.command.result.BatchResult;
-import org.riotfamily.core.screen.list.command.result.UpdateCommandsResult;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public abstract class AbstractSwitchCommand extends AbstractCommand {
+
+	private boolean enablingCommand;
 	
-	public  static final String ACTION_ENABLE = "enable";
+	public void setEnablingCommand(boolean enablingCommand) {
+		this.enablingCommand = enablingCommand;
+	}
 	
-	public static final String ACTION_DISABLE = "disable";
-	
+	protected boolean isEnablingCommand() {
+		return enablingCommand;
+	}
+
 	@Override
 	protected String getAction(CommandContext context) {
-		return isEnabled() ? ACTION_DISABLE : ACTION_ENABLE; 
+		return isEnablingCommand() ? "enable" : "disable";
 	}
 	
 	@Override
 	protected String getIcon(String action) {
-		return action == ACTION_DISABLE ? "switchOn" : "switchOff"; 
+		return isEnablingCommand() ? "start" : "stop";
 	}
-		
+
+	@Override
+	public boolean isEnabled(CommandContext context, Selection selection) {
+		return (isEnablingCommand() && !isEnabled())
+				|| (!isEnablingCommand() && isEnabled());
+	}
+	
 	public CommandResult execute(CommandContext context, Selection selection) {
 		setEnabled(!isEnabled());
-		return new BatchResult(
-				new RefreshListResult(), 
-				new UpdateCommandsResult());
+		return new RefreshListResult();
 	}
-	
+
 	protected abstract boolean isEnabled();
-	
+
 	protected abstract void setEnabled(boolean enabled);
+
 }

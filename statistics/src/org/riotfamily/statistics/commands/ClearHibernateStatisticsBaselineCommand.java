@@ -17,6 +17,8 @@ import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
+import org.riotfamily.core.screen.list.command.result.BatchResult;
+import org.riotfamily.core.screen.list.command.result.NotificationResult;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public class ClearHibernateStatisticsBaselineCommand extends AbstractCommand {
@@ -24,8 +26,13 @@ public class ClearHibernateStatisticsBaselineCommand extends AbstractCommand {
 	private SessionFactory sessionFactory;
 	
 	@Override
+	protected String getName() {
+		return "Clear Baseline";
+	}
+
+	@Override
 	protected String getIcon(String action) {
-		return "clear";
+		return "chart_bar_delete";
 	}
 	
 	public ClearHibernateStatisticsBaselineCommand(SessionFactory sessionFactory) {
@@ -34,6 +41,9 @@ public class ClearHibernateStatisticsBaselineCommand extends AbstractCommand {
 
 	public CommandResult execute(CommandContext context, Selection selection) {
 		sessionFactory.getStatistics().clear();
-		return new RefreshListResult();
+		return new BatchResult(
+				new RefreshListResult(),
+				new NotificationResult(context, this)
+						.setDefaultMessage("The baseline has been cleared."));
 	}
 }

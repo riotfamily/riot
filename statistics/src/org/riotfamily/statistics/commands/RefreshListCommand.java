@@ -14,32 +14,25 @@ package org.riotfamily.statistics.commands;
 
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
-import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
+import org.riotfamily.core.screen.list.command.SelectionItem;
+import org.riotfamily.core.screen.list.command.impl.support.AbstractChildCommand;
+import org.riotfamily.core.screen.list.command.result.BatchResult;
+import org.riotfamily.core.screen.list.command.result.NotificationResult;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
-import org.riotfamily.statistics.web.RequestCountFilterPlugin;
 
-public class ClearRequestStatisticsBaselineCommand extends AbstractCommand  {
-
-	private RequestCountFilterPlugin filterPlugin;
-
-	public ClearRequestStatisticsBaselineCommand(RequestCountFilterPlugin filterPlugin) {
-		this.filterPlugin = filterPlugin;
-	}
-
-	@Override
-	protected String getName() {
-		return "Clear Baseline";
-	}
+public class RefreshListCommand extends AbstractChildCommand {
 
 	@Override
 	protected String getIcon(String action) {
-		return "chart_bar_delete";
+		return "arrow_refresh";
 	}
-
-	public CommandResult execute(CommandContext context, Selection selection) {
-		filterPlugin.reset();
-		return new RefreshListResult();
+	
+	@Override
+	protected CommandResult execute(CommandContext context, SelectionItem parent) {
+		return new BatchResult(
+				new RefreshListResult(),
+				new NotificationResult(context, this)
+						.setDefaultMessage("The list has been refreshed."));
 	}
 
 }

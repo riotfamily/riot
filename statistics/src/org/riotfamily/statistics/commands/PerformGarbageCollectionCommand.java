@@ -20,6 +20,11 @@ import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 
 public class PerformGarbageCollectionCommand extends AbstractCommand  {
 	
+	@Override
+	protected String getIcon(String action) {
+		return "database_refresh";
+	}
+	
 	public CommandResult execute(CommandContext context, Selection selection) {
 		System.gc(); 
 		return new RefreshListResult();
