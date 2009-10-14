@@ -609,7 +609,12 @@ dwr.engine.setErrorHandler(function(err, ex) {
 		}
 		else {
 			list.setIdle();
-			alert(ex.message);	
+			if (ex.message) {
+				alert(ex.message);
+			}
+			else {
+				alert(ex.javaClassName);
+			}
 		}
 	}
 	else {
