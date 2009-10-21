@@ -31,7 +31,7 @@
 			var riotComponentFormParams = {};
 			${inplaceMacroHelper.initScript}
 			<#nested />
-			document.observe('toolbar:loaded', function(event) {
+			function riotToolbarLoaded() {
 				riot.toolbar.edit = ${inplaceMacroHelper.isEditGranted()?string};
 				riot.toolbar.publish = ${inplaceMacroHelper.isPublishGranted()?string};
 				<#if contentMap??>
@@ -40,7 +40,7 @@
 						riot.toolbar.enablePreviewButton();
 					</#if>
 				</#if>
-			});
+			}
 		</script>
 	<#elseif inplaceMacroHelper.liveMode>
 		<script type="text/javascript" language="JavaScript">
