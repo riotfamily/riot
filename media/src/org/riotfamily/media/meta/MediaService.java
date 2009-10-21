@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.media.service;
+package org.riotfamily.media.meta;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import java.io.InputStream;
 
 import javax.activation.FileTypeMap;
 
+import org.riotfamily.media.processing.FFmpeg;
 import org.riotfamily.media.store.FileStore;
 
 /**

@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.media.service;
+package org.riotfamily.media.processing;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.media.meta.VideoMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

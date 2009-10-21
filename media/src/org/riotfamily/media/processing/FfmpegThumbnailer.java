@@ -10,15 +10,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.media.service;
+package org.riotfamily.media.processing;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.riotfamily.media.processing.ImageMagick;
-import org.riotfamily.media.processing.ImageMagickThumbnailer;
-import org.riotfamily.media.processing.Thumbnailer;
 
 public class FfmpegThumbnailer implements Thumbnailer {
 

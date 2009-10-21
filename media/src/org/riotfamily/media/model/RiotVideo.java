@@ -19,7 +19,7 @@ import java.io.InputStream;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.riotfamily.media.service.VideoMetaData;
+import org.riotfamily.media.meta.VideoMetaData;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

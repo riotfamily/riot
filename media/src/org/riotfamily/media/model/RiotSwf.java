@@ -20,7 +20,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.riotfamily.media.service.FlashInfo;
+import org.riotfamily.media.meta.FlashInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

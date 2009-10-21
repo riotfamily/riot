@@ -21,7 +21,7 @@
 		<property name="command" value="${imageMagick.convertCommand=}" />
 	</bean>
 	
-	<bean id="imageMagickIdentify" class="org.riotfamily.media.service.ImageMagickIdentify">
+	<bean id="imageMagickIdentify" class="org.riotfamily.media.meta.ImageMagickIdentify">
 		<description>
 			ImageMagick 'identify' command which is used to extract meta data from images.
 			
@@ -47,9 +47,9 @@
 		<property name="command" value="${imageMagick.identifyCommand=}" />
 	</bean>
 	
-	<bean id="ffmpeg" class="org.riotfamily.media.service.FFmpeg" />
+	<bean id="ffmpeg" class="org.riotfamily.media.processing.FFmpeg" />
 	
-	<bean id="mediaService" class="org.riotfamily.media.service.MediaService">
+	<bean id="mediaService" class="org.riotfamily.media.meta.MediaService">
 		<constructor-arg ref="fileStore" />
 		<constructor-arg ref="fileTypeMap" />
 		<constructor-arg ref="imageMagickIdentify" />
