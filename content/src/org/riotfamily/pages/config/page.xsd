@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://www.riotfamily.org/schema/pages/page"
+<xsd:schema xmlns="http://www.riotfamily.org/schema/content/page"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:tool="http://www.springframework.org/schema/tool"
 	attributeFormDefault="unqualified" elementFormDefault="qualified"
-	targetNamespace="http://www.riotfamily.org/schema/pages/page">
+	targetNamespace="http://www.riotfamily.org/schema/content/page">
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans"
 		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" />
@@ -39,7 +39,7 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:element name ="handler" type="bean-or-ref" minOccurs="0" />
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 				<xsd:element name="type" type="type" />
 				<xsd:element name="type-ref" type="type-ref" />
@@ -48,6 +48,7 @@
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="suffix" type="xsd:string" />
 		<xsd:attribute name="label" type="xsd:string" />
+		<xsd:attribute name="handler" type="xsd:string" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="bean-or-ref">
@@ -77,7 +78,7 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:element name ="handler" type="bean-or-ref" minOccurs="0" />
 			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
 			<xsd:choice>
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -88,6 +89,7 @@
 				<xsd:element name="virtual-page" type="virtual-page" minOccurs="0" />
 			</xsd:choice>
 		</xsd:sequence>
+		<xsd:attribute name="handler" type="xsd:string" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="system-page">
@@ -99,7 +101,7 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:element name ="handler" type="bean-or-ref" minOccurs="0" />
 			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
 			<xsd:choice>
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -114,6 +116,7 @@
 		<xsd:attribute name="suffix" type="xsd:string" />
 		<xsd:attribute name="label" type="xsd:string" />
 		<xsd:attribute name="path-component" type="xsd:string" />
+		<xsd:attribute name="handler" type="xsd:string" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="virtual-page">
@@ -126,12 +129,13 @@
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name ="resolver" type="bean-or-ref" />
-			<xsd:element name ="handler" type="bean-or-ref" />
+			<xsd:element name ="handler" type="bean-or-ref" minOccurs="0" />
 			<xsd:element name ="virtual-page" type="virtual-page" minOccurs="0" />
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="suffix" type="xsd:string" />
 		<xsd:attribute name="label" type="xsd:string" />
+		<xsd:attribute name="handler" type="xsd:string" />
 	</xsd:complexType>
 
 </xsd:schema>

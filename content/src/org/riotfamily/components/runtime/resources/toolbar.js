@@ -50,6 +50,9 @@ riot.Toolbar = Class.create({
 			this.buttons.values().invoke('activate');
 			this.buttons.get('browse').select();
 		}
+		if (window.riotToolbarLoaded) {
+			riotToolbarLoaded();
+		}
 		this.element.fire('toolbar:loaded');
 	},
 

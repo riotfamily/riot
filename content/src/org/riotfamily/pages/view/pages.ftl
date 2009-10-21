@@ -7,6 +7,10 @@
 	<#return beans.pageResolver.getVirtualPage(site, type, arg) />
 </#function>
 
+<#function get type site=currentSite>
+	<#return ContentPage.loadByTypeAndSite(type, site) />
+</#function>
+
 <#---
   - Renders an HTML link to the given Page. The link text will be inplace 
   - editable if the page is the current page.

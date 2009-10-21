@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.cache.CacheTagUtils;
@@ -40,11 +41,20 @@ public class PageFacade {
 
 	private HttpServletRequest request;
 	
+	private HttpServletResponse response;
+	
 	private boolean preview;
 	
 	public PageFacade(Page page, HttpServletRequest request) {
+		this(page, request, null);
+	}
+	
+	public PageFacade(Page page, HttpServletRequest request,
+			HttpServletResponse response) {
+		
 		this.page = page;
 		this.request = request;
+		this.response = response;
 		this.preview = isPreview(page);
 		CacheTagUtils.tagIfSupported(page);
 	}
@@ -68,6 +78,9 @@ public class PageFacade {
 		String suffix = page.getSite().getSchema().getDefaultSuffix(page.getPageType());
 		if (suffix != null) {
 			url.append(suffix);
+		}
+		if (response != null) {
+			return ServletUtils.resolveAndEncodeUrl(url.toString(), request, response);
 		}
 		return url.toString();
 	}	
@@ -121,7 +134,7 @@ public class PageFacade {
 		if (parent == null) {
 			return Collections.singletonList(this);
 		}
-		return new PageFacade(parent, request).getChildren();
+		return new PageFacade(parent, request, response).getChildren();
 	}
 	
 	public PageFacade getPreviousSibling() {
@@ -171,7 +184,7 @@ public class PageFacade {
 		ArrayList<PageFacade> result = Generics.newArrayList();
 		for (Page page : pages) {
 			if (page.isPublished() || isPreview(page)) {
-				result.add(new PageFacade(page, request));
+				result.add(new PageFacade(page, request, response));
 			}
 		}
 		return result;

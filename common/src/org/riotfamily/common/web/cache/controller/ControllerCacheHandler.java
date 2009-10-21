@@ -46,10 +46,14 @@ public class ControllerCacheHandler extends AbstractHttpHandler {
 
 	@Override
 	public String getCacheKey() {
-		StringBuilder key = new StringBuilder();
-		key.append(controller.getCacheKey(getRequest()));
-		cacheKeyAugmentor.augmentCacheKey(key, getRequest());
-		return key.toString();
+		String key = controller.getCacheKey(getRequest());
+		if (key != null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(key);
+			cacheKeyAugmentor.augmentCacheKey(sb, getRequest());
+			return sb.toString();
+		}
+		return null;
 	}
 	
 	@Override
@@ -65,6 +69,7 @@ public class ControllerCacheHandler extends AbstractHttpHandler {
 		return false;
 	}
 	
+	@Override
 	protected void handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		

@@ -20,7 +20,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.riotfamily.media.service.ImageMetaData;
+import org.riotfamily.media.meta.ImageMetaData;
 import org.springframework.web.multipart.MultipartFile;
 
 

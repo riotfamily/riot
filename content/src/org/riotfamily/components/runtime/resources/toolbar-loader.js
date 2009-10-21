@@ -1,10 +1,9 @@
 (function() {
-	Object.extend(riot, {
-		contextPath: '${contextPath}',
-		resourcePath: '${contextPath}${resourcePath}',
-		path: '${contextPath}${riotServletPrefix}',
-		language: '${language}' || 'en'
-	});
+
+	riot.contextPath = '${contextPath}';
+	riot.resourcePath = '${contextPath}${resourcePath}';
+	riot.path = '${contextPath}${riotServletPrefix}';
+	riot.language = '${language}' || 'en';
 	
 	riot.Resources.setBasePath(riot.resourcePath)
 		.loadStyleSheet('style/toolbar.css')

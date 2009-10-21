@@ -41,7 +41,9 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered {
 			throws TemplateModelException {
 		
 		Page page = (Page) obj;
-		PageFacade facade = new PageFacade(page, RequestHolder.getRequest());
+		PageFacade facade = new PageFacade(page, RequestHolder.getRequest(), 
+				RequestHolder.getResponse());
+		
 		return new FacadeTemplateModel(facade, page, wrapper);
 	}
 

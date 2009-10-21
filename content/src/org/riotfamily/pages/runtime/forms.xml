@@ -16,7 +16,7 @@
 		<list bind="aliases" sortable="false">
 			<textfield />
 		</list>
-		<selectbox bind="schema" value-property="name" label-property="label" required="true">
+		<selectbox bind="schemaName" value-property="name" label-property="label" required="true">
 			<options ref="sitemapSchemaRepository" />
 		</selectbox>
 	</form>
