@@ -42,7 +42,7 @@ public class SiteListController extends AbstractCacheableController {
 		List<Site> sites = Site.findAll();
 		if (sites.size() == 1) {
 			Site site = sites.get(0);
-			String url = new PageFacade(site.getRootPage(), request).getUrl();
+			String url = new PageFacade(site.getRootPage(), request, response).getUrl();
 			return new ModelAndView(new RedirectView(url, true));
 		}
 		if (!sites.isEmpty()) {
