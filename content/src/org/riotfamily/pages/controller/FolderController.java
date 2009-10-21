@@ -42,7 +42,7 @@ public class FolderController implements CacheableController {
 		Page page = PageResolver.getResolvedPage(request);
 		for (PageFacade child : new PageFacade(page, request, response).getChildren()) {
 			if (child.isRequestable()) {
-				return new ModelAndView(new RedirectView(child.getUrl(), true));
+				return new ModelAndView(new RedirectView(child.getUrl()));
 			}
 		}
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
