@@ -100,7 +100,7 @@ public class Site extends ActiveRecordBeanSupport {
 			if (hostName != null) {
 				name = hostName;
 			}
-			else {
+			else if (locale != null) {
 				name = locale.toString();
 			}
 		}
