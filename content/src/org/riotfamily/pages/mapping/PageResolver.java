@@ -27,7 +27,7 @@ import org.riotfamily.pages.model.Site;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PageResolver {
+public final class PageResolver {
 	
 	public static final String SITE_ATTRIBUTE = PageResolver.class.getName() + ".site";
 
@@ -35,12 +35,15 @@ public class PageResolver {
 
 	private static final Object NOT_FOUND = new Object();
 	
+	private PageResolver() {
+	}
+	
 	/**
 	 * Returns the first Site that matches the given request. The PathCompleter
 	 * is used to strip the servlet mapping from the request URI.
 	 * @return The first matching Site, or <code>null</code> if no match is found
 	 */
-	public Site getSite(HttpServletRequest request) {
+	public static Site getSite(HttpServletRequest request) {
 		Object site = request.getAttribute(SITE_ATTRIBUTE);
 		if (site == null) {
 			site = resolveSite(request);
@@ -54,14 +57,14 @@ public class PageResolver {
 		return result; 
 	}
 
-	protected void exposeSite(Site site, HttpServletRequest request) {
+	protected static void exposeSite(Site site, HttpServletRequest request) {
 		expose(site, request, SITE_ATTRIBUTE);
 	}
 	
 	/**
 	 * Returns the Page for the given request.
 	 */
-	public Page getPage(HttpServletRequest request) {
+	public static Page getPage(HttpServletRequest request) {
 		Object page = request.getAttribute(PAGE_ATTRIBUTE);
 		if (page == null) {
 			page = resolvePage(request);
@@ -73,11 +76,11 @@ public class PageResolver {
 		return (Page) page;
 	}
 	
-	public Page getVirtualPage(Site site, String type, Object arg) {
+	public static Page getVirtualPage(Site site, String type, Object arg) {
 		return site.getSchema().getVirtualPageType(type).resolve(site, arg);
 	}
 	
-	protected void exposePage(Page page, HttpServletRequest request) {
+	protected static void exposePage(Page page, HttpServletRequest request) {
 		expose(page, request, PAGE_ATTRIBUTE);
 	}
 	
@@ -105,12 +108,12 @@ public class PageResolver {
 		return site != NOT_FOUND ? (Site) site : null; 
 	}
 
-	private Site resolveSite(HttpServletRequest request) {
+	private static Site resolveSite(HttpServletRequest request) {
 		String hostName = request.getServerName();
 		return Site.loadByHostName(hostName);
 	}
 
-	private Page resolvePage(HttpServletRequest request) {
+	private static Page resolvePage(HttpServletRequest request) {
 		Site site = getSite(request);
 		if (site == null) {
 			return null;
@@ -130,7 +133,7 @@ public class PageResolver {
 		return page;
 	}
 	
-	private Page resolveVirtualChildPage(Site site, String lookupPath) {
+	private static Page resolveVirtualChildPage(Site site, String lookupPath) {
 		for (ContentPage parent : ContentPage.findByTypesAndSite(site.getSchema().getVirtualParents(), site)) {
 			if (lookupPath.startsWith(parent.getPath())) {
 				SystemPageType parentType = (SystemPageType) site.getSchema().getPageType(parent);
@@ -141,15 +144,15 @@ public class PageResolver {
 		return null;
 	}
 
-	public String getLookupPath(HttpServletRequest request) {
+	public static String getLookupPath(HttpServletRequest request) {
 		return getLookupPath(ServletUtils.getPathWithinApplication(request));
 	}
 	
-	public String getLookupPath(String path) {
+	public static String getLookupPath(String path) {
 		return FormatUtils.stripExtension(path);
 	}
 	
-	private void expose(Object object, HttpServletRequest request,
+	private static void expose(Object object, HttpServletRequest request,
 			String attributeName) {
 		
 		if (object == null) {

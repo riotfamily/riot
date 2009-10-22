@@ -44,7 +44,6 @@
  	<!-- Pages -->
  	
  	<bean id="pageHandlerMapping" class="org.riotfamily.pages.mapping.PageHandlerMapping">
-		<constructor-arg ref="pageResolver" />
 		<property name="interceptors">
 			<list>
 				<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
@@ -64,9 +63,7 @@
 		<property name="suffix" value=".ftl" />
 	</bean>
 	
-	<bean id="noSiteHandlerMapping" class="org.riotfamily.pages.mapping.NoSiteHandlerMapping">
-		<constructor-arg ref="pageResolver" />
-	</bean>
+	<bean id="noSiteHandlerMapping" class="org.riotfamily.pages.mapping.NoSiteHandlerMapping" />
 			
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
 	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
@@ -76,8 +73,6 @@
 		<bean class="org.riotfamily.pages.view.PageToolbarScript" />
 	</override:add>
 
-	<bean class="org.riotfamily.pages.view.PageContextExposer">
-		<constructor-arg ref="pageResolver" />
-	</bean>
+	<bean class="org.riotfamily.pages.view.PageContextExposer" />
 
 </beans>

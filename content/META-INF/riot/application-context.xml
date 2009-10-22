@@ -47,8 +47,6 @@
 	
 	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository" />
 	
-	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver" />
-	
 	<bean class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
 		<constructor-arg ref="sessionFactory" />
 	</bean>

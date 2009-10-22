@@ -30,22 +30,16 @@ import org.riotfamily.pages.model.Site;
  */
 public class PageContextExposer implements ModelPostProcessor {
 
-	private PageResolver pageResolver;
-	
-	public PageContextExposer(PageResolver pageResolver) {
-		this.pageResolver = pageResolver;
-	}
-
 	public void postProcess(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
-		Site site = pageResolver.getSite(request);
+		Site site = PageResolver.getSite(request);
 		if (site != null) {
 			model.put("currentSite", site);
 		}
 		
-		Page page = pageResolver.getPage(request);
+		Page page = PageResolver.getPage(request);
 		if (page != null) {
 			model.put("currentPage", page);
 			if (!model.containsKey("contentMap")) {

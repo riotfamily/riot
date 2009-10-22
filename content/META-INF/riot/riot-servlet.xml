@@ -160,9 +160,7 @@
 
 	<!-- Policies -->
 	
-	<bean id="siteUserPolicy" class="org.riotfamily.pages.riot.security.SiteUserPolicy">
-		<constructor-arg ref="pageResolver" />
-	</bean>
+	<bean id="siteUserPolicy" class="org.riotfamily.pages.riot.security.SiteUserPolicy" />
 	
 	<bean id="masterPagePolicy" class="org.riotfamily.pages.riot.security.MasterPagePolicy" />
 	
