@@ -14,21 +14,19 @@ public class CharacterContent implements Content {
 
 	private File file;
 	
-	private String encoding;
-	
-	public CharacterContent(File file, String encoding) {
+	public CharacterContent(File file) {
 		this.file = file;
-		this.encoding = encoding;
 	}
 
 	public int getLength(HttpServletRequest request, HttpServletResponse response) {
+		//REVISIT Return correct number of bytes based on the actual response encoding (which may not be UTF-8)
 		return (int) file.length();
 	}
 
 	public void serve(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		IOUtils.serve(file, response.getWriter(), encoding);
+		IOUtils.serve(file, response.getWriter(), "UTF-8");
 	}
 
 	public void delete() {
