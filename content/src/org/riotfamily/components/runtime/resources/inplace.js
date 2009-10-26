@@ -158,7 +158,7 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 		this.inline = this.element.getStyle('display') == 'inline';
 		this.input = this.inline
 				? new Element('input', {type: 'text'})
-				: new Element('textarea', {wrap: 'off'});
+				: new Element('textarea');
 
 		this.input.className = 'riot-inplace-text-editor';
 		this.input.setStyle({
