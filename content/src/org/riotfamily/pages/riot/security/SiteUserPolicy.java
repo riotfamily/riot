@@ -24,14 +24,8 @@ import org.riotfamily.pages.model.Site;
 
 public class SiteUserPolicy implements AuthorizationPolicy {
 	
-	private PageResolver pageResolver;
-	
 	private int order = Integer.MAX_VALUE - 2;
-	
-	public SiteUserPolicy(PageResolver pageResolver) {
-		this.pageResolver = pageResolver;
-	}
-	
+		
     public int getOrder() {
 		return this.order;
 	}
@@ -70,7 +64,7 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 		}
 		if (object instanceof HttpServletRequest) {
 			HttpServletRequest request = (HttpServletRequest) object;
-			Page page = pageResolver.getPage(request);
+			Page page = PageResolver.getPage(request);
 			return page != null && !user.getSites().contains(page.getSite());
 		}
 		return false;

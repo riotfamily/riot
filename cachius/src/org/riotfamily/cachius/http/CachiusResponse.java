@@ -189,9 +189,7 @@ public class CachiusResponse implements HttpServletResponse {
                 throw new IllegalStateException();
             }
             OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-            scanWriter = directives.createWriter(
-            		new OutputStreamWriter(out, data.getCharacterEncoding()));
-            
+            scanWriter = directives.createWriter(new OutputStreamWriter(out, "UTF-8"));
 	        writer = new PrintWriter(scanWriter);
 	    }
         return writer;
@@ -222,7 +220,7 @@ public class CachiusResponse implements HttpServletResponse {
 	    		data.setContent(content);
     		}
     		else {
-    			data.setContent(new CharacterContent(file, data.getCharacterEncoding()));
+    			data.setContent(new CharacterContent(file));
     		}
     	}
     	else {

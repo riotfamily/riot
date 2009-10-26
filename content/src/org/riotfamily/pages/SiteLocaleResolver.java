@@ -26,14 +26,9 @@ import org.riotfamily.pages.model.Site;
  */
 public class SiteLocaleResolver extends ChainedLocaleResolver {
 
-	private PageResolver pageResolver;
-	
-	public SiteLocaleResolver(PageResolver pageResolver) {
-		this.pageResolver = pageResolver;
-	}
-
+	@Override
 	protected Locale resolveLocaleInternal(HttpServletRequest request) {
-		Site site = pageResolver.getSite(request);
+		Site site = PageResolver.getSite(request);
 		if (site != null) {
 			return site.getLocale();
 		}

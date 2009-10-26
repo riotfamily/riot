@@ -34,12 +34,6 @@ import org.springframework.web.util.WebUtils;
  */
 public class PageHandlerMapping extends AbstractHandlerMapping {
 
-	private PageResolver pageResolver;
-	
-	public PageHandlerMapping(PageResolver pageResolver) {
-		this.pageResolver = pageResolver;
-	}
-
 	@Override
 	protected Object getHandlerInternal(HttpServletRequest request)
 			throws Exception {
@@ -47,10 +41,10 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		if (WebUtils.isIncludeRequest(request)) {
 			return null;
 		}
-		Page page = pageResolver.getPage(request);
-		String path = pageResolver.getLookupPath(request);
+		Page page = PageResolver.getPage(request);
+		String path = PageResolver.getLookupPath(request);
 		if (page == null) {
-			Site site = pageResolver.getSite(request);
+			Site site = PageResolver.getSite(request);
 			if (site == null) {
 				return null;
 			}
