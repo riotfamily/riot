@@ -40,30 +40,22 @@
 <#---
   - Renders an inline JavaScript to support hover states for buttons that are 
   - no &lt;a&gt; elements in IE &lt; 7.
-  - <p>
-  - The macro outputs a function called <code>addButtonHoverHandler</code>
-  - which is automatically invoked when the DOM is ready. The code is wrapped
-  - inside a condtional comment so it won't be visible to other browsers.
-  - </p>
   - <b>Note:</b> The code requires prototype.js to be loaded. 
   -->
 <#macro insertButtonHoverHack>
 	<script type="text/javascript">
-	/*@cc_on
-	/*@if (@_jscript_version < 5.7)
-		function addButtonHoverHandler() {
-			$$('.txt2imgbtn:not(a)').each(function(el) {
-				el.observe('mouseover', function() {
-					this._txt2imgClass = this.className; 
-					this.className += this.className + 'Hover';
-				});
-				el.observe('mouseout', function() {
-					this.className = this._txt2imgClass;
+		if (Prototype.Browser.IE && typeof document.documentElement.style.maxHeight == 'undefined') {
+			document.observe('dom:loaded', function() {
+				$$('.txt2imgbtn:not(a)').each(function(el) {
+					el.observe('mouseover', function() {
+						this._txt2imgClass = this.className; 
+						this.className += this.className + 'Hover';
+					});
+					el.observe('mouseout', function() {
+						this.className = this._txt2imgClass;
+					});
 				});
 			});
 		}
-		document.observe('dom:loaded', addButtonHoverHandler); 
-	/*@end
-	@*/
 	</script>
 </#macro>
