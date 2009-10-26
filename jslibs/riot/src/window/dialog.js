@@ -38,6 +38,12 @@ riot.window = (function() {
 				var margin = (document.body.offsetWidth - initialWidth) + 'px'; 
 				document.body.style.marginRight = margin;
 				overlay.style.paddingRight = margin;
+				
+				if (Prototype.Browser.IE) {
+					this.hideElements('select');
+				}
+				hideElements('object', dialog.box);
+				hideElements('embed', dialog.box);
 			}
 			overlay.style.zIndex = zIndex-1;
 		}
@@ -59,8 +65,8 @@ riot.window = (function() {
 					window.scrollBy(0,-1);
 					window.scrollBy(0,1);
 				}
-				//showElements('object');
-				//showElements('embed');
+				showElements('object');
+				showElements('embed');
 				Element.remove(overlay);
 			}
 		}
@@ -76,21 +82,20 @@ riot.window = (function() {
 		return null;
 	}
 	
-	function hideElements(name) {
-		var exclude = this.div;
+	function hideElements(name, exclude) {
 		$$(name).each(function (e) {
-			if (!e.childOf(exclude) && e.getStyle('visibility') != 'hidden') {
-				e.makeInvisible();
-				e.hidden = true;
+			if ((exclude && !e.ancestors().include(exclude)) && e.getStyle('visibility') != 'hidden') {
+				e.style.visibility = 'hidden';
+				e._hidden = true;
 			}
 		});
 	}
 
 	function showElements(name) {
 		$$(name).each(function (e) {
-			if (e.hidden) {
-				e.setStyle({visibility: 'visible'});
-				e.hidden = false;
+			if (e._hidden) {
+				e.style.visibility = 'visible';
+				delete(e._hidden);
 			}
 		});
 	}
