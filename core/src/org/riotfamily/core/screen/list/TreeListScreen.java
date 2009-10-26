@@ -30,6 +30,7 @@ import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.Searchable;
+import org.riotfamily.core.dao.Sortable;
 import org.riotfamily.core.screen.AbstractRiotScreen;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.RiotScreen;
@@ -169,6 +170,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 		itemScreen.setParentScreen(this);
 	}
 	
+	@Override
 	public Collection<RiotScreen> getChildScreens() {
 		if (itemScreen == null) {
 			return Collections.emptySet();
@@ -264,6 +266,16 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 			state = new ListState(key, getId(), locale, 
 					screenContext.getParentId(), filterForm, 
 					searchField, pageSize, chooserSettings);
+			
+			if (dao instanceof Sortable) {
+				Sortable sortable = (Sortable) dao;
+				for (ColumnConfig col : columns) {
+					if (col.isSortable() && sortable.canSortBy(col.getProperty())) {
+						state.getParams().orderBy(col.getProperty(), col.isAscending(), col.isCaseSensitive());
+						break;
+					}
+				}
+			}
 			
 			ListState.put(request, key, state);
 		}
