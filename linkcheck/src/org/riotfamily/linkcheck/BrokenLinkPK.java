@@ -16,6 +16,8 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+import org.springframework.util.ObjectUtils;
+
 @Embeddable
 public class BrokenLinkPK implements Serializable {
 	
@@ -41,5 +43,30 @@ public class BrokenLinkPK implements Serializable {
 	public void setSource(String source) {
 		this.source = source;
 	}	
+
+	@Override
+	public int hashCode() {
+		int result = 1;
+		if (getSource() != null) {
+			result += getSource().hashCode();
+		}
+		if (getDestination() != null) {
+			result += getDestination().hashCode();
+		}
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof BrokenLinkPK) {
+			BrokenLinkPK other = (BrokenLinkPK) obj;
+			return ObjectUtils.nullSafeEquals(getSource(), other.getSource())
+					&& ObjectUtils.nullSafeEquals(getSource(), other.getDestination());
+		}
+		return false;
+	}
 
 }

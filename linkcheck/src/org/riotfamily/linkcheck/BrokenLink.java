@@ -97,32 +97,27 @@ public class BrokenLink extends ActiveRecord implements Serializable {
 		this.statusText = FormatUtils.truncate(statusText, 255);
 	}
 
+	@Override
 	public int hashCode() {
-		int result = 1;
-		if (primaryKey.getSource() != null) {
-			result += primaryKey.getSource().hashCode();
+		if (primaryKey != null) {
+			return primaryKey.hashCode();
 		}
-		if (primaryKey.getDestination() != null) {
-			result += primaryKey.getDestination().hashCode();
-		}
-		return result;
+		return 1;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
+		if (obj instanceof BrokenLink) {
+			BrokenLink other = (BrokenLink) obj;
+			return ObjectUtils.nullSafeEquals(primaryKey, other.getPrimaryKey());
 		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final BrokenLink other = (BrokenLink) obj;
-		return ObjectUtils.nullSafeEquals(primaryKey.getSource(), other.primaryKey.getSource())
-				&& ObjectUtils.nullSafeEquals(primaryKey.getSource(), other.primaryKey.getDestination());
+		return false;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer(getDestination());
 		if (statusCode > 0) {
