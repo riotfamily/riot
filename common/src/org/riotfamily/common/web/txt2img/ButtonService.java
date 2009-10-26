@@ -148,7 +148,7 @@ public class ButtonService implements ApplicationContextAware {
 		}
 
 		public String getCacheRegion() {
-			return ButtonService.class.getName();
+			return null;
 		}
 		
 		public String getCacheKey() {
