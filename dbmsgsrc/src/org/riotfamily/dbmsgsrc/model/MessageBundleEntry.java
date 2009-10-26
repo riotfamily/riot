@@ -79,6 +79,7 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 	}
 
 	@Type(type="text")
+	@Column(name="`comment`")
 	public String getComment() {
 		return comment;
 	}
