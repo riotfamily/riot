@@ -25,8 +25,8 @@
   -->
 <#macro button style tag="button" attributes...>
 	<#local label><#nested /></#local>
-	<#local attributes = attributes + {"class": "txt2imgbtn " + style} />
-	<${tag} style="${txt2ImgMacroHelper.getButtonStyle(style, label)}" ${c.joinAttributes(attributes)}>${label?trim}</${tag}>
+	<#local attributes = attributes + {"class": (style + " txt2imgbtn " + attributes.class?if_exists)?trim} />
+	<${tag} style="${txt2ImgMacroHelper.getButtonStyle(style, label)?html}" ${c.joinAttributes(attributes)}>${label?trim}</${tag}>
 </#macro>
 
 <#---
