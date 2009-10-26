@@ -190,7 +190,7 @@
 			<#if !attributes.width?has_content && contentMap[key]??>
 				<#local attributes = attributes + {"width": contentMap[key].width?c} />
 			</#if>
-			<#if !attributes.height?has_content && content[key]??>
+			<#if !attributes.height?has_content && contentMap[key]??>
 				<#local attributes = attributes + {"height": contentMap[key].height?c} />
 			</#if>
 			<#if !attributes.alt?has_content>
