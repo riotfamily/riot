@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -240,6 +241,7 @@ public class RiotFile extends ActiveRecordBeanSupport {
 		this.contentType = contentType;
 	}
 
+	@Column(name="`size`")
 	public long getSize() {
 		return this.size;
 	}

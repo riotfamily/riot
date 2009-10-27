@@ -36,8 +36,8 @@
 	<property name="build.repo.dir" value="${build.dir}/repo" />
 	<property name="build.tstamp" value="${build.dir}/.timestamp" />
 
-	<property name="ivy.download" value="http://riotfamily.org/ivy/ivy-2.0.0-beta2.jar" />
-	<property name="ivy.jar" value="${lib.dir}/ivy2.jar" />
+	<property name="ivy.download" value="http://riotfamily.org/ivy/ivy-2.1.0.jar" />
+	<property name="ivy.jar" value="${lib.dir}/ivy.jar" />
 
 	<taskdef resource="org/apache/ivy/ant/antlib.xml"
 		uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar}"

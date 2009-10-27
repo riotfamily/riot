@@ -222,7 +222,7 @@ var Txt2ImgReplacement = Class.create({
 
 		var printText = document.createElement("span");
 		printText.className = "print-text";
-		printText.innerHTML = this.text;
+		printText.innerHTML = this.el.innerHTML;
 		this.el.update();
 		this.el.appendChild(img);
 		this.el.appendChild(printText);

@@ -146,6 +146,10 @@ class CommandContextHandler extends ListServiceHandler
 		try {
 			Object input = form.populateBackingObject();
 			Selection selection = form.getAttribute("selection");
+			if (selection != null) {
+				selection.resetObjects();
+			}
+			selection.resetObjects();
 			commandId = form.getAttribute("commandId");
 			DialogCommand command = (DialogCommand) getCommands().get(commandId);
 			result = command.handleInput(this, selection, input, 

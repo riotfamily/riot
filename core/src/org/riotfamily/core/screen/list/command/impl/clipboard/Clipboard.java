@@ -43,18 +43,12 @@ public class Clipboard {
 	public ListScreen getSource() {
 		return source;
 	}
-	
-	private void resetSelectionItems() {
-		if (selection != null) {
-			for (SelectionItem item : selection) {
-				item.resetObject();
-			}
-		}
-	}
-	
+		
 	public boolean canPaste(CommandContext context, SelectionItem parent) {
 		if (command != null) {
-			resetSelectionItems();
+			if (selection != null) {
+				selection.resetObjects();
+			}
 			return command.canPaste(source, selection, context, parent);
 		}
 		return false;
@@ -63,7 +57,9 @@ public class Clipboard {
 	public void paste(CommandContext context, SelectionItem parent, 
 			NotificationResult notification) {
 		
-		resetSelectionItems();
+		if (selection != null) {
+			selection.resetObjects();
+		}
 		notification.setArgs(selection.size());
 		command.paste(source, selection, context, parent, notification);
 		clear();

@@ -53,10 +53,8 @@ riot.components = (function() {
 
 	function getContent(el) {
 		if (!el.content) {
-			var c = el.up('.riot-component');
-			if (c && c.readAttribute('riot:contentid')
-					== el.readAttribute('riot:contentid')) {
-				
+			var c = el.hasClassName('riot-component') ? el : el.up('.riot-component');
+			if (c && c.readAttribute('riot:contentid') == el.readAttribute('riot:contentid')) {
 				el.content = new Component(c);
 			}
 			else {
