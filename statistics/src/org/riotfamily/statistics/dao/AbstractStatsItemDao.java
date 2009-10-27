@@ -20,10 +20,12 @@ import org.riotfamily.statistics.domain.StatsItem;
 
 public abstract class AbstractStatsItemDao extends InMemoryRiotDao {
 
+	@Override
 	public Class<?> getEntityClass() {
 		return StatsItem.class;
 	}
 
+	@Override
 	public String getObjectId(Object entity) {
 		return ((StatsItem) entity).getName();
 	}
@@ -33,6 +35,11 @@ public abstract class AbstractStatsItemDao extends InMemoryRiotDao {
 		return getStats();
 	}
 
+	@Override
+	public boolean canSortBy(String property) {
+		return false;
+	}
+	
 	protected abstract List<? extends StatsItem> getStats() throws Exception;
 
 }
