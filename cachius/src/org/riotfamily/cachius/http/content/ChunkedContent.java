@@ -2,8 +2,9 @@ package org.riotfamily.cachius.http.content;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -61,7 +62,9 @@ public class ChunkedContent implements Content {
 	public void serve(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		Reader reader = new BufferedReader(new FileReader(file));
+		Reader reader = new BufferedReader(new InputStreamReader(
+				new FileInputStream(file), "UTF-8"));
+		
 		try {
 			if (chunks != null) {
 				for (Chunk chunk : chunks) {
@@ -113,6 +116,7 @@ public class ChunkedContent implements Content {
 			return fragment.getLength(request, response);
 		}
 
+		@Override
 		public void serve(Reader reader, HttpServletRequest request, 
 				HttpServletResponse response) throws ServletException, IOException {
 			
