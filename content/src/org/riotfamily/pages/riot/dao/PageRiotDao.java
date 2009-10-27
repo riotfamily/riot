@@ -54,9 +54,7 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 	
 	public void delete(Object entity, Object parent) throws DataAccessException {
 		ContentPage page = (ContentPage) entity;
-		if (parent instanceof ContentPage) {
-			((ContentPage) parent).getChildren().remove(page);
-		}
+		page.getParent().getChildren().remove(page);
 		page.delete();
 	}
 

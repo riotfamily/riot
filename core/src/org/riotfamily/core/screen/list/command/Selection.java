@@ -57,7 +57,18 @@ public class Selection implements Iterable<SelectionItem> {
 		
 		return first;
 	}
-		
+	
+	public void resetObjects() {
+		for (SelectionItem item : items) {
+			item.resetObject();
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
@@ -103,6 +114,12 @@ public class Selection implements Iterable<SelectionItem> {
 			object = null;
 		}
 		
+		@Override
+		public int hashCode() {
+			return objectId != null ? objectId.hashCode() : 0;
+		}
+		
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == this) {
 				return true;

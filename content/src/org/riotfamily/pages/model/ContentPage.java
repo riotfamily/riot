@@ -90,28 +90,40 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		this.pathComponent = pathComponent;
 		this.site = site;
 	}
-	
-	// ----------------------------------------------------------------------
-	// Implementation of the SitemapItem interface
-	// ----------------------------------------------------------------------
-	
+		
 	public String getPathComponent() {
 		return pathComponent;
+	}
+	
+	public void setPathComponent(String pathComponent) {
+		this.pathComponent = pathComponent;
 	}
 	
 	public String getPageType() {
 		return pageType;
 	}
 
+	public void setPageType(String pageType) {
+		this.pageType = pageType;
+	}
+	
 	@ManyToOne(cascade=CascadeType.MERGE)
 	public Site getSite() {
 		return this.site;
+	}
+	
+	public void setSite(Site site) {
+		this.site = site;
 	}
 	
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.MERGE)
 	@JoinColumn(name="parent_id", updatable=false, insertable=false)
 	public ContentPage getParent() {
 		return parent;
+	}
+	
+	public void setParent(ContentPage parent) {
+		this.parent = parent;
 	}
 	
 	@OneToMany(cascade=CascadeType.ALL)
@@ -122,28 +134,10 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		return children;
 	}
 		
-	// ----------------------------------------------------------------------
-			
-	public void setPageType(String pageType) {
-		this.pageType = pageType;
-	}
-
-	public void setSite(Site site) {
-		this.site = site;
-	}
-	
-	public void setParent(ContentPage parent) {
-		this.parent = parent;
-	}
-	
 	public void setChildren(List<ContentPage> children) {
 		this.children = children;
 	}
-	
-	public void setPathComponent(String pathComponent) {
-		this.pathComponent = pathComponent;
-	}
-		
+			
 	// ----------------------------------------------------------------------
 	
 	@Transient
