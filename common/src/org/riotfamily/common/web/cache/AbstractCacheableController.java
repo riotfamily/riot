@@ -110,12 +110,10 @@ public abstract class AbstractCacheableController
 	}
 
 	/**
-	 * The default implementation returns <code>0</code> so that 
-	 * {@link #getLastModified(HttpServletRequest)} is invoked every time the
-	 * controller is requested.
+	 * The default implementation returns <code>CACHE_ETERNALLY</code>.
 	 */
 	public long getTimeToLive() {
-		return 0;
+		return CACHE_ETERNALLY;
 	}
 	
     /**
