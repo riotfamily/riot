@@ -20,13 +20,13 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.property.PropertyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.Hierarchy;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Order;
 import org.riotfamily.core.dao.Sortable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -91,9 +91,13 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao implements
 		if (entityClass == null && parentClass != null) {
 			entityClass = PropertyUtils.getCollectionPropertyType(parentClass, collectionProperty);
 		}
-		Assert.notNull(entityClass, "The entityClass must be set");
+		Assert.notNull(entityClass, "The entityClass must be set");		
 	}
 
+	protected String getRole() {
+		return parentClass.getName() + "." + collectionProperty;
+	}
+	
 	public Object getParent(Object entity) {
 		if (parentProperty != null) {
 			return PropertyUtils.getProperty(entity, parentProperty);
@@ -169,6 +173,7 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao implements
 		return Collections.emptyList();
 	}
 
+	@Override
 	public int getListSize(Object parent, ListParams params) {
 		Collection<?> c = getCollection(parent);
 		if (c != null) {

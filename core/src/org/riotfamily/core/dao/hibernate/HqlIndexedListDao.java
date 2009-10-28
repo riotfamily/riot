@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.persister.collection.AbstractCollectionPersister;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.core.screen.list.ListParamsImpl;
@@ -23,8 +24,32 @@ import org.riotfamily.core.screen.list.ListParamsImpl;
 public class HqlIndexedListDao extends HqlCollectionDao 
 		implements Swapping {
 
+	private String indexColumn;
+	
 	public HqlIndexedListDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
+	}
+	
+	@Override
+	protected void initDao() throws Exception {
+		super.initDao();
+		AbstractCollectionPersister persister = (AbstractCollectionPersister) 
+				getSessionFactory().getCollectionMetadata(getRole());
+
+		indexColumn = persister.getIndexColumnNames()[0];
+	}
+	
+	/**
+	 * Always returns false, as the list must always be sorted by the index.
+	 */
+	@Override
+	public boolean canSortBy(String property) {
+		return false;
+	}
+	
+	@Override
+	protected String getOrderBy(ListParams params) {
+		return "order by " + indexColumn;
 	}
 	
 	public boolean canSwap(Object entity, Object parent,
