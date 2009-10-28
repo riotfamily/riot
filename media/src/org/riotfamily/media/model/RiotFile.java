@@ -42,7 +42,6 @@ import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.media.meta.MediaService;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -128,7 +127,6 @@ public class RiotFile extends ActiveRecordBeanSupport {
 		}
 	}
 
-	@Required
 	public void setMediaService(MediaService mediaService) {
 		this.mediaService = mediaService;
 	}

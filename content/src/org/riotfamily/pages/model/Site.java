@@ -33,7 +33,6 @@ import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.config.SitemapSchemaRepository;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -65,7 +64,6 @@ public class Site extends ActiveRecordBeanSupport {
 
 	private SitemapSchemaRepository schemaRepository;
 	
-	@Required
 	@Transient
 	public void setSchemaRepository(SitemapSchemaRepository schemaRepository) {
 		this.schemaRepository = schemaRepository;

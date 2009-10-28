@@ -21,7 +21,6 @@ import org.hibernate.annotations.AccessType;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecord;
 import org.riotfamily.common.web.cache.CacheTagUtils;
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Base class for entities that act as {@link ContentContainerOwner}s.
@@ -36,7 +35,6 @@ public abstract class ContentEntity extends ActiveRecord
 	
 	private CacheService cacheService;
 	
-	@Required	
 	public void setCacheService(CacheService cacheService) {
 		this.cacheService = cacheService;
 	}
