@@ -15,6 +15,7 @@ package org.riotfamily.common.web.cache.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.cachius.http.AbstractHttpHandler;
 import org.riotfamily.common.web.cache.CacheKeyAugmentor;
 import org.riotfamily.common.web.mvc.view.ViewResolverHelper;
@@ -74,6 +75,10 @@ public class ControllerCacheHandler extends AbstractHttpHandler {
 			HttpServletResponse response) throws Exception {
 		
 		ModelAndView mv = controller.handleRequest(getRequest(), response);
+		long ttl = controller.getTimeToLive();
+		if (ttl >= 0) {
+			CacheContext.expireIn(ttl);
+		}
 		if (mv != null) {
 	    	View view = viewResolverHelper.resolveView(getRequest(), mv);
 	    	view.render(mv.getModel(), getRequest(), response);
