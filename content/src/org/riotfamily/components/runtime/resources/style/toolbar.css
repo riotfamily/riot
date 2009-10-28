@@ -167,10 +167,9 @@ body > #riot-notification {
 .riot-types {
 	position: absolute;
 	line-height: 1em;
-	xborder: 5px solid rgba(0,0,0,0.6);
-	x-moz-border-radius: 5px;
+	box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
 	-moz-box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
-	xborder: 5px solid #666;
+	-webkit-box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
 	border: 1px solid #dadada;
 }
 
