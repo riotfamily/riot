@@ -24,6 +24,7 @@ import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.web.cache.AbstractCacheableController;
 import org.riotfamily.common.web.cache.controller.Compressible;
@@ -52,8 +53,6 @@ public abstract class AbstractResourceController extends AbstractCacheableContro
     
     private List<ResourceFilter> filters;
     
-	private boolean checkForModifications = false;
-		        
 	
     public void setFileTypeMap(FileTypeMap fileTypeMap) {
 		this.fileTypeMap = fileTypeMap;
@@ -65,13 +64,6 @@ public abstract class AbstractResourceController extends AbstractCacheableContro
 
 	public void setFilters(List<ResourceFilter> filters) {
 		this.filters = filters;
-	}
-
-	/**
-	 * Sets whether the controller check for file modifications.
-	 */
-	public void setCheckForModifications(boolean checkForModifications) {
-		this.checkForModifications = checkForModifications;
 	}
 	
 	protected Resource lookupResource(String path) throws IOException {
@@ -94,11 +86,8 @@ public abstract class AbstractResourceController extends AbstractCacheableContro
 	}
 	
 	protected abstract String getResourcePath(HttpServletRequest request);
-		
-	public long getTimeToLive() {
-		return checkForModifications ? 0 : CACHE_ETERNALLY;
-	}
-	
+			
+	@Override
 	protected String getCacheKeyInternal(HttpServletRequest request) {
 		StringBuffer key = new StringBuffer();
 		key.append(getResourcePath(request));
@@ -144,6 +133,11 @@ public abstract class AbstractResourceController extends AbstractCacheableContro
 		if (res != null) {
 			String contentType = getContentType(res);
 			response.setContentType(contentType);
+			try {
+				CacheContext.addFile(res.getFile());
+			}
+			catch (IOException ex) {
+			}
 			if (contentType.startsWith("text/")) {
 				serveText(res, path, contentType, request, response.getWriter());
 			}

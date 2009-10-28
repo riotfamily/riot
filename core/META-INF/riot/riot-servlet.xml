@@ -406,7 +406,6 @@
 	
 	<bean id="resourceController" name="/resources/{version}/**" class="org.riotfamily.core.resource.ResourceController">
 		<property name="fileTypeMap" ref="fileTypeMap" />
-		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
 		<property name="filters" ref="resourceFilters" />
 		<property name="mappings" ref="resourceMappings" />
 		<property name="compressors">
