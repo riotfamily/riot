@@ -29,7 +29,6 @@ import org.hibernate.annotations.Type;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.cache.TagCacheItems;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
 /**
@@ -76,7 +75,6 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	}
 	
 	@Transient
-	@Required
 	public void setMarshaller(ContentMapMarshaller marshaller) {
 		this.marshaller = marshaller;
 	}
