@@ -118,8 +118,8 @@ public final class PageResolver {
 		if (site == null) {
 			return null;
 		}
-		String path = FormatUtils.stripTrailingSlash(ServletUtils.getPathWithinApplication(request));
-		String lookupPath = getLookupPath(path);
+		String path = ServletUtils.getPathWithinApplication(request);
+		String lookupPath = getLookupPath(FormatUtils.stripTrailingSlash(path));
 		Page page = ContentPage.loadBySiteAndPath(site, lookupPath);
 		if (page == null) {
 			page = resolveVirtualChildPage(site, lookupPath);
