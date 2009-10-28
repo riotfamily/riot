@@ -773,13 +773,18 @@ Calendar.prototype.create = function (_par) {
 	(this.isPopup) && --title_length;
 	(this.weekNumbers) && ++title_length;
 
-	hh("?", 1, 400).ttip = Calendar._TT["INFO"];
+	var infoBtn = hh("?", 1, 400);
+	infoBtn.ttip = Calendar._TT["INFO"];
+	infoBtn.className += " info";
+	
 	this.title = hh("", title_length, 300);
 	this.title.className = "title";
 	if (this.isPopup) {
 		this.title.ttip = Calendar._TT["DRAG_TO_MOVE"];
 		this.title.style.cursor = "move";
-		hh("&#x00d7;", 1, 200).ttip = Calendar._TT["CLOSE"];
+		var closeBtn = hh("&#x00d7;", 1, 200);
+		closeBtn.ttip = Calendar._TT["CLOSE"];
+		closeBtn.className += " close";
 	}
 
 	row = Calendar.createElement("tr", thead);
