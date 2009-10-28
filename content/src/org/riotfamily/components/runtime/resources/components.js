@@ -464,8 +464,8 @@ riot.components = (function() {
 				return !config.max || componentList.countComponents(config.type) < config.max;
 			});
 			
-			this.element = new Element('div').insert(
-					new Element('div').addClassName('riot-insert-button')
+			this.element = new Element('div').addClassName('riot-insert-container')
+					.insert(new Element('div').addClassName('riot-insert-button')
 					.observe('click', this.onclick.bindAsEventListener(this)));
 
 			this.componentList.element.insert(this.element);
