@@ -112,7 +112,7 @@
 		</property>
 	</bean>
 	
-	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.common.web.performance.MinifyCssController">
+	<bean id="minifyCssController" name="/${riot.utils.path=riot-utils}/joined.css" class="org.riotfamily.common.web.performance.MinifyCssController">
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
@@ -124,7 +124,7 @@
 		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	
-	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.common.web.performance.MinifyScriptController">
+	<bean id="minifyScriptController" name="/${riot.utils.path=riot-utils}/joined.js" class="org.riotfamily.common.web.performance.MinifyScriptController">
 		<description>
 			Controller to compress (minify) JavaScript files.
 		</description>
@@ -132,7 +132,7 @@
 		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	
-	<bean id="clientErrorLogController" name="/riot-utils/error.*" class="org.riotfamily.common.web.controller.ClientErrorLogController">
+	<bean id="clientErrorLogController" name="/${riot.utils.path=riot-utils}/error.*" class="org.riotfamily.common.web.controller.ClientErrorLogController">
 		<description>
 			Controller to log client-side JavaScript errors.
 		</description>
@@ -211,6 +211,7 @@
 		<constructor-arg ref="cacheService" />
 		<constructor-arg ref="resourceStamper" />
 		<property name="reloadable" value="${riot.resources.reloadable=false}" />
+		<property name="riotUtilsPath" value="${riot.utils.path=riot-utils}" />
 	</bean>
 	
 	<bean id="txt2ImgMacroHelper" class="org.riotfamily.common.web.txt2img.Txt2ImgMacroHelperFactory">
@@ -223,7 +224,7 @@
 		<property name="baseDir" value="/WEB-INF/hyphenation" />
 	</bean>
 	
-	<bean id="txt2ImgController" name="/riot-utils/txt2img.{type}" class="org.riotfamily.common.web.txt2img.Txt2ImgController">
+	<bean id="txt2ImgController" name="/${riot.utils.path=riot-utils}/txt2img.{type}" class="org.riotfamily.common.web.txt2img.Txt2ImgController">
 		<property name="compressor">
 			<bean class="org.riotfamily.common.web.performance.YUIJavaScriptCompressor">
 				<property name="enabled" value="${riot.resources.compress=true}" />
@@ -231,15 +232,15 @@
 		</property>
 	</bean>
 	
-	<bean id="txt2imgButtonController" name="/riot-utils/imagebtn/{style}.*" class="org.riotfamily.common.web.txt2img.ButtonController">
+	<bean id="txt2imgButtonController" name="/${riot.utils.path=riot-utils}/imagebtn/{style}.*" class="org.riotfamily.common.web.txt2img.ButtonController">
 		<constructor-arg ref="buttonService" />
 	</bean>
 	
-	<bean id="txt2imgButtonCssController" name="/riot-utils/imagebtn/buttons.css" class="org.riotfamily.common.web.txt2img.ButtonStylesheetController">
+	<bean id="txt2imgButtonCssController" name="/${riot.utils.path=riot-utils}/imagebtn/buttons.css" class="org.riotfamily.common.web.txt2img.ButtonStylesheetController">
 		<constructor-arg ref="buttonService" />
 	</bean>
 		
-	<bean id="countryFlagController" name="/riot-utils/country/{locale}.gif" class="org.riotfamily.common.web.controller.CountryFlagController">
+	<bean id="countryFlagController" name="/${riot.utils.path=riot-utils}/country/{locale}.gif" class="org.riotfamily.common.web.controller.CountryFlagController">
 		<constructor-arg ref="fileTypeMap" />
 		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/icons/flags/" />
 		<property name="defaultFlag" value="europeanunion" />
