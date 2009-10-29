@@ -1,11 +1,6 @@
-#childLists .list {
-	margin-top:10px;
-}
-#childLists .item {
-	padding: 3px 0 3px 20px;
-}
-#childLists a {
-	font-weight: bold;
+.extra .box .links a {
+	margin-left: 13px;
+	padding-left: 24px;
 }
 
 .commands .saveButton {
@@ -430,13 +425,14 @@ table.item .indent {
 
 .calendar-button {
 	width: 23px;
-	height: 26px;
+	height: 24px;
 	padding: 0;
 	*margin-top: 1px;
 	overflow: hidden;
-	border: 0;
 	vertical-align: top;
-	background: ${highlight_color} url(images/calendar.gif) no-repeat center center;
+	background: url(images/calendar.gif) no-repeat center center;
+	display: -moz-inline-stack;
+	display: inline-block;
 }
 #elements input.calendar-input,
 #elements input.color-input {
