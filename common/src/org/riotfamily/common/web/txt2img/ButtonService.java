@@ -46,6 +46,8 @@ public class ButtonService implements ApplicationContextAware {
 	
 	private boolean reloadable = false;
 	
+	private String riotUtilsPath = "riot-utils";
+	
 	public ButtonService(CacheService cacheService, ResourceStamper resourceStamper) {
 		this.cacheService = cacheService;
 		this.resourceStamper = resourceStamper;
@@ -57,6 +59,10 @@ public class ButtonService implements ApplicationContextAware {
 
 	public void setReloadable(boolean reloadable) {
 		this.reloadable = reloadable;
+	}
+
+	public void setRiotUtilsPath(String riotUtilsPath) {
+		this.riotUtilsPath = riotUtilsPath;
 	}
 
 	public void setApplicationContext(ApplicationContext ctx) {
@@ -102,8 +108,8 @@ public class ButtonService implements ApplicationContextAware {
 	private String getImageUri(String style, String label, HttpServletRequest request) {
 		String encodedLabel = FormatUtils.uriEscape(label);
 		String locale = RequestContextUtils.getLocale(request).toString();
-		return String.format("%s/riot-utils/imagebtn/%s.png?label=%s&locale=%s", 
-				request.getContextPath(), style, encodedLabel, locale);
+		return String.format("%s/%s/imagebtn/%s.png?label=%s&locale=%s", 
+				request.getContextPath(), riotUtilsPath, style, encodedLabel, locale);
 	}
 	
 	
