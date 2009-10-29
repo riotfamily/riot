@@ -1,6 +1,6 @@
 (function() {
 	var inputField = $('${element.eventTriggerId}');
-	var button = new Element('button', {className: 'calendar-button'});
+	var button = new Element('span', {className: 'calendar-button'});
 	inputField.insert({after: button});
 	Calendar.setup({
 		inputField: inputField,
