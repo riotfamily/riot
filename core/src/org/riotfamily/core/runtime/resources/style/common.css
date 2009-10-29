@@ -102,6 +102,7 @@ td {
 .extra .box a {
 	color: #3d3d3d;
 	text-decoration: none;
+	background-repeat: no-repeat;
 }
 .extra .box a:hover {
 	text-decoration: underline;
