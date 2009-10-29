@@ -214,8 +214,9 @@ public class CommonMacroHelper {
 		Matcher m = LINK_PATTERN.matcher(html);
 		StringBuffer result = new StringBuffer();
 		while (m.find() && m.groupCount() == 3) {
-			String newLink = ServletUtils.resolveAndEncodeUrl(m.group(2), request, response);
-			log.debug("Replacing link '" + m.group(2) + "' with '" + newLink + "'");
+			String oldLink = m.group(2).trim();
+			String newLink = ServletUtils.resolveAndEncodeUrl(oldLink, request, response);
+			log.debug("Replacing link '" + oldLink + "' with '" + newLink + "'");
 			m.appendReplacement(result, m.group(1) + newLink + m.group(3));
 		}
 		m.appendTail(result);

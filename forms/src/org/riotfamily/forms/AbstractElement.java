@@ -192,7 +192,7 @@ public abstract class AbstractElement implements Element {
 	 * Returns <code>true</code>, if the element as well as its parent is
 	 * enabled.
 	 */
-	public final boolean isEnabled() {
+	public boolean isEnabled() {
 		if (enabled && (parent != null)) {
 			return parent.isEnabled();
 		}

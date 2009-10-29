@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+
+ 	<!--
+ 	<override:add ref="messageBasenames">
+		<value>classpath:/org/riotfamily/linkcheck/runtime/messages</value>
+	</override:add>
+	
+	<override:add ref="resourceMappings" append="true">			
+		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+			<property name="path" value="/" />
+			<property name="location" value="classpath:/org/riotfamily/linkcheck/runtime/resources/" />
+		</bean>
+	</override:add>
+	-->
+	
+ 	<!--
+ 	<bean id="brokenLinkService" class="org.riotfamily.linkcheck.BrokenLinkService"/>
+ 	<override:add ref="dwrController" property="configurators">
+ 		<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
+			<property name="serviceBeans">
+				<map>
+					<entry key="BrokenLinkService" value-ref="brokenLinkService" />
+				</map>
+			</property>							
+		</bean>
+	</override:add>
+	-->
+
+	<!--
+	<bean class="org.riotfamily.linkcheck.BrokenLinkStatusMonitor">
+		<property name="link" value="/list/brokenLinks" />
+	</bean>
+	-->
+	
+	<override:add ref="systemScreens">
+		<bean id="brokenLinks" class="org.riotfamily.core.screen.list.TreeListScreen">
+			<property name="icon" value="link_break" />
+			<property name="dao">
+				<bean class="org.riotfamily.linkcheck.BrokenLinkRiotDao">
+					<constructor-arg ref="sessionFactory" />
+				</bean>			
+			</property>
+			<property name="columns">
+				<list>
+					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+						<property name="property" value="source" />
+					</bean>
+					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+						<property name="property" value="destination" />
+					</bean>
+					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+						<property name="property" value="statusCode" />
+					</bean>
+				</list>
+			</property>
+			<property name="commands">
+				<list>
+				 	<bean class="org.riotfamily.linkcheck.GotoUrlCommand">
+				 		<property name="urlProperty" value="source" />
+				 	</bean>
+				</list>
+			</property>
+		</bean>
+	</override:add>
+ 	
+</beans>

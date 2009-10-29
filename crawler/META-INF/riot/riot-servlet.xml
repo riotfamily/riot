@@ -5,21 +5,8 @@
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	
-	<bean id="crawler" class="org.riotfamily.crawler.Crawler">
-		<property name="startPage" value="${riot.crawler.startPage}" />
-		<property name="linkExtractor" ref="linkExtractor" />
-	</bean>
-	
-	<bean id="linkExtractor" class="org.riotfamily.crawler.DefaultLinkExtractor" />
-	
 	<bean id="crawlerControlController" name="/crawler/status" class="org.riotfamily.crawler.CrawlerController">
 		<constructor-arg ref="crawler" />
 	</bean>
-			
-	<bean id="crawlerTask" class="org.riotfamily.common.scheduling.MethodInvokingScheduledTask">
-		<property name="targetObject" ref="crawler" />
-		<property name="targetMethod" value="run" />
-		<property name="triggerNames" value="${riot.crawler.schedule=startup,daily}" />
-	</bean>
- 
+
 </beans>

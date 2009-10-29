@@ -62,8 +62,16 @@ public class PageFacade {
 	public Page getPage() {
 		return page;
 	}
-		
-	private boolean isPreview(Page page) {
+
+	protected HttpServletRequest getRequest() {
+		return request;
+	}
+
+	protected HttpServletResponse getResponse() {
+		return response;
+	}
+
+	protected boolean isPreview(Page page) {
 		return EditModeUtils.isPreview(request, page.getContentContainer());
 	}
 	
@@ -180,7 +188,7 @@ public class PageFacade {
 		return getContent().get(key);
 	}
 
-	private List<PageFacade> createFacades(Collection<? extends Page> pages) {
+	protected List<PageFacade> createFacades(Collection<? extends Page> pages) {
 		ArrayList<PageFacade> result = Generics.newArrayList();
 		for (Page page : pages) {
 			if (page.isPublished() || isPreview(page)) {

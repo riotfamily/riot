@@ -31,7 +31,6 @@ import org.riotfamily.cachius.persistence.DiskStore;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.ImageUtils;
-import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.performance.ResourceStamper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -149,7 +148,7 @@ public class ButtonService implements ApplicationContextAware {
 		}
 
 		public String getCacheRegion() {
-			return ButtonService.class.getName();
+			return null;
 		}
 		
 		public String getCacheKey() {

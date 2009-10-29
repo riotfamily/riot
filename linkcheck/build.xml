@@ -1,0 +1,7 @@
+<project name="riot-linkcheck" default="compile">
+
+	<property name="module.title" value="Riot Link Check" />
+	
+	<import file="../module-build.xml" />
+
+</project>

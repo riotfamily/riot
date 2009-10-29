@@ -22,7 +22,9 @@
 	<tx:annotation-driven />
 	
 	<dwr:configuration>
-		<dwr:convert type="exception" class="java.lang.Exception" />
+		<dwr:convert type="exception" class="java.lang.Exception">
+			<dwr:exclude method="stackTrace"/>
+		</dwr:convert>
 	</dwr:configuration>
 	
 	<dwr:annotation-config />
@@ -431,6 +433,11 @@
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
+		<constructor-arg>
+			<bean class="org.riotfamily.common.web.performance.YUICssCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>
+		</constructor-arg>
 	</bean>
 	
 	<!-- Misc -->

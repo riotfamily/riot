@@ -22,7 +22,7 @@
   - The name of the current FreeMarker template (may be useful for debugging).
   - @see <a href="http://www.riotfamily.org/api/latest/org/riotfamily/common/web/view/freemarker/RiotFreeMarkerView.html">RiotFreeMarkerView</a>
  -->
-<#assign templateName = .data_model['org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView.templateName']! />
+<#assign templateName = .data_model['org.riotfamily.common.web.mvc.view.RiotFreeMarkerView.templateName']! />
 
 <#---
   - Includes the given path using a RequestDispatcher. 
@@ -424,7 +424,7 @@
 
 <#macro stylesheets hrefs compress=commonMacroHelper.compressResources rel="stylesheet" type="text/css" attributes...>
 	<#if compress>
-		<#local files = statics["org.riotfamily.website.performance.MinifyCssController"].buildParam(hrefs) />
+		<#local files = statics["org.riotfamily.common.web.performance.MinifyCssController"].buildParam(hrefs) />
 		<link rel="${rel}" type="${type}" href="${resource(pathForHandler("minifyCssController") + "?files=" + files?xml)}"${joinAttributes(attributes)} />
 	<#else>
 		<#if attributes?is_sequence>

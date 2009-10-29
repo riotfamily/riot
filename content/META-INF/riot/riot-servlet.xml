@@ -210,27 +210,27 @@
 	</bean>
 	
 	<bean id="sitemaps" class="org.riotfamily.core.screen.list.TreeListScreen">
-			<property name="icon" value="world" />
-			<property name="dao" ref="siteRiotDao" />
-			<property name="columns">
-				<list>
-					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-						<property name="property" value="locale" />
-					</bean>
-					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-						<property name="property" value="name" />
-					</bean>
-				</list>
-			</property>
-			<property name="commands">
-				<list>
-					<bean class="org.riotfamily.core.screen.list.command.impl.GoCommand" />
-				</list>
-			</property>
-			<property name="itemScreen">
-				<ref bean="sitemap" />
-			</property>
-		</bean>
+		<property name="icon" value="world" />
+		<property name="dao" ref="siteRiotDao" />
+		<property name="columns">
+			<list>
+				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+					<property name="property" value="locale" />
+				</bean>
+				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+					<property name="property" value="name" />
+				</bean>
+			</list>
+		</property>
+		<property name="commands">
+			<list>
+				<bean class="org.riotfamily.core.screen.list.command.impl.GoCommand" />
+			</list>
+		</property>
+		<property name="itemScreen">
+			<ref bean="sitemap" />
+		</property>
+	</bean>
 	
 	<override:add ref="systemScreens">
 		<bean id="sites" class="org.riotfamily.core.screen.list.TreeListScreen">
@@ -265,6 +265,5 @@
 			</property>
 		</bean>
 	</override:add>
-	
-	 
+
 </beans>

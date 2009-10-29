@@ -22,14 +22,19 @@ import org.riotfamily.statistics.web.RequestCountFilterPlugin;
 public class ClearRequestStatisticsBaselineCommand extends AbstractCommand  {
 
 	private RequestCountFilterPlugin filterPlugin;
-	
+
 	public ClearRequestStatisticsBaselineCommand(RequestCountFilterPlugin filterPlugin) {
 		this.filterPlugin = filterPlugin;
 	}
-	
+
+	@Override
+	protected String getName() {
+		return "Clear Baseline";
+	}
+
 	@Override
 	protected String getIcon(String action) {
-		return "clear";
+		return "chart_bar_delete";
 	}
 
 	public CommandResult execute(CommandContext context, Selection selection) {

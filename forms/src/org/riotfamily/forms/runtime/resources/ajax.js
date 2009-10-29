@@ -75,7 +75,7 @@ function submitElement(id, clickedButton) {
 				&& element.type != 'file' 
 				&& (element.type != 'submit' || element == clickedButton)) {
 				
-			var key = element.name, value = element.getValue();
+			var key = element.name, value = $F(element);
 			if (value != null) {
 				if (key in result) {
 					if (result[key].constructor != Array) result[key] = [result[key]];

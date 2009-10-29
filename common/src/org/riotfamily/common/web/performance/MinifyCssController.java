@@ -32,6 +32,10 @@ public class MinifyCssController extends AbstractMinifyController {
 
 	private YUICssCompressor compressor = new YUICssCompressor();
 	
+	public MinifyCssController(YUICssCompressor compressor) {
+		this.compressor = compressor;
+	}
+	
 	protected String getContentType() {
 		return "text/css";
 	}

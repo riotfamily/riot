@@ -18,8 +18,8 @@
 <#macro link page tag="a" editable=page==currentPage labelKey="title" form="" attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
 	<#if editable>
-		<@inplace.link key=labelKey href=c.url(page.url) tag=tag attributes=attributes>${page[labelKey]}</@inplace.link>
+		<@inplace.link key=labelKey href=page.url tag=tag attributes=attributes>${page[labelKey]}</@inplace.link>
 	<#else>
-		<@c.link href=c.url(page.url) attributes=attributes>${page[labelKey]}</@c.link>
+		<@c.link href=page.url attributes=attributes>${page[labelKey]}</@c.link>
 	</#if>
 </#macro>

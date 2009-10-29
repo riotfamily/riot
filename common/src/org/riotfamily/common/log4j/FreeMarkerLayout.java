@@ -39,7 +39,7 @@ import freemarker.template.TemplateException;
  */
 public class FreeMarkerLayout extends Layout {
 
-	private String templateName = "/org/riotfamily/common/log/layout.ftl";
+	private String templateName = "org/riotfamily/common/log4j/layout.ftl";
 	
 	private String contentType = "text/html";
 	
