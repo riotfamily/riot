@@ -153,11 +153,15 @@ riot.components = (function() {
 				this.element.addClassName('riot-mode-insert');
 				this.insertButton = new InsertButton(this);
 			}
+			if (this.componentElements.length == 0) {
+				this.element.addClassName('riot-empty-list');
+			}
 		},
 		
 		insertOff: function() {
 			if (this.insertButton) {
 				this.element.removeClassName('riot-mode-insert');
+				this.element.removeClassName('riot-empty-list');
 				this.insertButton.remove();
 				this.insertButton = null;
 			}
@@ -458,17 +462,20 @@ riot.components = (function() {
 
 		initialize: function(componentList) {
 			this.componentList = componentList;
+			this.index = 0;
 			
 			// Filter types that exceed the max occurrence
 			this.types = componentList.config.validTypes.select(function(config) {
 				return !config.max || componentList.countComponents(config.type) < config.max;
 			});
 			
-			this.element = new Element('div').addClassName('riot-insert-container')
+			var dest = this.componentList.element.down() || this.componentList.element;
+			this.element = new Element('div').setStyle({position: 'absolute'})
+					.clonePosition(dest, {setWidth: false, setHeight: false})
 					.insert(new Element('div').addClassName('riot-insert-button')
 					.observe('click', this.onclick.bindAsEventListener(this)));
 
-			this.componentList.element.insert(this.element);
+			$(document.body).insert(this.element);
 			
 			var button = this;
 			this.moveHandler = function(ev) {
@@ -487,17 +494,23 @@ riot.components = (function() {
 		},
 		
 		move: function(ev, el) {
-			var before;
+			this.index = this.componentList.componentElements.indexOf(el);
 			var pos = el.cumulativeOffset();
+			var left = pos.left;
+			var top = pos.top;
 			if (el.getStyle('float') != 'none') {
-				before = ev.pointerX() < pos.left + el.getWidth() / 2;
+				if (ev.pointerX() > left + el.getWidth() / 2) {
+					left += el.getWidth();
+					this.index++;
+				}
 			}
 			else {
-				before = ev.pointerY() < pos.top + el.getHeight() / 2;
+				if (ev.pointerY() > top + el.getHeight() / 2) {
+					top += el.getHeight();
+					this.index++;
+				}
 			}
-			var content = {};
-			content[before ? 'before' : 'after'] = this.element;
-			el.insert(content);
+			this.element.setStyle({left: left + 'px', top: top + 'px'});
 		},
 		
 		remove: function() {
@@ -526,27 +539,23 @@ riot.components = (function() {
 		},
 
 		insert: function(type) {		
-			var pos = 0;
-			var prev = this.element.previous('.riot-component');
-			if (prev) {
-				pos = this.componentList.componentElements.indexOf(prev) + 1;
-			}
-			ComponentEditor.insertComponent(this.componentList.id, pos, 
-					type, this.insertHtml.bind(this, prev));
+			ComponentEditor.insertComponent(this.componentList.id, this.index, 
+					type, this.insertHtml.bind(this));
 		},
 
-		insertHtml: function(prev, html) {
+		insertHtml: function(html) {
 			var tmp = new Element('div').update(html);
 			var el = this.componentElement = tmp.down();
 			el.hide();
-			if (prev) {
-				prev.insert({after: el});
+			if (this.index > 0) {
+				this.componentList.componentElements[this.index].insert({before: el});
 			}
 			else {
 				this.componentList.element.insert({top: el});
 			}
 			
 			this.componentList.findComponentElements();
+			this.componentList.element.removeClassName('riot-empty-list');
 			this.componentList.updatePositionClasses();
 			this.id = el.readAttribute('riot:contentId');
 			el.fire('component:updated');
