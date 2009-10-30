@@ -29,7 +29,7 @@ public final class ActiveRecordUtils {
 	 * 
 	 * @see ClassMetadata#getIdentifier(Object, EntityMode)
 	 */
-	public static Serializable getId(ActiveRecord record) {
+	public static Serializable getId(Persistable record) {
 		return ActiveRecord.getSessionFactory()
 				.getClassMetadata(getClass(record))
 				.getIdentifier(record, EntityMode.POJO);
@@ -39,7 +39,7 @@ public final class ActiveRecordUtils {
 	 * Like {@link #getId(ActiveRecord)}, but guarantees to return a non-null 
 	 * value by invoking {@link ActiveRecord#save()} on unsaved records.
 	 */
-	public static Serializable getIdAndSaveIfNecessary(ActiveRecord record) {
+	public static Serializable getIdAndSaveIfNecessary(Persistable record) {
 		Serializable id = getId(record);
 		if (id == null) {
 			record.save();
@@ -51,7 +51,7 @@ public final class ActiveRecordUtils {
 	 * Returns the true underlying class of a possibly proxied record.
 	 * @see Hibernate#getClass(Object)
 	 */
-	public static Class<?> getClass(ActiveRecord a) {
+	public static Class<?> getClass(Persistable a) {
 		return Hibernate.getClass(a);
 	}
 	

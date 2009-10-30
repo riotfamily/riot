@@ -16,6 +16,7 @@ import java.io.Serializable;
 
 import org.riotfamily.common.hibernate.ActiveRecord;
 import org.riotfamily.common.hibernate.ActiveRecordUtils;
+import org.riotfamily.common.hibernate.Persistable;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -36,13 +37,13 @@ public class ActiveRecordConverter implements Converter {
 
 	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class type) {
-		return ActiveRecord.class.isAssignableFrom(type);
+		return Persistable.class.isAssignableFrom(type);
 	}
 	
 	public void marshal(Object source, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		
-		ActiveRecord record = (ActiveRecord) source;
+		Persistable record = (Persistable) source;
 		XStreamMarshaller.addReference(context, record);
 		Serializable id = ActiveRecordUtils.getIdAndSaveIfNecessary(record);
 		if (id instanceof Long) {
