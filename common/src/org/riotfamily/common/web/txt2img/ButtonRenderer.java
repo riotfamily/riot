@@ -71,7 +71,11 @@ public class ButtonRenderer extends ListItemRenderer implements BeanNameAware {
 	public long getLastModified() {
 		return Math.max(creationTime, bgFile.lastModified());
 	}
-		
+	
+	public boolean hasAlpha() {
+		return bg.getColorModel().hasAlpha();
+	}
+	
 	public BufferedImage generate(String label, Locale locale) throws Exception {
 		
 		BufferedImage labelImage = generate(label, locale, Integer.MAX_VALUE, null, false);
@@ -100,14 +104,17 @@ public class ButtonRenderer extends ListItemRenderer implements BeanNameAware {
 	public String getRules() {
 		StringBuilder sb = new StringBuilder();
 		sb.append('.').append(id).append(",\n")
-				.append('.').append(id).append("Hover {\n")
-				.append("border:0;background-repeat:none;text-indent:-999em;")
-				.append("height:").append(buttonHeight).append("px;}\n")
-				.append('.').append(id).append(":hover,\n")
-				.append('.').append(id).append("Hover {\n")
-				.append("background-position:0 -").append(buttonHeight)
-				.append("px}\n");
-		
+			.append('.').append(id).append("Hover {\n")
+			.append("border:0;background-repeat:none;text-indent:-999em;")
+			.append("height:").append(buttonHeight).append("px;}\n")
+			.append('.').append(id).append(":hover,\n")
+			.append('.').append(id).append("Hover {\n")
+			.append("background-position:0 -").append(buttonHeight)
+			.append("px}\n")
+			.append('.').append(id).append(":hover .txt2imgbtn-ie6,\n")
+			.append('.').append(id).append("Hover .txt2imgbtn-ie6 {\n")
+			.append("margin-top: -").append(buttonHeight).append("px}\n");
+
 		return sb.toString();
 	}
 	
