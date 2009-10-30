@@ -566,9 +566,9 @@ var CommandButton = Class.create({
 			+ command.icon + '\', sizingMethod=\'crop\')';
 		
 		this.element = new Element('a', {href: '#'}).addClassName('action')
-			.insert(new Element('span', {style: style}).addClassName('icon'))
-			.insert(new Element('span').addClassName('label')
-				.insert(new Element('div').insert(command.label))
+			.insert(new Element('span').addClassName('icon-and-label')
+				.insert(new Element('span', {style: style}).addClassName('icon'))
+				.insert(new Element('span').addClassName('label').insert(command.label))
 			).observe('click', this.onclick.bindAsEventListener(this));
 		
 		this.setEnabled(command.enabled);

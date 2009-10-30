@@ -1,37 +1,53 @@
 .commands .action {
 	display: block;
-	width: 117px;
+	width: 120px;
 	float: left;
 	text-decoration: none;
-	margin: 0 0 1px 1px;
+}
+
+.commands .icon-and-label {
+	display: block;
+	margin: 0 1px;
+	border-style: solid;
+	border-color: #f0f0f0;
+	border-width: 1px 0;	
 }
 
 .commands .action .icon {
 	float: left;
 	width: 16px;
-	height: 25px;
+	height: 16px;
 	background-repeat: no-repeat;
 	margin: 7px 0 0 12px;
 }
 
 .commands .label {
 	display: block;
-	padding: 7px 0 0 36px;
+	padding: 7px 0 7px 36px;
 	text-transform: capitalize;
 	color: #000;
 	font-size: 11px;
 	line-height: 18px;
+	
+	margin: 0 -1px;
+	border-style: solid;
+	border-color: #f0f0f0;
+	border-width:0 1px;
 }
 
 .commands .disabled .label {
 	color: #a4a4a4;
 }
 
-.commands .enabled:hover,
-.commands .enabled:focus {
-	background: url(images/command-hover-bg.gif) no-repeat;
+.commands .enabled:hover {
 	outline: none;
 	-moz-outline: none;
+}
+
+.commands .enabled:hover .icon-and-label,
+.commands .enabled:hover .label { 
+	background: #f0f0f0 url(images/command-hover-bg.gif) repeat-x;
+	border-color: #dadada;
 }
 
 .commands .disabled {

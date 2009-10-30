@@ -19,7 +19,7 @@
 	<@template.block name="extra">
 		<div class="box">
 			<div class="commands">
-				<a class="action enabled" href="javascript:save()"><span class="icon saveButton"></span><span class="label"><@c.message "label.form.button.save">Save</@c.message></span></a>
+				<a class="action enabled" href="javascript:save()"><span class="icon-and-label"><span class="icon saveButton"></span><span class="label"><@c.message "label.form.button.save">Save</@c.message></span></span></a>
 				<div id="commands"></div>
 			</div>
 		</div>
@@ -85,7 +85,7 @@
 			<div class="box">
 				<div class="links">
 					<#list childLinks as child>
-						<a class="screen" href="${c.url(child.url)}"	style="${riot.iconStyle(child.icon!"brick")}">
+						<a class="screen" href="${c.url(child.url)}" style="${riot.iconStyle(child.icon!"brick")}">
 							${child.title}
 						</a>
 					</#list>
