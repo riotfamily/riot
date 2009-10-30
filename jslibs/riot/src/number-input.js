@@ -32,7 +32,7 @@ NumberInput.Field = Class.create({
 		this.validate();
 		
 		if (this.options.spinner) {
-			var div = this.element.setStyle({float: 'left'}).wrap(
+			var div = this.element.setStyle({'float': 'left'}).wrap(
 				new Element('div').addClassName('numberInput')
 				.setStyle({height: this.element.getHeight() + 'px'})
 			);
