@@ -30,6 +30,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.mapper.Mapper;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 public class XStreamMarshaller implements ContentMapMarshaller, 
 		InitializingBean {
@@ -37,7 +38,7 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 	private XStream xstream;
 	
 	private HierarchicalStreamDriver driver;
-	
+
 	public void setDriver(HierarchicalStreamDriver driver) {
 		this.driver = driver;
 	}
@@ -46,7 +47,13 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		if (driver == null) {
 			driver = new DomDriver("UTF-8");
 		}
-		xstream = new XStream(driver);
+		
+		xstream = new XStream(driver) {
+			@Override
+			protected MapperWrapper wrapMapper(MapperWrapper next) {
+				return new HibernateProxyMapper(next);
+			}
+		};
 
 		xstream.alias("component", Component.class);
 		xstream.alias("component-list", ComponentList.class);

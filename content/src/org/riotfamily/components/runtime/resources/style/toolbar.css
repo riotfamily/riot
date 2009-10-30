@@ -164,6 +164,7 @@ body > #riot-notification {
 
 .riot-types {
 	position: absolute;
+	z-index: 100000;
 	line-height: 1em;
 	box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
 	-moz-box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
@@ -231,7 +232,7 @@ body > #riot-notification {
 	background-image: url(images/toolbar/add.png);
 	margin: -16px 0 0 -16px;
 	position: absolute;
-	z-index: 1;
+	z-index: 99999;
 }
 .riot-insert-button:hover {
 	background: url(images/toolbar/add_glow.png) left center no-repeat;
@@ -257,6 +258,10 @@ body > #riot-notification {
 
 .riot-component-list .riot-component {
 	clear: none;
+}
+
+.riot-empty-list {
+	padding-top: 20px;
 }
 
 div.riot-editor {

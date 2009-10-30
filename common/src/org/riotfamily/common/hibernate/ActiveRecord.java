@@ -30,7 +30,7 @@ import org.riotfamily.common.beans.injection.ConfigurableBean;
  * @author Alf Werder [alf dot werder at artundweise dot de]
  * @since 8.0
  */
-public abstract class ActiveRecord extends ConfigurableBean implements Persistable {
+public abstract class ActiveRecord extends ConfigurableBean {
 	
 	private static SessionFactory sessionFactory;
 	
