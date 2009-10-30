@@ -10,7 +10,7 @@
 		http://www.riotfamily.org/schema/common/override-9.0.xsd
 		http://www.riotfamily.org/schema/core/screen
 		http://www.riotfamily.org/schema/core/screen-9.0.xsd">
-	
+
 	<override:add ref="formRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/dbmsgsrc/runtime/forms.xml</value>
 	</override:add>

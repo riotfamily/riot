@@ -57,7 +57,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 			new RandomStringGenerator(14, true, Chars.DIGITS);
 	
 	private ServletContext servletContext;
-		
+
 	
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;

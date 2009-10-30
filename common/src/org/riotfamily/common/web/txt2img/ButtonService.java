@@ -46,7 +46,7 @@ public class ButtonService implements ApplicationContextAware {
 	
 	private boolean reloadable = false;
 	
-	private String riotUtilsPath = "riot-utils";
+	private String riotUtilsUriPrefix = "/riot-utils";
 	
 	public ButtonService(CacheService cacheService, ResourceStamper resourceStamper) {
 		this.cacheService = cacheService;
@@ -61,12 +61,17 @@ public class ButtonService implements ApplicationContextAware {
 		this.reloadable = reloadable;
 	}
 
-	public void setRiotUtilsPath(String riotUtilsPath) {
-		this.riotUtilsPath = riotUtilsPath;
+	public void setRiotUtilsUriPrefix(String riotUtilsUriPrefix) {
+		this.riotUtilsUriPrefix = riotUtilsUriPrefix;
 	}
 
 	public void setApplicationContext(ApplicationContext ctx) {
 		buttons = ctx.getBeansOfType(ButtonRenderer.class);
+	}
+	
+	public boolean hasAlpha(String style) {
+		ButtonRenderer renderer = buttons.get(style);
+		return renderer.hasAlpha();
 	}
 	
 	public String getInlineStyle(String style, String label, 
@@ -108,8 +113,8 @@ public class ButtonService implements ApplicationContextAware {
 	private String getImageUri(String style, String label, HttpServletRequest request) {
 		String encodedLabel = FormatUtils.uriEscape(label);
 		String locale = RequestContextUtils.getLocale(request).toString();
-		return String.format("%s/%s/imagebtn/%s.png?label=%s&locale=%s", 
-				request.getContextPath(), riotUtilsPath, style, encodedLabel, locale);
+		return String.format("%s%s/imagebtn/%s.png?label=%s&locale=%s", 
+				request.getContextPath(), riotUtilsUriPrefix, style, encodedLabel, locale);
 	}
 	
 	
@@ -171,12 +176,7 @@ public class ButtonService implements ApplicationContextAware {
 			writeImage(image, new FileOutputStream(file));
 			return new Button(file, getInlineStyle(image));
 		}
-		
-		public void delete(Serializable data) throws Exception {
-			Button button = (Button) data;
-			button.getFile().delete();
-		}
-		
+				
 		protected BufferedImage generateImage() throws Exception {
 			return renderer.generate(label, locale);
 		}
@@ -240,4 +240,5 @@ public class ButtonService implements ApplicationContextAware {
 			IOUtils.serve(button.getFile(), response.getOutputStream());
 		}
 	}
+
 }
