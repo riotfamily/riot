@@ -1,5 +1,5 @@
 #riot-notification {
-	background: ${highlight_color};
+	background: #cb0038;
 	color: #fff;
 	padding: 10px;
 	text-align: center;
@@ -27,24 +27,22 @@ body > #riot-notification {
 	left: 6px;
 	z-index: 1000;
 	text-align: left;
-	width: 64px;
-	background: url(images/toolbar/background.png) no-repeat;
-	_background: none;
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/toolbar/background.png')
-	
+	width: 40px;
+	background: url(images/toolbar/background.gif) no-repeat;
+	box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
 }
 
 #riot-toolbar-title {
 	width: 40px;
 	height: 20px;
-	margin: 2px 0 2px 4px;
 	cursor: move;
 }
 
 #riot-toolbar-buttons {
 	width: 38px;
-	padding: 3px 0;
-	margin: 0 0 60px 6px;
+	margin: 3px 0 4px 2px;
 }
 
 #riot-toolbar-buttons a {

@@ -30,7 +30,7 @@ import org.riotfamily.common.beans.injection.ConfigurableBean;
  * @author Alf Werder [alf dot werder at artundweise dot de]
  * @since 8.0
  */
-public abstract class ActiveRecord extends ConfigurableBean {
+public abstract class ActiveRecord extends ConfigurableBean implements Persistable {
 	
 	private static SessionFactory sessionFactory;
 	
@@ -88,6 +88,7 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 * @see Session#update(Object)
 	 * @deprecated Please use {@link #merge()} instead to ensure JPA compatibility.
 	 */
+	@Deprecated
 	public final void update() {
 		getSession().update(this);
 	}
