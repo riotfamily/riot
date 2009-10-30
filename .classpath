@@ -44,7 +44,7 @@
 	<classpathentry kind="lib" path="lib/persistence.jar"/>
 	<classpathentry kind="lib" path="lib/poi.jar"/>
 	<classpathentry kind="lib" path="lib/javamail.jar"/>
-	<classpathentry kind="lib" path="lib/xstream.jar"/>
+	<classpathentry kind="lib" path="lib/xstream.jar" sourcepath="lib/xstream.src.zip"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/spring-aop.jar"/>
 	<classpathentry kind="lib" path="lib/spring-beans.jar" sourcepath="lib/spring-beans.src.zip"/>
