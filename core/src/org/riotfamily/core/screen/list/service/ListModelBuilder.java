@@ -70,12 +70,13 @@ public class ListModelBuilder extends ListItemLoader {
 		model.setColumns(createColumns());
 		model.setCommandButtons(createButtons());
 		model.setTree(dao instanceof Tree);
-		
-		StringWriter writer = new StringWriter();
-		state.getFilterForm().render(new PrintWriter(writer));
-		model.setFilterFormHtml(writer.toString());
-		
 		//model.setInstantAction(chooser || singleAction);
+		
+		if (state.getFilterForm() != null) {
+			StringWriter writer = new StringWriter();
+			state.getFilterForm().render(new PrintWriter(writer));
+			model.setFilterFormHtml(writer.toString());
+		}
 		
 		return model;
 	}
