@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:s="http://www.riotfamily.org/schema/core/screen"
 	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.riotfamily.org/schema/core/screen
+		http://www.riotfamily.org/schema/core/screen-9.0.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
@@ -41,34 +44,23 @@
 	-->
 	
 	<override:add ref="systemScreens">
-		<bean id="brokenLinks" class="org.riotfamily.core.screen.list.TreeListScreen">
-			<property name="icon" value="link_break" />
-			<property name="dao">
+		<s:list id="brokenLinks" icon="link_break">
+			<s:dao>
 				<bean class="org.riotfamily.linkcheck.BrokenLinkRiotDao">
 					<constructor-arg ref="sessionFactory" />
 				</bean>			
-			</property>
-			<property name="columns">
-				<list>
-					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-						<property name="property" value="source" />
-					</bean>
-					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-						<property name="property" value="destination" />
-					</bean>
-					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-						<property name="property" value="statusCode" />
-					</bean>
-				</list>
-			</property>
-			<property name="commands">
-				<list>
-				 	<bean class="org.riotfamily.linkcheck.GotoUrlCommand">
-				 		<property name="urlProperty" value="source" />
-				 	</bean>
-				</list>
-			</property>
-		</bean>
+			</s:dao>
+			<s:columns>
+				<s:column property="source" />
+				<s:column property="destination" />
+				<s:column property="statusCode" />
+			</s:columns>
+			<s:commands>
+				<bean class="org.riotfamily.linkcheck.GotoUrlCommand">
+			 		<property name="urlProperty" value="source" />
+			 	</bean>
+			</s:commands>
+		</s:list>
 	</override:add>
  	
 </beans>

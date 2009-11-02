@@ -2,6 +2,7 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:s="http://www.riotfamily.org/schema/core/screen"
 	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
@@ -9,6 +10,8 @@
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.riotfamily.org/schema/core/screen
+		http://www.riotfamily.org/schema/core/screen-9.0.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
@@ -71,284 +74,205 @@
 	</util:list>
  	
  	<override:add ref="systemScreens">
-		
-		<bean id="systemStatistics" class="org.riotfamily.core.screen.GroupScreen">
-			<property name="icon" value="chart_curve" />
-			<property name="childScreens">
-				<list>
-					<bean id="properties" class="org.riotfamily.core.screen.GroupScreen">
-						<property name="childScreens">
-							<list>	
-					        	<bean id="systemProperties" class="org.riotfamily.core.screen.list.TreeListScreen">
-						        	<property name="icon" value="table_gear" />
-						        	<property name="dao">
-										<bean class="org.riotfamily.statistics.dao.SystemPropertiesDao" />
-									</property>
-									<property name="columns" ref="statsColumns" />
-					        	</bean>
-					        	<bean id="environmentProperties" class="org.riotfamily.core.screen.list.TreeListScreen">
-					        		<property name="icon" value="picture" />
-					        		<property name="dao">
-										<bean class="org.riotfamily.statistics.dao.EnvironmentPropertiesDao" />
-									</property>
-									<property name="columns" ref="statsColumns" />
-					        	</bean>
-					        	<!-- 
-					        	<bean id="applicationProperties" class="org.riotfamily.core.screen.list.TreeListScreen">
-					        		<property name="icon" value="cog" />
-					        		<property name="dao">
-					        			<bean class="org.riotfamily.statistics.dao.ResourcePropertiesDao">
-								        	<property name="resource" value="classpath:/application.properties" />
-        								</bean>
-        							</property>
-        							<property name="columns" ref="statsColumns" />
-					        	</bean>
-					        	-->
-					        </list>
-				       </property>
-					</bean>
-					
-			        <bean id="riotModuleVersions" class="org.riotfamily.core.screen.list.TreeListScreen">
-			        	<property name="icon" value="plugin" />
-			        	<property name="dao">
-			        		<bean class="org.riotfamily.statistics.dao.PackageListDao">
-        						<property name="patterns" ref="packageListPatterns" />
-        					</bean>
-       					</property>
-			        	<property name="columns" ref="statsColumns" />
-				    </bean>
-				    
-				    <bean id="hibernateStatistics" class="org.riotfamily.core.screen.GroupScreen">
-						<property name="icon" value="hibernate" />
-						<property name="childScreens">
-							<list>
-					        	<bean id="hibernateCommonStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-					        		<property name="icon" value="chart_bar" />
-					        		<property name="dao">
-					        			<bean class="org.riotfamily.statistics.dao.HibernateStatisticsDao">
-					        				<constructor-arg ref="sessionFactory" />
-					        			</bean>
-					        		</property>
-					        		<property name="columns" ref="statsColumns" />
-					        		<property name="commands">
-					        			<list>
-						        			<bean class="org.riotfamily.statistics.commands.ToggleHibernateStatisticsCommand">
-						        				<constructor-arg ref="sessionFactory" />
-						        				<property name="enablingCommand" value="true" />
-						        			</bean>
-						        			<bean class="org.riotfamily.statistics.commands.ToggleHibernateStatisticsCommand">
-						        				<constructor-arg ref="sessionFactory" />
-						        				<property name="enablingCommand" value="false" />
-						        			</bean>
-						        			<bean class="org.riotfamily.statistics.commands.ClearHibernateStatisticsBaselineCommand">
-						        				<constructor-arg ref="sessionFactory" />
-						        			</bean>
-						        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-					        			</list>
-					        		</property>
-					        	</bean>
-					        	<bean id="hibernateCacheStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-					        		<property name="dao">
-					        			<bean class="org.riotfamily.statistics.dao.HibernateCacheStatisticsDao">
-					        				<constructor-arg ref="sessionFactory" />
-					        			</bean>
-					        		</property>
-					        		<property name="columns" ref="statsColumns" />
-					        		<property name="commands">
-					        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-					        		</property>
-					        	</bean>
-					        	<bean id="hibernateCacheRegions" class="org.riotfamily.core.screen.list.TreeListScreen">
-					        		<property name="dao">
-					        			<bean class="org.riotfamily.statistics.dao.HibernateCacheRegionDao">
-					        				<constructor-arg ref="sessionFactory" />
-					        			</bean>
-					        		</property>
-					        		<property name="icon" value="map" />
-				        	 		<property name="columns">
-						        	 	<util:list>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="name" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="elementsInMemory" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="elementsOnDisk" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="hitCount" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="missCount" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="putCount" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="kbInMemory" />
-											</bean>
-										</util:list>
-				        	 		</property>
-					        		<property name="commands">
-					        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-					        		</property>
-					        	</bean>
-							</list>
-						</property>
-					</bean>
-			        
-			        <bean id="connectionPoolStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-			        	<property name="icon" value="database_connect" />
-					    <property name="dao">
-					    	<bean class="org.riotfamily.statistics.dao.C3P0StatisticsDao">
-		        				<property name="dataSource" ref="riotDataSource" />
-		        			</bean>
-		        		</property>
-		        		<property name="columns" ref="statsColumns" />
-		        		<property name="commands">
-		        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-		        		</property>
-			        </bean>
-			        
-			        <bean id="runtimeStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-			        	<property name="icon" value="server_chart" />
-			        	<property name="dao">
-			        		<bean class="org.riotfamily.statistics.dao.RuntimeStatisticsDao" />
-			        	</property>
-			        	<property name="columns" ref="statsColumns" />
-		        		<property name="commands">
-		        			<list>
-		        				<bean class="org.riotfamily.statistics.commands.PerformGarbageCollectionCommand" />
-			        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-		        			</list>
-		        		</property>
-			        </bean>
-			        
-			        <bean id="requestStatistics" class="org.riotfamily.core.screen.GroupScreen">
-						<property name="childScreens">
-							<list>
-						        <bean id="requestOverviewStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-						        	<property name="icon" value="chart_bar" />
-						        	<property name="dao">
-						        		<bean class="org.riotfamily.statistics.dao.RequestStatisticsDao">
-						        			<constructor-arg ref="requestCountFilterPlugin" />
-						        		</bean>
-						        	</property>
-						        	<property name="columns" ref="statsColumns" />
-					        		<property name="commands">
-					        			<list>
-						        			<bean class="org.riotfamily.statistics.commands.ToggleRequestStatisticsCommand">
-						        				<constructor-arg ref="requestCountFilterPlugin" />
-						        				<property name="enablingCommand" value="true" />
-						        			</bean>
-						        			<bean class="org.riotfamily.statistics.commands.ToggleRequestStatisticsCommand">
-						        				<constructor-arg ref="requestCountFilterPlugin" />
-						        				<property name="enablingCommand" value="false" />
-						        			</bean>
-						        			<bean class="org.riotfamily.statistics.commands.ClearRequestStatisticsBaselineCommand">
-						        				<constructor-arg ref="requestCountFilterPlugin" />
-						        			</bean>
-						        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-					        			</list>
-					        		</property>
-						        </bean>
-					            <bean id="requestCriticalStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-					            	<property name="icon" value="hourglass" />
-					            	<property name="dao">
-					            		<bean class="org.riotfamily.statistics.dao.CriticalRequestStatisticsDao">
-					            			<constructor-arg ref="requestCountFilterPlugin" />
-					            		</bean>
-						        	</property>
-				        	 		<property name="columns">
-						        	 	<list>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="name" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="timestamp" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="responseTime" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="clientIp" />
-											</bean>
-										</list>
-				        	 		</property>
-					        		<property name="commands">
-					        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-					        		</property>
-						        </bean>
-						        <bean id="requestCurrentStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-						        	<property name="icon" value="time" />
-						        	<property name="dao">
-						        		<bean class="org.riotfamily.statistics.dao.CurrentRequestStatisticsDao">
-						        			<constructor-arg ref="requestCountFilterPlugin" />
-						        		</bean>
-						        	</property>
-				        	 		<property name="columns">
-						        	 	<list>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="name" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="timestamp" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="responseTime" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="clientIp" />
-											</bean>
-										</list>
-				        	 		</property>
-					        		<property name="commands">
-					        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-					        		</property>
-						        </bean>
-						        <bean id="requestFaultyStatistics" class="org.riotfamily.core.screen.list.TreeListScreen">
-						        	<property name="icon" value="error" />
-						        	<property name="dao">
-						        		<bean class="org.riotfamily.statistics.dao.FaultyResponsesStatisticsDao">
-						        			<constructor-arg ref="requestCountFilterPlugin" />
-						        		</bean>
-						        	</property>
-				        	 		<property name="columns">
-						        	 	<list>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="name" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="status" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="count" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="lastTime" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="referer" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="clientIp" />
-											</bean>
-											<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-												<property name="property" value="userAgent" />
-											</bean>
-										</list>
-				        	 		</property>
-					        		<property name="commands">
-					        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
-					        		</property>
-						        </bean>
-							</list>
-						</property>
-					</bean>
-				</list>
-			</property>
-		</bean>
+		<s:group id="systemStatistics" icon="chart_curve">
+			<s:group id="properties">
+				<s:list id="systemProperties" icon="table_gear">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.SystemPropertiesDao" />
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="value" />
+					</s:columns>
+				</s:list>
+				<s:list id="environmentProperties" icon="picture">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.EnvironmentPropertiesDao" />
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="value" />
+					</s:columns>
+				</s:list>
+				<s:list id="riotModuleVersions" icon="plugin">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.PackageListDao">
+       						<property name="patterns" ref="packageListPatterns" />
+       					</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="value" />
+					</s:columns>
+				</s:list>
+			</s:group>
+			
+			<s:group id="hibernateStatistics" icon="hibernate">
+				<s:list id="hibernateCommonStatistics" icon="chart_bar">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.HibernateStatisticsDao">
+	        				<constructor-arg ref="sessionFactory" />
+	        			</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="value" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.ToggleHibernateStatisticsCommand">
+	        				<constructor-arg ref="sessionFactory" />
+	        				<property name="enablingCommand" value="true" />
+	        			</bean>
+	        			<bean class="org.riotfamily.statistics.commands.ToggleHibernateStatisticsCommand">
+	        				<constructor-arg ref="sessionFactory" />
+	        				<property name="enablingCommand" value="false" />
+	        			</bean>
+	        			<bean class="org.riotfamily.statistics.commands.ClearHibernateStatisticsBaselineCommand">
+	        				<constructor-arg ref="sessionFactory" />
+	        			</bean>
+	        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					</s:commands>
+				</s:list>
+				<s:list id="hibernateCacheStatistics">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.HibernateCacheStatisticsDao">
+	        				<constructor-arg ref="sessionFactory" />
+	        			</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="value" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					</s:commands>
+				</s:list>
+				<s:list id="hibernateCacheRegions" icon="map">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.HibernateCacheRegionDao">
+	        				<constructor-arg ref="sessionFactory" />
+	        			</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="elementsInMemory" />
+						<s:column property="elementsOnDisk" />
+						<s:column property="hitCount" />
+						<s:column property="missCount" />
+						<s:column property="putCount" />
+						<s:column property="kbInMemory" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					</s:commands>
+				</s:list>
+				<s:list id="connectionPoolStatistics" icon="database_connect">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.C3P0StatisticsDao">
+	        				<property name="dataSource" ref="riotDataSource" />
+	        			</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="value" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					</s:commands>
+				</s:list>
+				<s:list id="runtimeStatistics" icon="server_chart">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.RuntimeStatisticsDao" />
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="value" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.PerformGarbageCollectionCommand" />
+	        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					</s:commands>
+				</s:list>
+			</s:group>
+			<s:group id="requestStatistics">
+					<s:list id="requestOverviewStatistics" icon="chart_bar">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.RequestStatisticsDao">
+		        			<constructor-arg ref="requestCountFilterPlugin" />
+		        		</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="value" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.ToggleRequestStatisticsCommand">
+	        				<constructor-arg ref="requestCountFilterPlugin" />
+	        				<property name="enablingCommand" value="true" />
+	        			</bean>
+	        			<bean class="org.riotfamily.statistics.commands.ToggleRequestStatisticsCommand">
+	        				<constructor-arg ref="requestCountFilterPlugin" />
+	        				<property name="enablingCommand" value="false" />
+	        			</bean>
+	        			<bean class="org.riotfamily.statistics.commands.ClearRequestStatisticsBaselineCommand">
+	        				<constructor-arg ref="requestCountFilterPlugin" />
+	        			</bean>
+	        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />					
+					</s:commands>
+				</s:list>
+				<s:list id="requestCriticalStatistics" icon="hourglass">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.CriticalRequestStatisticsDao">
+	            			<constructor-arg ref="requestCountFilterPlugin" />
+	            		</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="timestamp" />
+						<s:column property="responseTime" />
+						<s:column property="clientIp" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					</s:commands>
+				</s:list>
+				<s:list id="requestCurrentStatistics" icon="time">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.CurrentRequestStatisticsDao">
+		        			<constructor-arg ref="requestCountFilterPlugin" />
+		        		</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="timestamp" />
+						<s:column property="responseTime" />
+						<s:column property="clientIp" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					</s:commands>
+				</s:list>
+				<s:list id="requestFaultyStatistics" icon="error">
+					<s:dao>
+						<bean class="org.riotfamily.statistics.dao.FaultyResponsesStatisticsDao">
+		        			<constructor-arg ref="requestCountFilterPlugin" />
+		        		</bean>
+					</s:dao>
+					<s:columns>
+						<s:column property="name" />
+						<s:column property="status" />
+						<s:column property="count" />
+						<s:column property="lastTime" />
+						<s:column property="referer" />
+						<s:column property="clientIp" />
+						<s:column property="userAgent" />
+					</s:columns>
+					<s:commands>
+						<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					</s:commands>
+				</s:list>
+			</s:group>
+		</s:group>
 	</override:add>
 		
 	<!--

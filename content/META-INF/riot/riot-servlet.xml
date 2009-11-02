@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:s="http://www.riotfamily.org/schema/core/screen"
 	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -9,6 +10,8 @@
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.riotfamily.org/schema/core/screen
+		http://www.riotfamily.org/schema/core/screen-9.0.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd
 		http://www.directwebremoting.org/schema/spring-dwr
@@ -169,26 +172,33 @@
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
 	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
 	
-	<bean id="sitemap" class="org.riotfamily.core.screen.list.TreeListScreen">
-		<property name="icon" value="sitemap" />
-		<property name="dao" ref="pageRiotDao" />
-		<property name="columns">
-			<list>
-				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-					<property name="property" value="title" />
+	<s:list id="sitemaps" icon="world">
+		<s:dao>
+			<ref bean="siteRiotDao" />
+		</s:dao>
+		<s:columns>
+			<s:column property="locale">
+				<bean class="org.riotfamily.core.ui.CountryFlagRenderer">
+					<constructor-arg ref="resourcePath" />
 				</bean>
-				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-					<property name="property" value="pathComponent" />
-				</bean>
-				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-					<property name="renderer">
-						<bean class="org.riotfamily.pages.riot.ui.PagePublishStatusRenderer" />
-					</property>
-				</bean>
-			</list>
-		</property>
-		<property name="commands">
-			<list>
+			</s:column>
+			<s:column property="name" />
+		</s:columns>
+		<s:commands>
+			<bean class="org.riotfamily.core.screen.list.command.impl.GoCommand" />
+		</s:commands>
+		<s:list id="sitemap" icon="sitemap">
+			<s:dao>
+				<ref bean="pageRiotDao" />
+			</s:dao>
+			<s:columns>
+				<s:column property="title" />
+				<s:column property="pathComponent" />
+				<s:column>
+					<bean class="org.riotfamily.pages.riot.ui.PagePublishStatusRenderer" />
+				</s:column>
+			</s:columns>
+			<s:commands>
 				<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
 				<bean class="org.riotfamily.pages.riot.command.GotoPageCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
@@ -200,70 +210,31 @@
 				<bean class="org.riotfamily.components.riot.command.PublishCommand" />
 				<bean class="org.riotfamily.components.riot.command.UnpublishCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
-			</list>
-		</property>
-		<property name="itemScreen">
-			<bean id="page" class="org.riotfamily.core.screen.form.FormScreen" autowire="constructor">
-				<property name="icon" value="page" />
-			</bean>
-		</property>
-	</bean>
-	
-	<bean id="sitemaps" class="org.riotfamily.core.screen.list.TreeListScreen">
-		<property name="icon" value="world" />
-		<property name="dao" ref="siteRiotDao" />
-		<property name="columns">
-			<list>
-				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-					<property name="property" value="locale" />
-				</bean>
-				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-					<property name="property" value="name" />
-				</bean>
-			</list>
-		</property>
-		<property name="commands">
-			<list>
-				<bean class="org.riotfamily.core.screen.list.command.impl.GoCommand" />
-			</list>
-		</property>
-		<property name="itemScreen">
-			<ref bean="sitemap" />
-		</property>
-	</bean>
+			</s:commands>
+			<s:form id="page" icon="page" />
+		</s:list>
+	</s:list>
 	
 	<override:add ref="systemScreens">
-		<bean id="sites" class="org.riotfamily.core.screen.list.TreeListScreen">
-			<property name="icon" value="world" />
-			<property name="dao" ref="siteRiotDao" />
-			<property name="columns">
-				<list>
-					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-						<property name="property" value="locale" />
-					</bean>
-					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-						<property name="property" value="name" />
-					</bean>
-					<bean class="org.riotfamily.core.screen.list.ColumnConfig">
-						<property name="property" value="enabled" />
-					</bean>
-				</list>
-			</property>
-			<property name="commands">
-				<list>
-					<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
-					<!-- <bean class="org.riotfamily.pages.riot.command.GotoSiteCommand" /> -->
-					<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
-					<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
-					<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
-					<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
-				</list>
-			</property>
-			<property name="itemScreen">
-				<bean id="site" class="org.riotfamily.core.screen.form.FormScreen" autowire="constructor">
-				</bean>
-			</property>
-		</bean>
+		<s:list id="sites" icon="world">
+			<s:dao>
+				<ref bean="siteRiotDao" />
+			</s:dao>
+			<s:columns>
+				<s:column property="locale" />
+				<s:column property="name" />
+				<s:column property="enabled" />
+			</s:columns>
+			<s:commands>
+				<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
+				<!-- <bean class="org.riotfamily.pages.riot.command.GotoSiteCommand" /> -->
+				<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
+				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
+			</s:commands>
+			<s:form id="site" />
+		</s:list>
 	</override:add>
 
 </beans>
