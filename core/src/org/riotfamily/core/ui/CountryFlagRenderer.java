@@ -42,7 +42,7 @@ public class CountryFlagRenderer implements ObjectRenderer {
 
 	protected boolean flagExists(String flag) {
 		return getClass().getResourceAsStream(
-				"/org/riotfamily/riot/runtime/resources/style/icons/flags/"
+				"/org/riotfamily/riot/runtime/resources/style/images/flags/"
 				+ flag.toLowerCase() + ".gif") != null;
 	}
 	
@@ -52,7 +52,7 @@ public class CountryFlagRenderer implements ObjectRenderer {
 		writer.print("<img class=\"flag\" src=\"");
 		writer.print(context.getContextPath());
 		writer.print(resourcePath);
-		writer.print("style/icons/flags/");
+		writer.print("style/images/flags/");
 		writer.print(flag.toLowerCase());
 		writer.print(".gif\"");
 		if (title != null) {
