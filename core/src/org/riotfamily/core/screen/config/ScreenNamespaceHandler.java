@@ -42,7 +42,10 @@ public class ScreenNamespaceHandler extends GenericNamespaceHandlerSupport {
 				.register("screenlets", new ListDecorator())
 				.setDefault(new ListItemDecorator("childScreens")));
 		
-		register("list", TreeListScreen.class).setDecorator(new ChildDecorator()
+		register("list", TreeListScreen.class)
+				.addTranslation("filter-form", "filterFormId")
+				.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR)
+				.setDecorator(new ChildDecorator()
 				.register("dao", new PropertyDecorator())
 				.register("columns", new ListDecorator())
 				.register("commands", new ListDecorator())

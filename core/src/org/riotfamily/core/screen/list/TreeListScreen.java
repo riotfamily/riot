@@ -76,6 +76,11 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 
 	private ApplicationContext applicationContext;
 
+
+	public TreeListScreen(FormRepository filterFormRepository) {
+		this.filterFormRepository = filterFormRepository;
+	}
+
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		
@@ -93,6 +98,10 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 		this.pageSize = pageSize;
 	}
 	
+	public void setFilterFormId(String filterFormId) {
+		this.filterFormId = filterFormId;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.riotfamily.core.screen.list.ListScreen#getDao()
 	 */

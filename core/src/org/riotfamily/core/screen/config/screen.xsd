@@ -63,6 +63,7 @@
 					<xsd:element name="screenlets" type="screenletsType" minOccurs="0" />
 				</xsd:sequence>
 				<xsd:attribute name="page-size" type="xsd:positiveInteger" />
+				<xsd:attribute name="filter-form" type="xsd:string" />
 				<xsd:attribute name="label-property" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>

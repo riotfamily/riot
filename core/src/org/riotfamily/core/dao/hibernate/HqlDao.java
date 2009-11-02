@@ -81,7 +81,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
     }
 
     public void setWhere(String where) {
-        this.where = where;
+        this.where = where != null ? "(" + where + ")" : null;
     }
 
 	public void setPositionProperty(String positionProperty) {

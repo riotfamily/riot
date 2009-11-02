@@ -54,6 +54,12 @@ public class ListModelBuilder extends ListItemLoader {
 	}
 	
 	public ListModel buildModel(String expandedId) {
+		if (state.getFilterForm() != null) {
+			if (!state.isInitialized()) {
+				state.setFormContext(formContextFactory.createFormContext(
+						messageResolver, getContextPath(), null));
+			}
+		}
 		Object[] expanded = loadExpanded(expandedId);
 		List<ListItem> items = createItems(expanded, 0, null);
 		ListParamsImpl params = state.getParams();
@@ -65,17 +71,11 @@ public class ListModelBuilder extends ListItemLoader {
 		model.setCommandButtons(createButtons());
 		model.setTree(dao instanceof Tree);
 		
-		//model.setInstantAction(chooser || singleAction);
+		StringWriter writer = new StringWriter();
+		state.getFilterForm().render(new PrintWriter(writer));
+		model.setFilterFormHtml(writer.toString());
 		
-		if (state.getFilterForm() != null) {
-			if (!state.isInitialized()) {
-				state.setFormContext(formContextFactory.createFormContext(
-						messageResolver, getContextPath(), null));
-			}
-			StringWriter writer = new StringWriter();
-			state.getFilterForm().render(new PrintWriter(writer));
-			model.setFilterFormHtml(writer.toString());
-		}
+		//model.setInstantAction(chooser || singleAction);
 		
 		return model;
 	}
