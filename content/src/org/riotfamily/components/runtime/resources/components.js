@@ -548,7 +548,12 @@ riot.components = (function() {
 			var el = this.componentElement = tmp.down();
 			el.hide();
 			if (this.index > 0) {
-				this.componentList.componentElements[this.index].insert({before: el});
+				if (this.index == this.componentList.componentElements.length) {
+					this.componentList.element.insert({bottom: el});
+				}
+				else {
+					this.componentList.componentElements[this.index].insert({before: el});
+				}
 			}
 			else {
 				this.componentList.element.insert({top: el});
