@@ -15,6 +15,7 @@ package org.riotfamily.common.web.cache;
 import java.io.Serializable;
 import java.util.Collection;
 
+import org.hibernate.proxy.HibernateProxy;
 import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.collection.TypedList;
@@ -32,7 +33,10 @@ public final class CacheTagUtils {
 	}
 	
 	public static String getTag(Class<?> clazz) {
-		return ClassUtils.getUserClass(clazz).getName();	
+		if (HibernateProxy.class.isAssignableFrom(clazz)) {
+			return clazz.getSuperclass().getName();
+		}
+		return ClassUtils.getUserClass(clazz).getName();
 	}
 	
 	public static String getTag(Class<?> clazz, Serializable id) {
