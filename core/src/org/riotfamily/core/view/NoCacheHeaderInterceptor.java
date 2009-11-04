@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.core.security.AccessController;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
@@ -29,14 +28,13 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  */
 public class NoCacheHeaderInterceptor extends HandlerInterceptorAdapter {
 
-	public void postHandle(HttpServletRequest request, 
-			HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
-		
-		if (!response.isCommitted() && modelAndView != null 
-				&& AccessController.isAuthenticatedUser()) {
-			
+	@Override
+	public boolean preHandle(HttpServletRequest request,
+			HttpServletResponse response, Object handler) throws Exception {
+
+		if (!response.isCommitted() && AccessController.isAuthenticatedUser()) {
 			ServletUtils.setNoCacheHeaders(response);
 		}
+		return true;
 	}
 }
