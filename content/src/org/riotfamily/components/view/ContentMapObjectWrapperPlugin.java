@@ -14,7 +14,11 @@ package org.riotfamily.components.view;
 
 import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
+import org.riotfamily.common.web.cache.CacheTagUtils;
+import org.riotfamily.common.web.cache.freemarker.TaggingMapModel;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentMap;
+import org.springframework.core.Ordered;
 
 import freemarker.ext.beans.MapModel;
 import freemarker.template.SimpleHash;
@@ -26,8 +30,21 @@ import freemarker.template.TemplateModelException;
  * (instead of a {@link SimpleHash}) so that getOwner(), getId() etc. can be 
  * accessed by a template.
  */
-public class ContentMapObjectWrapperPlugin implements ObjectWrapperPlugin {
+public class ContentMapObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered {
 
+	private int order = -1;
+	
+	/**
+	 * Sets the order. Default is <code>-1</code>.
+	 */
+	public void setOrder(int order) {
+		this.order = order;
+	}
+	
+	public int getOrder() {
+		return order;
+	}
+	
 	public boolean supports(Object obj) {
 		return obj instanceof ContentMap;
 	}
@@ -35,6 +52,12 @@ public class ContentMapObjectWrapperPlugin implements ObjectWrapperPlugin {
 	public TemplateModel wrapSupportedObject(Object obj,
 			PluginObjectWrapper wrapper) throws TemplateModelException {
 		
+		if (obj instanceof Content) {
+			Content content = (Content) obj;
+			TaggingMapModel model = new TaggingMapModel(content, wrapper);
+			model.addTag(CacheTagUtils.getTag(Content.class, content.getId().toString()));
+			return model;
+		}
 		return new MapModel((ContentMap) obj, wrapper);
 	}
 
