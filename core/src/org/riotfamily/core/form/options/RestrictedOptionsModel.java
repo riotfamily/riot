@@ -35,7 +35,7 @@ public class RestrictedOptionsModel implements OptionsModel {
 	}
 
 	public Collection<?> getOptionValues(Element element) {
-		Collection<?> sourceOptions = OptionsModelUtils.adapt(model, element).getOptionValues(element);
+		Collection<?> sourceOptions = OptionsModelUtils.getOptionValues(model, element);
 		ArrayList<Object> result = Generics.newArrayList();
 		Iterator<?> it = sourceOptions.iterator();
 		while (it.hasNext()) {
