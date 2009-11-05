@@ -30,6 +30,9 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 	 * error.<code>
 	 */
 	public String[] resolveMessageCodes(String errorCode, String objectName) {
+		if (errorCode == null) {
+			return null;
+		}
 		if (errorCode.startsWith("error.")) {
 			return new String[] {
 					errorCode
@@ -52,6 +55,9 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 	public String[] resolveMessageCodes(String errorCode, String objectName, 
 			String field, Class fieldType) {
 		
+		if (errorCode == null) {
+			return null;
+		}
 		if (errorCode.startsWith("error.")) {
 			return new String[] {
 					errorCode

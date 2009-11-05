@@ -68,6 +68,7 @@ public class TextField extends AbstractTextElement {
 
 	public void setConfirmMessageText(String confirmMessageText) {
 		this.confirmMessageText = confirmMessageText;
+		this.confirmMessageKey = null;
 	}	
 
 	public void setRegex(String regex) {
@@ -81,8 +82,10 @@ public class TextField extends AbstractTextElement {
 
 	public void setRegexMismatchMessageText(String regexMismatchMessageText) {
 		this.regexMismatchMessageText = regexMismatchMessageText;
+		this.regexMismatchMessageKey = null;
 	}
 
+	@Override
 	public void renderInternal(PrintWriter writer) {
 		super.renderInternal(writer);
 		if (confirm) {
@@ -103,6 +106,7 @@ public class TextField extends AbstractTextElement {
 		}		
 	}
 	
+	@Override
 	public void processRequest(FormRequest request) {
 		if (confirm) {
 			confirmText = request.getParameter(getConfirmParamName());
@@ -110,6 +114,7 @@ public class TextField extends AbstractTextElement {
 		super.processRequest(request);
 	}
 
+	@Override
 	public void validate() {		
 		super.validate();
 		if (confirm) {
@@ -119,6 +124,7 @@ public class TextField extends AbstractTextElement {
 		}
 	}
 	
+	@Override
 	protected void validateSyntax() {
 		if (pattern != null && StringUtils.hasLength(getText())) {
 			if (!pattern.matcher(getText()).matches()) {

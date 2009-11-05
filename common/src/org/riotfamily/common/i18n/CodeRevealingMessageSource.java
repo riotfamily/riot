@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DelegatingMessageSource;
+import org.springframework.util.ObjectUtils;
 
 /**
  * MessageSource that reveals the code(s) used to look-up a message.
@@ -74,6 +75,7 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 		return sb.toString();
 	}
 	
+	@Override
 	public String getMessage(String code, Object[] args, String defaultMessage,
 			Locale locale) {
 		
@@ -84,13 +86,17 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 		return super.getMessage(code, args, defaultMessage, locale);
 	}
 
+	@Override
 	public String getMessage(String code, Object[] args, Locale locale) {
 		return getMessage(code, args, null, locale);
 	}
 
+	@Override
 	public String getMessage(MessageSourceResolvable resolvable, Locale locale) {
-		if (shouldBeRevealed(resolvable.getCodes()[0])) {
-			return revealCodes(super.getMessage(resolvable, locale), resolvable.getCodes());
+		if (!ObjectUtils.isEmpty(resolvable.getCodes())) {
+			if (shouldBeRevealed(resolvable.getCodes()[0])) {
+				return revealCodes(super.getMessage(resolvable, locale), resolvable.getCodes());
+			}			
 		}
 		return super.getMessage(resolvable, locale);
 	}
