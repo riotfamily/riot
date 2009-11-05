@@ -32,6 +32,7 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 	private String viewName = ResourceUtils.getPath(
 			GroupScreen.class, "group.ftl");
 	
+	@Override
 	public List<RiotScreen> getChildScreens() {
 		return childScreens;
 	}
@@ -58,15 +59,17 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 		ModelAndView mv = new ModelAndView(viewName);
 		List<ScreenLink> links = Generics.newArrayList();
 		for (RiotScreen screen : childScreens) {
+			ScreenContext childContext = context.createChildContext(screen);
 			if (AccessController.isGranted("view", screen)) {
 				GroupScreenLink link = new GroupScreenLink(screen.getTitle(context),
-						HandlerUrlUtils.getContextRelativeUrl(request, screen.getId(), context),
+						HandlerUrlUtils.getContextRelativeUrl(request, screen.getId(), childContext),
 						screen.getIcon());
 				
 				if (screen instanceof GroupScreen) {
 					for (RiotScreen nested : screen.getChildScreens()) {
+						ScreenContext nestedContext = childContext.createChildContext(nested);
 						link.addChildLink(new GroupScreenLink(nested.getTitle(context),
-								HandlerUrlUtils.getContextRelativeUrl(request, nested.getId(), context),
+								HandlerUrlUtils.getContextRelativeUrl(request, nested.getId(), nestedContext),
 								nested.getIcon()));
 					}
 					

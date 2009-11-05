@@ -21,12 +21,14 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mvc.view.FlashScopeView;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.RiotDaoException;
+import org.riotfamily.core.screen.GroupScreen;
 import org.riotfamily.core.screen.ItemScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
@@ -282,10 +284,15 @@ public class FormScreen extends AjaxFormController
 	}
 	
 	public String getTitle(ScreenContext context) {
+		Locale locale = RequestContextUtils.getLocale(context.getRequest());
+		if (parentScreen instanceof GroupScreen) {
+			String code = "screen." + getId();
+			String defaultTitle = FormatUtils.xmlToTitleCase(getId());
+			return getMessageSource().getMessage(code, null, defaultTitle, locale);
+		}
 		if (context.getObject() != null) {
 			return ScreenUtils.getLabel(context.getObject(), this);
 		}
-		Locale locale = RequestContextUtils.getLocale(context.getRequest());
 		return getMessageSource().getMessage("label.form.new", null, "New", locale);
 	}
 

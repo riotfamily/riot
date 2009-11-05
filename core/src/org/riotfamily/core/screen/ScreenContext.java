@@ -143,7 +143,10 @@ public class ScreenContext {
 	}
 	
 	public ScreenContext createChildContext(RiotScreen screen) {
-		return new ScreenContext(screen, null, getObject(), false, this);
+		if (screen instanceof ListScreen) {
+			return new ScreenContext(screen, null, getObject(), false, this);
+		}
+		return new ScreenContext(screen, getObject(), null, false, this);
 	}
 	
 	public String getListStateKey() {
