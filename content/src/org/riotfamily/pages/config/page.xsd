@@ -48,6 +48,7 @@
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="suffix" type="xsd:string" />
 		<xsd:attribute name="label" type="xsd:string" />
+		<xsd:attribute name="form" type="xsd:string" />
 		<xsd:attribute name="handler" type="xsd:string" />
 	</xsd:complexType>
 	
@@ -89,6 +90,7 @@
 				<xsd:element name="virtual-page" type="virtual-page" minOccurs="0" />
 			</xsd:choice>
 		</xsd:sequence>
+		<xsd:attribute name="form" type="xsd:string" />
 		<xsd:attribute name="handler" type="xsd:string" />
 	</xsd:complexType>
 	
@@ -115,6 +117,7 @@
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="suffix" type="xsd:string" />
 		<xsd:attribute name="label" type="xsd:string" />
+		<xsd:attribute name="form" type="xsd:string" />
 		<xsd:attribute name="path-component" type="xsd:string" />
 		<xsd:attribute name="handler" type="xsd:string" />
 	</xsd:complexType>

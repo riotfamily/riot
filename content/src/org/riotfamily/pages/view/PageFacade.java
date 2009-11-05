@@ -83,7 +83,7 @@ public class PageFacade {
 	public String getRelativeUrl() {
 		StringBuilder url = new StringBuilder();
 		url.append(page.getPath());
-		String suffix = page.getSite().getSchema().getDefaultSuffix(page.getPageType());
+		String suffix = page.getSite().getSchema().getDefaultSuffix(page);
 		if (suffix != null) {
 			url.append(suffix);
 		}

@@ -25,6 +25,7 @@ import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
+import org.riotfamily.pages.config.PageType;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -44,7 +45,7 @@ public class PagePropertiesEditor extends CompositeElement
 	private EditorBinder binder;
 	
 	public PagePropertiesEditor(FormRepository repository, Form form, 
-			String pageType) {
+			PageType pageType) {
 		
 		this.repository = repository;
 		this.form = form;
@@ -92,7 +93,7 @@ public class PagePropertiesEditor extends CompositeElement
 	// -----------------------------------------------------------------
 	
 	public void valueChanged(ChangeEvent event) {
-		String pageType = (String) event.getNewValue();
+		PageType pageType = (PageType) event.getNewValue();
 		removeComponent(currentForm);
 		currentForm = new PropertiesForm(pageType); 
 		addComponent(currentForm);
@@ -102,14 +103,13 @@ public class PagePropertiesEditor extends CompositeElement
 	
 	private class PropertiesForm extends NestedForm {
 		
-		public PropertiesForm(String pageType) {
-			String id = pageType + "-page";
+		public PropertiesForm(PageType pageType) {
 			setRequired(true);
 			setEditorBinder(binder);
-			setStyleClass(id);
+			setStyleClass(pageType.getForm());
 			
 			addPagePropertyElements("page");
-			addPagePropertyElements(id);
+			addPagePropertyElements(pageType.getForm());
 		}
 		
 		private void addPagePropertyElements(String id) {

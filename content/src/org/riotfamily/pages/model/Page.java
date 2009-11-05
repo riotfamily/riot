@@ -15,6 +15,7 @@ package org.riotfamily.pages.model;
 import java.util.Collection;
 
 import org.riotfamily.components.model.ContentContainerOwner;
+import org.riotfamily.pages.config.PageType;
 
 /**
  * A Page is an object that holds a ContentContainer and is part of a hierarchy.
@@ -32,6 +33,6 @@ public interface Page extends ContentContainerOwner {
 	
 	public String getTitle();
 
-	public String getPageType();
+	public PageType getPageType();
 	
 }

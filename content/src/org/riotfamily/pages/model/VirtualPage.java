@@ -16,6 +16,7 @@ import java.util.Collection;
 
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentContainerOwner;
+import org.riotfamily.pages.config.PageType;
 import org.riotfamily.pages.config.VirtualPageType;
 
 public class VirtualPage implements Page {
@@ -40,8 +41,8 @@ public class VirtualPage implements Page {
 		this.title = title;
 	}
 
-	public String getPageType() {
-		return pageType.getName();
+	public PageType getPageType() {
+		return pageType;
 	}
 
 	public Page getParent() {

@@ -43,7 +43,7 @@ public class PageFormInitializer implements FormInitializer {
 	}
 
 	public void initForm(Form form) {
-		String pageType = null;
+		PageType pageType = null;
 		SelectBox sb = null;
 		if (form.isNew())  {
 			ContentPage parentPage = null;
@@ -62,10 +62,10 @@ public class PageFormInitializer implements FormInitializer {
 			else {
 				site = Site.loadDefaultSite();
 			}
-			List<? extends PageType> pageTypes = site.getSchema().getChildTypeOptions(parentPage);
+			List<? extends PageType> pageTypes = parentPage.getPageType().getChildTypes();
 			Assert.notEmpty(pageTypes, "Sitemap schema does not allow the creation of pages here");
 			sb = createPageTypeBox(form, pageTypes);
-			pageType = pageTypes.get(0).getName();
+			pageType = pageTypes.get(0);
 		}
 		else {
 			ContentPage page = (ContentPage) form.getBackingObject();
@@ -88,7 +88,6 @@ public class PageFormInitializer implements FormInitializer {
 		sb.setHideIfEmpty(true);
 		sb.setOptions(pageTypes);
 		sb.setLabelProperty("label");
-		sb.setValueProperty("name");
 		form.addElement(sb, "pageType");
 		return sb;
 	}

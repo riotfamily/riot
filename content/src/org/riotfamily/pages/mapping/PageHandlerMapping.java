@@ -52,7 +52,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		}
 		
 		exposePathWithinMapping(path, request);
-		return page.getSite().getSchema().getPageType(page.getPageType()).getHandler();
+		return page.getPageType().getHandler();
 	}
 		
 	/**

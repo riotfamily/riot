@@ -14,6 +14,7 @@ package org.riotfamily.pages.view;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.pages.config.PageType;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
@@ -33,8 +34,6 @@ public class PageRequestToViewNameTranslator
 	
 	private String suffix = "";
 	
-	private String defaultPageType = "default";
-	
 	private RequestToViewNameTranslator noPageTranslator;
 	
 	
@@ -46,10 +45,6 @@ public class PageRequestToViewNameTranslator
 		this.suffix = suffix;
 	}
 
-	public void setDefaultPageType(String defaultPageType) {
-		this.defaultPageType = defaultPageType;
-	}
-	
 	public void setNoPageTranslator(RequestToViewNameTranslator noPageTranslator) {
 		this.noPageTranslator = noPageTranslator;
 	}
@@ -57,11 +52,8 @@ public class PageRequestToViewNameTranslator
 	public String getViewName(HttpServletRequest request) throws Exception {
 		Page page = PageResolver.getResolvedPage(request);
 		if (page != null) {
-			String pageType = page.getPageType();
-			if (pageType == null) {
-				pageType = defaultPageType;
-			}
-			return prefix + pageType + suffix;
+			PageType pageType = page.getPageType();
+			return prefix + pageType.getName() + suffix;
 		}
 		else if (noPageTranslator != null) {
 			return noPageTranslator.getViewName(request);

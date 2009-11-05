@@ -87,7 +87,7 @@ public class SystemPageType extends ContentPageType implements VirtualPageParent
 	}
 
 	protected void update(ContentPage page) {
-		page.setPageType(getName());
+		page.setPageType(this);
 		if (childPages != null) {
 			for (SystemPageType child : childPages) {
 				child.sync(page);

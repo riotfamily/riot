@@ -22,6 +22,8 @@ public abstract class AbstractPageType implements PageType {
 	
 	private String label;
 	
+	private String form;
+	
 	private Object handler;
 	
 	private List<String> suffixes;
@@ -45,6 +47,17 @@ public abstract class AbstractPageType implements PageType {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public String getForm() {
+		if (form == null) {
+			form = name + "-page";
+		}
+		return form;
+	}
+
+	public void setForm(String form) {
+		this.form = form;
 	}
 
 	public Object getHandler() {

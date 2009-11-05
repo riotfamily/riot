@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,6 +43,7 @@ import org.riotfamily.common.web.cache.CacheTagUtils;
 import org.riotfamily.common.web.cache.TagCacheItems;
 import org.riotfamily.components.model.ContentEntity;
 import org.riotfamily.core.security.AccessController;
+import org.riotfamily.pages.config.PageType;
 import org.springframework.util.StringUtils;
 
 
@@ -60,7 +62,7 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	
 	private Long id;
 	
-	private String pageType;
+	private String pageTypeName;
 	
 	private ContentPage parent;
 	
@@ -99,12 +101,25 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		this.pathComponent = pathComponent;
 	}
 	
-	public String getPageType() {
-		return pageType;
+	@Transient
+	public PageType getPageType() {
+		if (site != null && pageTypeName != null) {
+			return site.getSchema().getPageType(pageTypeName);
+		}
+		return null;
 	}
 
-	public void setPageType(String pageType) {
-		this.pageType = pageType;
+	public void setPageType(PageType pageType) {
+		this.pageTypeName = pageType.getName();
+	}
+	
+	@Column(name="pageType")
+	protected String getPageTypeName() {
+		return pageTypeName;
+	}
+	
+	protected void setPageTypeName(String pageTypeName) {
+		this.pageTypeName = pageTypeName;
 	}
 	
 	@ManyToOne(cascade=CascadeType.MERGE)

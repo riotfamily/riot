@@ -19,6 +19,8 @@ public interface PageType {
 
 	public String getName();
 
+	public String getForm();
+	
 	public List<String> getSuffixes();
 	
 	public Object getHandler();

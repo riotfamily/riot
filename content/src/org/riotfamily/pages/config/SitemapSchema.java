@@ -12,6 +12,7 @@
  */
 package org.riotfamily.pages.config;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -88,10 +89,6 @@ public class SitemapSchema {
 		}
 		return false;
 	}
-
-	public PageType getPageType(Page page) {
-		return getPageType(page.getPageType());
-	}
 	
 	public PageType getPageType(String name) {
 		return typeMap.get(name);
@@ -121,10 +118,6 @@ public class SitemapSchema {
 		rootPage.sync(site);
 	}
 
-	public List<? extends PageType> getChildTypeOptions(ContentPage parent) {
-		return Generics.emptyIfNull(getPageType(parent).getChildTypes());
-	}
-	
 	public VirtualPageType getVirtualPageType(String name) {
 		PageType pageType = getPageType(name);
 		Assert.isInstanceOf(VirtualPageType.class, pageType);
@@ -132,31 +125,39 @@ public class SitemapSchema {
 	}
 	
 	public VirtualPageType getVirtualChildType(Page page) {
-		PageType parentType = getPageType(page);
+		PageType parentType = page.getPageType();
 		if (parentType instanceof VirtualPageParent) {
 			return ((VirtualPageParent) parentType).getVirtualChildType();
 		}
 		return null;
 	}
 
-	public String getDefaultSuffix(String pageType) {
-		List<String> suffixes = getPageType(pageType).getSuffixes();
+	public String getDefaultSuffix(Page page) {
+		List<String> suffixes = page.getPageType().getSuffixes();
 		if (suffixes != null && !suffixes.isEmpty()) {
 			return suffixes.get(0);
 		}
 		return defaultSuffix;
 	}
 
-	public boolean isSystemPage(ContentPage page) {
-		return getPageType(page) instanceof SystemPageType;
+	public boolean isSystemPage(Page page) {
+		return page.getPageType() instanceof SystemPageType;
 	}
 
+	private List<? extends PageType> getChildTypes(Page page) {
+		List<? extends PageType> types = page.getPageType().getChildTypes();
+		if (types == null) {
+			types = Collections.emptyList();
+		}
+		return types;
+	}
+	
 	public boolean canHaveChildren(ContentPage parent) {
-		return !getChildTypeOptions(parent).isEmpty();
+		return !getChildTypes(parent).isEmpty();
 	}
 	
 	public boolean isValidChild(ContentPage parent, ContentPage child) {
-		return getChildTypeOptions(parent).contains(getPageType(child));
+		return getChildTypes(parent).contains(child.getPageType());
 	}
 	
 	public boolean suffixMatches(Page page, String path) {
@@ -165,7 +166,7 @@ public class SitemapSchema {
 		if (i < path.length()) {
 			suffix = path.substring(i);
 		}
-		List<String> suffixes = getPageType(page).getSuffixes();
+		List<String> suffixes = page.getPageType().getSuffixes();
 		if (suffixes != null && !suffixes.isEmpty()) {
 			for (String s : suffixes) {
 				if (nullSafeEquals(suffix, s)) {

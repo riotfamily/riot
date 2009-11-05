@@ -136,7 +136,7 @@ public final class PageResolver {
 	private static Page resolveVirtualChildPage(Site site, String lookupPath) {
 		for (ContentPage parent : ContentPage.findByTypesAndSite(site.getSchema().getVirtualParents(), site)) {
 			if (lookupPath.startsWith(parent.getPath())) {
-				SystemPageType parentType = (SystemPageType) site.getSchema().getPageType(parent);
+				SystemPageType parentType = (SystemPageType) parent.getPageType();
 				String tail = lookupPath.substring(parent.getPath().length());
 				return parentType.getVirtualChildType().resolve(parent, tail);
 			}
