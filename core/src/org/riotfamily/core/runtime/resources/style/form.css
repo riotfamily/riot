@@ -88,9 +88,6 @@ label {
 .title {
 	margin-bottom:4px;
 }
-.composite-title label {
-	font-size: 15px;
-}
 label.disabled,
 .disabled label,
 .disabled div.title label {
