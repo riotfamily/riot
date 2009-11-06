@@ -137,10 +137,15 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	
 	@Override
 	public void onDelete(Object entity, Serializable id, Object[] state,
-			String[] propertyNames, Type[] types) {
+			String[] propertyNames, Type[] types) throws CallbackException {
 		
-		if (listenerExists(entity)) {
-			getInterceptions().entityDeleted(entity);
+		for (EntityListener listener : getListeners(entity)) {
+			try {
+				listener.onDelete(entity, sessionFactory.getCurrentSession());
+			}
+			catch (Exception e) {
+				throw new CallbackException(e);
+			}
 		}
 	}
 		
@@ -154,11 +159,6 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 				template.execute(new HibernateCallbackWithoutResult() {
 					@Override
 					public void doWithoutResult(Session session) throws Exception {
-						for (Object entity : i.getDeletedEntities()) {
-							for (EntityListener listener : getListeners(entity)) {
-								listener.onDelete(entity, session);
-							}	
-						}
 						for (Object entity : i.getSavedEntities()) {
 							for (EntityListener listener : getListeners(entity)) {
 								listener.onSave(entity, session);
@@ -206,8 +206,6 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		
 		private List<Update> updates;
 		
-		private List<Object> deletedEntities;
-		
 		private Set<Object> ignore;
 		
 		public Interceptions(SessionFactory sessionFactory) {
@@ -243,15 +241,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 				ignore.add(entity);
 			}
 		}
-		
-		public void entityDeleted(Object entity) {
-			if (deletedEntities == null) {
-				deletedEntities = Generics.newArrayList();
-			}
-			deletedEntities.add(entity);
-			ignore.add(entity);
-		}
-		
+				
 		public List<Object> getSavedEntities() {
 			return Generics.emptyIfNull(savedEntities);
 		}
@@ -259,11 +249,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		public List<Update> getUpdates() {
 			return Generics.emptyIfNull(updates);
 		}
-		
-		public List<Object> getDeletedEntities() {
-			return Generics.emptyIfNull(deletedEntities);
-		}
-		
+				
 		public boolean isEmpty() {
 			return savedEntities == null && updates == null;
 		}
