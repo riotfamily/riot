@@ -298,9 +298,13 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	
 	private String buildPath() {
 		if (parent != null) {
-			return parent.getPath() + "/" + pathComponent;
+			String s = parent.getPath();
+			if (!s.endsWith("/")) {
+				s += "/";
+			}
+			return s + pathComponent;
 		}
-		return "";
+		return "/";
 	}
 	
 	// ----------------------------------------------------------------------

@@ -32,7 +32,7 @@ public class RootPageType extends SystemPageType {
 	
 	@Override
 	public List<String> getSuffixes() {
-		return Collections.singletonList("/");
+		return Collections.singletonList(null);
 	}
 	
 	public void sync(Site site) {

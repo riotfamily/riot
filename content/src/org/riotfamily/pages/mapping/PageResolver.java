@@ -149,7 +149,8 @@ public final class PageResolver {
 	}
 	
 	public static String getLookupPath(String path) {
-		return FormatUtils.stripExtension(path);
+		String s = FormatUtils.stripExtension(path);
+		return s.length() > 0 ? s : "/";
 	}
 	
 	private static void expose(Object object, HttpServletRequest request,

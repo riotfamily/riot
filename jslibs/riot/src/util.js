@@ -129,7 +129,7 @@ var RElement = {
 					e.riot_onclick = e.onclick || null;
 					e.onclick = function() { return false; }
 				}
-				else if (e.onlick) {
+				else if (e.onclick) {
 					e.riot_onclick = e.onclick;
 					e.onclick = null;
 				}
