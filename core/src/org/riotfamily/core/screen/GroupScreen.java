@@ -67,10 +67,12 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 				
 				if (screen instanceof GroupScreen) {
 					for (RiotScreen nested : screen.getChildScreens()) {
-						ScreenContext nestedContext = childContext.createChildContext(nested);
-						link.addChildLink(new GroupScreenLink(nested.getTitle(context),
-								HandlerUrlUtils.getContextRelativeUrl(request, nested.getId(), nestedContext),
-								nested.getIcon()));
+						if (AccessController.isGranted("view", nested)) {
+							ScreenContext nestedContext = childContext.createChildContext(nested);
+							link.addChildLink(new GroupScreenLink(nested.getTitle(context),
+									HandlerUrlUtils.getContextRelativeUrl(request, nested.getId(), nestedContext),
+									nested.getIcon()));
+						}
 					}
 					
 				}
