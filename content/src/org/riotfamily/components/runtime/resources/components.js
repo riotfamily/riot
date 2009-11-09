@@ -387,6 +387,9 @@ riot.components = (function() {
 		},
 		
 		editProperties: function() {
+			if (activeComponent) {
+				return;
+			}
 			var formUrl = riot.path + '/components/form/' + this.id + '/' + this.form + '?' 
 					+ $H(riotComponentFormParams).toQueryString();
 
@@ -469,13 +472,13 @@ riot.components = (function() {
 				return !config.max || componentList.countComponents(config.type) < config.max;
 			});
 			
-			var dest = this.componentList.element.down() || this.componentList.element;
 			this.element = new Element('div').setStyle({position: 'absolute'})
-					.clonePosition(dest, {setWidth: false, setHeight: false})
 					.insert(new Element('div').addClassName('riot-insert-button')
 					.observe('click', this.onclick.bindAsEventListener(this)));
 
 			$(document.body).insert(this.element);
+			var dest = this.componentList.element.down() || this.componentList.element;
+			this.element.clonePosition(dest, {setWidth: false, setHeight: false});
 			
 			var button = this;
 			this.moveHandler = function(ev) {
@@ -607,7 +610,7 @@ riot.components = (function() {
 			var menu = this;
 			meta.each(function(m) {
 				var icon = riot.resourcePath + 'style/images/icons/' + (m.icon || 'plugin') + '.png';
-				var e = new Element('div').addClassName('type')
+				var e = new Element('a', {href: 'javascript://'}).addClassName('type')
 					.insert(new Element('span', {
 						style: 'background-image:url(' + icon 
 						+ ');_background-image:none;_filter:progid:'
@@ -632,7 +635,12 @@ riot.components = (function() {
 				duration: 0.2, 
 				scaleX: true, 
 				afterFinish: function(e) {
-					new Effect.Appear(e.element.down(), {duration: 0.2});
+					if (Prototype.Browser.IE && typeof document.documentElement.style.maxHeight == 'undefined') {
+						e.element.down().show();
+					}
+					else {
+						new Effect.Appear(e.element.down(), {duration: 0.2});
+					}
 				}
 			});
 		},
@@ -800,11 +808,10 @@ riot.components = (function() {
 		},
 		
 		editProperties: function(e) {
-			e = e || this;
-			var componentElement = Element.up(e, '.riot-component');
-			if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
+			var ce = Element.up(e, '.riot-component');
+			if (ce && (!ce.content || !ce.content.mode)) {
 				riot.toolbar.buttons.get('properties').click();
-				componentElement.component.properties();
+				getContent(ce).editProperties();
 			}
 			return false;
 		}
