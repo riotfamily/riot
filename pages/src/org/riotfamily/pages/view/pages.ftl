@@ -52,6 +52,13 @@
 </#function>
 
 <#---
+  - Returns the list of sites.
+  -->
+<#function listSites>
+	<#return pagesMacroHelper.listSites() />
+</#function>
+
+<#---
   - @see <a href="inplace.html#use">inplace.use</a>
   -->
 <#macro use page=currentPage form="" tag="" autoSizePopup=true attributes...>

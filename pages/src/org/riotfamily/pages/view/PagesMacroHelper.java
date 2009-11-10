@@ -105,4 +105,8 @@ public class PagesMacroHelper {
 	public Site getSiteWithProperty(String name, Object value) {
 		return this.pageDao.findSiteWithProperty(name, value);
 	}
+	
+	public List<Site> listSites() {
+		return pageDao.listSites();
+	}
 }
