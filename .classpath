@@ -12,6 +12,7 @@
 	<classpathentry kind="src" path="crawler/src"/>
 	<classpathentry kind="src" path="search/src"/>
 	<classpathentry kind="src" path="content/src"/>
+	<classpathentry kind="src" path="cachius/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/dwr.jar"/>
@@ -59,5 +60,6 @@
 	<classpathentry kind="lib" path="lib/spring-web.jar" sourcepath="lib/spring-web.src.zip"/>
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j.jar"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

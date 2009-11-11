@@ -15,5 +15,6 @@
     <dependencies>
 		<dependency org="slf4j" name="slf4j" rev="1.5.8" conf="*->default" />
 		<dependency org="sun" name="servlet-api" rev="2.4" conf="build->default" />
+		<dependency org="junit" name="junit" rev="4.1" conf="test->default" />
     </dependencies>
 </ivy-module>
