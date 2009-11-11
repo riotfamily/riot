@@ -31,7 +31,7 @@
 						<a href="http://www.riotfamily.org" title="Riot V${riotMacroHelper.runtime.versionString}"></a>
 					</td>
 					<td id="project">
-						<a id="logo" href="/"></a>
+						<a id="logo" href="/" target="_blank"></a>
 					</td>
 				</tr>
 			</tbody>
