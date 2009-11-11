@@ -118,11 +118,11 @@ public final class HibernateUtils {
 			String name = propertyNames[i];
 			Object value = properties.get(name);
 			if (value != null) {
-				if (hql.length() > 0) {
-					hql.append(" and ");
-				}				
 				Class<?> propertyClass = PropertyUtils.getPropertyType(entityClass, name);
 				if (propertyClass != null) {
+					if (hql.length() > 0) {
+						hql.append(" and ");
+					}
 					if (Collection.class.isAssignableFrom(propertyClass)) {
 						Collection<?> c = null;
 						if (value instanceof Collection) {
