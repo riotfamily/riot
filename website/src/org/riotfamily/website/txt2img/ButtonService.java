@@ -71,7 +71,12 @@ public class ButtonService implements ApplicationContextAware {
 	public void setApplicationContext(ApplicationContext ctx) {
 		buttons = SpringUtils.beansOfType(ctx, ButtonRenderer.class);
 	}
-	
+
+	public boolean hasAlpha(String style) {
+		ButtonRenderer renderer = buttons.get(style);
+		return renderer.hasAlpha();
+	}
+
 	public String getInlineStyle(String style, String label, 
 			HttpServletRequest request) throws Exception {
 		

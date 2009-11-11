@@ -105,7 +105,13 @@ public abstract class AbstractReverseHandlerMapping
 		}
 		
 		if (attributes.getClass().isArray()) {
-			return getUrlForHandlerWithArray(handlerName, (Object[]) attributes, prefix, context);
+			Object[] attributesArray = (Object[]) attributes;
+			if (attributesArray.length == 0) {
+				return getUrlForHandler(handlerName, defaults, prefix, context);
+			}
+			else {
+				return getUrlForHandlerWithArray(handlerName, (Object[]) attributes, prefix, context);
+			}
 		}
 		
 		return getUrlForHandlerWithBean(handlerName, attributes, defaults, 

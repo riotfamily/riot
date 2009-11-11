@@ -33,7 +33,11 @@ var Txt2ImgConfig = Class.create({
 		this.pixelImage = new Image();
 		this.pixelImage.src = pixelUrl;
 		this.selectors = selectors;
-		this.createHoverRules();
+		try {
+			this.createHoverRules();
+		}
+		catch(exception) {
+		}
 		document.observe("dom:loaded", this.insertImages.bind(this));
 		if (window.riotEditCallbacks) {
 			addRiotEditCallback(this.insertImages.bind(this));

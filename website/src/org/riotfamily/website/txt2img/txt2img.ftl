@@ -25,8 +25,8 @@
   -->
 <#macro button style tag="button" attributes...>
 	<#local label><#nested /></#local>
-	<#local attributes = attributes + {"class": "txt2imgbtn " + style} />
-	<${tag} style="${txt2ImgMacroHelper.getButtonStyle(style, label)}" ${c.joinAttributes(attributes)}>${label?trim}</${tag}>
+	<#local attributes = attributes + {"class": ((attributes.class!) + " txt2imgbtn " + txt2ImgMacroHelper.getButtonClass(style))?trim} />
+	<${tag} style="${txt2ImgMacroHelper.getButtonStyle(style, label)?html}" ${c.joinAttributes(attributes)}>${label?trim}</${tag}>
 </#macro>
 
 <#---
@@ -40,30 +40,36 @@
 <#---
   - Renders an inline JavaScript to support hover states for buttons that are 
   - no &lt;a&gt; elements in IE &lt; 7.
-  - <p>
-  - The macro outputs a function called <code>addButtonHoverHandler</code>
-  - which is automatically invoked when the DOM is ready. The code is wrapped
-  - inside a condtional comment so it won't be visible to other browsers.
-  - </p>
   - <b>Note:</b> The code requires prototype.js to be loaded. 
   -->
 <#macro insertButtonHoverHack>
 	<script type="text/javascript">
-	/*@cc_on
-	/*@if (@_jscript_version < 5.7)
-		function addButtonHoverHandler() {
-			$$('.txt2imgbtn:not(a)').each(function(el) {
-				el.observe('mouseover', function() {
-					this._txt2imgClass = this.className; 
-					this.className += this.className + 'Hover';
-				});
-				el.observe('mouseout', function() {
-					this.className = this._txt2imgClass;
+		if (Prototype.Browser.IE && typeof document.documentElement.style.maxHeight == 'undefined') {
+			document.observe('dom:loaded', function() {
+				$$('.txt2imgbtn').each(function(el) {
+					if (el.nodeName != 'A') {
+						el.observe('mouseover', function() {
+							this._txt2imgClass = this.className;
+							this.addClassName($w(this.className).map(function(s) { return s + 'Hover'}).join(' '));
+						});
+						el.observe('mouseout', function() {
+							this.className = this._txt2imgClass;
+						});
+					}
+					
+					if (el.hasClassName('txt2imgbtn-alpha')) {
+						var filter = el.style.backgroundImage.replace('url(','').replace(')','');
+						el.setStyle({ backgroundImage : "none", overflow: 'hidden'}).update(
+							new Element('span').addClassName('txt2imgbtn-ie6').setStyle({
+								display: 'block',
+								height: '1%',
+								filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"
+							 		+ filter + "',sizingMethod='image')"
+							})
+						);
+					}
 				});
 			});
 		}
-		document.observe('dom:loaded', addButtonHoverHandler); 
-	/*@end
-	@*/
 	</script>
 </#macro>

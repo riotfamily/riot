@@ -40,7 +40,7 @@
 				<xsd:extension base="txt2ImgType">
 					<xsd:attribute name="id" type="xsd:ID" use="required" />
 					<xsd:attribute name="bg" type="xsd:string" use="required" />
-					<xsd:attribute name="hover-color" type="xsd:string" use="required" />
+					<xsd:attribute name="hover-color" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
