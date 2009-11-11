@@ -39,7 +39,15 @@ public class Txt2ImgMacroHelper {
 		this.request = request;
 	}
 
+	public String getButtonClass(String id) throws Exception {
+		if (buttonService.hasAlpha(id)) {
+			return id + " txt2imgbtn-alpha";
+		}
+		return id;
+	}
+	
 	public String getButtonStyle(String id, String label) throws Exception {
 		return buttonService.getInlineStyle(id, label, request);
 	}
+
 }
