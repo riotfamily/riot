@@ -62,5 +62,9 @@
 			</s:commands>
 		</s:list>
 	</override:add>
+	
+	<override:add ref="home" property="screenlets" append="true">
+		<bean class="org.riotfamily.linkcheck.BrokenLinksScreenlet" />
+	</override:add>	
  	
 </beans>
