@@ -4,6 +4,6 @@
     	<artifact name="riot-js" type="jar" />
     </publications>
     <dependencies>
-    	<dependency org="riotfamily" name="scriptaculous-js" rev="1.8.1" conf="default->default" />
+    	<dependency org="riotfamily" name="scriptaculous-js" rev="1.8.3" conf="default->default" />
     </dependencies>
 </ivy-module>
