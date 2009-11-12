@@ -19,7 +19,7 @@ public class CacheEntry implements Serializable, Comparable<CacheEntry> {
     private String key;
     
 	/** The actual item */
-    private CacheItem item = new CacheItem();
+    private CacheItem item;
     
     /** Time of the last access */
     private long lastAccess;
@@ -32,6 +32,7 @@ public class CacheEntry implements Serializable, Comparable<CacheEntry> {
     
     CacheEntry(String key) {
     	this.key = key;
+    	this.item = new CacheItem(key);
     }
     
     /**
@@ -93,11 +94,13 @@ public class CacheEntry implements Serializable, Comparable<CacheEntry> {
          lock = new ReentrantReadWriteLock(true);
     }
     
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return key.hashCode();
     }
     
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
     	if (obj == this) {
     		return true;
     	}
@@ -108,7 +111,8 @@ public class CacheEntry implements Serializable, Comparable<CacheEntry> {
     	return false;
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
     	return key;
     }
 

@@ -17,6 +17,8 @@ public class CacheItem implements Serializable {
 
 	private Logger log = LoggerFactory.getLogger(CacheItem.class);
 	
+	private String key;
+	
 	private Serializable data;
 	
 	/** Time of the last modification */
@@ -46,12 +48,13 @@ public class CacheItem implements Serializable {
     /** Set of files involved in the creation of the cached data */
     private Set<File> involvedFiles;
     
-    public CacheItem() {
+    public CacheItem(String key) {
+    	this.key = key;
     	this.lastModified = System.currentTimeMillis();
     }
     
     public CacheItem(CacheItem old) {
-    	this();
+    	this(old.key);
     	this.data = old.data;
     }
     
@@ -86,6 +89,7 @@ public class CacheItem implements Serializable {
 	 * Invalidates the item.
 	 */
 	public void invalidate() {
+		log.trace("Invalidating {}", key);
     	this.invalidated = true;
     }
 
@@ -152,6 +156,7 @@ public class CacheItem implements Serializable {
 	 */
 	public void addTag(String tag) {
 		assert tag != null : "Tag must not be null.";
+		log.trace("Tagging item with {}", tag);
 		if (tags == null) {
 			tags = new HashSet<String>();
 		}

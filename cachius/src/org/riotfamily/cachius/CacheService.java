@@ -131,7 +131,7 @@ public class CacheService {
 		log.debug("Updating {} (non-blocking)", entry.getKey());
 		
 		// Create a new CacheItem and capture the content ...
-		CacheItem newItem = new CacheItem();
+		CacheItem newItem = new CacheItem(entry.getKey());
 
 		updateInContext(handler, newItem);
 		
@@ -164,7 +164,7 @@ public class CacheService {
 			else {
 				// Item is stale and must be revalidated
 				log.debug("Updating {} (blocking)", entry.getKey());
-				CacheItem newItem = new CacheItem();
+				CacheItem newItem = new CacheItem(entry.getKey());
 				updateInContext(handler, newItem);
 				replaceItemAndServeData(entry, handler, oldItem, newItem);
 			}
