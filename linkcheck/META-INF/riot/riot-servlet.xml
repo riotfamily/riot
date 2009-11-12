@@ -11,37 +11,33 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
- 	<!--
- 	<override:add ref="messageBasenames">
+ 	<!-- 
+ 	<override:add ref="messageBasenames" append="true">
 		<value>classpath:/org/riotfamily/linkcheck/runtime/messages</value>
 	</override:add>
+	-->	
 	
 	<override:add ref="resourceMappings" append="true">			
-		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+		<bean class="org.riotfamily.core.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/linkcheck/runtime/resources/" />
 		</bean>
 	</override:add>
-	-->
 	
- 	<!--
- 	<bean id="brokenLinkService" class="org.riotfamily.linkcheck.BrokenLinkService"/>
- 	<override:add ref="dwrController" property="configurators">
- 		<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
-			<property name="serviceBeans">
+	<override:add ref="resourceFilters">
+		<bean class="org.riotfamily.core.resource.PropertyResourceFilter">
+			<property name="match" value="/**/linkcheck.js" />
+			<property name="properties">
 				<map>
-					<entry key="BrokenLinkService" value-ref="brokenLinkService" />
+					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
+					<entry key="riotVersion" value-ref="riotVersion" />
+					<entry key="resourcePath" value-ref="resourcePath" />
 				</map>
-			</property>							
+			</property>
 		</bean>
-	</override:add>
-	-->
-
-	<!--
-	<bean class="org.riotfamily.linkcheck.BrokenLinkStatusMonitor">
-		<property name="link" value="/list/brokenLinks" />
-	</bean>
-	-->
+	</override:add>	
+	
+ 	<bean id="brokenLinkService" class="org.riotfamily.linkcheck.BrokenLinkService" />
 	
 	<override:add ref="systemScreens">
 		<s:list id="brokenLinks" icon="link_break">

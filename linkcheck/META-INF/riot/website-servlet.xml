@@ -8,10 +8,8 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 	
-	<!--
 	<override:add ref="inplaceMacroHelper" property="toolbarScripts" append="true">
-		<value>/linkcheck.js</value>
+		<value>linkcheck.js</value>
 	</override:add>
-	-->
 		
 </beans>
