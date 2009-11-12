@@ -35,12 +35,29 @@ public class TaggingMapModel extends MapModel {
 		tags.add(tag);
 	}
 	
-	@Override
-	public TemplateModel get(String key) throws TemplateModelException {
+	private void tag() {
 		for (String tag : tags) {
 			CacheContext.tag(tag);
 		}
+	}
+	
+	@Override
+	public TemplateModel get(String key) throws TemplateModelException {
+		tag();
 		return super.get(key);
+	}
+	
+	@Override
+	public Object getWrappedObject() {
+		tag();
+		return super.getWrappedObject();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdaptedObject(Class hint) {
+		tag();
+		return super.getAdaptedObject(hint);
 	}
 
 }
