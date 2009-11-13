@@ -4,7 +4,7 @@
   -->
  
 <#function resolve type arg site=currentSite>
-	<#return beans.pageResolver.getVirtualPage(site, type, arg) />
+	<#return site.getSchema().getVirtualPageType(type).resolve(site, arg) />
 </#function>
 
 <#function get type site=currentSite>
