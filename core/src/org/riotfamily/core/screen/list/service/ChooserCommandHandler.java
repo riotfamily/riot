@@ -46,6 +46,7 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		super(service, key, request);
 	}
 
+	@Override
 	protected Map<String, Command> getCommands() {
 		if (commands == null) {
 			if (chooserTarget != null) {
@@ -109,7 +110,7 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		}
 		
 		public CommandResult execute(CommandContext context, Selection selection) {
-			return new ScriptResult("parent.riot.chooser.chosen('" + 
+			return new ScriptResult("parent.riot.window.getDialog(window).options.chooser.chosen('" + 
 					selection.getSingleItem().getObjectId() + "')");
 		}
 	}

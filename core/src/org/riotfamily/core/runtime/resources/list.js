@@ -624,8 +624,8 @@ dwr.engine.setErrorHandler(function(err, ex) {
 });
 
 dwr.engine.setWarningHandler(function(err, ex) {
-	if (ex.name == 'dwr.engine.missingData') {
-		riot.window.alert('The server is currently not available.');
+	if (window.console && console.log) {
+		console.log(err);
 	}
 });
 

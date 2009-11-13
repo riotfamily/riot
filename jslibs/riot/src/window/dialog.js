@@ -15,6 +15,8 @@ riot.window = (function() {
 	// Stack of open windows
 	var stack = [];
 	
+	var dialogCount = 0;
+	
 	var ie6 = Prototype.Browser.IE && typeof document.documentElement.style.maxHeight == 'undefined';
 	
 	// ------------------------------------------------------------------------
@@ -82,6 +84,16 @@ riot.window = (function() {
 		return null;
 	}
 	
+	function findDialogById(id) {
+		for (var i = stack.length-1; i >= 0; i--) {
+			var dlg = stack[i];
+			if (dlg.id == id) {
+				return dlg;
+			}
+		}
+		return null;
+	}
+	
 	function hideElements(name, exclude) {
 		$$(name).each(function (e) {
 			if ((exclude && !e.ancestors().include(exclude)) && e.getStyle('visibility') != 'hidden') {
@@ -130,6 +142,10 @@ riot.window = (function() {
 	// Public API
 	// ------------------------------------------------------------------------
 	
+	if (parent && parent.riot && parent.riot.window) {
+		return parent.riot.window;
+	}
+	
 	return {
 		Dialog: Class.create({
 			initialize: function(options) {
@@ -148,6 +164,8 @@ riot.window = (function() {
 					'</td><td class="border border-right"></td></tr>' +
 					'<tr><td class="border border-bottom-left"></td><td class="border border-bottom"></td><td class="border border-bottom-right"></td></tr>');
 				
+				this.id = "riot-dialog-" + dialogCount++;
+				
 				this.content = this.box.down('.content');
 				this.pane = this.box.down('.pane');
 				
@@ -161,7 +179,7 @@ riot.window = (function() {
 				
 				if (this.options.url) {
 					this.box.style.visibility = 'hidden';
-					this.iframe = new Element('iframe', {src: this.options.url, width: '100%'}).observe('load', function() {
+					this.iframe = new Element('iframe', {src: this.options.url, width: '100%', name: this.id}).observe('load', function() {
 						this.resize();
 						this.box.style.visibility = 'visible';
 					}.bind(this));
@@ -239,10 +257,10 @@ riot.window = (function() {
 			}
 		}),
 		
-		alert: function(msg, onclose) {
-			ask(null, msg, ['Ok'], onclose);
+		getDialog: function(win) {
+			return findDialogById(win.name);
 		},
-	
+		
 		ask: function(title, question, answers, callback) {
 			var dlg;	
 			var buttons = new Element('form').addClassName('buttons');
@@ -260,6 +278,10 @@ riot.window = (function() {
 				.insert(buttons);
 				
 			dlg = new this.Dialog({title: title, content: content});
+		},
+		
+		alert: function(msg, onclose) {
+			this.ask(null, msg, ['Ok'], onclose);
 		},
 		
 		closeAll: function() {

@@ -40,13 +40,14 @@ Pellentesque malesuada euismod erat. Sed in ante. Quisque scelerisque. Etiam eu 
 </p>
 <button onclick="openModal()">Open</button>
 <button onclick="ask()">Ask</button>
+<button onclick="console.log(riot.window.getDialog(window))">Log reference</button>
 <script>
 	function ask() {
 		riot.window.ask('Title...', 'Question?', ['Yes', 'No', 'Maybe'], function(i, a) {alert(i)})
 	}
 	function openModal(w) {
 		if (!w) w = 600;
-		new riot.window.Dialog({xurl: 'textarea.html', content: 'Hello World. <button onclick="openModal('+ (w-50) +')">Open Another</button> <button onclick="riot.window.closeAll()">Close All</button>', title: 'Test', closeButton: true, minWidth: 200, minHeight: 50});
+		new riot.window.Dialog({url: 'dialog.html?' + new Date().getTime(), content: 'Hello World. <button onclick="openModal('+ (w-50) +')">Open Another</button> <button onclick="riot.window.closeAll()">Close All</button>', title: 'Test', closeButton: true, minWidth: 800, minHeight: 50});
 	}
 </script>
 </body>

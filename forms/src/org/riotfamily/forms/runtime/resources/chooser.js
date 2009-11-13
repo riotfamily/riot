@@ -2,8 +2,6 @@ if (!window.riot) var riot = {}; // riot namespace
 
 riot.chooser = (function() {
 
-	var activeChooser;
-	
 	var Chooser = Class.create({
 		initialize: function(id, url) {
 			this.id = id;
@@ -18,8 +16,7 @@ riot.chooser = (function() {
 		
 		choose: function(ev) {
 			ev.stop();
-			this.dialog = new riot.window.Dialog({url: this.url, modal: true, closeButton: true, minWidth: 2000, minHeight: 2000});
-			activeChooser = this;
+			this.dialog = new riot.window.Dialog({url: this.url, modal: true, closeButton: true, minWidth: 2000, minHeight: 2000, chooser: this});
 		},
 		
 		unset: function(ev) {
@@ -29,7 +26,6 @@ riot.chooser = (function() {
 		
 		chosen: function(objectId) {
 			this.value = objectId || '';
-			activeChooser = null;
 			submitEvent(new ChangeEvent(this), this.onUpdate.bind(this));
 		},
 		
@@ -41,10 +37,6 @@ riot.chooser = (function() {
 	return {
 		register: function(id, url) {
 			new Chooser(id, url);
-		},
-		
-		chosen: function(objectId) {
-			activeChooser.chosen(objectId);
 		}
 	}
 	
