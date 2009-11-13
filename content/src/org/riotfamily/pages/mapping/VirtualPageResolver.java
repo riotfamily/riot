@@ -6,7 +6,6 @@ import java.util.List;
 import org.riotfamily.common.collection.TypedList;
 import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.pages.config.VirtualPageType;
-import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.model.VirtualPage;
@@ -25,11 +24,13 @@ public abstract class VirtualPageResolver<T extends ContentContainerOwner>
 	@SuppressWarnings("unchecked")
 	public Page getPage(VirtualPageType type, Site site, Object object) {
 		T entity = (T) object;
-		ContentPage parent = ContentPage.loadByTypeAndSite(
-				type.getParent().getName(), site);
-		
+		Page parent = type.getParent().getPage(site, getParent(entity));
 		return new VirtualPage(type, parent, entity, getPathComponent(entity),
 				getTitle(entity));
+	}
+	
+	protected Object getParent(T object) {
+		return null;
 	}
 	
 	public Collection<Page> listChildren(VirtualPageType type, Page parent) {

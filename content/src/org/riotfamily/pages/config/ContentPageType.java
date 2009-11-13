@@ -14,6 +14,9 @@ package org.riotfamily.pages.config;
 
 import java.util.List;
 
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
+
 public class ContentPageType extends AbstractPageType {
 
 	private List<PageType> childTypes;
@@ -32,6 +35,10 @@ public class ContentPageType extends AbstractPageType {
 
 	public void setChildTypes(List<PageType> childTypes) {
 		this.childTypes = childTypes;
+	}
+
+	public Page getPage(Site site, Object object) {
+		throw new IllegalStateException("Operation not supported");
 	}
 	
 }

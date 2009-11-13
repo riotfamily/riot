@@ -14,6 +14,9 @@ package org.riotfamily.pages.config;
 
 import java.util.List;
 
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
+
 
 public interface PageType {
 
@@ -26,6 +29,9 @@ public interface PageType {
 	public Object getHandler();
 	
 	public List<? extends PageType> getChildTypes();
+
+	public Page getPage(Site site, Object object);
 	
 	void register(SitemapSchema schema, PageType parent);
+	
 }

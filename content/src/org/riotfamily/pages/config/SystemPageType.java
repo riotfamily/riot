@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.pages.model.ContentPage;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
 public class SystemPageType extends ContentPageType implements VirtualPageParent {
@@ -64,6 +65,10 @@ public class SystemPageType extends ContentPageType implements VirtualPageParent
 
 	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
+	}
+	
+	public Page getPage(Site site, Object object) {
+		return ContentPage.loadByTypeAndSite(getName(), site);
 	}
 
 	private void sync(ContentPage parent) {
