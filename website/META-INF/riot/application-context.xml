@@ -42,5 +42,7 @@
 			<constructor-arg ref="cacheService" />
 		</bean>
     </override:add>
+    
+    <bean id="fontManager" class="org.riotfamily.website.txt2img.DefaultFontManager" />
 
 </beans>

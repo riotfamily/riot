@@ -26,7 +26,6 @@ package org.riotfamily.website.txt2img;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -34,19 +33,14 @@ import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Locale;
 
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.ColorUtils;
-import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
 
 /**
@@ -56,11 +50,9 @@ import org.springframework.util.StringUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class TextRenderer implements InitializingBean {
+public class TextRenderer implements ApplicationContextAware, InitializingBean {
 	
 	private RiotLog log = RiotLog.get(TextRenderer.class);
-	
-	private FontBundle fontBundle = new FontBundle();
 	
 	private float fontSize = 22;
 	
@@ -87,6 +79,20 @@ public class TextRenderer implements InitializingBean {
 	private int internalFontSize = 120;
 	
 	private int scale = 1;
+
+	private String fontName;
+	
+	private FontManager fontManager;
+
+	private ApplicationContext applicationContext;
+	
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+	
+	public void setFontManager(FontManager fontManager) {
+		this.fontManager = fontManager;
+	}
 	
 	/**
 	 * Sets the font to use. The resource must either point to a Type 1
@@ -96,73 +102,8 @@ public class TextRenderer implements InitializingBean {
 	 * The font type is determined by the filename extension. 
 	 * Supported extensions are <i>.pfa</i>, <i>.pfb</i> and <i>.ttf</i>.
 	 */
-	public void setFont(Resource res) throws FontFormatException, IOException {
-		try {
-			File f = res.getFile();
-			if (f.isDirectory()) {
-				addAllFonts(f);
-			}
-			else {
-				addFont(f);
-			}
-		}
-		catch (IOException e) {
-			addFont(res);
-		}
-		Assert.notEmpty(fontBundle.getAllFonts(), "Found no fonts at " + res.getFilename());
-	}
-	
-	private int getFontFormat(String fileName) {
-		String ext = FormatUtils.getExtension(fileName).toLowerCase();
-		if (ext.equals("ttf")) {
-			return Font.TRUETYPE_FONT;			
-		}
-		if (ext.equals("pfa") || ext.equals("pfb")) {
-			return Font.TYPE1_FONT;
-		}
-		return -1;
-	}
-	
-	private void addFont(Resource res) throws FontFormatException, IOException {
-		addFont(res.getFilename(), res.getInputStream());
-	}
-	
-	private void addFont(File file) throws FontFormatException, IOException {
-		addFont(file.getName(), new FileInputStream(file));
-	}
-	
-	private void addFont(String name, InputStream input) throws FontFormatException, IOException {
-		int format = getFontFormat(name);
-		if (format != -1) {
-			fontBundle.addFont(name, Font.createFont(format, input));
-		}
-	}
-	
-	private void addAllFonts(File dir) throws FontFormatException, IOException {
-		File[] files = dir.listFiles();
-		Arrays.sort(files);
-		for (File file : files) {
-			addFont(file);
-		}
-	}
-	
-	public Font getFont(String text, Locale locale) {
-		int maxChars = -1;
-		Font bestMatch = fontBundle.getFontFor(locale);
-		if (bestMatch != null && (maxChars = bestMatch.canDisplayUpTo(text)) == -1) {
-			return bestMatch;
-		}
-		
-		for (Font font : fontBundle.getAllFonts()) {
-			int upTo = font.canDisplayUpTo(text);
-			if (upTo == -1) {
-				return font;
-			}
-			if (upTo > maxChars) {
-				bestMatch = font;
-			}
-		}
-		return bestMatch;
+	public void setFont(String fontName) {
+		this.fontName = fontName;
 	}
 	
 	/**
@@ -264,6 +205,10 @@ public class TextRenderer implements InitializingBean {
 	}
 	
 	public void afterPropertiesSet() {
+		if (fontManager == null) {
+			fontManager = SpringUtils.beanOfTypeIncludingAncestors(
+					applicationContext, FontManager.class);
+		}
 		if (resample) {
 			scale = Math.round(internalFontSize / fontSize);
 			fontSize *= scale;
@@ -349,7 +294,7 @@ public class TextRenderer implements InitializingBean {
 			}
 		}
 				
-		Font font = getFont(text, locale).deriveFont(fontSize);
+		Font font = fontManager.getFont(fontName, locale).deriveFont(fontSize);
 		
 		Graphics2D graphics = createGraphics(image);
 		FontRenderContext fc = graphics.getFontRenderContext();

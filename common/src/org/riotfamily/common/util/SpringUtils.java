@@ -87,6 +87,11 @@ public final class SpringUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static<T> T beanOfTypeIncludingAncestors(ListableBeanFactory lbf, Class<T> type) {
+		return (T) BeanFactoryUtils.beanOfTypeIncludingAncestors(lbf, type);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfTypeIncludingAncestors(
 			ListableBeanFactory lbf, Class<T> type) {
 		
