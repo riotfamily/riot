@@ -71,10 +71,12 @@ public class ProfileConfigurer extends PlaceholderWithDefaultConfigurer
 		this.fileName = fileName;
 	}
 
+	@Override
 	public void afterPropertiesSet() throws Exception {
 		Resource defaultProps = new ClassPathResource(getPath(defaultProfile));
 		Resource profileProps = new ClassPathResource(getPath(getProfile()));
 		setLocations(new Resource[] { defaultProps, profileProps});
+		super.afterPropertiesSet();
 	}
 	
 	protected String getPath(String profile) {

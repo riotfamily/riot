@@ -12,16 +12,9 @@
  */
 package org.riotfamily.common.beans.config;
 
-import java.util.HashSet;
 import java.util.Properties;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionVisitor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.util.StringValueResolver;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * PropertyPlaceholderConfigurer that allows to define inline default values.
@@ -42,8 +35,8 @@ import org.springframework.util.StringValueResolver;
  * depend on the setting of the {@link #setIgnoreUnresolvablePlaceholders(boolean) 
  * ignoreUnresolvablePlaceholders} flag. 
  */
-public class PlaceholderWithDefaultConfigurer 
-		extends PropertiesPlaceholderConfigurer {
+public class PlaceholderWithDefaultConfigurer extends PropertiesPlaceholderConfigurer
+		implements InitializingBean {
 
 	public static final String DEFAULT_VALUE_SEPARATOR = "=";
 	
@@ -51,51 +44,27 @@ public class PlaceholderWithDefaultConfigurer
 			PlaceholderWithDefaultConfigurer.class.getName() + ".NULL_DEFAULT";
 	
 	private String valueSeparator = DEFAULT_VALUE_SEPARATOR;
-	
-	private String beanName;
 
-	private BeanFactory beanFactory;
+	private String nullValue;
+	
 	
 	public void setValueSeparator(String valueSeparator) {
 		this.valueSeparator = valueSeparator;
 	}
 	
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-		super.setBeanName(beanName);
-	}
-
-	public void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-		super.setBeanFactory(beanFactory);
+	@Override
+	public void setNullValue(String nullValue) {
+		super.setNullValue(nullValue);
+		this.nullValue = nullValue;
 	}
 	
-	protected void processProperties(
-			ConfigurableListableBeanFactory beanFactoryToProcess, 
-			Properties props) throws BeansException {
-	
-		StringValueResolver valueResolver = new PlaceholderResolvingStringValueResolver(props);
-		BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver);
-		
-		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
-		for (int i = 0; i < beanNames.length; i++) {
-			// Check that we're not parsing our own bean definition,
-			// to avoid failing on unresolvable placeholders in properties file locations.
-			if (!(beanNames[i].equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
-				BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanNames[i]);
-				try {
-					visitor.visitBeanDefinition(bd);
-				}
-				catch (BeanDefinitionStoreException ex) {
-					throw new BeanDefinitionStoreException(bd.getResourceDescription(), beanNames[i], ex.getMessage());
-				}
-			}
+	public void afterPropertiesSet() throws Exception {
+		if (nullValue == null) {
+			setNullValue(NULL_DEFAULT);
 		}
-		
-		// New in Spring 2.5: resolve placeholders in alias target names and aliases as well.
-		beanFactoryToProcess.resolveAliases(valueResolver);
 	}
 	
+	@Override
 	protected String resolvePlaceholder(String placeholder, Properties props, 
 			int systemPropertiesMode) {
 		
@@ -106,7 +75,7 @@ public class PlaceholderWithDefaultConfigurer
 				defaultValue = placeholder.substring(i + 1);
 			}
 			else {
-				defaultValue = NULL_DEFAULT;
+				defaultValue = nullValue;
 			}
 			placeholder = placeholder.substring(0, i); 
 		}
@@ -120,26 +89,4 @@ public class PlaceholderWithDefaultConfigurer
 		return value;
 	}
 	
-	/**
-	 * BeanDefinitionVisitor that resolves placeholders in String values,
-	 * delegating to the <code>parseStringValue</code> method of the
-	 * containing class.
-	 */
-	private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
-
-		private final Properties props;
-
-		public PlaceholderResolvingStringValueResolver(Properties props) {
-			this.props = props;
-		}
-
-		public String resolveStringValue(String strVal) throws BeansException {
-			String value = parseStringValue(strVal, this.props, new HashSet<String>());
-			if (NULL_DEFAULT.equals(value)) {
-				return null;
-			}
-			return value;
-		}
-	}
-
 }
