@@ -149,6 +149,7 @@ public class CssTemplateController extends AbstractCacheableController
 	public void afterPropertiesSet() throws Exception {
 		if (freeMarkerConfig == null) {
 			freeMarkerConfig = new Configuration();
+			freeMarkerConfig.setNumberFormat("#0.#");
 		}
 		freeMarkerConfig.setTemplateLoader(new RiotFileTemplateLoader(
 				new File(servletContext.getRealPath("/"))));
