@@ -89,6 +89,7 @@ public class ListItem extends TemplateElement implements DHTMLElement, ClickList
 		return list.getInitScript();
 	}
 	
+	@Override
 	public void focus() {
 		editor.focus();
 	}

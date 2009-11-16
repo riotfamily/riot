@@ -22,6 +22,7 @@ import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
+import org.riotfamily.forms.ui.Dimension;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -70,6 +71,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		this.type = type;
 	}
 	
+	@Override
 	public String getEventTriggerId() {		
 		return getId() + "-event-source";
 	}
@@ -126,6 +128,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		}
 	}
 
+	@Override
 	protected void afterBindingSet() {
 		initPropertyEditor();
 	}
@@ -190,6 +193,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		}
 	}
 
+	@Override
 	public void processRequest(FormRequest request) {
 		text = request.getParameter(getParamName());
 		validate();
@@ -239,6 +243,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	protected void validateSyntax() {
 	}
 	
+	@Override
 	public void renderInternal(PrintWriter writer) {
 		TagWriter input = new TagWriter(writer);
 		input.startEmpty("input")
@@ -256,6 +261,10 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 			input.attribute("maxlength", getMaxLength().intValue());
 		}
 		input.end();
+	}
+	
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getTextfieldSize();
 	}
 
 	public int getEventTypes() {

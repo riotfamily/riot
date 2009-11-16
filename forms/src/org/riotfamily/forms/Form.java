@@ -38,6 +38,7 @@ import org.riotfamily.forms.resource.LoadingCodeGenerator;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.ui.Dimension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -500,11 +501,16 @@ public class Form implements BeanEditor {
 		this.editorBinder.registerPropertyEditors(
 				formContext.getPropertyEditorRegistrars());
 		
+		this.elements.setComponentPadding(formContext.getSizing().getLabelSize());
 		Iterator<Element> it = getRegisteredElements().iterator();
 		while (it.hasNext()) {
 			Element element = it.next();
 			element.setFormContext(formContext);
 		}
+	}
+	
+	public Dimension getDimension() {
+		return elements.getDimension();
 	}
 	
 	public String getAction() {

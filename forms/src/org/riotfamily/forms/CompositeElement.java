@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.riotfamily.forms.request.FormRequest;
+import org.riotfamily.forms.ui.Dimension;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -94,6 +95,7 @@ public abstract class CompositeElement extends AbstractEditorBase
 	 * Invokes <code>initComponent(Element)</code> on all components and 
 	 * finally calls <code>initCompositeElement()</code>.
 	 */
+	@Override
 	protected final void afterFormSet() {
 		for (Element element : components) {
 			initComponent(element);
@@ -115,6 +117,7 @@ public abstract class CompositeElement extends AbstractEditorBase
 	 * Calls <code>processRequestInternal()</code> and afterwards 
 	 * <code>processRequestComponents()</code> to process the components.
 	 */
+	@Override
 	public void processRequest(FormRequest request) {
 		processRequestInternal(request);		
 		processRequestCompontents(request);
@@ -155,15 +158,33 @@ public abstract class CompositeElement extends AbstractEditorBase
 	protected void processRequestInternal(FormRequest request) {
 	}
 
+	@Override
 	protected void renderInternal(PrintWriter writer) {		
 		for (Element component : components) {
 			component.render(writer);
 		}	
-	}	
+	}
+	
+	public Dimension getDimension() {
+		Dimension d = getPadding();
+		for (Element component : components) {
+			d = d.addHeight(getComponentPadding(component).add(component.getDimension()));
+		}
+		return d;
+	}
+
+	protected Dimension getPadding() {
+		return new Dimension();
+	}
+	
+	protected Dimension getComponentPadding(Element component) {
+		return new Dimension();
+	}
 	
 	/**
 	 * Delegates the call to the first component.
 	 */
+	@Override
 	public void focus() {
 		if (!components.isEmpty()) {
 			components.get(0).focus();
@@ -174,6 +195,7 @@ public abstract class CompositeElement extends AbstractEditorBase
 	 * Helper method to check for composite elements in templates.
 	 * Always returns <code>true</code>
 	 */
+	@Override
 	public boolean isCompositeElement() {
 		return true;
 	}

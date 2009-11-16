@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import org.riotfamily.common.util.TagWriter;
+import org.riotfamily.forms.ui.Dimension;
 
 
 /**
@@ -37,6 +38,7 @@ public class MultiSelectBox extends AbstractMultiSelectElement {
 		this.maxSize = maxSize;
 	}
 
+	@Override
 	protected void renderInternal(PrintWriter writer) {
 		TagWriter selectTag = new TagWriter(writer);
 
@@ -44,13 +46,21 @@ public class MultiSelectBox extends AbstractMultiSelectElement {
 		selectTag.start("select");
 		selectTag.attribute("id", getEventTriggerId());
 		selectTag.attribute("name", getParamName());
-		selectTag.attribute("size", Math.min(options.size(), maxSize));
+		selectTag.attribute("size", getSize());
 		selectTag.attribute("multiple", true);
 		selectTag.body();
 		for (OptionItem item : options) {
 			item.render();
 		}
 		selectTag.end();
+	}
+	
+	private int getSize() {
+		return Math.min(getOptionItems().size(), maxSize);
+	}
+
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getSelectBoxSize(getSize());
 	}
 
 }

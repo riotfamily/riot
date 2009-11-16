@@ -18,6 +18,10 @@
 		<@riot.script src="prototype/prototype.js" />
 	</head>
 	<body>
-		${form}
+		${html}
+		<script>
+			var dlg = parent.riot.window.getDialog(window);
+			dlg.setSize(${form.dimension.width}, ${form.dimension.height + 70});
+		</script>
 	</body>
 </html>

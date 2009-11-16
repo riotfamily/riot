@@ -23,6 +23,7 @@ import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.request.FormRequest;
+import org.riotfamily.forms.ui.Dimension;
 
 public class ElementSwitch extends Container 
 		implements Editor, NestedEditor, ChangeListener {
@@ -70,6 +71,7 @@ public class ElementSwitch extends Container
 		this.permanent = permanent;
 	}
 		
+	@Override
 	public void addElement(Element element) {
 		SwitchCase switchCase = (SwitchCase) element;
 		switchCase.setVisible(false);
@@ -81,6 +83,14 @@ public class ElementSwitch extends Container
 		super.addElement(element);
 	}
 
+	public Dimension getDimension() {
+		Dimension d = new Dimension();
+		for (SwitchCase c : cases.values()) {
+			d.expand(c.getDimension());
+		}
+		return d.addHeight(selectBox.getDimension());
+	}
+	
 	private void activateCase(Object value) {
 		if (activeCase != null) {
 			activeCase.deactivate();

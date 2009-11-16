@@ -21,6 +21,7 @@ import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.request.FormRequest;
+import org.riotfamily.forms.ui.Dimension;
 import org.springframework.util.Assert;
 
 public abstract class AbstractConditionalElement extends AbstractElement 
@@ -30,6 +31,7 @@ public abstract class AbstractConditionalElement extends AbstractElement
 	
 	private boolean hide;
 
+	@Override
 	protected void afterFormSet() {
 		Assert.notNull(editor, "An editor must be set.");
 		getForm().registerElement(editor);
@@ -73,19 +75,22 @@ public abstract class AbstractConditionalElement extends AbstractElement
 		return Collections.singletonList((Element) editor);
 	}
 
+	@Override
 	public void processRequest(FormRequest request) {
 		if (isEditable() && isEnabled()) {
 			editor.processRequest(request);
 		}
 	}
 	
+	@Override
 	public String getLabel() {
-		if (hide && !getForm().isNew()) {
-			return null;
+		if (!hide || isEditable()) {
+			return editor.getLabel();
 		}
-		return editor.getLabel();
+		return null;		
 	}
 	
+	@Override
 	public boolean isRequired() {
 		if (isEditable()) {
 			return editor.isRequired();
@@ -93,12 +98,21 @@ public abstract class AbstractConditionalElement extends AbstractElement
 		return false;
 	}
 	
+	@Override
 	protected void renderInternal(PrintWriter writer) {
 		if (!hide || isEditable()) {
 			editor.render(writer);
 		}
 	}
+	
+	public Dimension getDimension() {
+		if (!hide || isEditable()) {
+			return editor.getDimension();
+		}
+		return null;
+	}
 
+	@Override
 	public String getStyleClass() {
 		if (!hide) {
 			return editor.getStyleClass();
@@ -106,6 +120,7 @@ public abstract class AbstractConditionalElement extends AbstractElement
 		return null;
 	}
 
+	@Override
 	public boolean isCompositeElement() {
 		return editor.isCompositeElement();
 	}

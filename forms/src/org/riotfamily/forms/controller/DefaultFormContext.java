@@ -22,6 +22,7 @@ import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.OptionsModelAdapter;
 import org.riotfamily.forms.TemplateRenderer;
+import org.riotfamily.forms.ui.ElementSizing;
 import org.springframework.beans.PropertyEditorRegistrar;
 
 /**
@@ -47,6 +48,8 @@ public class DefaultFormContext implements FormContext {
 	private Collection<PropertyEditorRegistrar> propertyEditorRegistrars;
 	
 	private List<OptionsModelAdapter> optionValuesAdapters;
+
+	private ElementSizing elementSizing;
 	
 	public DefaultFormContext() {
 	}
@@ -55,7 +58,7 @@ public class DefaultFormContext implements FormContext {
 			TemplateRenderer templateRenderer,
 			String contextPath, String resourcePath, String formUrl,
 			Collection<PropertyEditorRegistrar> propertyEditorRegistrars,
-			List<OptionsModelAdapter> optionValuesAdapters) {
+			List<OptionsModelAdapter> optionValuesAdapters, ElementSizing elementSizing) {
 
 		this.messageResolver = messageResolver;
 		this.contextPath = contextPath;
@@ -64,6 +67,7 @@ public class DefaultFormContext implements FormContext {
 		this.formUrl = formUrl;
 		this.propertyEditorRegistrars = propertyEditorRegistrars;
 		this.optionValuesAdapters = optionValuesAdapters;
+		this.elementSizing = elementSizing;
 	}
 
 	private void setResourcePath(String path) {
@@ -143,6 +147,10 @@ public class DefaultFormContext implements FormContext {
 
 	public List<OptionsModelAdapter> getOptionsModelAdapters() {
 		return optionValuesAdapters;
+	}
+
+	public ElementSizing getSizing() {
+		return elementSizing;
 	}
 	
 }

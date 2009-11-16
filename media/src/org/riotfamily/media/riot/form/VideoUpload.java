@@ -28,6 +28,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.ui.Dimension;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotVideo;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,12 +44,14 @@ public class VideoUpload extends FileUpload {
 			Resources.SCRIPTACULOUS_EFFECTS);
 	
 	
+	@Override
 	protected RiotFile createRiotFile(MultipartFile multipartFile) 
 			throws IOException {
 		
 		return new RiotVideo(multipartFile);
 	}
 	
+	@Override
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
@@ -85,6 +88,7 @@ public class VideoUpload extends FileUpload {
 			}
 		}
 		
+		@Override
 		protected void renderTemplate(PrintWriter writer) {
 			if (getVideo() != null) {
 				double w = getVideo().getWidth();
@@ -108,6 +112,10 @@ public class VideoUpload extends FileUpload {
 			return this.previewHeight;
 		}
 
+		public Dimension getDimension() {
+			return getFormContext().getSizing().getVideoPreviewSize();
+		}
+		
 		public RiotVideo getVideo() {
 			return (RiotVideo) VideoUpload.this.getPreviewFile();
 		}

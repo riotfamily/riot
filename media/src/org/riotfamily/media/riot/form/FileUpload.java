@@ -22,6 +22,7 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.element.upload.AbstractFileUpload;
+import org.riotfamily.forms.ui.Dimension;
 import org.riotfamily.media.meta.UnknownFormatException;
 import org.riotfamily.media.model.RiotFile;
 import org.springframework.util.FileCopyUtils;
@@ -37,6 +38,7 @@ public class FileUpload extends AbstractFileUpload {
 	
 	private RiotFile uploadedFile;
 	
+	@Override
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
@@ -145,6 +147,10 @@ public class FileUpload extends AbstractFileUpload {
 
 		public String getDownloadUrl() {
 			return getFormContext().getContentUrl(this);
+		}
+		
+		public Dimension getDimension() {
+			return getFormContext().getSizing().getFilePreviewSize();
 		}
 
 	}

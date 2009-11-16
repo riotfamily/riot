@@ -10,28 +10,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms.element;
+package org.riotfamily.forms.ui;
 
-import java.io.PrintWriter;
+public interface ElementSizing {
 
-import org.riotfamily.forms.AbstractElement;
-import org.riotfamily.forms.ui.Dimension;
+	Dimension getButtonSize();
 
-public class StaticText extends AbstractElement {
+	Dimension getCheckboxSize();
 
-	private String text;
+	Dimension getRadioButtonSize();
 	
-	public StaticText(String text) {
-		this.text = text;
-	}
+	Dimension getTextfieldSize();
 
-	@Override
-	protected void renderInternal(PrintWriter writer) {
-		writer.print(text);
-	}
+	Dimension getTextareaSize(Integer rows, Integer cols, String text);
 	
-	public Dimension getDimension() {
-		return getFormContext().getSizing().getTextSize(text);
-	}
+	Dimension getSelectBoxSize(int i);
+	
+	Dimension getTextSize(String text);
+
+	Dimension getFilePreviewSize();
+
+	Dimension getVideoPreviewSize();
+
+	Dimension getListItemPadding();
+	
+	Dimension getMapItemPadding();
+
+	Dimension getLabelSize();
 
 }

@@ -31,6 +31,8 @@ import org.riotfamily.forms.TemplateRenderer;
 import org.riotfamily.forms.options.ArrayOptionsModelAdapter;
 import org.riotfamily.forms.options.CollectionOptionsModelAdapter;
 import org.riotfamily.forms.options.DependentOptionsModelAdapter;
+import org.riotfamily.forms.ui.DefaultElementSizing;
+import org.riotfamily.forms.ui.ElementSizing;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.factory.BeanFactory;
@@ -62,6 +64,8 @@ public final class FormContextFactory implements MessageSourceAware,
 	private Collection<PropertyEditorRegistrar> propertyEditorRegistrars;
 	
 	private List<OptionsModelAdapter> optionValuesAdapters = Generics.newArrayList();
+
+	private ElementSizing elementSizing = new DefaultElementSizing();
 
 	public FormContextFactory() {
 		registerDefaultOptionValuesAdapters();
@@ -153,7 +157,7 @@ public final class FormContextFactory implements MessageSourceAware,
 		
 		return new DefaultFormContext(messageResolver, templateRenderer, 
 				contextPath, resourcePath, formUrl,
-				propertyEditorRegistrars, optionValuesAdapters);
+				propertyEditorRegistrars, optionValuesAdapters, elementSizing );
 	}
 
 }

@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.MessageUtils;
+import org.riotfamily.forms.ui.Dimension;
 
 
 /**
@@ -40,6 +41,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 	 * @deprecated Use @link #setChooseLabel(String) or 
 	 * @link #setChooseLabelKey(String) instead.
 	 */
+	@Deprecated
 	public void setShowChooseOption(boolean show) {
 		if (show) {
 			chooseLabelKey = DEFAULT_CHOOSE_LABEL_KEY;
@@ -58,6 +60,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 		this.chooseLabelKey = chooseLabelKey;
 	}
 	
+	@Override
 	protected List<OptionItem> createOptionItems(Collection<?> values) {
 		List<OptionItem> optionItems = super.createOptionItems(values);
 		if (chooseLabelKey != null) {
@@ -74,6 +77,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 		return optionItems;
 	}
 	
+	@Override
 	public Object getValue() {
 		List<OptionItem> optionItems = getOptionItems();
 		if (optionItems.size() == 1 && isRequired()) {
@@ -82,6 +86,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 		return super.getValue();
 	}
 			
+	@Override
 	protected void renderInternal(PrintWriter writer) {
 		List<OptionItem> optionItems = getOptionItems();
 		TagWriter selectTag = new TagWriter(writer)
@@ -97,7 +102,10 @@ public class SelectBox extends AbstractSingleSelectElement {
 			item.render();
 		}
 		selectTag.end();
-		
+	}
+	
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getSelectBoxSize(1);
 	}
 
 }

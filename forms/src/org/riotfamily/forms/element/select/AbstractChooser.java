@@ -28,6 +28,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.ui.Dimension;
 import org.springframework.util.StringUtils;
 
 /**
@@ -46,11 +47,13 @@ public abstract class AbstractChooser extends AbstractEditorBase
 			new ScriptResource("form/chooser.js", "riot.chooser", 
 			Resources.RIOT_DIALOG);
 	
+	@Override
 	public String getEventTriggerId() {		
 		return getId();
 	}
 	
 	
+	@Override
 	protected void renderInternal(PrintWriter writer) {
 		DocumentWriter doc = new DocumentWriter(writer);
 		doc.start("div").attribute("class", "chooser").body();
@@ -74,6 +77,10 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		}
 		doc.end();
 	}
+	
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getButtonSize();
+	}
 
 	protected String getUnsetLabel() {
 		return MessageUtils.getUILabel(this, "chooser", "unset", "Unset");
@@ -89,6 +96,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		return 0;
 	}
 	
+	@Override
 	public void processRequest(FormRequest request) {
 		validate();
 	}

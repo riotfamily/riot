@@ -28,6 +28,7 @@ import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.ui.Dimension;
 import org.springframework.web.multipart.MultipartFile;
 
 public abstract class AbstractFileUpload extends CompositeElement implements Editor,
@@ -50,10 +51,12 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 	 * Though this is a composite element we want it to be treated as a
 	 * single widget.
 	 */
+	@Override
 	public boolean isCompositeElement() {
 		return false;
 	}
 	
+	@Override
 	protected final void processRequestInternal(FormRequest request) {
 		validate();
 	}
@@ -87,6 +90,7 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 			this.uploadId = UploadStatus.createUploadId();
 		}
 		
+		@Override
 		public String getEventTriggerId() {		
 			return getId();
 		}
@@ -107,6 +111,7 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 			return processing;
 		}
 		
+		@Override
 		public void processRequestInternal(FormRequest request) {
 			log.debug("Processing " + getParamName());
 			MultipartFile multipartFile = request.getFile(getParamName());
@@ -153,6 +158,11 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 			}
 		}
 		
+		@Override
+		public Dimension getDimension() {
+			return getFormContext().getSizing().getTextfieldSize();
+		}
+		
 	}
 	
 	private class RemoveButton extends Button {
@@ -161,10 +171,12 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 			setStyleClass("remove-file");
 		}
 
+		@Override
 		public String getLabel() {
 			return "Remove";
 		}
 
+		@Override
 		protected void onClick() {
 			onRemove();
 			ErrorUtils.removeErrors(AbstractFileUpload.this);
@@ -173,12 +185,14 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 			}
 		}
 
+		@Override
 		public void renderInternal(PrintWriter writer) {
 			if (!AbstractFileUpload.this.isRequired() && isFilePresent()) {
 				super.renderInternal(writer);
 			}
 		}
 
+		@Override
 		public int getEventTypes() {
 			return JavaScriptEvent.ON_CLICK;
 		}

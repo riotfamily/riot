@@ -317,7 +317,6 @@ riot.components = (function() {
 			this.element = el;
 			this.id = id || el.readAttribute('riot:contentId');
 			this.form = el.readAttribute('riot:form');
-			this.autoSizePopup = el.readAttribute('riot:autoSizePopup') != 'false';
 			this.bShowOutline = this.showOutline.bindAsEventListener(this);
 			this.bHideOutline = this.hideOutline.bindAsEventListener(this);
 			this.bOnClick = this.onClick.bindAsEventListener(this);
@@ -398,8 +397,8 @@ riot.components = (function() {
 				title: '${title.properties}', 
 				url: formUrl,
 				closeButton: true,
+				autoSize: false,
 				onClose: function() { activeComponent = null }
-				//TODO if (!this.autoSizePopup) minHeight = ...
 			});
 		},
 		

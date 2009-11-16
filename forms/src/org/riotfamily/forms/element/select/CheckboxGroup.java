@@ -21,6 +21,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.ui.Dimension;
 
 
 /**
@@ -41,6 +42,7 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 		template = TemplateUtils.getTemplatePath(CheckboxGroup.class);
 	}
 	
+	@Override
 	public String getEventTriggerId() {		
 		return getId();
 	}
@@ -53,6 +55,7 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 		this.template = template;
 	}
 
+	@Override
 	protected void renderInternal(PrintWriter writer) {
 		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("element", this);
@@ -60,10 +63,16 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 		getFormContext().getTemplateRenderer().render(template, model, writer);
 	}
 	
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getCheckboxSize().times(
+				1, getOptionItems().size());
+	}
+		
 	public String getInitScript() {
 		return "new RiotCheckboxGroup('" + getId() + "');";
 	}
 
+	@Override
 	public boolean isCompositeElement() {
 		return true;
 	}
