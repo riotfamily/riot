@@ -6,7 +6,7 @@
 		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	
 	<xsd:import namespace="http://www.riotfamily.org/schema/forms/form-config"
-		schemaLocation="http://www.riotfamily.org/schema/forms/form-config.xsd" />
+		schemaLocation="http://www.riotfamily.org/schema/forms/form-config-9.0.xsd" />
 	
 	<xsd:element name="chooser">
 		<xsd:complexType>
@@ -24,7 +24,6 @@
 			    			tree, etc) which leads to the desired target</xsd:documentation>
 			    		</xsd:annotation>					
 					</xsd:attribute>
-					<!-- 
 					<xsd:attribute name="root-property" type="xsd:string">
 			    		<xsd:annotation>
 			    			<xsd:documentation>Passes a specific property of
@@ -36,7 +35,8 @@
 			    			<xsd:documentation>Passes an additional attribute,
 			    			such as the Site ID</xsd:documentation>
 			    		</xsd:annotation>					
-					</xsd:attribute>					
+					</xsd:attribute>			
+					<!--		
 					<xsd:attribute name="display" type="xsd:string">
 			    		<xsd:annotation>
 			    			<xsd:documentation>The target's property that shall

@@ -91,7 +91,7 @@ public class ChooserCommandHandler extends CommandContextHandler {
 			ScreenContext nextContext = new ScreenContext(nextList, 
 					null, selection.getSingleItem().getObject(), false, screenContext);
 			
-			ChooserSettings settings = new ChooserSettings(chooserTarget.getId(), null, null);
+			ChooserSettings settings = new ChooserSettings(chooserTarget.getId(), null);
 			ScreenLink link = settings.appendTo(nextContext.getLink());
 			return new GotoUrlResult(context.getRequest(), link.getUrl());
 		}

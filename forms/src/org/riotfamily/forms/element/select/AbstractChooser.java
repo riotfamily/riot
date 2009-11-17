@@ -57,8 +57,12 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	protected void renderInternal(PrintWriter writer) {
 		DocumentWriter doc = new DocumentWriter(writer);
 		doc.start("div").attribute("class", "chooser").body();
-				
-		renderLabel(object, writer);
+		
+		if (object != null) {
+			doc.start("span").attribute("class", "label").body();		
+			renderLabel(object, writer);
+			doc.end();
+		}
 		
 		doc.startEmpty("input")
 				.attribute("type", "button")
