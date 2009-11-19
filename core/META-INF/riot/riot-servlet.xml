@@ -157,6 +157,20 @@
 			HandlerAdapter that handles regular (non-cacheable) Controllers.
 		</description>
 	</bean>
+	
+	<bean id="annotationMethodHandlerAdapter" class="org.riotfamily.common.web.cache.annotation.CacheAnnotationHandlerAdapter">
+		<description>
+			HandlerAdapter that handles @RequestMapping annotated beans
+			and supports the @Cache annotation.
+		</description>
+		<constructor-arg ref="cacheService" />
+		<constructor-arg ref="cacheKeyAugmentor" />
+		<property name="customArgumentResolvers">
+			<list>
+				<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeArgumentResolver" />
+			</list>
+		</property>
+	</bean>	
 
 	<bean id="freemarkerConfig" class="org.riotfamily.common.web.cache.freemarker.WebsiteFreeMarkerConfigurer">
 		<description>
@@ -451,10 +465,10 @@
 		
 	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />
  
-	<!-- 
-	<bean id="exportController" name="/export/{listSessionKey}/{commandId}" class="org.riotfamily.riot.list.command.export.ExportController" />
-	<alias alias="/export/{listSessionKey}/{commandId}/{objectId}" name="exportController"/>
- 	-->
+	<bean id="exportController" name="/export/{screenId}/{commandId}" class="org.riotfamily.core.screen.list.command.impl.export.ExportController">
+		<constructor-arg ref="listService" />
+	</bean>
+	<alias alias="/export/{screenId}/{commandId}/{objectId}" name="exportController"/>
  
 	<!--
 	<bean id="org.directwebremoting.PageNormalizer"
