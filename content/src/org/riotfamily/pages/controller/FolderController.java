@@ -39,7 +39,7 @@ public class FolderController implements CacheableController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		
-		Page page = PageResolver.getResolvedPage(request);
+		Page page = PageResolver.getPage(request);
 		for (PageFacade child : new PageFacade(page, request, response).getChildren()) {
 			if (child.isRequestable()) {
 				return new ModelAndView(new RedirectView(child.getUrl()));

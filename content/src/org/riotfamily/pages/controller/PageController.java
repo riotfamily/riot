@@ -23,7 +23,7 @@ public class PageController extends ConfigurableViewController {
 
 	@Override
 	protected void populateModel(Model model, HttpServletRequest request) {
-		populateModel(model, PageResolver.getResolvedPage(request));
+		populateModel(model, PageResolver.getPage(request));
 	}
 	
 	protected void populateModel(Model model, Page page) {

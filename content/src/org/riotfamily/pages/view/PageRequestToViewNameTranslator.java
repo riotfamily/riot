@@ -50,7 +50,7 @@ public class PageRequestToViewNameTranslator
 	}
 
 	public String getViewName(HttpServletRequest request) throws Exception {
-		Page page = PageResolver.getResolvedPage(request);
+		Page page = PageResolver.getPage(request);
 		if (page != null) {
 			PageType pageType = page.getPageType();
 			return prefix + pageType.getName() + suffix;
