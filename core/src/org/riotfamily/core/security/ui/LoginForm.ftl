@@ -14,11 +14,6 @@
 		"riot-js/notification/notification.css",
 		"style/common.css", "style/logo.css", "style/login.css"]
 	/>
-	
-	<script language="JavaScript" type="text/javascript">
-		Resources.basePath='${c.url(runtime.resourcePath)}';
-	</script>
-	
 </head>
 <body class="login">
 	<div id="wrapper">
@@ -51,7 +46,7 @@
 							<td class="label">
 							</td>
 							<td class="input">
-								<input id="submit" type="submit" class="button-login" value="${c.getMessageWithDefault("label.login.submit", "Login")?html}" />							
+								<span><input id="submit" type="submit" class="button-login" value="${c.getMessageWithDefault("label.login.submit", "Login")?html}" /></span>							
 							</td>
 						</tr>
 					</table>

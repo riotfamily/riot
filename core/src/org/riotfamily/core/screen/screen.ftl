@@ -14,7 +14,7 @@
 	<@riot.stylesheets hrefs=[
 		"riot-js/window/dialog.css",
 		"riot-js/notification/notification.css",
-		"style/common.css", "style/logo.css"
+		"style/common.css"
 		] + (customStyleSheets![]) + (template.vars.stylesheets![])
 	/>
 	
