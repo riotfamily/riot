@@ -67,6 +67,7 @@ public class SystemPageType extends ContentPageType implements VirtualPageParent
 		this.properties = properties;
 	}
 	
+	@Override
 	public Page getPage(Site site, Object object) {
 		return ContentPage.loadByTypeAndSite(getName(), site);
 	}
@@ -81,6 +82,7 @@ public class SystemPageType extends ContentPageType implements VirtualPageParent
 	
 	protected ContentPage createPage(Site site, ContentPage parent) {
 		ContentPage page = new ContentPage(getPathComponent(), site);
+		page.setPublished(true);
 		if (properties != null) {
 			page.getContentContainer().getPreviewVersion().putAll(properties);
 		}
