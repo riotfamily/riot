@@ -15,9 +15,7 @@ package org.riotfamily.forms;
 import java.io.PrintWriter;
 
 import org.riotfamily.forms.request.FormRequest;
-
-
-
+import org.riotfamily.forms.ui.Dimension;
 
 
 /**
@@ -127,5 +125,7 @@ public interface Element {
 	 * in the same style as element groups or nested forms. 
 	 */
 	public boolean isCompositeElement();
+	
+	public Dimension getDimension();
 	
 }

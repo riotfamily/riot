@@ -153,7 +153,8 @@ riot.window = (function() {
 					modal: true,
 					minWidth: 600,
 					minHeight: 100,
-					openOnLoad: true
+					openOnLoad: true,
+					autoSize: true
 				}, options);
 				
 				this.box = new Element('table').addClassName('riot-dialog')
@@ -180,7 +181,9 @@ riot.window = (function() {
 				if (this.options.url) {
 					this.box.style.visibility = 'hidden';
 					this.iframe = new Element('iframe', {src: this.options.url, width: '100%', name: this.id}).observe('load', function() {
-						this.resize();
+						if (this.options.autoSize) {
+							this.autoSize();
+						}
 						this.box.style.visibility = 'visible';
 					}.bind(this));
 					this.content.update(this.iframe);
@@ -204,8 +207,8 @@ riot.window = (function() {
 				this.box.style.top = top + 'px';
 				this.box.style.left = left + 'px';
 			},
-			
-			resize: function() {
+
+			autoSize: function() {
 				var el = this.content;
 				if (this.iframe) {
 					var doc = this.iframe.contentWindow || this.iframe.contentDocument;
@@ -213,18 +216,20 @@ riot.window = (function() {
 						doc = doc.document;
 					}
 					if (!doc.body) {
-						setTimeout(this.resize.bind(this), 100);
+						setTimeout(this.autoSize.bind(this), 100);
 						return;
 					}
 					el = doc.body;
 				}
-
 				var w = Math.max(this.options.minWidth, el.offsetWidth);
-				w = Math.min(w, document.viewport.getWidth() - 50);
-				this.pane.style.width = w + 'px';
-				
 				var h = Math.max(this.options.minHeight, el.offsetHeight);
-				h = Math.min(h, document.viewport.getHeight() - 100); 
+				this.setSize(w, h);
+			},
+			
+			setSize: function(w, h) {
+				w = Math.min(w, document.viewport.getWidth() - 50);
+				h = Math.min(h, document.viewport.getHeight() - 100);
+				this.pane.style.width = w + 'px';
 				this.pane.style.height = h + 'px';
 				if (this.iframe) {
 					this.iframe.style.height = this.pane.style.height; 
@@ -240,7 +245,9 @@ riot.window = (function() {
 				if (!this.isOpen) {
 					document.body.appendChild(this.box);
 					fixPNGs(this.box);
-					this.resize();
+					if (this.options.autoSize) {
+						this.autoSize();
+					}
 					this.box.style.zIndex = windowOpened(this);
 					this.isOpen = true;
 				}
@@ -292,21 +299,8 @@ riot.window = (function() {
 })(); 
 
 /*
-	open: function() {
-		if (Prototype.Browser.IE) {
-			this.hideElements('select');
-		}
-		this.hideElements('object');
-		this.hideElements('embed');
-	},
-
 	close: function() {
 		Event.stopObserving(document, 'keydown', this.keyDownHandler);
-		if (riot.activePopup == this) {
-			if (Prototype.Browser.IE) {
-				this.showElements('select');
-			}
-		}
 	},
 
 	handleKeyDown: function(ev) {

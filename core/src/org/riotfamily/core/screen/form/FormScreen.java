@@ -134,9 +134,15 @@ public class FormScreen extends AjaxFormController
 	protected Form createForm(HttpServletRequest request) {
 		Form form = formRepository.createForm(getFormId());
 		form.addButton("save");
+		ScreenContext context = ScreenContext.get(request);
+		form.setAttribute("screenContext", context);
 		return form;
 	}
 
+	public static ScreenContext getScreenContext(Form form) {
+		return form.getAttribute("screenContext");
+	}
+	
 	@Override
 	protected Object getFormBackingObject(HttpServletRequest request) {
 		return ScreenContext.get(request).getObject();

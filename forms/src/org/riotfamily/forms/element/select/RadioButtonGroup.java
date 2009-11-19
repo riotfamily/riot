@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 
 import org.riotfamily.forms.TemplateUtils;
+import org.riotfamily.forms.ui.Dimension;
 
 /**
  * Single-select element that uses a group of radio-buttons to render 
@@ -35,6 +36,7 @@ public class RadioButtonGroup extends AbstractSingleSelectElement {
 		this.template = template;
 	}
 
+	@Override
 	protected void renderInternal(PrintWriter writer) {
 		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("element", this);
@@ -42,6 +44,12 @@ public class RadioButtonGroup extends AbstractSingleSelectElement {
 		getFormContext().getTemplateRenderer().render(template, model, writer);
 	}
 	
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getRadioButtonSize().times(
+				1, getOptionItems().size());
+	}
+	
+	@Override
 	public boolean isCompositeElement() {
 		return true;
 	}

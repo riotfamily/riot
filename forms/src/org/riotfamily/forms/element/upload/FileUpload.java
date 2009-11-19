@@ -21,6 +21,7 @@ import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.element.TemplateElement;
+import org.riotfamily.forms.ui.Dimension;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -103,6 +104,9 @@ public class FileUpload extends AbstractFileUpload {
 			return getFormContext().getContentUrl(this);
 		}
 
+		public Dimension getDimension() {
+			return getFormContext().getSizing().getFilePreviewSize();
+		}
 	}
 
 }

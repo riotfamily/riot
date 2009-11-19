@@ -38,6 +38,7 @@ import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
 import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.OptionsModelUtils;
+import org.riotfamily.forms.ui.Dimension;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
@@ -102,6 +103,7 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		this.keyElementFactory = keyElementFactory;
 	}
 	
+	@Override
 	protected void initCompositeElement() {
 		if (keyElementFactory != null) {
 			keyEditor = (Editor) keyElementFactory.createElement(this, getForm(), false);
@@ -136,6 +138,10 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		}
 	}
 	
+	@Override
+	protected Dimension getComponentPadding(Element component) {
+		return getFormContext().getSizing().getMapItemPadding();
+	}
 
 	/**
 	 * Sets the class to use if a new map instance needs to be created.
@@ -319,7 +325,8 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 			binding.setValue(value);
 			editor.setValue(value);
 		}
-		
+
+		@Override
 		public void focus() {
 			editor.focus();
 		}

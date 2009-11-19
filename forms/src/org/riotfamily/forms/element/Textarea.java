@@ -20,6 +20,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.ui.Dimension;
 
 
 /**
@@ -43,6 +44,7 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 		this.rows = rows;
 	}
 
+	@Override
 	public void renderInternal(PrintWriter writer) {
 		DocumentWriter doc = new DocumentWriter(writer);
 		if (getMaxLength() == null && rows != null) {
@@ -65,6 +67,11 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 		}
 		
 		doc.body(getText()).closeAll();
+	}
+	
+	@Override
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getTextareaSize(rows, cols, getText());
 	}
 	
 	public FormResource getResource() {

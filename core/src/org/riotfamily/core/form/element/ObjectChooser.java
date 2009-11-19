@@ -14,11 +14,13 @@ package org.riotfamily.core.form.element;
 
 import java.io.PrintWriter;
 
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenRepository;
 import org.riotfamily.core.screen.ScreenUtils;
+import org.riotfamily.core.screen.form.FormScreen;
 import org.riotfamily.core.screen.list.ChooserSettings;
 import org.riotfamily.forms.element.select.AbstractChooser;
 import org.springframework.context.ApplicationContext;
@@ -30,6 +32,10 @@ public class ObjectChooser extends AbstractChooser
 	private String rootId;
 	
 	private String targetId;
+	
+	private String rootProperty;
+	
+	private String rootIdAttribute;
 	
 	private ScreenRepository screenRepository;
 	
@@ -55,6 +61,14 @@ public class ObjectChooser extends AbstractChooser
 		this.rootId = rootId;
 	}
 	
+	public void setRootProperty(String rootProperty) {
+		this.rootProperty = rootProperty;
+	}
+
+	public void setRootIdAttribute(String rootIdAttribute) {
+		this.rootIdAttribute = rootIdAttribute;
+	}
+
 	@Override
 	protected void afterFormSet() {
 		targetList = ScreenUtils.getListScreen(screenRepository.getScreen(targetId));
@@ -66,12 +80,32 @@ public class ObjectChooser extends AbstractChooser
 		}
 	}
 	
+	protected String getRootObjectId() {
+		String id = null;
+		if (rootId != null) {
+			if (rootIdAttribute != null) {
+				id = String.valueOf(getForm().getAttribute(rootIdAttribute));
+			}
+			else {
+				Object root = FormScreen.getScreenContext(getForm()).getParent();
+				if (rootProperty != null) {
+					root = PropertyUtils.getProperty(root, rootProperty);
+				}
+				if (root != null) {
+					id = ScreenUtils.getParentListScreen(rootList).getDao().getObjectId(root);
+				}
+			}
+		}
+		return id;
+	}
+	
 	@Override
 	protected String getChooserUrl() {
-		ChooserSettings settings = new ChooserSettings(targetId, rootId, null);
+		ChooserSettings settings = new ChooserSettings(targetId, rootId);
 		String url = HandlerUrlUtils.getUrlResolver(applicationContext)
 				.getUrlForHandler(rootList.getId(),
-				new ScreenContext(null, null, null, null, false));
+				new ScreenContext(null, null, getRootObjectId(), null, false));
+		
 		return settings.appendTo(url);
 	}
 
@@ -82,9 +116,7 @@ public class ObjectChooser extends AbstractChooser
 
 	@Override
 	protected void renderLabel(Object object, PrintWriter writer) {
-		if (object != null) {
-			writer.print(targetList.getItemLabel(object));
-		}
+		writer.print(targetList.getItemLabel(object));
 	}
 
 }

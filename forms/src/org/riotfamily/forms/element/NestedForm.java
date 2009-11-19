@@ -95,8 +95,8 @@ public class NestedForm extends TemplateElement implements
 	@Override
 	protected void afterFormContextSet() {
 		super.afterFormContextSet();
-		editorBinder.registerPropertyEditors(
-				getFormContext().getPropertyEditorRegistrars());
+		elements.setComponentPadding(getFormContext().getSizing().getLabelSize());
+		editorBinder.registerPropertyEditors(getFormContext().getPropertyEditorRegistrars());
 	}
 	
 	@Override

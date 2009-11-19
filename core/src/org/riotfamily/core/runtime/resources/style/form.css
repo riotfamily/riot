@@ -308,10 +308,18 @@ table.item td {
 }
 
 table.item td.handle {
-	background: url(images/move_ns.gif) center center no-repeat;
+	vertical-align: middle;
+	padding: 0px 5px;
+	background: #f6f6f6 url(images/form/drag_handle_bg.jpg) 0 0 repeat-x;
+	background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-webkit-background-size: 100% 100%; 
 }
+
 table.item td.handle div {
-	width: 20px;
+	width: 7px;
+	height: 19px;
+	background: url(images/form/move_ns.gif) center center no-repeat;
 }
 table.item td.itemElement {
 	width: 100%;

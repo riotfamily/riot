@@ -19,6 +19,7 @@ import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.request.FormRequest;
+import org.riotfamily.forms.ui.Dimension;
 
 
 /**
@@ -66,10 +67,12 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 		return checked;
 	}
 
+	@Override
 	public String getEventTriggerId() {		
 		return getId() + "-event-source";
 	}
 	
+	@Override
 	public void renderInternal(PrintWriter writer) {
 		TagWriter inputTag = new TagWriter(writer);
 		inputTag.startEmpty("input")
@@ -80,6 +83,10 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 				.attribute("checked", checked)
 				.attribute("disabled", !isEnabled())
 				.end();
+	}
+	
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getCheckboxSize();
 	}
 	
 	@Override
@@ -111,6 +118,7 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 		return checked ? checkedValue : uncheckedValue;
 	}
 	
+	@Override
 	public void processRequest(FormRequest request) {
 		Object newValue = request.getParameter(getParamName());
 		checked = newValue != null;

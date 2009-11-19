@@ -24,7 +24,7 @@ import org.riotfamily.forms.TemplateUtils;
 /**
  * CompositeElement that is rendered using a template.
  */
-public class TemplateElement extends CompositeElement {
+public abstract class TemplateElement extends CompositeElement {
 	
 	private Map<String, Object> renderModel = Generics.newHashMap();
 	
@@ -79,11 +79,13 @@ public class TemplateElement extends CompositeElement {
 		this.template = name;
 	}
 	
+	@Override
 	protected void afterFormContextSet() {
 		setAttribute("messageResolver", getFormContext().getMessageResolver());
 		setAttribute("errors", getForm().getErrors());
 	}
 	
+	@Override
 	protected void renderInternal(PrintWriter writer) {
 		renderTemplate(writer);
 	}

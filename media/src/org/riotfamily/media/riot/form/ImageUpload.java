@@ -33,6 +33,7 @@ import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
+import org.riotfamily.forms.ui.Dimension;
 import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
@@ -245,12 +246,17 @@ public class ImageUpload extends FileUpload {
 
 		@Override
 		protected void renderInternal(PrintWriter writer) {
-			int w = crop && maxWidth > 0 ? maxWidth : previewWidth;
-			int h = (maxHeight > 0 ? maxHeight : previewHeight) + 50;
+			Dimension d = getDimension();
 			new TagWriter(writer).start("div")
 					.attribute("id", getId())
-					.attribute("style", "width:" + w + "px;height:" + h + "px")
+					.attribute("style", d.getCss())
 					.end();
+		}
+		
+		public Dimension getDimension() {
+			int w = crop && maxWidth > 0 ? maxWidth : previewWidth;
+			int h = (maxHeight > 0 ? maxHeight : previewHeight) + 65;
+			return new Dimension(w, h);
 		}
 
 		private int getIntParameter(HttpServletRequest request, String name) {

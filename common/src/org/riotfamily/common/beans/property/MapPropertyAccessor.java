@@ -22,6 +22,7 @@ import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.util.Assert;
 
 /**
@@ -59,6 +60,11 @@ public class MapPropertyAccessor extends AbstractPropertyAccessor {
 		return true;
 	}
 
+	public TypeDescriptor getPropertyTypeDescriptor(String propertyName) throws BeansException {
+		return null;
+	}
+	
+	@Override
 	public Class<?> getPropertyType(String propertyName) {
 		if (valueClass != null) {
 			return valueClass;
@@ -92,25 +98,30 @@ public class MapPropertyAccessor extends AbstractPropertyAccessor {
 		return map;
 	}
 
+	@Override
 	public Object getPropertyValue(String propertyName) {
 		return getMap().get(propertyName);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setPropertyValue(String propertyName, Object value) {
 		getMap().put(propertyName, value);
 	}
 
+	@Override
 	public void setPropertyValue(PropertyValue pv) {
 		setPropertyValue(pv.getName(), pv.getValue());
 	}
 
+	@Override
 	public void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown,
 			boolean ignoreInvalid) throws BeansException {
 
 		setPropertyValues(pvs);
 	}
 
+	@Override
 	public void setPropertyValues(PropertyValues pvs) {
 		PropertyValue[] pv = pvs.getPropertyValues();
 		for (int i = 0; i < pv.length; i++) {
@@ -118,6 +129,7 @@ public class MapPropertyAccessor extends AbstractPropertyAccessor {
 		}
 	}
 
+	@Override
 	public void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown) {
 		setPropertyValues(pvs);
 	}

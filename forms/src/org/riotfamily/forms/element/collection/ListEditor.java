@@ -26,6 +26,7 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.NestedEditor;
@@ -39,6 +40,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.ui.Dimension;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
@@ -125,10 +127,12 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 		this.maxSize = maxSize;
 	}
 	
+	@Override
 	public void setRequired(boolean required) {
 		minSize = required ? 1 : 0;
 	}
 	
+	@Override
 	public boolean isRequired() {
 		return minSize != 0;
 	}
@@ -331,6 +335,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 		}
 	}
 		
+	@Override
 	protected void processRequestInternal(FormRequest request) {
 		if (sortable) {
 			String itemOrder = request.getParameter(getParamName());
@@ -339,5 +344,10 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 			}
 		}
 		validate();
+	}
+	
+	@Override
+	protected Dimension getComponentPadding(Element component) {
+		return getFormContext().getSizing().getListItemPadding();
 	}
 }

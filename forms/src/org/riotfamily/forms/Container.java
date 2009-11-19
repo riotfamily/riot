@@ -14,6 +14,8 @@ package org.riotfamily.forms;
 
 import java.util.List;
 
+import org.riotfamily.forms.ui.Dimension;
+
 
 /**
  * Composite element that notifies the form whenever an element is added or 
@@ -24,6 +26,8 @@ import java.util.List;
  */
 public class Container extends CompositeElement implements ContainerElement {
 
+	private Dimension componentPadding = new Dimension();
+	
 	/**
 	 * Creates an empty container.
 	 */
@@ -45,6 +49,15 @@ public class Container extends CompositeElement implements ContainerElement {
 		}
 	}
 
+	public void setComponentPadding(Dimension componentPadding) {
+		this.componentPadding = componentPadding;
+	}
+	
+	@Override
+	protected Dimension getComponentPadding(Element component) {
+		return componentPadding;
+	}
+	
 	/**
 	 * Removes the given element from the container.
 	 */

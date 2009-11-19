@@ -93,7 +93,9 @@ public abstract class AbstractFrontOfficeFormController
 
 		StringWriter sw = new StringWriter();
 		renderForm(form, new PrintWriter(sw));
-		return new ModelAndView(viewName, "form", sw.toString());
+		return new ModelAndView(viewName)
+			.addObject("html", sw.toString())
+			.addObject("form", form);
 	}
 
 	@Override

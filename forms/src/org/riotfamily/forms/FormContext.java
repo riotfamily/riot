@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.common.ui.RenderContext;
+import org.riotfamily.forms.ui.ElementSizing;
 import org.springframework.beans.PropertyEditorRegistrar;
 
 public interface FormContext extends RenderContext {
@@ -41,5 +42,7 @@ public interface FormContext extends RenderContext {
 	public Collection<PropertyEditorRegistrar> getPropertyEditorRegistrars();
 
 	public List<OptionsModelAdapter> getOptionsModelAdapters();
+	
+	public ElementSizing getSizing();
 	
 }

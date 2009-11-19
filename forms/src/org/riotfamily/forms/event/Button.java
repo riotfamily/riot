@@ -21,6 +21,7 @@ import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.request.FormRequest;
+import org.riotfamily.forms.ui.Dimension;
 
 
 /**
@@ -50,6 +51,7 @@ public class Button extends AbstractEditorBase
 		setInline(true);
 	}
 
+	@Override
 	public String getEventTriggerId() {		
 		return getId() + "-event-source";
 	}
@@ -70,6 +72,7 @@ public class Button extends AbstractEditorBase
 		this.defaultLabel = defaultLabel;
 	}
 
+	@Override
 	public String getLabel() {
 		if (label != null) {
 			return label;
@@ -80,6 +83,7 @@ public class Button extends AbstractEditorBase
 		return "Submit";
 	}
 	
+	@Override
 	public void setLabel(String label) {
 		this.label = label;
 	}
@@ -124,6 +128,7 @@ public class Button extends AbstractEditorBase
 		listeners.add(listener);
 	}
 	
+	@Override
 	public void processRequest(FormRequest request) {		
 		String value = request.getParameter(getParamName());
 		clicked = value != null;
@@ -136,6 +141,7 @@ public class Button extends AbstractEditorBase
 		return this.clicked;
 	}
 
+	@Override
 	public void renderInternal(PrintWriter writer) {
 		TagWriter tag = new TagWriter(writer);
 		tag.startEmpty("input")
@@ -152,6 +158,10 @@ public class Button extends AbstractEditorBase
 					partitialSubmit + "', this); return false;");
 		}
 		tag.end();
+	}
+	
+	public Dimension getDimension() {
+		return getFormContext().getSizing().getButtonSize();
 	}
 	
 	protected void onClick() {

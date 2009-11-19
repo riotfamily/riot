@@ -25,21 +25,14 @@ public class ChooserSettings implements Serializable {
 	
 	private String startScreenId;
 	
-	private String rootObjectId;
-
 	
-	
-	public ChooserSettings(String targetScreenId, String startScreenId,
-			String rootObjectId) {
-		
+	public ChooserSettings(String targetScreenId, String startScreenId) {
 		this.targetScreenId = targetScreenId;
 		this.startScreenId = startScreenId;
-		this.rootObjectId = rootObjectId;
 	}
 
 	public ChooserSettings(HttpServletRequest request) {
-		this(request.getParameter("choose"),request.getParameter("start"), 
-					request.getParameter("rootId"));
+		this(request.getParameter("choose"), request.getParameter("start"));
 	}
 
 	public ScreenLink appendTo(ScreenLink link) {
@@ -59,7 +52,6 @@ public class ChooserSettings implements Serializable {
 		if (targetScreenId != null) {
 			ServletUtils.appendParameter(sb, "choose", targetScreenId);
 			ServletUtils.appendParameter(sb, "start", startScreenId);
-			ServletUtils.appendParameter(sb, "rootId", rootObjectId);
 		}
 	}
 	
@@ -69,10 +61,6 @@ public class ChooserSettings implements Serializable {
 
 	public String getStartScreenId() {
 		return startScreenId;
-	}
-
-	public String getRootObjectId() {
-		return rootObjectId;
 	}
 
 }
