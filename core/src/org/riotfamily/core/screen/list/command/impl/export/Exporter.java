@@ -10,21 +10,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.linkcheck;
+package org.riotfamily.core.screen.list.command.impl.export;
 
-import java.util.Map;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
-import org.riotfamily.core.screen.ModelAndViewScreenlet;
-import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.linkcheck.BrokenLink;
+import javax.servlet.http.HttpServletResponse;
 
-public class BrokenLinksScreenlet extends ModelAndViewScreenlet {
+public interface Exporter {
 
-	@Override
-	protected void populateModel(Map<String, Object> model,
-			ScreenContext context) {
-
-		model.put("totalBrokenLinks", BrokenLink.findAllBrokenLinks().size());
-	}
-
+	public String getFileExtension();
+	
+	public void export(String objectId, Collection<?> items, Object parent, 
+			List<String> properties, HttpServletResponse response) 
+			throws IOException;
 }

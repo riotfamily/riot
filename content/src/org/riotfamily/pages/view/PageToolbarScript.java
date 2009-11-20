@@ -18,6 +18,7 @@ import org.riotfamily.components.view.DynamicToolbarScript;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -26,16 +27,18 @@ import org.riotfamily.pages.model.Page;
 public class PageToolbarScript implements DynamicToolbarScript {
 
 	public String generateJavaScript(HttpServletRequest request) {
-		Page page = PageResolver.getResolvedPage(request);
-		//REVISIT Expose path instead?
-		if (page instanceof ContentPage) {
-			return String.format(
-					"riotComponentFormParams.pageId = %s;\n" +
-					"riotComponentFormParams.siteId = %s;\n", 
-					((ContentPage) page).getId(), 
-					page.getSite().getId());
+		StringBuilder sb = new StringBuilder();
+		Site site = PageResolver.getSite(request);
+		if (site != null) {
+			sb.append("riotComponentFormParams.siteId = ").
+				append(site.getId()).append(";\n");
 		}
-		return null;
+		Page page = PageResolver.getPage(request);
+		if (page instanceof ContentPage) {
+			sb.append("riotComponentFormParams.pageId = ").
+				append(((ContentPage) page).getId()).append(";\n");
+		}
+		return sb.toString();
 	}
 	
 }

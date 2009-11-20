@@ -12,8 +12,10 @@
  */
 package org.riotfamily.core.resource;
 
+import java.io.File;
 import java.io.IOException;
 
+import org.riotfamily.cachius.CacheContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -49,6 +51,14 @@ public class ResourceMapping {
 			String relativePath = path.substring(this.path.length());
 			Resource res = location.createRelative(relativePath);
 			log.debug("Looking for resource: " + res);
+			try {
+				File f = res.getFile();
+				if (f != null) {
+					CacheContext.addFile(f);
+				}
+			}
+			catch (IOException ex) {
+			}
 			if (res.exists()) {
 				return res;
 			}

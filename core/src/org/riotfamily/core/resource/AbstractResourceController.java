@@ -24,7 +24,6 @@ import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.web.cache.AbstractCacheableController;
 import org.riotfamily.common.web.cache.controller.Compressible;
@@ -133,11 +132,6 @@ public abstract class AbstractResourceController extends AbstractCacheableContro
 		if (res != null) {
 			String contentType = getContentType(res);
 			response.setContentType(contentType);
-			try {
-				CacheContext.addFile(res.getFile());
-			}
-			catch (IOException ex) {
-			}
 			if (contentType.startsWith("text/")) {
 				serveText(res, path, contentType, request, response.getWriter());
 			}
