@@ -220,6 +220,9 @@ public class YUIJavaScriptCompressor implements Compressor {
 	    				.append(lineOffset)
 	    				.append(")");
 	    	}
+	    	if (lineSource != null) {
+	    		sb.append('\n').append('\t').append(lineSource);
+	    	}
 	    	return sb.toString();	
 	    }
 
