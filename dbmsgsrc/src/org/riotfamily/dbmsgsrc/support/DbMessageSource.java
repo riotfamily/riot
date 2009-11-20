@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.riotfamily.common.web.cache.CacheTagUtils;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
@@ -76,8 +77,11 @@ public class DbMessageSource extends AbstractMessageSource {
 					}
 				});
 			}
+			catch (ConstraintViolationException e) {
+				result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
+			}
 			catch (DataIntegrityViolationException e) {
-				return result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
+				result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 			}
 		}
 		return result;
