@@ -57,7 +57,7 @@
 	<#elseif bookmarklet>
 		<script type="text/javascript" language="JavaScript">
 			// This variable is read by the login-bookmarklet:
-			var riotPagesUrl = '${riot.resource("/pages")}';
+			var riotPagesUrl = '${c.url(riot.resource("/pages"))}';
 		</script>
 	</#if>
 </#macro>
