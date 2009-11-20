@@ -476,7 +476,7 @@ riot.components = (function() {
 					.observe('click', this.onclick.bindAsEventListener(this)));
 
 			$(document.body).insert(this.element);
-			var dest = this.componentList.element.down() || this.componentList.element;
+			var dest = this.componentList.element.down() || this.componentList.element;
 			this.element.clonePosition(dest, {setWidth: false, setHeight: false});
 			
 			var button = this;
