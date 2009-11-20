@@ -205,7 +205,9 @@ public class TemplateMacroHelper {
 		}
 		
 		public void render(Writer out) throws TemplateException, IOException {
-			body.render(out);
+			if (body != null) {
+				body.render(out);
+			}
 		}
 		
 		public void requestTemplate() throws IOException {
