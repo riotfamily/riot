@@ -26,7 +26,7 @@
         <dependency org="sun" name="jaf" rev="1.0.2" conf="*->default" />
         <dependency org="json" name="json-lib" rev="${dep.json-lib.revision}" conf="*->default,src" />
         <dependency org="davidashen" name="texhyphj" rev="1.1" conf="*->default" />
-        <dependency org="yahoo" name="yuicompressor" rev="2.2.5" conf="*->default" />
+        <dependency org="yahoo" name="yuicompressor" rev="2.4.2" conf="*->default" />
         <dependency org="opensymphony" name="quartz" rev="${dep.quartz.revision}" conf="build->default" />
 		<dependency org="dom4j" name="dom4j" rev="1.6.1" conf="*->default" />
 		<exclude org="apache" module="commons-logging" />
