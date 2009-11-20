@@ -29,7 +29,7 @@
 			{src: 'components.js', test: 'riot.components', onload: activateToolbar}
 		]; 
 					
-		if (location.hash.indexOf('debug-scripts') != -1) {
+		if (location.href.indexOf('debug-scripts') != -1) {
 			riot.Resources.loadScriptSequence(scripts);
 		}
 		else {

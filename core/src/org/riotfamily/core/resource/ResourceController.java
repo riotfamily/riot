@@ -41,19 +41,27 @@ public class ResourceController extends AbstractResourceController {
 		return "/" + HandlerUrlUtils.getPathWithinMapping(request);
 	}
 	
+	@Override
 	protected Reader getReader(Resource res, String path, String contentType,
 			HttpServletRequest request) throws IOException {
 		
 		Reader in = super.getReader(res, path, contentType, request);
 		if (compressors != null && ServletUtils.isDirectRequest(request)) {
-			Compressor compressor = compressors.get(contentType);
-			if (compressor != null) {
-				StringWriter buffer = new StringWriter();
-				compressor.compress(in, buffer);
-				in = new StringReader(buffer.toString());
+			if (!isDebug(request)) {
+				Compressor compressor = compressors.get(contentType);
+				if (compressor != null) {
+					StringWriter buffer = new StringWriter();
+					compressor.compress(in, buffer);
+					in = new StringReader(buffer.toString());
+				}
 			}
 		}
 		return in;
+	}
+
+	private boolean isDebug(HttpServletRequest request) {
+		String s = request.getQueryString();
+		return s != null && s.indexOf("debug") != -1;
 	}
 
 }
