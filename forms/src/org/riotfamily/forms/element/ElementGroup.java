@@ -78,6 +78,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 		this.labelItems = labelItems;
 	}
 
+	@Override
 	public String getLabel() {
 		if (labelKey == null) {
 			return "";
@@ -85,6 +86,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 		return MessageUtils.getMessage(this, labelKey);
 	}
 	
+	@Override
 	public String getSystemStyleClass() {
 		if (labelKey != null) {
 			return FormatUtils.toCssClass(labelKey);
@@ -105,12 +107,20 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 		return this.expanded;
 	}
 	
+	@Override
+	protected void afterFormContextSet() {
+		super.afterFormContextSet();
+		container.setComponentPadding(getFormContext().getSizing().getListItemPadding());
+	}
+	
+	@Override
 	protected void processRequestCompontents(FormRequest request) {
 		if (clientHasExpandedState) {
 			super.processRequestCompontents(request);
 		}
 	}
 	
+	@Override
 	protected void renderInternal(PrintWriter writer) {
 		if (!expanded) {
 			for (Element element : getElements()) {

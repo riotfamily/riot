@@ -26,7 +26,6 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
-import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.NestedEditor;
@@ -78,6 +77,8 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	private boolean dragAndDrop = true;
 	
 	private String cloneMethod;
+	
+	private Dimension minDimension;
 	
 	public ListEditor() {
 		addComponent("items", container);
@@ -143,6 +144,12 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	
 	public void setPositionProperty(String positionProperty) {
 		this.positionProperty = positionProperty;
+	}
+	
+	@Override
+	protected void afterFormContextSet() {
+		super.afterFormContextSet();
+		container.setComponentPadding(getFormContext().getSizing().getListItemPadding());
 	}
 
 	public FormResource getResource() {
@@ -274,17 +281,18 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 
 	protected ListItem addItem(Object value, boolean newItem) {		
 		ListItem item = createItem();
-		Editor editor = (Editor) itemElementFactory.createElement(
-				item, getForm(), false);
-		
-		item.setEditor(editor);
 		container.addElement(item);
 		item.setValue(value, newItem);
 		return item;
 	}
-	
+
 	protected ListItem createItem() {
-		return new ListItem(this);
+		ListItem item = new ListItem(this);
+		Editor editor = (Editor) itemElementFactory.createElement(
+				item, getForm(), false);
+		
+		item.setEditor(editor);
+		return item;
 	}
 	
 	public void removeItem(ListItem item) {		
@@ -347,7 +355,25 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	}
 	
 	@Override
-	protected Dimension getComponentPadding(Element component) {
-		return getFormContext().getSizing().getListItemPadding();
+	public Dimension getDimension() {
+		return super.getDimension().expand(getMinDimension());
 	}
+
+	private Dimension getMinDimension() {
+		if (minDimension == null) {
+			if (items.size() > 0) {
+				minDimension = container.getDimension();
+			}
+			else {
+				ListItem item = createItem();
+				item.setForm(getForm());
+				item.setFormContext(getFormContext());
+				minDimension = item.getDimension()
+					.add(getFormContext().getSizing().getListItemPadding())
+					.addHeight(super.getDimension());
+			}
+		}
+		return minDimension;
+	}
+	
 }

@@ -83,10 +83,11 @@ public class ElementSwitch extends Container
 		super.addElement(element);
 	}
 
+	@Override
 	public Dimension getDimension() {
 		Dimension d = new Dimension();
 		for (SwitchCase c : cases.values()) {
-			d.expand(c.getDimension());
+			d = d.expand(c.getDimension());
 		}
 		return d.addHeight(selectBox.getDimension());
 	}

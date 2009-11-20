@@ -21,7 +21,7 @@
 		${html}
 		<script>
 			var dlg = parent.riot.window.getDialog(window);
-			dlg.setSize(${form.dimension.width}, ${form.dimension.height + 70});
+			dlg.setSize(${form.dimension.width + 60}, ${form.dimension.height + 70});
 		</script>
 	</body>
 </html>

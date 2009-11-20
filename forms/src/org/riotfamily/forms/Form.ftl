@@ -38,6 +38,7 @@
 				<div id="${element.id}-hint" class="hint">${element.hint}</div>
 			</#if>
 			<div class="element<#if composite> composite-element</#if>">
+				<#-- Uncomment to debug dimensions: <div style="position:absolute;border:1px solid red;${element.dimension.css}"></div> -->
 				${element.render()}
 				${form.errors.renderErrors(element)}
 			</div>

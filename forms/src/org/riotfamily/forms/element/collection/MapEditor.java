@@ -38,7 +38,6 @@ import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
 import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.OptionsModelUtils;
-import org.riotfamily.forms.ui.Dimension;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
@@ -96,6 +95,12 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		this.removeUnknownKeys = removeUnknownKeys;
 	}
 	
+	@Override
+	protected void afterFormContextSet() {
+		super.afterFormContextSet();
+		items.setComponentPadding(getFormContext().getSizing().getMapItemPadding());
+	}
+	
 	/**
 	 * Sets the factory that is used to create an element for each map key. 
 	 */
@@ -138,11 +143,6 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		}
 	}
 	
-	@Override
-	protected Dimension getComponentPadding(Element component) {
-		return getFormContext().getSizing().getMapItemPadding();
-	}
-
 	/**
 	 * Sets the class to use if a new map instance needs to be created.
 	 * Default is <code>java.util.HashMap</code>.
