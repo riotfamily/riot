@@ -194,10 +194,7 @@ var RElement = {
 		return el;
 	},
 	
-	//Prototype's cumulativeOffset() method is too simple, 
-	//see http://qooxdoo.org/documentation/general/compute_element_position
-	//and http://www.koders.com/javascript/fidEA3E9D9152F06207EBED4D57045EFC0F2629593B.aspx?s=array
-	
+	// Overwrite Prototype's cumulativeOffset() method with more sophisticated one: 
 	cumulativeOffset: function(el) {
     	var left, top;
     	if (Prototype.Browser.IE) {
@@ -209,10 +206,12 @@ var RElement = {
       	else {
     		top = el.offsetTop;
     		left = el.offsetLeft;
-			while (el.tagName.toLowerCase() != 'body') {
+			while (el && el.tagName.toLowerCase() != 'body') {
 				el = el.offsetParent;
-				left += el.offsetLeft;
-				top += el.offsetTop;
+				if (el) {
+					left += el.offsetLeft;
+					top += el.offsetTop;
+				}
 			}
 		}
 		var body = $(document.body);
