@@ -90,7 +90,7 @@ public class PageFacade {
 		if (response != null) {
 			return ServletUtils.resolveAndEncodeUrl(url.toString(), request, response);
 		}
-		return url.toString();
+		return ServletUtils.resolveUrl(url.toString(), request);
 	}	
 	
 	public String getUrl() {

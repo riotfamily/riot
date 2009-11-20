@@ -12,14 +12,25 @@
  */
 package org.riotfamily.pages.riot.command;
 
+import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractBatchCommand;
 import org.riotfamily.core.screen.list.command.result.PopupResult;
-import org.riotfamily.pages.model.ContentPage;
+import org.riotfamily.pages.mapping.PageResolver;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.view.PageFacade;
+import org.springframework.beans.factory.annotation.Required;
 
-public class GotoPageCommand extends AbstractBatchCommand<ContentPage> {
+public class GotoVirtualPageCommand extends AbstractBatchCommand<Object> {
+	
+	private String pageType;
+
+	@Required
+	public void setPageType(String pageType) {
+		this.pageType = pageType;
+	}
 	
 	@Override
 	protected boolean isShowOnForm(CommandContext context) {
@@ -30,11 +41,29 @@ public class GotoPageCommand extends AbstractBatchCommand<ContentPage> {
 	protected String getIcon(String action) {
 		return "application_go";
 	}
+	
+	@Override
+	protected String getName() {
+		return "Goto Page";
+	}
 
 	@Override
-	protected CommandResult execute(CommandContext context, ContentPage page, 
+	protected CommandResult execute(CommandContext context, Object object, 
 			int index, int selectionSize) {
 		
+		ScreenContext ctx = context.createParentContext();
+		Site site = null;
+		while (site == null && ctx != null) {
+			Object parent = ctx.getObject();
+			if (parent instanceof Site) {
+				site = (Site) parent;
+			}
+			ctx = ctx.createParentContext();
+		}
+		if (site == null) {
+			site = Site.loadDefaultSite();
+		}
+		Page page = PageResolver.getVirtualPage(site, pageType, object);
 		String url = new PageFacade(page, context.getRequest()).getUrl();
 		return new PopupResult(url);
 	}
