@@ -80,7 +80,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
      * Returns a list of items.
      */
 	@Override
-    protected final List<?> listInternal(Object parent, ListParams params) {
+    protected List<?> listInternal(Object parent, ListParams params) {
     	Query query = getSession().createQuery(buildHql(parent, params));
     	setQueryParameters(query, parent, params);
         if (params.getPageSize() > 0) {
@@ -94,7 +94,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
      * Returns the total number of items.
      */
     @Override
-	public final int getListSize(Object parent, ListParams params) {
+	public int getListSize(Object parent, ListParams params) {
         Query query = getSession().createQuery(buildCountHql(parent, params));
         setQueryParameters(query, parent, params);
         Number size = (Number) query.uniqueResult();
@@ -130,8 +130,8 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
      */
     protected final String buildCountHql(Object parent, ListParams params) {
     	StringBuffer hql = new StringBuffer();
-    	hql.append("select count(*) from ");
-    	hql.append(getFrom(params));
+    	hql.append("select count(*)");
+    	appendFromClause(hql, params);
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	log.debug(hql.toString());
         return hql.toString();
@@ -144,13 +144,17 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     	StringBuffer hql = new StringBuffer();
     	hql.append("select ");
     	hql.append(getSelect());
-    	hql.append(" from ");
-    	hql.append(getFrom(params));
+    	appendFromClause(hql, params);
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
     	log.debug(hql.toString());
         return hql.toString();
     }
+
+	protected void appendFromClause(StringBuffer hql, ListParams params) {
+		hql.append(" from ");
+    	hql.append(getFrom(params));
+	}
 
     protected String getWhereClause(Object parent, ListParams params) {
         StringBuffer sb = new StringBuffer();

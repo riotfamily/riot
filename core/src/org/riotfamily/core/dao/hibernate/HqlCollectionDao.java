@@ -14,7 +14,6 @@ package org.riotfamily.core.dao.hibernate;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -23,23 +22,20 @@ import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.core.dao.CutAndPaste;
 import org.riotfamily.core.dao.Hierarchy;
 import org.riotfamily.core.dao.ListParams;
-import org.riotfamily.core.dao.Order;
 import org.riotfamily.core.dao.Sortable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
  * RiotDao implementation that loads a bean and returns one of the bean's
  * properties as (filtered) collection.
  */
-public class HqlCollectionDao extends AbstractHibernateRiotDao implements
+public class HqlCollectionDao extends AbstractHqlDao implements
 		Sortable, Hierarchy, CutAndPaste {
-
-	private Logger log = LoggerFactory.getLogger(HqlCollectionDao.class);
 
 	private boolean polymorph = true;
 
+	private String select = "this";
+	
 	private String where;
 
 	private Class<?> entityClass;
@@ -53,6 +49,15 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao implements
 	public HqlCollectionDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
+	
+	@Override
+	protected String getSelect() {
+    	return select;
+    }
+    
+    public void setSelect(String select) {
+		this.select = select;
+	}
 
 	public void setEntityClass(Class<?> entityClass) {
 		this.entityClass = entityClass;
@@ -65,9 +70,19 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao implements
 	public void setPolymorph(boolean polymorph) {
 		this.polymorph = polymorph;
 	}
+	
+	@Override
+	protected boolean isPolymorph() {
+		return polymorph;
+	}
 
 	public void setWhere(String string) {
 		where = string;
+	}
+	
+	@Override
+	protected String getWhere() {
+		return where;
 	}
 
 	public void setParentClass(Class<?> parentClass) {
@@ -134,40 +149,20 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao implements
 				collectionProperty);
 	}
 
-	protected void buildQueryString(StringBuffer hql, ListParams params) {
-		boolean hasWhere = false;
-		if (!polymorph) {
-			hql.append(" where this.class = ");
-			hql.append(getEntityClass().getName());
-			hasWhere = true;
-		}
-		if (where != null) {
-			hql.append(hasWhere ? " and " : " where ");
-			hasWhere = true;
-			hql.append(where);
-		}
-		hql.append(getOrderBy(params));
+	@Override
+	protected void appendFromClause(StringBuffer hql, ListParams params) {
 	}
-
+	
 	@Override
 	protected List<?> listInternal(Object parent, ListParams params) {
-		StringBuffer hql = new StringBuffer("select this ");
-		buildQueryString(hql, params);
-
 		Collection<?> c = getCollection(parent);
 		if (c != null) {
-			Query query = getSession().createFilter(c, hql.toString());
-
-			if (params.getPageSize() > 0) {
-				query.setFirstResult(params.getOffset());
-				query.setMaxResults(params.getPageSize());
-			}
-			if (params.getFilter() != null) {
-				query.setProperties(params.getFilter());
-			}
-			if (log.isDebugEnabled()) {
-				log.debug("HQL query: " + query.getQueryString());
-			}
+			Query query = getSession().createFilter(c, buildHql(parent, params));
+	    	setQueryParameters(query, parent, params);
+	        if (params.getPageSize() > 0) {
+	            query.setFirstResult(params.getOffset());
+	            query.setMaxResults(params.getPageSize());
+	        }
 			return query.list();
 		}
 		return Collections.emptyList();
@@ -177,44 +172,15 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao implements
 	public int getListSize(Object parent, ListParams params) {
 		Collection<?> c = getCollection(parent);
 		if (c != null) {
-			StringBuffer hql = new StringBuffer("select count(*) ");
-			if (!polymorph) {
-				hql.append(" where this.class = ");
-				hql.append(getEntityClass().getName());
-			}
-			if (where != null) {
-				hql.append(polymorph ? " where " : " and ");
-				hql.append(where);
-			}
-			
-			Query query = getSession().createFilter(c, hql.toString());
-	
-			if (params.getFilter() != null) {
-				query.setProperties(params.getFilter());
-			}
-			Number size = (Number) query.uniqueResult();
-			return size.intValue();
+			Query query = getSession().createFilter(c, buildCountHql(parent, params));
+	        setQueryParameters(query, parent, params);
+	        Number size = (Number) query.uniqueResult();
+	        if (size == null) {
+	        	return 0;
+	        }
+	        return size.intValue();
 		}
 		return 0;
-	}
-
-	protected String getOrderBy(ListParams params) {
-		StringBuffer sb = new StringBuffer();
-		if (params.hasOrder()) {
-			sb.append(" order by");
-			Iterator<?> it = params.getOrder().iterator();
-			while (it.hasNext()) {
-				Order order = (Order) it.next();
-				sb.append(" this.");
-				sb.append(order.getProperty());
-				sb.append(' ');
-				sb.append(order.isAscending() ? "asc" : "desc");
-				if (it.hasNext()) {
-					sb.append(',');
-				}
-			}
-		}
-		return sb.toString();
 	}
 
 	public boolean canCut(Object entity) {
