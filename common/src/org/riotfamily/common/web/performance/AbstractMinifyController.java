@@ -66,20 +66,15 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 	 * Returns the server start-up time, or the current time if running in
 	 * {@link #setReloadable(boolean) development mode}.
 	 */
+	@Override
 	public long getLastModified(HttpServletRequest request) {
 		return reloadable ? System.currentTimeMillis() : startUpTime;
 	}
 
 	/**
-	 * The cache is bypassed in {@link #setReloadable(boolean) development mode}.
-	 */
-	protected boolean bypassCache(HttpServletRequest request) {
-		return reloadable;
-	}
-	
-	/**
 	 * Adds the query-string to the cache-key. 
 	 */
+	@Override
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
 		key.append('?').append(request.getQueryString());
 	}
@@ -87,6 +82,7 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 	/**
 	 * Returns <code>CACHE_ETERNALLY</code>.
 	 */
+	@Override
 	public long getTimeToLive() {
 		return CACHE_ETERNALLY;
 	}

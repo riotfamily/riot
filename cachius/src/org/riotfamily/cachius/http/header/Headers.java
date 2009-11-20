@@ -23,6 +23,8 @@ import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.http.support.SessionIdEncoder;
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
@@ -107,9 +109,9 @@ public class Headers implements Serializable {
 	}
 	
 	private HeaderValue createValue(String value) {
-		int i = value.indexOf("(@sessionid)");
+		int i = value.indexOf(SessionIdEncoder.DIRECTIVE);
 		if (i >= 0) {
-			return new SessionIdHeaderValue(value, i, 12);
+			return new SessionIdHeaderValue(value, i, SessionIdEncoder.DIRECTIVE.length());
 		}
 		return new StaticHeaderValue(value);
 	}

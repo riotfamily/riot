@@ -287,7 +287,7 @@ public class CommonMacroHelper {
 
 	public String include(String url, boolean dynamic) throws ServletException, IOException {
 		if (dynamic && CacheContext.exists()) {
-			return "(@include " + url + ")";
+			return "(@riot.include " + url + ")";
 		}
 		return capture(url);
 	}

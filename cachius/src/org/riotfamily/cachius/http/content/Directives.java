@@ -31,7 +31,7 @@ public class Directives {
 	}
 
 	public ScanWriter createWriter(Writer out) {
-		return new ScanWriter(out, "(@", ')');
+		return new ScanWriter(out, "(@riot.", ')');
 	}
 
 }

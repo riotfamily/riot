@@ -26,7 +26,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.http.content.BinaryContent;
-import org.riotfamily.cachius.http.content.CharacterContent;
 import org.riotfamily.cachius.http.content.ChunkedContent;
 import org.riotfamily.cachius.http.content.ContentFragment;
 import org.riotfamily.cachius.http.content.Directives;
@@ -207,21 +206,16 @@ public class CachiusResponse implements HttpServletResponse {
     public void stopCapturing() throws IOException {
     	flushBuffer();
     	resetBuffer();
-    	if (scanWriter != null) {
-    		if (scanWriter.foundBlocks()) {
-	    		ChunkedContent content = new ChunkedContent(file);
-	    		for (Block block : scanWriter.getBlocks()) {
-	    			ContentFragment fragment = directives.parse(block.getValue());
-	    			if (fragment != null) {
-	    				content.addFragment(block.getStart(), block.getEnd(), fragment);
-	    			}
-	    		}
-	    		content.addTail();
-	    		data.setContent(content);
+    	if (scanWriter != null && scanWriter.foundBlocks()) {
+    		ChunkedContent content = new ChunkedContent(file);
+    		for (Block block : scanWriter.getBlocks()) {
+    			ContentFragment fragment = directives.parse(block.getValue());
+    			if (fragment != null) {
+    				content.addFragment(block.getStart(), block.getEnd(), fragment);
+    			}
     		}
-    		else {
-    			data.setContent(new CharacterContent(file));
-    		}
+    		content.addTail();
+    		data.setContent(content);
     	}
     	else {
     		if (compressible && file.length() > gzipThreshold) {

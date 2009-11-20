@@ -24,6 +24,8 @@ import javax.servlet.http.HttpSession;
  */
 public class SessionIdEncoder {
 
+	public static final String DIRECTIVE = "(@riot.sessionid)";
+	
 	private String scheme;
 
 	private String serverName;
@@ -223,11 +225,11 @@ public class SessionIdEncoder {
     }
     
     public boolean containsSessionId(String file) {
-    	return file.indexOf("(@sessionid)") >= 0;
+    	return file.indexOf(DIRECTIVE) >= 0;
 	}
 
     public void appendSessionId(StringBuilder sb) {
-    	sb.append("(@sessionid)");
+    	sb.append(DIRECTIVE);
     }
     
     public String replaceSessionId(String url) {
@@ -235,7 +237,7 @@ public class SessionIdEncoder {
     	if (sessionId != null) {
     		replacement = ";jsessionid=" + sessionId; 
     	}
-    	return url.replace("(@sessionid)", replacement);
+    	return url.replace(DIRECTIVE, replacement);
     }
 
 	public boolean isSessionIdCookie(Cookie cookie) {
