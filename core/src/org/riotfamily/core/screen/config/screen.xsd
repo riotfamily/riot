@@ -99,7 +99,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="screenType">
 				<xsd:sequence>
-					<xsd:group ref="screenElements" minOccurs="0" />
+					<xsd:group ref="screenElements" minOccurs="0" maxOccurs="unbounded" />
 					<xsd:element name="screenlets" type="screenletsType" minOccurs="0" />
 				</xsd:sequence>
 				<xsd:attribute name="form-id" type="xsd:string" />
