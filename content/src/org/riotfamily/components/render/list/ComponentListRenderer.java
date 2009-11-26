@@ -97,7 +97,7 @@ public class ComponentListRenderer {
 				list = createList(contentMap, key, config);
 			}
 			if (AccessController.isGranted("edit", 
-					contentMap.getContent().getContainer().getOwner())) {
+					contentMap.getContent().getContainer().getOwner(), request)) {
 				
 				strategy = editModeRenderStrategy;
 			}

@@ -22,16 +22,16 @@ public class RestrictedElement extends AbstractConditionalElement {
 	
 	private boolean readOnly = true;
 
+	@Override
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 	
+	@Override
 	protected boolean isEditable() {
 		if (readOnly) {
 			return false;
 		}
-		return AccessController.isGranted(
-				"edit-" + getEditor().getFieldName(), 
-				getForm().getBackingObject());
+		return AccessController.isGranted("editProperty", getEditor());
 	}
 }

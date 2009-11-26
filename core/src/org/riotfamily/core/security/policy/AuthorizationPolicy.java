@@ -32,6 +32,6 @@ public interface AuthorizationPolicy extends Ordered {
 	 * @param action The action to be performed
 	 * @param object The object on which the action is to be performed
 	 */
-    public Permission getPermission(RiotUser user, String action, Object object);
+    public Permission getPermission(RiotUser user, String action, Object object, Object context);
 
 }

@@ -305,7 +305,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 			ScreenContext ctx = screenContext;
 			while (ctx != null) {
 				if (ctx.getScreen() instanceof ListScreen) {
-					if (AccessController.isGranted("view", ctx.getScreen())) {
+					if (AccessController.isGranted("viewScreen", ctx.getScreen(), screenContext)) {
 						path.add(0, chooserSettings.appendTo(ctx.getLink()));
 					}
 				}

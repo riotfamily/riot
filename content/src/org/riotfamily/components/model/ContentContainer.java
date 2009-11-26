@@ -111,7 +111,7 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	public void publish() {
 		if (isDirty()) {
 			Content preview = getPreviewVersion();
-			AccessController.assertIsGranted("publish", this);
+			AccessController.assertIsGranted("publish", getOwner());
 			Content oldLiveVersion = liveVersion;
 			liveVersion = preview.createCopy();
 			if (oldLiveVersion != null) {

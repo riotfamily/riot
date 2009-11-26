@@ -117,7 +117,7 @@ class CommandContextHandler extends ListServiceHandler
 		}
 		String action = info.getAction();
 		for (SelectionItem item : selection) {
-			if (!AccessController.isGranted(action, item.getObject(), this)) {
+			if (!AccessController.isGranted(action, item.getObject(), screenContext)) {
 				return false;
 			}
 		}

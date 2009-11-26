@@ -72,7 +72,7 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		ArrayList<ListItem> items = Generics.newArrayList(objects.size());
 		Object next = i + 1 < expanded.length ? expanded[i + 1] : null;
 		for (Object object : objects) {
-			if (AccessController.isGranted("viewItem", screen, object)) {
+			if (AccessController.isGranted("viewItem", object, screenContext)) {
 				ListItem item = new ListItem();
 				String objectId = dao.getObjectId(object);
 				item.setObjectId(objectId);
@@ -96,10 +96,6 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		ArrayList<String> result = Generics.newArrayList();
 		BeanWrapper wrapper = new BeanWrapperImpl(object);
 		for (ColumnConfig col : screen.getColumns()) {
-			if (!AccessController.isGranted("viewColumn", screen, col, object)) {
-				continue;
-			}
-			
 			String propertyName = col.getProperty();
 			Object value = null;
 			if (propertyName != null) {
@@ -153,6 +149,7 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		return request.getContextPath();
 	}
 	
+	@Override
 	public MessageResolver getMessageResolver() {
 		return messageResolver;
 	}

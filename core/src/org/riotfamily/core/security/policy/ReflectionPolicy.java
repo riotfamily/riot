@@ -12,28 +12,25 @@
  */
 package org.riotfamily.core.security.policy;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.common.collection.TypeComparatorUtils;
+import org.hibernate.Hibernate;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.riotfamily.core.security.auth.RiotUser;
-import org.springframework.util.ClassUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
  * AuthorizationPolicy that delegates permission checks to individual methods
  * via reflection. It looks for methods with the name of the action and either 
  * one or two parameters (the first one must be assignment-compatible with 
- * {@link RiotUser}) and an <code>int</code> return type. The action name is
+ * {@link RiotUser}) and a <code>Permission</code> return type. The action name is
  * uncapitalized and converted to camel-case.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -41,11 +38,9 @@ import org.springframework.util.StringUtils;
  */
 public class ReflectionPolicy implements AssertionPolicy {
 
-	private Logger log = LoggerFactory.getLogger(ReflectionPolicy.class);
-	
 	private Object delegate = this;
 	
-	private Map<ActionAndClass, Method> methods = new HashMap<ActionAndClass, Method>();
+	private Map<SignaturePattern, PermissionMethod> methods = Generics.newHashMap();
 	
 	private int order;
 	
@@ -62,204 +57,218 @@ public class ReflectionPolicy implements AssertionPolicy {
 		this.methods.clear();
 	}
 	
-	public Permission getPermission(RiotUser user, String action, Object object) {
-		Method method = getMethod(action, object, false);
+	public final Permission getPermission(RiotUser user, String action, Object object, Object context) {
+		PermissionMethod method = getMethod(new SignaturePattern(action, object, context, false));
 		if (method != null) {
-			return (Permission) invoke(method, user, action, object);
+			return method.invoke(delegate, user, action, object, context);
 		}
 		return Permission.ABSTAIN;
 	}
 	
-	public void assertIsGranted(RiotUser user, String action, Object object) {
-		Method method = getMethod(action, object, true);
+	public final void assertIsGranted(RiotUser user, String action, Object object, Object context) {
+		PermissionMethod method = getMethod(new SignaturePattern(action, object, context, true));
 		if (method != null) {
-			invoke(method, user, action, object);
+			method.invoke(delegate, user, action, object, context);
 		}
-		else if (getPermission(user, action, object) == Permission.DENIED) {
+		else if (getPermission(user, action, object, context) == Permission.DENIED) {
 			throw new PermissionDeniedException(user, action, object, this);
 		}
 	}
 	
-	private Object invoke(Method method, RiotUser user, String action, Object object) {
-		List<Object> args = Generics.newArrayList();
-		if (object != null) {
-			if (object.getClass().isArray()) {
-				Object[] objects = (Object[]) object;
-				for (Object obj : objects) {
-					if (obj != null) {
-						args.add(obj);
-					}					
-				}
-			}
-			else {
-				args.add(object);
-			}
-		}
-		if (method.getParameterTypes().length - args.size() == 2) {
-			args.add(0, action);	
-		}
-		args.add(0, user);
-		return ReflectionUtils.invokeMethod(method, delegate, args.toArray());
-	}
-	
-	private Method getMethod(String action, Object object, boolean isVoid) {
-		ActionAndClass aac = new ActionAndClass(action, object, isVoid);
-		Method method = (Method) methods.get(aac);
+	private PermissionMethod getMethod(SignaturePattern signature) {
+		PermissionMethod method = methods.get(signature);
 		if (method == null) {
-			if (!methods.containsKey(aac)) {
-				method = findMethod(aac);
-				methods.put(aac, method);
+			if (!methods.containsKey(signature)) {
+				method = signature.find(delegate.getClass().getDeclaredMethods());
+				methods.put(signature, method);
 			}			
 		}
 		return method;
 	}
-	
-	private Method findMethod(ActionAndClass aac) {
-		Method bestMatch = null;
-		Method[] methods = delegate.getClass().getMethods();
-		if (aac.classes != null) {
-			bestMatch = getBestMatch(methods, aac.action, aac.classes, aac.isVoid);
-			if (bestMatch == null) {
-				bestMatch = getBestMatch(methods, null, aac.classes, aac.isVoid);
+
+	private enum Arguments {
+		V1(0 ,1, 1),
+		V2(1 ,1, 1),
+		V3(0 ,1, 0),
+		V4(0 ,0, 1),
+		V5(1 ,1, 0),
+		V6(1 ,0, 1);
+		
+		private boolean action;
+		private boolean object;
+		private boolean context;
+		
+		Arguments(int action, int object, int context) {
+			this.action = action > 0;
+			this.object = object > 0;
+			this.context = context > 0;
+		}
+		
+		public Object[] buildArgs(RiotUser user, 
+				String action, Object object, Object context) {
+			
+			List<Object> args = Generics.newArrayList();
+			args.add(user);
+			if (this.action) {
+				args.add(action);
 			}
+			if (this.object) {
+				args.add(object);
+			}
+			if (this.context) {
+				args.add(context);
+			}
+			return args.toArray();
 		}
-		if (bestMatch == null) {
-			bestMatch = getBestMatch(methods, aac.action, null, aac.isVoid);
-		}
-		
-		if (bestMatch != null) {
-			log.debug("Using " + bestMatch + " for " + aac);
-		}
-		else {
-			log.debug("No method found for " + aac);
-		}
-		return bestMatch;
-		
 	}
 	
-	private Method getBestMatch(Method[] methods, String action, 
-			Class<?>[] classes, boolean isVoid) {
+	private static class PermissionMethod {
 		
-		Method bestMatch = null;
-		int smallestDiff = Integer.MAX_VALUE;
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
-			if (signatureMatches(method, action, classes, isVoid)) {
-				if (classes == null) {
-					return method;
-				}
-				int diff = 0;
-				for (int j = 0; j < classes.length; j++) {
-					diff += TypeComparatorUtils.getTypeDifference(
-							method.getParameterTypes()[j+1], classes[j]);
-				}					
-				if (diff < smallestDiff) {
-					smallestDiff = diff;
-					bestMatch = method;
-				}
-			}
-		}
-		return bestMatch;
-	}
-	
-	
-	private boolean signatureMatches(Method method, String action, 
-			Class<?>[] classes, boolean isVoid) {
+		private Method method;
 		
-		if (!Modifier.isPublic(method.getModifiers())) {
-			return false;
+		private Arguments arguments;
+
+		public PermissionMethod(Method method, Arguments arguments) {
+			this.method = method;
+			this.arguments = arguments;
 		}
-		if (isVoid && method.getReturnType() != Void.TYPE) {
-			return false;
-		}
-		if (!isVoid && !method.getReturnType().equals(Permission.class)) {
-			return false;
-		}
-		Class<?>[] paramTypes = method.getParameterTypes();
-		if (action != null) {
-			if (method.getName().equals(action)) {
-				return paramTypesMatch(paramTypes, classes, 1);
-			}
-		}
-		else {
-			if (method.getName().equals("getPermission")) {
-				return paramTypesMatch(paramTypes, classes, 2) 
-						&& paramTypes[1].equals(String.class);
-			}
-		}
-		return false;
-	}
-	
-	private boolean paramTypesMatch(Class<?>[] paramTypes, 
-			Class<?>[] classes, int offset) {
 		
-		if (classes == null) {
-			return paramTypes.length == offset;
-		}
-		if (paramTypes.length == classes.length + offset) {
-			for (int i = 0; i < classes.length; i++) {
-				if (!paramTypes[i + offset].isAssignableFrom(classes[i])) {
-					return false;
-				}						
+		public Permission invoke(Object delegate, RiotUser user, 
+				String action, Object object, Object context) {
+
+			Object[] args = arguments.buildArgs(user, action, object, context);
+			try {
+				return (Permission) method.invoke(delegate, args);
 			}
-			return true;
+			catch (IllegalArgumentException e) {
+				throw new RuntimeException(
+						String.format("Failed to invoke %s with arguments %s", 
+						method.toString(), StringUtils.arrayToCommaDelimitedString(args)), e);
+			}
+			catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+			catch (InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
 		}
-		return false;
+		
 	}
-	
-	private static class ActionAndClass {
+	private static class SignaturePattern {
 		
 		private String action;
 		
-		private Class<?>[] classes;
+		private Class<?> objectClass;
+		
+		private Class<?> contextClass;
 		
 		private boolean isVoid;
 		
-		public ActionAndClass(String action, Object obj, boolean isVoid) {
+		public SignaturePattern(String action, Object obj, Object context, boolean isVoid) {
 			this.action = StringUtils.uncapitalize(FormatUtils.xmlToCamelCase(action));
 			if (obj != null) {
-				if (obj.getClass().isArray()) {
-					Object[] objects = (Object[]) obj;
-					List<Class<?>> tempClasses = Generics.newArrayList();					
-					for (int i =0; i < objects.length; i++) {
-						if (objects[i] != null) {
-							tempClasses.add(ClassUtils.getUserClass(objects[i]));
-						}
-					}
-					classes = tempClasses.toArray(new Class<?>[tempClasses.size()]);
-					
-				}
-				else {
-					classes = new Class<?>[] {ClassUtils.getUserClass(obj)};
-				}
+				objectClass = Hibernate.getClass(obj);
+			}
+			if (context != null) {
+				contextClass = context.getClass();
 			}
 			this.isVoid = isVoid;
 		}
+		
+		public PermissionMethod find(Method[] methods) {
+			for (Arguments arguments : Arguments.values()) {
+				Method method = find(methods, arguments);
+				if (method != null) {
+					return new PermissionMethod(method, arguments);
+				}
+			}
+			return null;
+		}
+		
+		private Method find(Method[] methods, Arguments arguments) {
+			Method match = null;
+			for (int i = 0; i < methods.length; i++) {
+				Method method = methods[i];
+				if (matches(method, arguments)) {
+					Assert.isNull(match, "Found ambigious signatures: " + method + " and " + match);
+					match = method;
+				}
+			}
+			return match;
+		}
+		
+		private boolean matches(Method method, Arguments arguments) {
+			if (!Modifier.isPublic(method.getModifiers())) {
+				return false;
+			}
+			if (isVoid && method.getReturnType() != Void.TYPE) {
+				return false;
+			}
+			if (!isVoid && !method.getReturnType().equals(Permission.class)) {
+				return false;
+			}
+			Class<?>[] paramTypes = method.getParameterTypes();
+			if (arguments.action) {
+				if (method.getName().equals("getPermission")) {
+					return paramTypesMatch(paramTypes, 2, arguments) 
+							&& paramTypes[1].equals(String.class);
+				}				
+			}
+			else {
+				if (method.getName().equals(action)) {
+					return paramTypesMatch(paramTypes, 1, arguments);
+				}
+			}
+			return false;
+		}
+		
+		private boolean paramTypesMatch(Class<?>[] paramTypes, int offset, Arguments arguments) {
+			int i = offset;
+			if (arguments.object && objectClass != null) {
+				if (paramTypes.length <= i || !paramTypes[i].isAssignableFrom(objectClass)) {
+					return false;
+				}
+				i++;
+			}
+			if (arguments.context && contextClass != null) {
+				if (paramTypes.length <= i || !paramTypes[i].isAssignableFrom(contextClass)) {
+					return false;
+				}
+				i++;
+			}
+			return paramTypes.length == i;
+		}
 
+		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			if (isVoid) {
 				sb.append("void ");
 			}
 			sb.append(action);
-			if (classes != null) {
-				for (Class<?> clazz : classes) {
-					sb.append(' ');
-					sb.append(clazz.getName());
-				}
+			if (objectClass != null) {
+				sb.append(' ');
+				sb.append(objectClass.getName());
+			}
+			if (contextClass != null) {
+				sb.append(' ');
+				sb.append(contextClass.getName());
 			}
 			return sb.toString();
 		}
 		
+		@Override
 		public int hashCode() {
 			return toString().hashCode();
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ActionAndClass) {
-				ActionAndClass other = (ActionAndClass) obj;
+			if (obj instanceof SignaturePattern) {
+				SignaturePattern other = (SignaturePattern) obj;
 				return ObjectUtils.nullSafeEquals(action, other.action)
-						&& ObjectUtils.nullSafeEquals(classes, other.classes)
+						&& ObjectUtils.nullSafeEquals(objectClass, other.objectClass)
+						&& ObjectUtils.nullSafeEquals(contextClass, other.contextClass)
 						&& isVoid == other.isVoid;
 			}
 			return false;
