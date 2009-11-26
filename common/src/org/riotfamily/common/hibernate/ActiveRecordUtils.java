@@ -16,6 +16,7 @@ import java.io.Serializable;
 
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
+import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 
 public final class ActiveRecordUtils {
@@ -30,8 +31,11 @@ public final class ActiveRecordUtils {
 	 * @see ClassMetadata#getIdentifier(Object, EntityMode)
 	 */
 	public static Serializable getId(ActiveRecord record) {
-		return ActiveRecord.getSessionFactory()
-				.getClassMetadata(getClass(record))
+		SessionFactory sessionFactory = ActiveRecord.getSessionFactory();
+		if (sessionFactory == null) {
+			return "N/A";
+		}
+		return sessionFactory.getClassMetadata(getClass(record))
 				.getIdentifier(record, EntityMode.POJO);
 	}
 	
