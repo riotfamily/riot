@@ -41,23 +41,21 @@ riot.Toolbar = Class.create({
 				cookie.put('toolbarPos', {top: s.top, left: s.left});
 			}
 		});
-		
-		document.body.appendChild(this.inspectorPanel = new Element('div', {id: 'riot-inspector'}));
 	},
 
-	activate: function() {
-		if (this.edit) { 
+	setState: function(state) {
+		this.state = state;
+		if (state.edit) { 
 			this.buttons.values().invoke('activate');
 			this.buttons.get('browse').select();
 		}
-		if (window.riotToolbarLoaded) {
-			riotToolbarLoaded();
+		if (state.dirty) {
+			this.enablePreviewButton();
 		}
-		this.element.fire('toolbar:loaded');
 	},
-
+	
 	enablePreviewButton: function() {
-		if (this.publish) {
+		if (this.state.containerIds.length > 0) {
 			this.buttons.get('preview').enable();
 		}
 	},
@@ -69,7 +67,6 @@ riot.Toolbar = Class.create({
 	buttonSelected: function(button) {
 		if (this.selectedButton) {
 			this.selectedButton.reset();
-			this.setInspector(null);
 		}
 		this.selectedButton = button;
 	},
@@ -78,35 +75,6 @@ riot.Toolbar = Class.create({
 		if (this.selectedButton == button) {
 			this.selectedButton = null;
 		}
-	},
-
-	setInspector: function(inspector) {
-		if (inspector != this.inspector) {
-			this.removeInspector();
-			if (inspector != null) {
-				this.inspector = inspector;
-				this.inspectorPanel.appendChild(inspector);
-				this.showInspector();
-			}
-		}
-	},
-
-	removeInspector: function() {
-		if (this.inspector) {
-			Element.remove(this.inspector);
-			this.inspector = null;
-			this.hideInspector();
-		}
-	},
-
-	showInspector: function() {
-		if (this.inspector) {
-			this.inspectorPanel.style.display = 'block';
-		}
-	},
-
-	hideInspector: function() {
-		this.inspectorPanel.style.display = 'none';
 	},
 
 	logout: function() {

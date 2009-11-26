@@ -218,6 +218,29 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 	
 	@RemoteMethod
+	public ToolbarState getState(Long[] containerIds) {
+		HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
+		ToolbarState state = new ToolbarState();
+		if (containerIds != null) {
+			for (Long id : containerIds) {
+				if (id != null) {
+					ContentContainer container = ContentContainer.load(id);
+					if (AccessController.isGranted("edit", container.getOwner(), request)) {
+						state.setEdit(true);
+					}
+					if (AccessController.isGranted("publish", container.getOwner(), request)) {
+						state.getContainerIds().add(container.getId());
+						if (container.isDirty()) {
+							state.setDirty(true);
+						}
+					}
+				}
+			}
+		}
+		return state;
+	}
+
+	@RemoteMethod
 	public void publish(Long[] containerIds) {
 		if (containerIds != null) {
 			for (Long id : containerIds) {

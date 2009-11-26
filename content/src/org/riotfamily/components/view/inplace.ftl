@@ -1,5 +1,5 @@
 <#---
-  - Macros to edit texts via the frontoffice.
+  - Macros to edit texts via the front-office.
   - @namespace inplace
   -->
 
@@ -31,15 +31,12 @@
 			var riotComponentFormParams = {};
 			${inplaceMacroHelper.initScript}
 			<#nested />
-			function riotToolbarLoaded() {
-				riot.toolbar.edit = ${inplaceMacroHelper.isEditGranted()?string};
-				riot.toolbar.publish = ${inplaceMacroHelper.isPublishGranted()?string};
+			function riotToolbarLoaded(toolbar) {
 				<#if contentMap??>
 					riot.components.registerContainer(${contentMap.container.id});
-				 	<#if contentMap.content.dirty>
-						riot.toolbar.enablePreviewButton();
-					</#if>
 				</#if>
+				<#-- TODO Register additional custom containers -->
+				riot.components.init();
 			}
 		</script>
 	<#elseif inplaceMacroHelper.liveMode>

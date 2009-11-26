@@ -25,7 +25,6 @@ import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.list.ComponentListRenderer;
 import org.riotfamily.components.support.EditModeUtils;
-import org.riotfamily.core.security.AccessController;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -76,14 +75,6 @@ public class InplaceMacroHelper {
 		return this.toolbarScripts;
 	}
 	
-	public boolean isEditGranted() {
-		return AccessController.isGranted("toolbarEdit", request);
-	}
-	
-	public boolean isPublishGranted() {
-		return AccessController.isGranted("toolbarPublish", request);
-	}
-
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer();
 		for (DynamicToolbarScript script : dynamicToolbarScripts) {

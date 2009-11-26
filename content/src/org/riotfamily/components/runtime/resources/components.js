@@ -695,7 +695,7 @@ riot.components = (function() {
 	// Initialization
 	// -----------------------------------------------------------------------
 	
-	containersToPublish = [];
+	var containersToPublish = [];
 	
 	dwr.engine.setTextHtmlHandler(function() {
 		location.reload();
@@ -727,6 +727,12 @@ riot.components = (function() {
 	});
 	document.body.appendChild(previewFrame);
 	adoptFloatsAndClears();
+	
+	function setState(state) {
+		containersToPublish.clear();
+		state.containerIds.each(function(id) {containersToPublish.push(id)});
+		riot.toolbar.setState(state);
+	}
 	
 	// =======================================================================
 	// Public API
@@ -804,6 +810,10 @@ riot.components = (function() {
 		
 		registerContainer: function(id) {
 			containersToPublish.push(id);
+		},
+		
+		init: function() {
+			ComponentEditor.getState(containersToPublish, setState);
 		},
 		
 		editProperties: function(e) {

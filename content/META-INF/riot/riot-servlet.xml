@@ -34,7 +34,7 @@
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 	
-	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.components.meta" />
+	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.components" />
 	
 	<!--
 	  - FormRepository providing component property forms.
