@@ -83,7 +83,7 @@ public class ComponentListRenderer {
 		return list;
 	}
 	
-	public String renderComponentList(ContentMap contentMap, 
+	public String renderComponents(ContentMap contentMap, 
 			String key, ComponentListConfig config,
 			HttpServletRequest request,
 			HttpServletResponse response) 

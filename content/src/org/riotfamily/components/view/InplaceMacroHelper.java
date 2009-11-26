@@ -12,13 +12,17 @@
  */
 package org.riotfamily.components.view;
 
+import java.io.StringWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.support.CapturingResponseWrapper;
 import org.riotfamily.components.config.ComponentListConfig;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ContentMap;
+import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.list.ComponentListRenderer;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.core.security.AccessController;
@@ -39,18 +43,21 @@ public class InplaceMacroHelper {
 	
 	private ComponentListRenderer componentListRenderer;
 	
+	private ComponentRenderer componentRenderer;
 	
 	public InplaceMacroHelper(HttpServletRequest request,
 			HttpServletResponse response, 
 			List<String> toolbarScripts,
 			List<DynamicToolbarScript> dynamicToolbarScripts, 
-			ComponentListRenderer componentListRenderer) {
+			ComponentListRenderer componentListRenderer,
+			ComponentRenderer componentRenderer) {
 
 		this.request = request;
 		this.response = response;
 		this.toolbarScripts = toolbarScripts;
 		this.dynamicToolbarScripts = dynamicToolbarScripts;
 		this.componentListRenderer = componentListRenderer;
+		this.componentRenderer = componentRenderer;
 	}
 
 	public boolean isEditMode() {
@@ -88,7 +95,7 @@ public class InplaceMacroHelper {
 		return sb.toString();
 	}
 		
-	public String renderComponentList(ContentMap contentMap, 
+	public String renderComponents(ContentMap contentMap, 
 			String key, Integer minComponents, Integer maxComponents,
 			List<String> initalComponentTypes, 
 			List<?> validComponentTypes)
@@ -98,8 +105,16 @@ public class InplaceMacroHelper {
 				minComponents, maxComponents, 
 				initalComponentTypes, validComponentTypes);
 		
-		return componentListRenderer.renderComponentList(contentMap, key, config, 
+		return componentListRenderer.renderComponents(contentMap, key, config, 
 				request, response);
+	}
+	
+	public String renderComponent(Component component) throws Exception {
+		StringWriter sw = new StringWriter();
+		if (component != null) {
+			componentRenderer.render(component, request, new CapturingResponseWrapper(response, sw));
+		}
+		return sw.toString();
 	}
 	
 }

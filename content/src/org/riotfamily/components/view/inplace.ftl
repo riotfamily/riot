@@ -62,11 +62,18 @@
 	</#if>
 </#macro>
 
+<#---
+ - @deprecated Please use @inplace.components instead.
+ -->
 <#macro componentList key min=0 max=1000 initial=[] valid=[]>
+	<@components key min max initial valid />
+</#macro>
+
+<#macro components key min=0 max=1000 initial=[] valid=[]>
 	<#if !contentMap??>
 		<#stop "No contentMap found in model">
 	</#if>
-	${inplaceMacroHelper.renderComponentList(contentMap, key, min, max, initial, valid)!}
+	${inplaceMacroHelper.renderComponents(contentMap, key, min, max, initial, valid)!}
 </#macro>
 
 <#---
