@@ -176,9 +176,9 @@
 	</#compress>
 </#macro>
 
-<#macro properties form tag="div">
+<#macro properties form tag="div" content=contentMap>
 	<#if editMode>
-		<${tag} class="riot-content riot-form" riot:contentId="${contentMap.compositeId}" riot:form="${form}"><#nested /></${tag}>
+		<${tag} class="riot-content riot-form" riot:contentId="${content.compositeId}" riot:form="${form}"><#nested /></${tag}>
 	<#else>
 		<#nested />
 	</#if>
