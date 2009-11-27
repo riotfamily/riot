@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.riotfamily.core.dao.InMemoryRiotDao;
 import org.riotfamily.statistics.domain.StatsItem;
+import org.springframework.dao.DataAccessException;
 
 public abstract class AbstractStatsItemDao extends InMemoryRiotDao {
 
@@ -28,6 +29,11 @@ public abstract class AbstractStatsItemDao extends InMemoryRiotDao {
 	@Override
 	public String getObjectId(Object entity) {
 		return ((StatsItem) entity).getName();
+	}
+	
+	@Override
+	public Object load(String id) throws DataAccessException {
+		return null;
 	}
 
 	@Override
