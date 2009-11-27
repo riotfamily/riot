@@ -305,5 +305,10 @@ public class FormScreen extends AjaxFormController
 	public Collection<Screenlet> getScreenlets() {
 		return screenlets;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("FormScreen[id=%s]", id);
+	}
 
 }
