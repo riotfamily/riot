@@ -32,6 +32,7 @@ public class PageView extends RedirectView {
 
 	public PageView(String pageType) {
 		this.pageType = pageType;
+		setExposeModelAttributes(false);
 	}
 
 	public PageView addRequestParameters() {
