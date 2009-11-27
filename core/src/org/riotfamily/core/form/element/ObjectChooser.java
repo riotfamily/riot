@@ -104,7 +104,7 @@ public class ObjectChooser extends AbstractChooser
 		ChooserSettings settings = new ChooserSettings(targetId, rootId);
 		String url = HandlerUrlUtils.getUrlResolver(applicationContext)
 				.getUrlForHandler(rootList.getId(),
-				new ScreenContext(null, null, getRootObjectId(), null, false));
+				new ScreenContext(null, null, null, getRootObjectId(), false));
 		
 		return settings.appendTo(url);
 	}
