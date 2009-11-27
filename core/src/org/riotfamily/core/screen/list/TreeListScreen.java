@@ -233,7 +233,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 	private String getListStateKey(ScreenContext context, 
 			ChooserSettings chooserSettings) {
 		
-		StringBuilder key = new StringBuilder();
+		StringBuilder key = new StringBuilder("list:");
 		key.append(getId()).append("/-");
 		if (context.getParentId() != null) {
 			key.append('/').append(context.getParentId());
