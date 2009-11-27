@@ -84,6 +84,7 @@
 						<s:column property="name" />
 						<s:column property="value" />
 					</s:columns>
+					<s:commands />
 				</s:list>
 				<s:list id="environmentProperties" icon="picture">
 					<s:dao>
@@ -93,6 +94,7 @@
 						<s:column property="name" />
 						<s:column property="value" />
 					</s:columns>
+					<s:commands />
 				</s:list>
 				<s:list id="riotModuleVersions" icon="plugin">
 					<s:dao>
@@ -104,6 +106,7 @@
 						<s:column property="name" />
 						<s:column property="value" />
 					</s:columns>
+					<s:commands />
 				</s:list>
 			</s:group>
 			
