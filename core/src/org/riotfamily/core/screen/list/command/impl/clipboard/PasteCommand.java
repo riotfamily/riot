@@ -25,7 +25,7 @@ import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 public class PasteCommand extends AbstractChildCommand {
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "paste_plain";
 	}
 	
@@ -41,6 +41,7 @@ public class PasteCommand extends AbstractChildCommand {
 		return source.equals(target);
 	}
 	
+	@Override
 	public CommandResult execute(CommandContext context, SelectionItem parent) {
 		NotificationResult notification = new NotificationResult(context, this)
 				.setDefaultMessage("{0,choice,1#One item has|1<{0} items have} been pasted.");

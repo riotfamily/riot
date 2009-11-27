@@ -29,11 +29,16 @@ public class ClearRequestStatisticsBaselineCommand extends AbstractCommand  {
 
 	@Override
 	protected String getName() {
-		return "Clear Baseline";
+		return "clearBaseline";
 	}
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getAction() {
+		return "admin";
+	}
+	
+	@Override
+	protected String getIcon() {
 		return "chart_bar_delete";
 	}
 

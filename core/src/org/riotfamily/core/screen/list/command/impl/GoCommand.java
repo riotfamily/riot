@@ -23,8 +23,13 @@ package org.riotfamily.core.screen.list.command.impl;
 public class GoCommand extends EditCommand {
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "bullet_go";
+	}
+	
+	@Override
+	protected String getAction() {
+		return null;
 	}
 
 }

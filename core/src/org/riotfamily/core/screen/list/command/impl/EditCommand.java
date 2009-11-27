@@ -21,7 +21,7 @@ import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 public class EditCommand extends AbstractSingleItemCommand<Object> {
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "pencil";
 	}
 	

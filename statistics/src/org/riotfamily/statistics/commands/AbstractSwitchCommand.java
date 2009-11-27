@@ -31,19 +31,23 @@ public abstract class AbstractSwitchCommand extends AbstractCommand {
 	}
 
 	@Override
-	protected String getAction(CommandContext context) {
+	protected String getName() {
 		return isEnablingCommand() ? "enable" : "disable";
 	}
 	
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return isEnablingCommand() ? "start" : "stop";
 	}
 
 	@Override
+	protected String getAction() {
+		return "admin";
+	}
+	
+	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		return (isEnablingCommand() && !isEnabled())
-				|| (!isEnablingCommand() && isEnabled());
+		return isEnablingCommand() ^ isEnabled();
 	}
 	
 	public CommandResult execute(CommandContext context, Selection selection) {

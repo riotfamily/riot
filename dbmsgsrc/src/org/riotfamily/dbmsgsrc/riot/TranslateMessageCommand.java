@@ -24,6 +24,16 @@ import org.riotfamily.pages.model.Site;
 public class TranslateMessageCommand extends AbstractCommand {
 	
 	@Override
+	protected String getName() {
+		return "translate";
+	}
+	
+	@Override
+	protected String getAction() {
+		return "add";
+	}
+	
+	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
 		Message message = (Message) selection.getSingleItem().getObject();
 		return MessageBundleEntry.C_LOCALE.equals(message.getLocale());

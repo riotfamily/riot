@@ -15,6 +15,8 @@ package org.riotfamily.core.screen.list.command;
 
 public class CommandInfo {
 
+	private String name;
+	
 	private String action;
 	
 	private String label;
@@ -23,13 +25,18 @@ public class CommandInfo {
 
 	private boolean showOnForm;
 	
-	public CommandInfo(String action, String label, String icon,
+	public CommandInfo(String name, String action, String label, String icon,
 			boolean showOnForm) {
 		
+		this.name = name;
 		this.action = action;
 		this.label = label;
 		this.icon = icon;
 		this.showOnForm = showOnForm;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 	public String getAction() {
