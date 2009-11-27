@@ -82,7 +82,6 @@ public class SystemPageType extends ContentPageType implements VirtualPageParent
 	
 	protected ContentPage createPage(Site site, ContentPage parent) {
 		ContentPage page = new ContentPage(getPathComponent(), site);
-		page.setPublished(true);
 		if (properties != null) {
 			page.getContentContainer().getPreviewVersion().putAll(properties);
 		}
@@ -90,6 +89,7 @@ public class SystemPageType extends ContentPageType implements VirtualPageParent
 			parent.addPage(page);
 		}
 		page.save();
+		page.getContentContainer().publish();
 		return page;
 	}
 
