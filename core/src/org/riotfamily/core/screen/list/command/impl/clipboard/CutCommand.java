@@ -41,6 +41,11 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 	}
 	
 	@Override
+	protected String getAction() {
+		return null;
+	}
+	
+	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
 		CutAndPaste dao = getDao(context.getScreen());
 		if (selection.size() == 0) {

@@ -207,6 +207,11 @@ public class ScreenContext {
 		return path;
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("ScreenContext[screen=%s]", getScreen().getId());
+	}
+	
 	public static ScreenContext get(HttpServletRequest request) {
 		return (ScreenContext) request.getAttribute(REQUEST_ATTR);
 	}

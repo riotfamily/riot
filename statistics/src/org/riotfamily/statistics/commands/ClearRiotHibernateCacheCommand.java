@@ -24,10 +24,11 @@ public class ClearRiotHibernateCacheCommand
 	}
 	
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "clear";
 	}
 
+	@Override
 	public void doExecute(CommandContext context, Selection selection) {
 		clearCache("org.riotfamily", false); 
 	}

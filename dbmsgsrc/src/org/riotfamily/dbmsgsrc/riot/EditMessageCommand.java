@@ -21,6 +21,11 @@ import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 public abstract class EditMessageCommand extends AbstractCommand {
 
 	@Override
+	protected String getName() {
+		return "edit";
+	}
+	
+	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
 		if (selection.size() != 1) {
 			return false;

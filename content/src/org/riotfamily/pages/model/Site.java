@@ -226,7 +226,7 @@ public class Site extends ActiveRecordBeanSupport {
 
 	@Override
 	public String toString() {
-		return getName();
+		return String.format("Site[name=%s,id=%s]", getName(), getId());
 	}
 	
 	@Override

@@ -21,6 +21,7 @@ import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 
@@ -90,6 +91,11 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware,
 
 	public void setScreenlets(List<Screenlet> screenlets) {
 		this.screenlets = screenlets;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s[id=%s]", ClassUtils.getShortName(getClass()), getId());
 	}
 	
 }

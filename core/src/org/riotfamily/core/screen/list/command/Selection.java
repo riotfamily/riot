@@ -39,6 +39,10 @@ public class Selection implements Iterable<SelectionItem> {
 		return items.iterator();
 	}
 	
+	public boolean isEmpty() {
+		return size() == 0;
+	}
+	
 	public int size() {
 		return items.size();
 	}

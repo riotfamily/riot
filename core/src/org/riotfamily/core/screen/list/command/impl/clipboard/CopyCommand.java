@@ -27,8 +27,13 @@ import org.springframework.util.Assert;
 public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "page_copy";
+	}
+	
+	@Override
+	protected String getAction() {
+		return null;
 	}
 	
 	@Override

@@ -116,9 +116,14 @@ class CommandContextHandler extends ListServiceHandler
 			return false;
 		}
 		String action = info.getAction();
-		for (SelectionItem item : selection) {
-			if (!AccessController.isGranted(action, item.getObject(), this)) {
-				return false;
+		if (action != null) {
+			if (selection.isEmpty()) {
+				return AccessController.isGranted(action, null, screenContext);
+			}
+			for (SelectionItem item : selection) {
+				if (!AccessController.isGranted(action, item.getObject(), screenContext)) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -130,7 +135,14 @@ class CommandContextHandler extends ListServiceHandler
 		Command command = getCommands().get(commandId);
 		TransactionStatus status = beginTransaction();
 		try {
-			result = command.execute(this, new Selection(dao, items));
+			Selection selection = new Selection(dao, items);
+			String action = command.getInfo(this).getAction();
+			if (action != null) {
+				for (SelectionItem item : selection) {
+					AccessController.assertIsGranted(action, item.getObject(), screenContext);
+				}
+			}
+			result = command.execute(this, selection);
 		}
 		catch (RuntimeException e) {
 			rollback(status);

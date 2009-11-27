@@ -19,8 +19,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.riotfamily.core.dao.InvalidPropertyValueException;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
@@ -33,6 +31,8 @@ import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.pages.model.Site;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 public class ImportMessagesCommand extends DialogCommand {
@@ -46,8 +46,13 @@ public class ImportMessagesCommand extends DialogCommand {
 	}
 	
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "import";
+	}
+	
+	@Override
+	protected String getAction() {
+		return "add";
 	}
 	
 	@Override

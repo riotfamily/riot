@@ -34,7 +34,7 @@
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 	
-	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.components.meta" />
+	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.components" />
 	
 	<!--
 	  - FormRepository providing component property forms.
@@ -88,7 +88,7 @@
 		<value>classpath:/org/riotfamily/pages/runtime/i18n/messages</value>
 	</override:add>
 
-	<override:add ref="loginInterceptor" property="excludes">
+	<override:add ref="loginFilterPlugin" property="excludes">
 		<value>/pages/login</value>
 	</override:add>
 	

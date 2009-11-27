@@ -233,7 +233,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 	private String getListStateKey(ScreenContext context, 
 			ChooserSettings chooserSettings) {
 		
-		StringBuilder key = new StringBuilder();
+		StringBuilder key = new StringBuilder("list:");
 		key.append(getId()).append("/-");
 		if (context.getParentId() != null) {
 			key.append('/').append(context.getParentId());
@@ -305,7 +305,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 			ScreenContext ctx = screenContext;
 			while (ctx != null) {
 				if (ctx.getScreen() instanceof ListScreen) {
-					if (AccessController.isGranted("view", ctx.getScreen())) {
+					if (AccessController.isGranted("viewScreen", ctx.getScreen(), screenContext)) {
 						path.add(0, chooserSettings.appendTo(ctx.getLink()));
 					}
 				}

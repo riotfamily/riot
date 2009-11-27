@@ -27,10 +27,15 @@ public class GotoPageCommand extends AbstractBatchCommand<ContentPage> {
 	}
 	
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "application_go";
 	}
 
+	@Override
+	protected String getAction() {
+		return null;
+	}
+	
 	@Override
 	protected CommandResult execute(CommandContext context, ContentPage page, 
 			int index, int selectionSize) {

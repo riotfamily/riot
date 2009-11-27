@@ -24,6 +24,7 @@ import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.request.SimpleFormRequest;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * State of a list screen. Instances are stored in the HTTP session.
@@ -48,7 +49,10 @@ public class ListState implements Serializable {
 	private ChooserSettings chooserSettings;
 	
 	public static ListState get(HttpServletRequest request, String key) {
-		return (ListState) request.getSession().getAttribute(key);
+		if (key.startsWith("list:")) {
+			return (ListState) request.getSession().getAttribute(key);
+		}
+		return new ListState(key, request);
 	}
 	
 	public static void put(HttpServletRequest request, String key, 
@@ -57,7 +61,13 @@ public class ListState implements Serializable {
 		request.getSession().setAttribute(key, state);
 	}
 	
-	ListState(String key, String screenId, Locale locale,
+	public ListState(String screenId, HttpServletRequest request) {
+		this.screenId = screenId;
+		this.locale = RequestContextUtils.getLocale(request);
+		this.chooserSettings = new ChooserSettings(request);
+	}
+	
+	public ListState(String key, String screenId, Locale locale,
 			String parentId, Form filterForm, TextField searchField, 
 			int pageSize, ChooserSettings chooserSettings) {
 		

@@ -34,22 +34,12 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 		this.order = order;
 	}
 	
-	public Permission getPermission(RiotUser riotUser, String action, Object object) {
+	public Permission getPermission(RiotUser riotUser, String action, Object object, Object context) {
 		if (riotUser instanceof SiteUser) {
 			SiteUser user = (SiteUser) riotUser;
-			
 			if (isLimited(user)) {
-				boolean denied = false;
-				if (object != null && object.getClass().isArray()) {
-					Object[] objects = (Object[]) object;
-					for (Object o : objects) {
-						denied |= isDenied(user, o);
-					}
-				}
-				else {
-					denied |= isDenied(user, object);
-				}
-				if (denied) {
+				//FIXME Check context
+				if (isDenied(user, object)) {
 					return Permission.DENIED;
 				}
 			}

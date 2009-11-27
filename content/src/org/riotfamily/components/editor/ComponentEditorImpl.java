@@ -37,6 +37,7 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentFragment;
 import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentRenderer;
@@ -107,6 +108,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	@RemoteMethod
 	public void updateText(String contentId, String property, String text) {
 		ContentMap content = Content.loadFragment(contentId);
+		assertIsEditGranted(content);
 		content.put(property, text);
 		nofifyUsers();
 	}
@@ -120,6 +122,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 
 		String[] html = new String[chunks.length];
 		Component component = Component.load(componentId);
+		assertIsEditGranted(component);
 		component.put(property, chunks[0]);
 		html[0] = renderComponent(component);
 		
@@ -155,6 +158,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		Assert.notNull(listId, "listId must not be null");
 		Assert.notNull(type, "type must not be null");
 		ComponentList componentList = ComponentList.load(listId);
+		assertIsEditGranted(componentList);
 		Component component = createComponent(componentList, type);
 		componentList.add(position, component);
 		nofifyUsers();
@@ -182,6 +186,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		Assert.notNull(componentId, "componentId must not be null");
 		Assert.notNull(type, "type must not be null");
 		Component component = Component.load(componentId);
+		assertIsEditGranted(component);
 		component.setType(type);
 		return renderComponent(component);
 	}
@@ -207,22 +212,50 @@ public class ComponentEditorImpl implements ComponentEditor,
 
 	@RemoteMethod
 	public void moveComponent(String componentId, String prevComponentId) {
-		Component.load(componentId).move(prevComponentId);
+		Component component = Component.load(componentId);
+		assertIsEditGranted(component);
+		component.move(prevComponentId);
 		nofifyUsers();
 	}
 
 	@RemoteMethod
 	public void deleteComponent(String componentId) {
-		Component.load(componentId).delete();
+		Component component = Component.load(componentId);
+		assertIsEditGranted(component);
+		component.delete();
 		nofifyUsers();
 	}
 	
+	@RemoteMethod
+	public ToolbarState getState(Long[] containerIds) {
+		HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
+		ToolbarState state = new ToolbarState();
+		if (containerIds != null) {
+			for (Long id : containerIds) {
+				if (id != null) {
+					ContentContainer container = ContentContainer.load(id);
+					if (AccessController.isGranted("edit", container.getOwner(), request)) {
+						state.setEdit(true);
+					}
+					if (AccessController.isGranted("publish", container.getOwner(), request)) {
+						state.getContainerIds().add(container.getId());
+						if (container.isDirty()) {
+							state.setDirty(true);
+						}
+					}
+				}
+			}
+		}
+		return state;
+	}
+
 	@RemoteMethod
 	public void publish(Long[] containerIds) {
 		if (containerIds != null) {
 			for (Long id : containerIds) {
 				if (id != null) {
 					ContentContainer container = ContentContainer.load(id);
+					assertIsPublishGranted(container);
 					container.publish();
 				}
 			}
@@ -236,6 +269,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 			for (Long id : containerIds) {
 				if (id != null) {
 					ContentContainer container = ContentContainer.load(id);
+					assertIsEditGranted(container);
 					container.discard();
 				}
 			}
@@ -254,6 +288,20 @@ public class ComponentEditorImpl implements ComponentEditor,
 	}
 
 	/* Utility methods */
+	
+	private void assertIsEditGranted(ContentFragment fragment) {
+		assertIsEditGranted(fragment.getContent().getContainer());
+	}
+	
+	private void assertIsEditGranted(ContentContainer container) {
+		AccessController.assertIsGranted("edit", container.getOwner(), 
+				WebContextFactory.get().getHttpServletRequest());
+	}
+	
+	private void assertIsPublishGranted(ContentContainer container) {
+		AccessController.assertIsGranted("publish", container.getOwner(), 
+				WebContextFactory.get().getHttpServletRequest());
+	}
 	
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {
 		WebContext ctx = WebContextFactory.get();

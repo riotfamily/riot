@@ -21,7 +21,12 @@ import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 public class RemoveEmptyEntriesCommand extends AbstractCommand {
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
+		return "delete";
+	}
+	
+	@Override
+	protected String getAction() {
 		return "delete";
 	}
 	

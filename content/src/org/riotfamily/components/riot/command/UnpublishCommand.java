@@ -21,12 +21,17 @@ import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 public class UnpublishCommand extends AbstractBatchCommand<ContentContainerOwner> {
 
 	@Override
-	protected String getAction(CommandContext context) {
+	protected String getName() {
 		return "unpublish";
 	}
 	
 	@Override
-	protected String getIcon(String action) {
+	protected String getAction() {
+		return "publish";
+	}
+	
+	@Override
+	protected String getIcon() {
 		return "stop";
 	}
 	

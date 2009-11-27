@@ -31,6 +31,16 @@ public class GoToNestedCommand extends AbstractSingleItemCommand<Object> {
 		this.screenId = screenId;
 	}
 	
+	@Override
+	protected String getIcon() {
+		return "application_go";
+	}
+	
+	@Override
+	protected String getAction() {
+		return null;
+	}
+	
 	private RiotScreen findChildScreen(CommandContext context) {
 		RiotScreen itemScreen = context.getScreen().getItemScreen();
 		Assert.notNull(itemScreen, "The list must have an itemScreen");
@@ -50,7 +60,9 @@ public class GoToNestedCommand extends AbstractSingleItemCommand<Object> {
 	public CommandInfo getInfo(CommandContext context) {
 		RiotScreen screen = findChildScreen(context);
 		ScreenContext screenContext = context.createNewItemContext(null);
-		return new CommandInfo(getAction(context), 
+		return new CommandInfo(
+				getName(),
+				getAction(), 
 				screen.getTitle(screenContext), 
 				getIconUrl(context, screen.getIcon()), 
 				false);

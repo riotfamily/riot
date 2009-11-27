@@ -44,6 +44,8 @@ public interface ComponentEditor {
 
 	public void deleteComponent(String componentId);
 	
+	public ToolbarState getState(Long[] containerIds);
+	
 	public void publish(Long[] containerIds);
 
 	public void discard(Long[] containerIds);
