@@ -54,8 +54,12 @@ public class ContentMapObjectWrapperPlugin implements ObjectWrapperPlugin, Order
 		
 		if (obj instanceof Content) {
 			Content content = (Content) obj;
+			if (content.getId() == null) {
+				throw new TemplateModelException("Model contains unsaved Content:" + content);
+			}
 			TaggingMapModel model = new TaggingMapModel(content, wrapper);
 			model.addTag(CacheTagUtils.getTag(Content.class, content.getId().toString()));
+			
 			return model;
 		}
 		return new MapModel((ContentMap) obj, wrapper);
