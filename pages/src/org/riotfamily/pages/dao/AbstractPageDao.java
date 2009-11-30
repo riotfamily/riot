@@ -393,7 +393,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 		catch(RiotDaoException e) {
 			log.error("Validation error with parent [%s] and child [%s (type: %s)]: ",
-					e, parentNode, page, page.getNode().getPageType());
+					e, parentNode, page, page.getNode() == null ? "default" : page.getNode().getPageType());
 			
 			throw e;
 		}
