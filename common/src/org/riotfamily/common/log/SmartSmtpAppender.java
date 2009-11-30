@@ -26,7 +26,6 @@ package org.riotfamily.common.log;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.AppenderSkeleton;
@@ -216,7 +215,7 @@ public class SmartSmtpAppender extends AppenderSkeleton {
 			msg.setText(text.toString(), html);
 			mailSender.send(mime);
 		}
-		catch (MessagingException e) {
+		catch (Exception e) {
 			getErrorHandler().error("Failed to send report", e, 0);
 		}
 		finally {
