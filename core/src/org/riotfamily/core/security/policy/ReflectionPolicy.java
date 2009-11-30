@@ -36,7 +36,7 @@ import org.springframework.util.StringUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ReflectionPolicy implements AssertionPolicy {
+public class ReflectionPolicy implements AuthorizationPolicy {
 
 	private Object delegate = this;
 	
@@ -58,23 +58,13 @@ public class ReflectionPolicy implements AssertionPolicy {
 	}
 	
 	public final Permission getPermission(RiotUser user, String action, Object object, Object context) {
-		PermissionMethod method = getMethod(new SignaturePattern(action, object, context, false));
+		PermissionMethod method = getMethod(new SignaturePattern(action, object, context));
 		if (method != null) {
 			return method.invoke(delegate, user, action, object, context);
 		}
 		return Permission.ABSTAIN;
 	}
-	
-	public final void assertIsGranted(RiotUser user, String action, Object object, Object context) {
-		PermissionMethod method = getMethod(new SignaturePattern(action, object, context, true));
-		if (method != null) {
-			method.invoke(delegate, user, action, object, context);
-		}
-		else if (getPermission(user, action, object, context) == Permission.DENIED) {
-			throw new PermissionDeniedException(user, action, object, this);
-		}
-	}
-	
+		
 	private PermissionMethod getMethod(SignaturePattern signature) {
 		PermissionMethod method = methods.get(signature);
 		if (method == null) {
@@ -162,9 +152,7 @@ public class ReflectionPolicy implements AssertionPolicy {
 		
 		private Class<?> contextClass;
 		
-		private boolean isVoid;
-		
-		public SignaturePattern(String action, Object obj, Object context, boolean isVoid) {
+		public SignaturePattern(String action, Object obj, Object context) {
 			this.action = StringUtils.uncapitalize(FormatUtils.xmlToCamelCase(action));
 			if (obj != null) {
 				objectClass = Hibernate.getClass(obj);
@@ -172,7 +160,6 @@ public class ReflectionPolicy implements AssertionPolicy {
 			if (context != null) {
 				contextClass = context.getClass();
 			}
-			this.isVoid = isVoid;
 		}
 		
 		public PermissionMethod find(Method[] methods) {
@@ -201,10 +188,7 @@ public class ReflectionPolicy implements AssertionPolicy {
 			if (!Modifier.isPublic(method.getModifiers())) {
 				return false;
 			}
-			if (isVoid && method.getReturnType() != Void.TYPE) {
-				return false;
-			}
-			if (!isVoid && !method.getReturnType().equals(Permission.class)) {
+			if (!method.getReturnType().equals(Permission.class)) {
 				return false;
 			}
 			Class<?>[] paramTypes = method.getParameterTypes();
@@ -242,9 +226,6 @@ public class ReflectionPolicy implements AssertionPolicy {
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			if (isVoid) {
-				sb.append("void ");
-			}
 			sb.append(action);
 			if (objectClass != null) {
 				sb.append(' ');
@@ -268,8 +249,7 @@ public class ReflectionPolicy implements AssertionPolicy {
 				SignaturePattern other = (SignaturePattern) obj;
 				return ObjectUtils.nullSafeEquals(action, other.action)
 						&& ObjectUtils.nullSafeEquals(objectClass, other.objectClass)
-						&& ObjectUtils.nullSafeEquals(contextClass, other.contextClass)
-						&& isVoid == other.isVoid;
+						&& ObjectUtils.nullSafeEquals(contextClass, other.contextClass);
 			}
 			return false;
 		}

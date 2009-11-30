@@ -22,7 +22,7 @@ import org.springframework.core.Ordered;
 public interface AuthorizationPolicy extends Ordered {
 
 	public enum Permission {
-		ABSTAIN, DENIED, GRANTED
+		ABSTAIN, DENIED, GRANTED, REQUESTABLE
 	}
 	
 	/**

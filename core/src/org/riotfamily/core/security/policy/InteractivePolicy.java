@@ -14,19 +14,17 @@ package org.riotfamily.core.security.policy;
 
 import org.riotfamily.core.security.auth.RiotUser;
 
-public interface AssertionPolicy extends AuthorizationPolicy {
+public interface InteractivePolicy extends AuthorizationPolicy {
 
     /**
-	 * By contract this method is invoked whenever an action is about to be 
-	 * executed. Implementors can use this hook to veto a previously granted
-	 * permission.   
+	 * By contract this method is invoked when an action is about to be 
+	 * executed and the Policy returned Permission.REQUESTABLE.
 	 * 
-	 * @param subject The user
+	 * @param user The user
 	 * @param action The action to be performed
 	 * @param object The object on which the action is to be performed
 	 * @param context Optional context information
-	 * @throws PermissionDeniedException if the permission is not granted
 	 */
-    public void assertIsGranted(RiotUser user, String action, Object object, Object context) 
-    		throws PermissionDeniedException;
+    public String getPermissionRequestUrl(RiotUser user, String action, 
+    		Object object, Object context);
 }
