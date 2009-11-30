@@ -200,7 +200,8 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		
 	@Override
 	public String toString() {
-		return site + ":" + path;
+		return String.format("ContentPage[path=%s,id=%s,site=%s]", 
+				getPath(), getId(), site.getName());
 	}
 	
 	// ----------------------------------------------------------------------

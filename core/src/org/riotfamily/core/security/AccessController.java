@@ -56,18 +56,22 @@ public final class AccessController {
 		return getCurrentUser() != null;
 	}
 	
+	/**
+	 * @deprecated Please provide a context
+	 */
+	@Deprecated
 	public static boolean isGranted(String action, Object object) {
-		return isGranted(getCurrentUser(), action, object);
+		return isGranted(action, object, null);
 	}
 	
-	public static boolean isGranted(String action, Object... object) {
-		return isGranted(getCurrentUser(), action, object);
+	public static boolean isGranted(String action, Object object, Object context) {
+		return isGranted(getCurrentUser(), action, object, context);
 	}
-	
-	public static boolean isGranted(RiotUser user, String action, Object object) {
+		
+	public static boolean isGranted(RiotUser user, String action, Object object, Object context) {
 		if (user != null) {
 			for (AuthorizationPolicy policy : policies) {
-				Permission permission = policy.getPermission(user, action, object);
+				Permission permission = policy.getPermission(user, action, object, context);
 				if (permission == Permission.GRANTED) {
 					return true;
 				}
@@ -82,14 +86,20 @@ public final class AccessController {
 	public static void assertIsGranted(String action, Object object) 
 			throws PermissionDeniedException {
 		
+		assertIsGranted(action, object, null);
+	}
+	
+	public static void assertIsGranted(String action, Object object, Object context) 
+			throws PermissionDeniedException {
+		
 		RiotUser subject = getCurrentUser();
 		if (subject != null) {
 			for (AuthorizationPolicy policy : policies) {
 				if (policy instanceof AssertionPolicy) {
 					AssertionPolicy assertionPolicy = (AssertionPolicy) policy;
-					assertionPolicy.assertIsGranted(subject, action, object);
+					assertionPolicy.assertIsGranted(subject, action, object, context);
 				}
-				else if (policy.getPermission(subject, action, object) == Permission.DENIED) {
+				else if (policy.getPermission(subject, action, object, context) == Permission.DENIED) {
 					throw new PermissionDeniedException(subject, action, object, policy);
 				}
 			}

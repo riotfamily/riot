@@ -29,11 +29,11 @@ public class GrantAllPolicy implements AuthorizationPolicy {
 		this.order = order;
 	}
 
-	public Permission getPermission(RiotUser user, String action, Object object) {
+	public Permission getPermission(RiotUser user, String action, Object object, Object context) {
         return Permission.GRANTED;
     }
 	
-	public void assertIsGranted(RiotUser user, String action, Object object)
+	public void assertIsGranted(RiotUser user, String action, Object object, Object context)
 			throws PermissionDeniedException {
 		
 	}

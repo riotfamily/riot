@@ -26,7 +26,7 @@ import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 public class ExportCommand extends AbstractCommand {
 	
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "table_go";
 	}
 
@@ -48,6 +48,11 @@ public class ExportCommand extends AbstractCommand {
 
 	public List<String> getProperties() {
 		return this.properties;
+	}
+	
+	@Override
+	protected String getAction() {
+		return "viewItem";
 	}
 	
 	public CommandResult execute(CommandContext context, Selection selection) {

@@ -32,6 +32,11 @@ public abstract class AbstractHibernateCacheCommand extends AbstractCommand {
 		return sessionFactory;
 	}
 	
+	@Override
+	protected String getAction() {
+		return "admin";
+	}
+	
 	public CommandResult execute(CommandContext context, Selection selection) {
 		doExecute(context, selection);
 		

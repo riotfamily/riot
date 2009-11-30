@@ -50,7 +50,7 @@ public class NotificationResult implements CommandResult {
 	public NotificationResult(CommandContext context, Command command) {
 		CommandInfo info = command.getInfo(context);
 		this.messageResolver = context.getMessageResolver();
-		this.keyPrefix = "command." + info.getAction() + ".notification";
+		this.keyPrefix = "command." + info.getName() + ".notification";
 		this.defaultTitle = info.getLabel();
 		this.icon = info.getIcon();
 	}

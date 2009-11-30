@@ -12,14 +12,12 @@
  */
 package org.riotfamily.pages.riot.dao;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.RiotDaoAdapter;
 import org.riotfamily.core.dao.Swapping;
-import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.model.Site;
 import org.springframework.dao.DataAccessException;
 
@@ -29,37 +27,37 @@ import org.springframework.dao.DataAccessException;
  */
 public class SiteRiotDao extends RiotDaoAdapter implements Swapping {
 
+	@Override
 	public Class<?> getEntityClass() {
 		return Site.class;
 	}
 
+	@Override
 	public Collection<?> list(Object parent, ListParams params) throws DataAccessException {
-		List<Site> allSites = Site.findAll();
-		ArrayList<Site> result = new ArrayList<Site>(allSites.size());
-		for (Site site : allSites) {
-			if (AccessController.isGranted("list", site)) {
-				result.add(site);
-			}
-		}
-		return result;
+		return Site.findAll();
 	}
 
+	@Override
 	public void save(Object entity, Object parent) throws DataAccessException {
 		((Site) entity).save();
 	}
 
+	@Override
 	public Object update(Object entity) throws DataAccessException {
 		return ((Site) entity).merge();
 	}
 
+	@Override
 	public void delete(Object entity, Object parent) throws DataAccessException {
 		((Site) entity).delete();
 	}
 
+	@Override
 	public String getObjectId(Object entity) {
 		return ((Site) entity).getId().toString();
 	}
 
+	@Override
 	public Object load(String id) throws DataAccessException {
 		return Site.load(Long.valueOf(id));
 	}

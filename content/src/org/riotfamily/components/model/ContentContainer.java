@@ -27,7 +27,6 @@ import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.web.cache.TagCacheItems;
-import org.riotfamily.core.security.AccessController;
 
 /**
  * Entity that holds references to multiple Content versions.
@@ -111,7 +110,6 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	public void publish() {
 		if (isDirty()) {
 			Content preview = getPreviewVersion();
-			AccessController.assertIsGranted("publish", this);
 			Content oldLiveVersion = liveVersion;
 			liveVersion = preview.createCopy();
 			if (oldLiveVersion != null) {

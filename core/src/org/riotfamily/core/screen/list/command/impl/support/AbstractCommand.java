@@ -30,14 +30,15 @@ public abstract class AbstractCommand implements Command {
 	}
 	
 	public CommandInfo getInfo(CommandContext context) {
-		String action = getAction(context);
-		if (action == null) {
+		String name = getName();
+		if (name == null) {
 			return null;
 		}
 		return new CommandInfo(
-				action,
-				getLabel(context, action),
-				getIconUrl(context, getIcon(action)),
+				name, 
+				getAction(),
+				getLabel(context, name),
+				getIconUrl(context, getIcon()),
 				isShowOnForm(context));
 	}
 	
@@ -59,14 +60,14 @@ public abstract class AbstractCommand implements Command {
 		return name;
 	}
 	
-	protected String getAction(CommandContext context) {
+	protected String getAction() {
 		return getName();
 	}
 	
-	protected String getLabel(CommandContext context, String action) {
+	protected String getLabel(CommandContext context, String name) {
 		return context.getMessageResolver().getMessage(
-				"command." + action + ".label", 
-				FormatUtils.xmlToTitleCase(action));
+				"command." + name + ".label", 
+				FormatUtils.xmlToTitleCase(name));
 	}
 		
 	protected String getIconUrl(CommandContext context, String iconName) {
@@ -74,8 +75,8 @@ public abstract class AbstractCommand implements Command {
 				+ iconName + ".png";
 	}
 	
-	protected String getIcon(String action) {
-		return action;
+	protected String getIcon() {
+		return getName();
 	}
 	
 	protected boolean isShowOnForm(CommandContext context) {

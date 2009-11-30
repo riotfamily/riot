@@ -159,7 +159,6 @@ public class FormScreen extends AjaxFormController
 		
 		ScreenContext context = ScreenContext.get(request);
 		if (context.getObject() != null) {
-			mv.addObject("listStateKey", context.createParentContext().getListStateKey());
 			if (childScreens != null) {
 				List<ScreenLink> childLinks = Generics.newArrayList();
 				for (RiotScreen screen : childScreens) {
@@ -168,6 +167,7 @@ public class FormScreen extends AjaxFormController
 				mv.addObject("childLinks", childLinks);
 			}
 		}
+		mv.addObject("listStateKey", ScreenUtils.getListScreen(this).getId());
 		return mv;
 	}
 
@@ -304,6 +304,11 @@ public class FormScreen extends AjaxFormController
 
 	public Collection<Screenlet> getScreenlets() {
 		return screenlets;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("FormScreen[id=%s]", id);
 	}
 
 }

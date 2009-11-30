@@ -38,13 +38,18 @@ public class GotoVirtualPageCommand extends AbstractBatchCommand<Object> {
 	}
 	
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "application_go";
 	}
 	
 	@Override
 	protected String getName() {
-		return "Goto Page";
+		return "gotoPage";
+	}
+	
+	@Override
+	protected String getAction() {
+		return null;
 	}
 
 	@Override

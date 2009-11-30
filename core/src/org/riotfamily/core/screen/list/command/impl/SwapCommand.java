@@ -24,6 +24,11 @@ public abstract class SwapCommand extends AbstractCommand {
 	protected abstract int getSwapWith();
 
 	@Override
+	protected String getAction() {
+		return "edit";
+	}
+	
+	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
 		if (selection.size() == 1 && context.getScreen().getDao() instanceof Swapping) {
 			Swapping dao = (Swapping) context.getScreen().getDao();

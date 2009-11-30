@@ -32,8 +32,13 @@ public class GotoUrlCommand extends AbstractSingleItemCommand<Object> {
 	}
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "application_go";
+	}
+	
+	@Override
+	protected String getAction() {
+		return null;
 	}
 
 	@Override

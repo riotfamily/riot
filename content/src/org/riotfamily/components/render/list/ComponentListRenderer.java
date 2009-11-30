@@ -83,7 +83,7 @@ public class ComponentListRenderer {
 		return list;
 	}
 	
-	public String renderComponentList(ContentMap contentMap, 
+	public String renderComponents(ContentMap contentMap, 
 			String key, ComponentListConfig config,
 			HttpServletRequest request,
 			HttpServletResponse response) 
@@ -97,7 +97,7 @@ public class ComponentListRenderer {
 				list = createList(contentMap, key, config);
 			}
 			if (AccessController.isGranted("edit", 
-					contentMap.getContent().getContainer().getOwner())) {
+					contentMap.getContent().getContainer().getOwner(), request)) {
 				
 				strategy = editModeRenderStrategy;
 			}

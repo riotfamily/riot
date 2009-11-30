@@ -12,9 +12,9 @@
  */
 package org.riotfamily.core.security.policy;
 
+import org.riotfamily.core.security.auth.RiotUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.riotfamily.core.security.auth.RiotUser;
 
 /**
  * A logging policy for debugging purposes.
@@ -22,7 +22,7 @@ import org.riotfamily.core.security.auth.RiotUser;
  * @since 6.5
  * @author Alf Werder [alf dot werder at artundweise dot de]
  */
-public class LoggingPolicy implements AuthorizationPolicy {
+public class LoggingPolicy implements AssertionPolicy {
 	
     private Logger log = LoggerFactory.getLogger(LoggingPolicy.class);
     
@@ -36,41 +36,23 @@ public class LoggingPolicy implements AuthorizationPolicy {
 		this.order = order;
 	}
 
-	public Permission getPermission(RiotUser user, String action, Object object) {
+	public Permission getPermission(RiotUser user, String action, Object object, Object context) {
 		if (log.isTraceEnabled()) {
-        	log.trace(getMessage(action, object));
+        	log.trace(getMessage(action, object, context));
         }
         return Permission.ABSTAIN;
     }
 	
-	public void assertIsGranted(RiotUser user, String action, Object object)
+	public void assertIsGranted(RiotUser user, String action, Object object, Object context)
 			throws PermissionDeniedException {
 		
 		if (log.isDebugEnabled()) {
-        	log.debug(getMessage(action, object));
+        	log.debug(getMessage(action, object, context));
         }
 	}
 	
-	private String getMessage(String action, Object object) {
-		StringBuilder message = new StringBuilder();
-		message.append("action: [").append(action).append("], ");
-		message.append("object: ");
-		if (object != null) {
-			if (object.getClass().isArray()) {
-				Object[] objects = (Object[]) object;
-				for (Object o : objects) {
-					if (o != null) {
-						message.append(o.getClass().getName());
-						message.append(',');
-					}
-				}
-			}
-			else {
-				message.append(object.getClass().getName());
-			}
-		}
-		message.append("[").append(object).append("]");
-		return message.toString();
+	private String getMessage(String action, Object object, Object context) {
+		return String.format("action: %s, object: %s, context: %s", action, object, context);
 	}
 
 }

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.macro.MacroHelperFactory;
+import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.list.ComponentListRenderer;
 
 /**
@@ -34,10 +35,14 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 
 	private ComponentListRenderer componentListRenderer;
 
+	private ComponentRenderer componentRenderer;
+	
 	public InplaceMacroHelperFactory(
-			ComponentListRenderer componentListRenderer) {
+			ComponentListRenderer componentListRenderer,
+			ComponentRenderer componentRenderer) {
 		
 		this.componentListRenderer = componentListRenderer;
+		this.componentRenderer = componentRenderer;
 	}
 	
 	public void setToolbarScripts(List<String> toolbarScripts) {
@@ -53,6 +58,6 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 
 		
 		return new InplaceMacroHelper(request, response, toolbarScripts, 
-				dynamicToolbarScripts, componentListRenderer);
+				dynamicToolbarScripts, componentListRenderer, componentRenderer);
 	}
 }

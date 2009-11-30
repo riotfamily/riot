@@ -83,7 +83,12 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		}
 		
 		@Override
-		protected String getIcon(String action) {
+		protected String getAction() {
+			return null;
+		}
+		
+		@Override
+		protected String getIcon() {
 			return "bullet_go";
 		}
 		
@@ -105,7 +110,12 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		}
 		
 		@Override
-		protected String getIcon(String action) {
+		protected String getAction() {
+			return null;
+		}
+		
+		@Override
+		protected String getIcon() {
 			return "accept";
 		}
 		

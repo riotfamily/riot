@@ -33,20 +33,18 @@ public class RestrictedOptionsModel implements OptionsModel {
 	public RestrictedOptionsModel(Object model) {
 		this.model = model;
 	}
-
+	
 	public Collection<?> getOptionValues(Element element) {
 		Collection<?> sourceOptions = OptionsModelUtils.getOptionValues(model, element);
 		ArrayList<Object> result = Generics.newArrayList();
 		Iterator<?> it = sourceOptions.iterator();
 		while (it.hasNext()) {
 			Object option = it.next();
-			if (AccessController.isGranted("use-option", option)) {
+			if (AccessController.isGranted("useOption", option, element)) {
 				result.add(option);
 			}
 		}
 		return result;
 	}
-
-	
 
 }

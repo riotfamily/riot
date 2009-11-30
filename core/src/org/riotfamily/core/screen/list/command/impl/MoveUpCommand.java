@@ -12,7 +12,6 @@
  */
 package org.riotfamily.core.screen.list.command.impl;
 
-import org.riotfamily.core.screen.list.command.CommandContext;
 
 public class MoveUpCommand extends SwapCommand {
 
@@ -22,13 +21,18 @@ public class MoveUpCommand extends SwapCommand {
 	}
 	
 	@Override
-	protected String getAction(CommandContext context) {
+	protected String getName() {
 		return "moveUp";
 	}
 	
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "arrow_up";
+	}
+	
+	@Override
+	protected String getAction() {
+		return "edit";
 	}
 
 }

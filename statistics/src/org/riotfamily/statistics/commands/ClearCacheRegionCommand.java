@@ -21,12 +21,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cache.entry.CacheEntry;
 import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.riotfamily.common.util.Generics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.SelectionItem;
 import org.riotfamily.statistics.domain.CacheRegionStatsItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 
@@ -37,10 +37,11 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 	}
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "clear";
 	}
 	
+	@Override
 	public void doExecute(CommandContext context, Selection selection) {
 		for (SelectionItem item : selection) {
 			CacheRegionStatsItem crs = (CacheRegionStatsItem) item.getObject();
@@ -69,7 +70,7 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 		/* Liefert z.Zt ClassCastException.
 		 * (http://opensource.atlassian.com/projects/hibernate/browse/HHH-2815)
 		 */
-		Map<?,?> entries = (Map<?,?>) slStats.getEntries();
+		Map<?,?> entries = slStats.getEntries();
 		
 		if (slStats != null && entries != null) {
 			for (Iterator<?> iterator = entries.entrySet().iterator(); iterator.hasNext();) {

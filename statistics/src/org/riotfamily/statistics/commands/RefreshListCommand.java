@@ -23,8 +23,13 @@ import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 public class RefreshListCommand extends AbstractChildCommand {
 
 	@Override
-	protected String getIcon(String action) {
+	protected String getIcon() {
 		return "arrow_refresh";
+	}
+	
+	@Override
+	protected String getAction() {
+		return null;
 	}
 	
 	@Override

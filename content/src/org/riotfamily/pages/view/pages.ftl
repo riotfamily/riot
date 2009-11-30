@@ -11,6 +11,15 @@
 	<#return ContentPage.loadByTypeAndSite(type, site) />
 </#function>
 
+<#macro renderComponents page key>
+	<#local components = page.contentContainer.getContent(false)[key] />
+	<#if components??>
+		<#list components as component>
+			${inplaceMacroHelper.renderComponent(component)!}
+		</#list>
+	</#if>
+</#macro>
+
 <#---
   - Renders an HTML link to the given Page. The link text will be inplace 
   - editable if the page is the current page.
