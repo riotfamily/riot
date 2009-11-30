@@ -25,23 +25,26 @@ public class PermissionDeniedException extends RuntimeException {
 	private String action;
 	
 	private Object object;
+	
+	private Object context;
 
 	private AuthorizationPolicy policy;
 	
 	private String permissionRequestUrl;
 
 	public PermissionDeniedException(RiotUser user, String action, Object object, 
-			AuthorizationPolicy policy) {
+			Object context, AuthorizationPolicy policy) {
 		
-		this(user, action, object, policy, null);
+		this(user, action, object, context, policy, null);
 	}
 	
 	public PermissionDeniedException(RiotUser user, String action, Object object, 
-			AuthorizationPolicy policy, String permissionRequestUrl) {
+			Object context,  AuthorizationPolicy policy, String permissionRequestUrl) {
 		
 		this.user = user;
 		this.action = action;
 		this.object = object;
+		this.context = context;
 		this.policy = policy;
 		this.permissionRequestUrl = permissionRequestUrl;
 	}
@@ -56,6 +59,10 @@ public class PermissionDeniedException extends RuntimeException {
 
 	public Object getObject() {
 		return this.object;
+	}
+	
+	public Object getContext() {
+		return context;
 	}
 
 	public AuthorizationPolicy getPolicy() {

@@ -103,16 +103,16 @@ public final class AccessController {
 					return;
 				}
 				else if (permission == DENIED) {
-					throw new PermissionDeniedException(user, action, object, policy);
+					throw new PermissionDeniedException(user, action, object, context, policy);
 				}
 				else if (permission == REQUESTABLE) {
 					Assert.isInstanceOf(InteractivePolicy.class, policy);
 					String url = ((InteractivePolicy) policy).getPermissionRequestUrl(user, action, object, context);
-					throw new PermissionDeniedException(user, action, object, policy, url);
+					throw new PermissionDeniedException(user, action, object, context, policy, url);
 				}
 			}
 		}
-		throw new PermissionDeniedException(user, action, object, null);
+		throw new PermissionDeniedException(user, action, object, context, null);
 	}
 	
 }
