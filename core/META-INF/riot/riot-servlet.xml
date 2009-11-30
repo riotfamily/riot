@@ -63,6 +63,11 @@
 		<property name="filterName" value="riot-filter" />
 	</bean>
 
+	<bean class="org.riotfamily.common.web.filter.OpenSessionInViewFilterPlugin">
+		<constructor-arg ref="sessionFactory" />
+		<property name="filterName" value="riot-filter" />
+	</bean>
+
 	<!-- Spring Web-MVC Setup -->
 	
 	<dwr:controller id="dwrController" debug="true">
@@ -77,10 +82,7 @@
     </bean>
     
     <util:list id="handlerInterceptors">
-    	<bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
-			<property name="sessionFactory" ref="sessionFactory" />
-		</bean>
-		<bean class="org.riotfamily.common.web.mvc.interceptor.RequestHolderInterceptor" />
+    	<bean class="org.riotfamily.common.web.mvc.interceptor.RequestHolderInterceptor" />
 	</util:list>
 			
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">
