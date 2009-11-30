@@ -20,9 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.TagWriter;
+import org.riotfamily.components.model.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.riotfamily.components.model.Component;
 
 /**
  * Abstract base class for component implementations.

@@ -12,8 +12,7 @@
  */
 package org.riotfamily.pages.riot.security;
 
-import static org.riotfamily.core.security.policy.AuthorizationPolicy.Permission.ABSTAIN;
-import static org.riotfamily.core.security.policy.AuthorizationPolicy.Permission.DENIED;
+import static org.riotfamily.core.security.policy.AuthorizationPolicy.Permission.*;
 
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.security.auth.RiotUser;

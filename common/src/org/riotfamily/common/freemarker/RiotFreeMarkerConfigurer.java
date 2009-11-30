@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.riotfamily.common.util.SpringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;

@@ -20,8 +20,8 @@ import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.hibernate.HibernateUtils;
 import org.riotfamily.core.dao.CutAndPaste;
-import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Hierarchy;
+import org.riotfamily.core.dao.ListParams;
 
 
 

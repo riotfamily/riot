@@ -16,14 +16,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.riotfamily.common.beans.property.IntArrayPropertyEditor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.MutablePropertyValues;

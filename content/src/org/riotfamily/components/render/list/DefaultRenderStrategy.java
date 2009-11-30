@@ -15,12 +15,12 @@ package org.riotfamily.components.render.list;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultRenderStrategy implements RenderStrategy {
 	

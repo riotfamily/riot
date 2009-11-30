@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.riotfamily.core.screen.ModelAndViewScreenlet;
 import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.linkcheck.BrokenLink;
 
 public class BrokenLinksScreenlet extends ModelAndViewScreenlet {
 
