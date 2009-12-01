@@ -14,10 +14,10 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.List;
 
-import org.riotfamily.common.web.support.RequestHolder;
-import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.form.FormScreen;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
+import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.config.PageType;
@@ -47,13 +47,14 @@ public class PageFormInitializer implements FormInitializer {
 		SelectBox sb = null;
 		if (form.isNew())  {
 			ContentPage parentPage = null;
-			Object parent = ScreenContext.get(RequestHolder.getRequest()).getParent();
+			Object parent = FormScreen.getScreenContext(form).getParent();
 			Site site;
 			if (parent instanceof ContentPage) {
 				parentPage = (ContentPage) parent;
 				site = parentPage.getSite();
 				form.setAttribute("pageId", parentPage.getId());
 				form.setAttribute("siteId", site.getId());
+				addPathComponentField(form);
 			}
 			else if (parent instanceof Site) {
 				site = (Site) parent;
@@ -71,6 +72,9 @@ public class PageFormInitializer implements FormInitializer {
 			ContentPage page = (ContentPage) form.getBackingObject();
 			form.setAttribute("pageId", page.getId());
 			form.setAttribute("siteId", page.getSite().getId());
+			if (page.getParent() != null) {
+				addPathComponentField(form);
+			}
 			pageType = page.getPageType();
 		}
 		
@@ -80,6 +84,12 @@ public class PageFormInitializer implements FormInitializer {
 			sb.addChangeListener(ppe);
 		}
 		form.addElement(ppe, "contentContainer.previewVersion");
+	}
+
+	private void addPathComponentField(Form form) {
+		TextField t = new TextField();
+		t.setRegex("([A-Za-z0-9_.,*@{}-]*)");
+		form.addElement(t, "pathComponent");
 	}
 	
 	private SelectBox createPageTypeBox(Form form, List<? extends PageType> pageTypes) {
