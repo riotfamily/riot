@@ -67,7 +67,7 @@ public class LoginManager implements ServletContextAware {
 			String password) {
 		
 		RiotUser user = authenticationService.authenticate(userName, password);
-		if (user != null) {
+		if (user != null && AccessController.isGranted(user, "login", null, request)) {
 			storeUserInSession(userName, user, request);
 			return true;
 		}
