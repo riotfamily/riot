@@ -20,18 +20,10 @@ import org.riotfamily.forms.element.AbstractConditionalElement;
  */
 public class RestrictedElement extends AbstractConditionalElement {
 	
-	private boolean readOnly = true;
-
-	@Override
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
-	
 	@Override
 	protected boolean isEditable() {
-		if (readOnly) {
-			return false;
-		}
-		return AccessController.isGranted("editProperty", getEditor());
+		return AccessController.isGranted("editProperty", 
+				getEditor().getEditorBinding().getProperty(),
+				getEditor());
 	}
 }
