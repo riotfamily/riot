@@ -27,6 +27,7 @@ import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.core.screen.list.dto.ListItem;
+import org.riotfamily.core.security.AccessController;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
@@ -54,14 +55,20 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 	}
 	
 	protected List<ListItem> createItems(String expandedId) {
-		ListItem expanded = createExpanded(expandedId);
+		ListItem expanded = null;
+		Object parent = loadExpandedParent(expandedId);
+		if (parent != null) {
+			while (parent != null) {
+				List<ListItem> children = createChildItems(parent, expanded);
+				expanded = createItem(parent, null);
+				expanded.setChildren(children);
+				parent = tree.getParentNode(parent);
+			}
+		}
 		if (rootNodeTreeDao != null) {
 			return Collections.singletonList(expanded);
 		}
-		List<ListItem> items = Generics.newArrayList();
-		for (Object child : dao.list(getParent(), state.getParams())) {
-			items.add(createItem(child, expanded));
-		}
+		List<ListItem> items = createChildItems(getParent(), expanded);
 		return items;
 	}
 	
@@ -76,32 +83,21 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		return null;
 	}
 	
-	private ListItem createExpanded(String expandedId) {
-		ListItem expanded = null;
-		Object parent = loadExpandedParent(expandedId);
-		if (parent != null) {
-			while (parent != null) {
-				List<ListItem> children = Generics.newArrayList();
-				for (Object child : dao.list(parent, getParams())) {
-					children.add(createItem(child, expanded));
-				}
-				expanded = createItem(parent, null);
-				expanded.setChildren(children);
-				parent = tree.getParentNode(parent);
-			}
-		}
-		return expanded;
+	protected List<ListItem> getChildren(String parentId) {
+		Object parent = dao.load(parentId);
+		List<ListItem> children = createChildItems(parent, null);
+		createItem(parent, null).setChildren(children); // Initialize parentNodeId
+		return children;
 	}
 
-	protected List<ListItem> getChildren(String parentId) {
-		List<ListItem> children = Generics.newArrayList();
-		Object parent = dao.load(parentId);
+	private List<ListItem> createChildItems(Object parent, ListItem expanded) {
+		List<ListItem> items = Generics.newArrayList();
 		for (Object child : dao.list(parent, getParams())) {
-			ListItem item = createItem(child, null);
-			item.setParentNodeId(parentId);
-			children.add(item);
+			if (AccessController.isGranted("viewItem", child, screenContext)) {
+				items.add(createItem(child, expanded));
+			}
 		}
-		return children;
+		return items;
 	}
 	
 	private ListItem createItem(Object object, ListItem expanded) {
