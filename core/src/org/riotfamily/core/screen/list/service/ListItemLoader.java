@@ -15,7 +15,6 @@ package org.riotfamily.core.screen.list.service;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +27,6 @@ import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.core.screen.list.dto.ListItem;
-import org.riotfamily.core.security.AccessController;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
@@ -39,54 +37,83 @@ import org.springframework.beans.NullValueInNestedPathException;
  */
 class ListItemLoader extends ChooserCommandHandler implements ListRenderContext {
 	
+	protected Tree tree;
+	
 	protected SingleRoot rootNodeTreeDao;
 	
 	ListItemLoader(ListService service, String key, 
 			HttpServletRequest request) {
 		
 		super(service, key, request);
-		if (dao instanceof SingleRoot) {
-			rootNodeTreeDao = (SingleRoot) dao;
-		}
-	}
-	
-	public List<ListItem> getItems(String parentId) {
-		Object[] expanded;
-		if (parentId != null) {
-			expanded = new Object[] {dao.load(parentId)};
-		}
-		else {
-			expanded = loadExpanded(null);
-		}
-		return createItems(expanded, 0, parentId);
-	}
-	
-	protected List<ListItem> createItems(Object[] expanded, int i, String parentNodeId) {
-		Collection<?> objects;
-		if (i == 0 && rootNodeTreeDao != null && expanded.length == 2) {
-			objects = Collections.singletonList(expanded[1]);
-		}
-		else {
-			objects = dao.list(expanded[i], state.getParams());
-		}
-		ArrayList<ListItem> items = Generics.newArrayList(objects.size());
-		Object next = i + 1 < expanded.length ? expanded[i + 1] : null;
-		for (Object object : objects) {
-			if (AccessController.isGranted("viewItem", object, screenContext)) {
-				ListItem item = new ListItem();
-				String objectId = dao.getObjectId(object);
-				item.setObjectId(objectId);
-				item.setParentNodeId(parentNodeId);
-				item.setColumns(getColumns(object));
-				item.setExpandable(isExpandable(object));
-				if (object.equals(next)) {
-					item.setChildren(createItems(expanded, i + 1, objectId));
-				}
-				item.setRowIndex(items.size());
-				items.add(item);
+		if (dao instanceof Tree) {
+			tree = (Tree) dao;
+			if (dao instanceof SingleRoot) {
+				rootNodeTreeDao = (SingleRoot) dao;
 			}
 		}
+	}
+	
+	protected List<ListItem> createItems(String expandedId) {
+		ListItem expanded = createExpanded(expandedId);
+		if (rootNodeTreeDao != null) {
+			return Collections.singletonList(expanded);
+		}
+		List<ListItem> items = Generics.newArrayList();
+		for (Object child : dao.list(getParent(), state.getParams())) {
+			items.add(createItem(child, expanded));
+		}
 		return items;
+	}
+	
+	private Object loadExpandedParent(String expandedId) {
+		if (tree != null && expandedId != null) {
+			Object object = dao.load(expandedId);
+			return tree.getParentNode(object);
+		}
+		if (rootNodeTreeDao != null) {
+			return rootNodeTreeDao.getRootNode(getParent());
+		}
+		return null;
+	}
+	
+	private ListItem createExpanded(String expandedId) {
+		ListItem expanded = null;
+		Object parent = loadExpandedParent(expandedId);
+		if (parent != null) {
+			while (parent != null) {
+				List<ListItem> children = Generics.newArrayList();
+				for (Object child : dao.list(parent, getParams())) {
+					children.add(createItem(child, expanded));
+				}
+				expanded = createItem(parent, null);
+				expanded.setChildren(children);
+				parent = tree.getParentNode(parent);
+			}
+		}
+		return expanded;
+	}
+
+	protected List<ListItem> getChildren(String parentId) {
+		List<ListItem> children = Generics.newArrayList();
+		Object parent = dao.load(parentId);
+		for (Object child : dao.list(parent, getParams())) {
+			ListItem item = createItem(child, null);
+			item.setParentNodeId(parentId);
+			children.add(item);
+		}
+		return children;
+	}
+	
+	private ListItem createItem(Object object, ListItem expanded) {
+		String id = dao.getObjectId(object);
+		if (expanded != null && id.equals(expanded.getObjectId())) {
+			return expanded;
+		}
+		ListItem item = new ListItem();
+		item.setObjectId(id);
+		item.setColumns(getColumns(object));
+		item.setExpandable(isExpandable(object));
+		return item;
 	}
 	
 	/**
@@ -114,26 +141,7 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		}
 		return result;
 	}
-	
-	protected Object[] loadExpanded(String expandedId) {
-		List<Object> result = Generics.newArrayList();
-		if (dao instanceof Tree) {
-			if (expandedId != null) {
-				Object expanded = dao.load(expandedId);
-				Tree tree = (Tree) dao;
-				while (expanded != null) {
-					result.add(0, expanded);
-					expanded = tree.getParentNode(expanded);
-				}
-			}
-			else if (rootNodeTreeDao != null) {
-				result.add(0, rootNodeTreeDao.getRootNode(getParent()));
-			}
-		}
-		result.add(0, getParent());
-		return result.toArray();
-	}
-	
+		
 	private boolean isExpandable(Object node) {
 		if (dao instanceof Tree) {
 			return ((Tree) dao).hasChildren(node, getParent(), state.getParams());

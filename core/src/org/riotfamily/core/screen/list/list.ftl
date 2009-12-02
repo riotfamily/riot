@@ -41,7 +41,7 @@
 				
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${listState.key}');
-			list.render('list', 'commands', <#if expand??>'${expand}'<#else>null</#if><#if listState.filterForm??>, 'filterForm'</#if>);
+			list.render('list', 'commands', <#if context.objectId??>'${context.objectId}'<#else>null</#if><#if listState.filterForm??>, 'filterForm'</#if>);
 		</script>
 	</@template.block>
 
