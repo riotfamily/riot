@@ -78,9 +78,9 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 
 	private enum Arguments {
 		V1(0 ,1, 1),
-		V2(1 ,1, 1),
-		V3(0 ,1, 0),
-		V4(0 ,0, 1),
+		V2(0 ,1, 0),
+		V3(0 ,0, 1),
+		V4(1 ,1, 1),
 		V5(1 ,1, 0),
 		V6(1 ,0, 1);
 		
