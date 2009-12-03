@@ -13,6 +13,8 @@
 package org.riotfamily.components.editor;
 
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -146,6 +148,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		for (int i = 0; i < types.length; i++) {
 			result.add(metaDataProvider.getMetaData(types[i]));
 		}
+		Collections.sort(result, new ComponentMetaDataComparator());
 		return result;
 	}
 	
@@ -349,6 +352,13 @@ public class ComponentEditorImpl implements ComponentEditor,
 					ScriptSessions.addFunctionCall("riot.showNotification", message);
 				}
 			});
+	}
+	
+	private class ComponentMetaDataComparator implements Comparator<ComponentMetaData> {
+
+		public int compare(ComponentMetaData o1, ComponentMetaData o2) {
+			return o1.getName().compareTo(o2.getName());
+		}
 	}
 
 }
