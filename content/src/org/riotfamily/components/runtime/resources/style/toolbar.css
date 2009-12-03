@@ -192,15 +192,14 @@ body > #riot-notification {
 	border-width: 1px 0 0 1px;
 	border-color: #fff;
 	max-height: 250px;
-	xoverflow: auto;
+	overflow: auto;
 }
 
 .riot-types .type {
 	display: block;
-	padding: 5px 5px 5px 12px;
-	width: 120px;
+	padding: 5px 12px 5px 12px;
 	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size:11px;
+	font-size: 11px;
 	text-align: left;
 	text-decoration: none;
 	color: #3d3d3d;
