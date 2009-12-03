@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
  * @since 6.5
  * @author Alf Werder [alf dot werder at artundweise dot de]
  */
-public class LoggingPolicy implements AssertionPolicy {
+public class LoggingPolicy implements AuthorizationPolicy {
 	
     private Logger log = LoggerFactory.getLogger(LoggingPolicy.class);
     
-	private int order = Integer.MIN_VALUE;
+	private int order = org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 	
     public int getOrder() {
 		return this.order;
@@ -37,20 +37,12 @@ public class LoggingPolicy implements AssertionPolicy {
 	}
 
 	public Permission getPermission(RiotUser user, String action, Object object, Object context) {
-		if (log.isTraceEnabled()) {
-        	log.trace(getMessage(action, object, context));
-        }
-        return Permission.ABSTAIN;
-    }
-	
-	public void assertIsGranted(RiotUser user, String action, Object object, Object context)
-			throws PermissionDeniedException {
-		
 		if (log.isDebugEnabled()) {
         	log.debug(getMessage(action, object, context));
         }
-	}
-	
+        return Permission.ABSTAIN;
+    }
+		
 	private String getMessage(String action, Object object, Object context) {
 		return String.format("action: %s, object: %s, context: %s", action, object, context);
 	}

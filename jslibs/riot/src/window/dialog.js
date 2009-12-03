@@ -42,7 +42,7 @@ riot.window = (function() {
 				overlay.style.paddingRight = margin;
 				
 				if (Prototype.Browser.IE) {
-					this.hideElements('select');
+					hideElements('select');
 				}
 				hideElements('object', dialog.box);
 				hideElements('embed', dialog.box);

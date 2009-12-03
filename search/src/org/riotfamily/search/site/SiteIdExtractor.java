@@ -16,8 +16,8 @@
 package org.riotfamily.search.site;
 
 import org.riotfamily.crawler.PageData;
-import org.riotfamily.search.index.html.FieldExtractor;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.search.index.html.FieldExtractor;
 
 /**
  * FieldExtractor that extracts the {@link Site#getId() siteId} from the URL.

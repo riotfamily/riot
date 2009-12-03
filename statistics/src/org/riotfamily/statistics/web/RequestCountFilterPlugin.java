@@ -26,10 +26,10 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.filter.FilterPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.riotfamily.statistics.domain.FaultyRepsonseStatsItem;
 import org.riotfamily.statistics.domain.RequestStatsItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RequestCountFilterPlugin extends FilterPlugin {
 

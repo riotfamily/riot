@@ -60,8 +60,7 @@ public class ListModelBuilder extends ListItemLoader {
 						messageResolver, getContextPath(), null));
 			}
 		}
-		Object[] expanded = loadExpanded(expandedId);
-		List<ListItem> items = createItems(expanded, 0, null);
+		List<ListItem> items = createItems(expandedId);
 		ListParamsImpl params = state.getParams();
 		int itemsTotal = dao.getListSize(getParent(), params);
 		params.adjust(itemsTotal);

@@ -23,7 +23,7 @@ import org.riotfamily.core.security.auth.RiotUser;
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class TransientSessionMetaDataStore implements SessionMetaDataStore {
+public class TransientSessionMetaDataStore implements SessionMetaDataStore<SessionMetaData> {
 
 	public List<SessionMetaData> listAll() {
 		return Collections.emptyList();

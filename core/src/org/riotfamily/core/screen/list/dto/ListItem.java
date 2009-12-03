@@ -23,9 +23,6 @@ import org.riotfamily.core.screen.list.command.ObjectReference;
  */
 @DataTransferObject
 public class ListItem implements ObjectReference {
-
-	@RemoteProperty
-	private int rowIndex;
 	
 	@RemoteProperty
 	private String objectId;
@@ -56,10 +53,6 @@ public class ListItem implements ObjectReference {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-
-	public void setRowIndex(int rowIndex) {
-		this.rowIndex = rowIndex;
-	}
 	
 	public void setParentNodeId(String parentNodeId) {
 		this.parentNodeId = parentNodeId;
@@ -79,8 +72,14 @@ public class ListItem implements ObjectReference {
 
 	public void setChildren(List<ListItem> children) {
 		this.children = children;
+		if (children != null) {
+			for (ListItem child : children) {
+				child.setParentNodeId(objectId);
+			}
+		}
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
@@ -92,6 +91,7 @@ public class ListItem implements ObjectReference {
 		return false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return objectId != null ? objectId.hashCode() : 0;
 	}
@@ -103,11 +103,7 @@ public class ListItem implements ObjectReference {
 	public String getObjectId() {
 		return this.objectId;
 	}
-	
-	public int getRowIndex() {
-		return this.rowIndex;
-	}
-	
+		
 	public String getParentNodeId() {
 		return this.parentNodeId;
 	}

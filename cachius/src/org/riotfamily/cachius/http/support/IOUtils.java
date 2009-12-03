@@ -24,6 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.SocketException;
 
+import org.springframework.util.FileCopyUtils;
+
 public class IOUtils {
 	
 	public static final int BUFFER_SIZE = 4096;

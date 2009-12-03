@@ -46,7 +46,7 @@ public abstract class AbstractConditionalElement extends AbstractElement
 	}
 	
 	/**
-	 * Sets whether the editor should be hidden if the form is not new.
+	 * Sets whether the editor should be hidden if it is not editable.
 	 */
 	public void setHide(boolean hide) {
 		this.hide = hide;

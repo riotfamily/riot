@@ -575,15 +575,8 @@ riot.components = (function() {
 		
 		afterInsert: function() {
 			riot.toolbar.enablePreviewButton();
-			if (this.componentList.config.max 
-					&& this.componentList.componentElements.length 
-					== this.componentList.config.max) {
-
-				this.componentList.insertOff();			
-			}
-			else {
-				this.trackMouse();
-			}			
+			riot.toolbar.selectedButton.applyHandler(false);
+			riot.toolbar.selectedButton.applyHandler(true);
 		}
 	});
 

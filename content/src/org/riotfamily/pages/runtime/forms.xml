@@ -25,9 +25,6 @@
 	
 	<form id="page" bean-class="org.riotfamily.pages.model.ContentPage"
 			initializer="pageFormInitializer">
-		<group label-key="page.preferences">
-			<textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,*@{}-]*)" />
-		</group>
 	</form>
 
 	<form id="riotUser" bean-class="org.riotfamily.pages.riot.security.SiteUser">

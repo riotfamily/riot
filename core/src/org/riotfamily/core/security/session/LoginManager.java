@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.AuthenticationService;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.auth.UserLookupAuthenticationService;
@@ -30,7 +31,7 @@ public class LoginManager implements ServletContextAware {
 
 	private UserLookupAuthenticationService userLookupService;
 	
-	private SessionMetaDataStore metaDataStore = new TransientSessionMetaDataStore();
+	private SessionMetaDataStore<SessionMetaData> metaDataStore = new TransientSessionMetaDataStore();
 	
 	
 	public LoginManager(AuthenticationService authenticationService) {
@@ -40,7 +41,7 @@ public class LoginManager implements ServletContextAware {
 		}
 	}
 	
-	public void setMetaDataStore(SessionMetaDataStore metaDataStore) {
+	public void setMetaDataStore(SessionMetaDataStore<SessionMetaData> metaDataStore) {
 		this.metaDataStore = metaDataStore;
 	}
 
@@ -67,7 +68,7 @@ public class LoginManager implements ServletContextAware {
 			String password) {
 		
 		RiotUser user = authenticationService.authenticate(userName, password);
-		if (user != null) {
+		if (user != null && AccessController.isGranted(user, "login", null, request)) {
 			storeUserInSession(userName, user, request);
 			return true;
 		}

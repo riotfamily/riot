@@ -116,7 +116,7 @@ public class ListService {
 	public List<ListItem> getChildren(String key, String parentId,
 			HttpServletRequest request) {
 		
-		return new ListItemLoader(this, key, request).getItems(parentId);
+		return new ListItemLoader(this, key, request).getChildren(parentId);
 	}
 	
 	@RemoteMethod

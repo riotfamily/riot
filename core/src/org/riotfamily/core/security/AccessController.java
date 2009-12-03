@@ -12,15 +12,18 @@
  */
 package org.riotfamily.core.security;
 
+import static org.riotfamily.core.security.policy.AuthorizationPolicy.Permission.*;
+
 import java.util.List;
 
 import org.riotfamily.core.security.auth.RiotUser;
-import org.riotfamily.core.security.policy.AssertionPolicy;
 import org.riotfamily.core.security.policy.AuthorizationPolicy;
+import org.riotfamily.core.security.policy.InteractivePolicy;
 import org.riotfamily.core.security.policy.PermissionDeniedException;
 import org.riotfamily.core.security.policy.AuthorizationPolicy.Permission;
 import org.riotfamily.core.security.session.AccessControlFilterPlugin;
 import org.riotfamily.core.security.session.SecurityContext;
+import org.springframework.util.Assert;
 
 
 
@@ -72,10 +75,10 @@ public final class AccessController {
 		if (user != null) {
 			for (AuthorizationPolicy policy : policies) {
 				Permission permission = policy.getPermission(user, action, object, context);
-				if (permission == Permission.GRANTED) {
+				if (permission == GRANTED || permission == REQUESTABLE) {
 					return true;
 				}
-				else if (permission == Permission.DENIED) {
+				else if (permission == DENIED) {
 					return false;
 				}
 			}
@@ -92,18 +95,24 @@ public final class AccessController {
 	public static void assertIsGranted(String action, Object object, Object context) 
 			throws PermissionDeniedException {
 		
-		RiotUser subject = getCurrentUser();
-		if (subject != null) {
+		RiotUser user = getCurrentUser();
+		if (user != null) {
 			for (AuthorizationPolicy policy : policies) {
-				if (policy instanceof AssertionPolicy) {
-					AssertionPolicy assertionPolicy = (AssertionPolicy) policy;
-					assertionPolicy.assertIsGranted(subject, action, object, context);
+				Permission permission = policy.getPermission(user, action, object, context);
+				if (permission == GRANTED) {
+					return;
 				}
-				else if (policy.getPermission(subject, action, object, context) == Permission.DENIED) {
-					throw new PermissionDeniedException(subject, action, object, policy);
+				else if (permission == DENIED) {
+					throw new PermissionDeniedException(user, action, object, context, policy);
+				}
+				else if (permission == REQUESTABLE) {
+					Assert.isInstanceOf(InteractivePolicy.class, policy);
+					String url = ((InteractivePolicy) policy).getPermissionRequestUrl(user, action, object, context);
+					throw new PermissionDeniedException(user, action, object, context, policy, url);
 				}
 			}
 		}
+		throw new PermissionDeniedException(user, action, object, context, null);
 	}
 	
 }

@@ -26,6 +26,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.http.content.BinaryContent;
+import org.riotfamily.cachius.http.content.CharacterContent;
 import org.riotfamily.cachius.http.content.ChunkedContent;
 import org.riotfamily.cachius.http.content.ContentFragment;
 import org.riotfamily.cachius.http.content.Directives;
@@ -206,7 +207,7 @@ public class CachiusResponse implements HttpServletResponse {
     public void stopCapturing() throws IOException {
     	flushBuffer();
     	resetBuffer();
-    	if (scanWriter != null && scanWriter.foundBlocks()) {
+    	if (isChunked()) {
     		ChunkedContent content = new ChunkedContent(file);
     		for (Block block : scanWriter.getBlocks()) {
     			ContentFragment fragment = directives.parse(block.getValue());
@@ -217,16 +218,29 @@ public class CachiusResponse implements HttpServletResponse {
     		content.addTail();
     		data.setContent(content);
     	}
+    	else if (isGzip()) {
+			data.setContent(new GzipContent(file, diskStore.getFile()));
+    	}
+    	else if (isCharacter()) {
+    		data.setContent(new CharacterContent(file));
+    	}	
     	else {
-    		if (compressible && file.length() > gzipThreshold) {
-    			data.setContent(new GzipContent(file, diskStore.getFile()));
-    		}
-    		else {
-    			data.setContent(new BinaryContent(file));
-    		}
+    		data.setContent(new BinaryContent(file));
     	}
     }
-        
+    
+    private boolean isCharacter() {
+		return scanWriter != null;
+	}
+    
+	private boolean isChunked() {
+		return isCharacter() && scanWriter.foundBlocks();
+	}
+	
+	private boolean isGzip() {
+		return compressible && file.length() > gzipThreshold;
+	}
+
     /**
      * Delegates the call to {@link SessionIdEncoder#encodeRedirectURL(String)}
      * to ensure that the session state remains the same during processing.

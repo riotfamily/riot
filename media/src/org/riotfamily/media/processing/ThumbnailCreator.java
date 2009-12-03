@@ -18,9 +18,6 @@ import java.io.IOException;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
-import org.riotfamily.media.processing.ImageMagick;
-import org.riotfamily.media.processing.ImageMagickThumbnailer;
-import org.riotfamily.media.processing.Thumbnailer;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
