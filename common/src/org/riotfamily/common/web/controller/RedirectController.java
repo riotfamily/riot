@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class RedirectController implements Controller {
 
+	private boolean permanent = false;
 	private boolean http10Compatible = true;
 	
 	private boolean addContextPath = false;
@@ -46,12 +47,30 @@ public class RedirectController implements Controller {
 	public RedirectController(String url, boolean addContextPath, 
 			boolean addServletMapping) {
 		
+		this(url, addContextPath, addServletMapping, false);
+	}
+
+	public RedirectController(String url, boolean addContextPath, 
+			boolean addServletMapping, boolean permanent) {
+		
 		this.url = url;
 		this.addContextPath = addContextPath;
 		this.addServletMapping = addServletMapping;
+		this.permanent = permanent;
 	}
 
 	protected RedirectController() {
+	}
+
+	/**
+	 * Set this to true if the redirect should send the HTTP statuse code 301
+	 * where only applicable. At current only GET and HEAD requests will send
+	 * the 301, other methods will send the status depending on the http10compatible
+	 * flag.
+	 * @see #setHttp10Compatible
+	 */
+	public void setPermanent(boolean permanent) {
+		this.permanent = permanent;
 	}
 	
 	/**
@@ -152,15 +171,30 @@ public class RedirectController implements Controller {
 	protected void sendRedirect(HttpServletRequest request, 
 			HttpServletResponse response, String targetUrl) throws IOException {
 		
-		if (http10Compatible) {
-			// always send status code 302
-			response.sendRedirect(response.encodeRedirectURL(targetUrl));
-		}
-		else {
-			// correct HTTP status code is 303, in particular for POST requests
-			response.setStatus(303);
+		if (permanent && isGetOrHeadRequest(request)) {
+			// send status code 301 for GET or HEAD requests only
+			response.setStatus(301);
 			response.setHeader("Location", response.encodeRedirectURL(targetUrl));
 		}
+		else {
+			if (http10Compatible) {
+				// always send status code 302
+				response.sendRedirect(response.encodeRedirectURL(targetUrl));
+			}
+			else {
+				// correct HTTP status code is 303, in particular for POST requests
+				response.setStatus(303);
+				response.setHeader("Location", response.encodeRedirectURL(targetUrl));
+			}
+		}
 	}
-		
+	
+	private boolean isGetOrHeadRequest(HttpServletRequest request) {
+		String method = request.getMethod();
+		if ("GET".equalsIgnoreCase(method) || "HEAD".equalsIgnoreCase(method)) {
+			return true;
+		}
+		return false;
+	}
+
 }
