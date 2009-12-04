@@ -13,10 +13,8 @@
 package org.riotfamily.dbmsgsrc.riot;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -25,22 +23,20 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.riotfamily.core.screen.list.command.impl.export.Exporter;
+import org.riotfamily.core.screen.list.command.impl.export.AbstractExportCommand;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 
-public class MessageEntryExcelExporter implements Exporter {
+public class MessageEntryExportCommand extends AbstractExportCommand {
 
-	
-	public String getFileExtension() {
+	@Override
+	protected String getFileExtension() {
 		return "xls";
 	}
 	
-	public void export(String objectId, Collection<?> items, Object parent, 
-			List<String> properties, HttpServletResponse response) 
-			throws IOException {
-				
+	@Override
+	protected void export(Collection<?> items, OutputStream out) throws IOException {
 		HSSFWorkbook wb = new WorkbookCreator().createWorkbook(items);
-		wb.write(response.getOutputStream());
+		wb.write(out);
 	}
 	
 	private final static class WorkbookCreator {
