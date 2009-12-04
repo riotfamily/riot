@@ -19,6 +19,6 @@ public interface Command {
 	
 	public boolean isEnabled(CommandContext context, Selection selection);
 	
-	public CommandResult execute(CommandContext context, Selection selection);
+	public CommandResult execute(CommandContext context, Selection selection) throws Exception;
 
 }

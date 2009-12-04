@@ -129,7 +129,7 @@ class CommandContextHandler extends ListServiceHandler
 		return true;
 	}
 
-	public CommandResult execCommand(String commandId, List<ListItem> items) {
+	public CommandResult execCommand(String commandId, List<ListItem> items) throws Exception {
 		this.commandId = commandId;
 		CommandResult result = null;
 		Command command = getCommands().get(commandId);
@@ -144,7 +144,7 @@ class CommandContextHandler extends ListServiceHandler
 			}
 			result = command.execute(this, selection);
 		}
-		catch (RuntimeException e) {
+		catch (Exception e) {
 			rollback(status);
 			throw e;
 		}
