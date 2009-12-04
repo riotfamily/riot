@@ -57,14 +57,12 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 		doc.start("div")
 			.attribute("class", "riot-component-list")
 			.attribute("riot:listId", list.getCompositeId());
-		
 		doc.body();
+		
+		doc.start("script").attribute("type", "application/riot-config")
+				.body(config.toJSON(), false).end();
+		
 		super.render(list, config, request, response);
-		doc.end();
-		
-		doc.start("script").body("riotComponentListConfig" + list.getCompositeId() 
-				+ " = " + config.toJSON() + ";", false);
-		
 		doc.end();
 	}
 
