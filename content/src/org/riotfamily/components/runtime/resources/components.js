@@ -476,8 +476,9 @@ riot.components = (function() {
 					.observe('click', this.onclick.bindAsEventListener(this)));
 
 			$(document.body).insert(this.element);
-			var dest = this.componentList.element.down() || this.componentList.element;
-			this.element.clonePosition(dest, {setWidth: false, setHeight: false});
+			
+			var dest = this.componentList.element.down('.riot-component') || this.componentList.element;
+			this.move(null, dest);
 			
 			var button = this;
 			this.moveHandler = function(ev) {
@@ -496,21 +497,30 @@ riot.components = (function() {
 		},
 		
 		move: function(ev, el) {
-			this.index = this.componentList.componentElements.indexOf(el);
+			this.index = Math.max(0, this.componentList.componentElements.indexOf(el));
+			var offset = this.componentList.config;
 			var pos = el.cumulativeOffset();
 			var left = pos.left;
 			var top = pos.top;
 			if (el.getStyle('float') != 'none') {
-				if (ev.pointerX() > left + el.getWidth() / 2) {
-					left += el.getWidth();
+				if (ev && ev.pointerX() > left + el.getWidth() / 2) {
+					left += el.getWidth() - offset.x;
 					this.index++;
 				}
+				else {
+					left += offset.x;
+				}
+				top += offset.y;
 			}
 			else {
-				if (ev.pointerY() > top + el.getHeight() / 2) {
-					top += el.getHeight();
+				if (ev && ev.pointerY() > top + el.getHeight() / 2) {
+					top += el.getHeight() - offset.y;
 					this.index++;
 				}
+				else {
+					top += offset.y;
+				}
+				left += offset.x;
 			}
 			this.element.setStyle({left: left + 'px', top: top + 'px'});
 		},
