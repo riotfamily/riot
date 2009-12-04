@@ -229,13 +229,13 @@ body > #riot-notification {
 .riot-insert-button {
 	clear: both;
 	display: block;
-	height: 32px;
-	width: 32px;
+	height: 24px;
+	width: 24px;
 	background: url(images/toolbar/add_glow.png) left center no-repeat;
 	background-image: url(images/toolbar/add.png);
 	_background-image: none;
 	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}style/images/toolbar/add.png', sizingMethod='image');
-	margin: -16px 0 0 -16px;
+	margin: -12px 0 0 -12px;
 	position: absolute;
 	z-index: 99999;
 }
