@@ -139,7 +139,7 @@ riot.components = (function() {
 			this.element = el;
 			this.id = el.readAttribute('riot:listId');
 			if (!el.id) el.id = 'riot-list-' + this.id;
-			this.config = eval('(' + el.down('script[type=application/riot-config]').innerHTML + ')');
+			this.config = window["riotComponentListConfig" + this.id];
 			this.findComponentElements();
 		},
 		
@@ -697,8 +697,6 @@ riot.components = (function() {
 	// -----------------------------------------------------------------------
 	// Initialization
 	// -----------------------------------------------------------------------
-	
-	Prototype.ScriptFragment = '<script(?![^>]*riot-config)[^>]*>([\\S\\s]*?)<\/script>';
 	
 	var containersToPublish = [];
 	
