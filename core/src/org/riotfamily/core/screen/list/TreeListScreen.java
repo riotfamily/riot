@@ -295,7 +295,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 			HttpServletResponse response) throws Exception {
 
 		
-		ScreenContext screenContext = ScreenContext.get(request);
+		ScreenContext screenContext = ScreenContext.Binding.get(request);
 		ChooserSettings chooserSettings = new ChooserSettings(request);
 		ModelAndView mv = new ModelAndView(viewName);
 		
