@@ -70,7 +70,7 @@ public class DistinctAutoCompleterModel extends HibernateDaoSupport
 				.setParameter("search", "%" + search  + "%");
 		
 		if (parentProperty != null) {
-			query.setParameter("parentId", ScreenContext.get(request).getParentId());	
+			query.setParameter("parentId", ScreenContext.Binding.get(request).getParentId());	
 		}
 		return query.list();
 	}

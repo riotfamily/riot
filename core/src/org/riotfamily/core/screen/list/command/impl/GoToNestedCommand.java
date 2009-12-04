@@ -59,7 +59,7 @@ public class GoToNestedCommand extends AbstractSingleItemCommand<Object> {
 	@Override
 	public CommandInfo getInfo(CommandContext context) {
 		RiotScreen screen = findChildScreen(context);
-		ScreenContext screenContext = context.createNewItemContext(null);
+		ScreenContext screenContext = context.getScreenContext().createNewItemContext(null);
 		return new CommandInfo(
 				getName(),
 				getAction(), 
@@ -71,8 +71,8 @@ public class GoToNestedCommand extends AbstractSingleItemCommand<Object> {
 	@Override
 	protected CommandResult execute(CommandContext context, Object item) {
 		RiotScreen screen = findChildScreen(context);
-		ScreenContext childContext = context.createItemContext(item).createChildContext(screen);
-		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
+		return new GotoUrlResult(context.getScreenContext()
+				.createItemContext(item).createChildContext(screen));
 	}
 
 	

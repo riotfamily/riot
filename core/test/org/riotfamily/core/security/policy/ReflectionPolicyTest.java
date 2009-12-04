@@ -15,6 +15,7 @@ package org.riotfamily.core.security.policy;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.riotfamily.core.screen.DefaultScreenContext;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.auth.User;
@@ -29,7 +30,7 @@ public class ReflectionPolicyTest {
 	
 	private RiotUser user = new User();
 	
-	private ScreenContext context = new ScreenContext(null, null, null, null, false);
+	private ScreenContext context = new DefaultScreenContext(null, null, null, null, false);
 	
 	@Test
 	public void test() {

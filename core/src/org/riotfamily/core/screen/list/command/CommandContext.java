@@ -36,19 +36,13 @@ public interface CommandContext {
 	public int getItemsTotal();
 	
 	public String getCommandId();
-	
-	public String getParentId();
-	
+		
 	public Object getParent();
 	
 	public ListScreen getScreen();
 	
-	public ScreenContext createParentContext();
+	public ScreenContext getScreenContext();
 	
 	public FormContext createFormContext(String formUrl);
-	
-	public ScreenContext createNewItemContext(Object parentTreeItem);
-	
-	public ScreenContext createItemContext(Object item);
 	
 }

@@ -10,23 +10,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.core.screen.list.command.impl;
+package org.riotfamily.core.screen.list.command.result;
 
-import org.riotfamily.core.screen.list.command.CommandContext;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.io.FileTransfer;
 import org.riotfamily.core.screen.list.command.CommandResult;
-import org.riotfamily.core.screen.list.command.impl.support.AbstractSingleItemCommand;
-import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 
-public class EditCommand extends AbstractSingleItemCommand<Object> {
+@DataTransferObject
+public class DownloadResult implements CommandResult {
 
-	@Override
-	protected String getIcon() {
-		return "pencil";
+    private FileTransfer file;
+    
+    public DownloadResult(FileTransfer file) {
+		this.file = file;
 	}
+
+    @RemoteMethod
+	public String getAction() {
+    	return "download";
+    }
 	
-	@Override
-	protected CommandResult execute(CommandContext context, Object item) {
-		return new GotoUrlResult(context.getScreenContext().createItemContext(item));
+    @RemoteMethod
+	public FileTransfer getFile() {
+		return file;
 	}
 
 }

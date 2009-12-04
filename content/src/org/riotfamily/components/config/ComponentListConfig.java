@@ -29,12 +29,18 @@ public class ComponentListConfig {
 	private Map<String, ComponentConfig> validTypes  = Generics.newLinkedHashMap();
 	
 	private List<String> initialTypes = Generics.newArrayList();
+	
+	private int x;
+	
+	private int y;
 
 	public ComponentListConfig(Integer min, Integer max, 
-			List<String> initial, List<?> valid) {
+			List<String> initial, List<?> valid, int x, int y) {
 		
 		this.min = min;
 		this.max = max;
+		this.x = x;
+		this.y = y;
 		if (initial != null) {
 			initialTypes.addAll(initial); 
 		}
@@ -78,6 +84,14 @@ public class ComponentListConfig {
 
 	public List<String> getInitialTypes() {
 		return initialTypes;
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
 	}
 	
 	public ComponentConfig getConfig(String type) {

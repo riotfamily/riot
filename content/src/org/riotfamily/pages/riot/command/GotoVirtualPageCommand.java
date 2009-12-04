@@ -56,7 +56,7 @@ public class GotoVirtualPageCommand extends AbstractBatchCommand<Object> {
 	protected CommandResult execute(CommandContext context, Object object, 
 			int index, int selectionSize) {
 		
-		ScreenContext ctx = context.createParentContext();
+		ScreenContext ctx = context.getScreenContext().createParentContext();
 		Site site = null;
 		while (site == null && ctx != null) {
 			Object parent = ctx.getObject();

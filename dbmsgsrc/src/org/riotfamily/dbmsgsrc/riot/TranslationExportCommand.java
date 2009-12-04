@@ -13,11 +13,9 @@
 package org.riotfamily.dbmsgsrc.riot;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -26,24 +24,25 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.riotfamily.core.screen.list.command.impl.export.Exporter;
+import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.Selection;
+import org.riotfamily.core.screen.list.command.impl.export.AbstractExportCommand;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.pages.model.Site;
 
-public class TranslationExcelExporter implements Exporter {
-
+public class TranslationExportCommand extends AbstractExportCommand {
 	
+	@Override
 	public String getFileExtension() {
 		return "xls";
 	}
-	
-	public void export(String objectId, Collection<?> items, Object parent, 
-			List<String> properties, HttpServletResponse response) 
-			throws IOException {
-		
-		Site site = (Site) parent;
+
+	@Override
+	protected void export(CommandContext context, Selection selection, OutputStream out) throws IOException {
+		Site site = (Site) context.getParent();
+		Collection<?> items = getItems(context, selection);
 		HSSFWorkbook wb = new WorkbookCreator().createWorkbook(items, site);
-		wb.write(response.getOutputStream());
+		wb.write(out);
 	}
 	
 	private final static class WorkbookCreator {

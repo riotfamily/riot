@@ -258,66 +258,86 @@ var RiotList = Class.create({
 		}
 	},
 	
+	handlers: {
+		
+		batch: function(list, result) {
+			dwr.engine.beginBatch();
+			result.batch.each(list.processCommandResult.bind(list));
+			dwr.engine.endBatch();
+		},
+		
+		refreshList: function(list, result) {
+			list.refreshList(result.objectId, result.refreshAll);
+		},
+		
+		updateCommands: function(list, result) {
+			list.updateCommandStates();
+		},
+		
+		gotoUrl: function(list, result) {
+			var win = eval(result.target);
+			if (result.replace) {
+				win.location.replace(result.url);
+			}
+			else {
+				win.location.href = result.url;
+			}
+		},
+		
+		popup: function(list, result) {
+			var win;
+			if (result.arguments) {
+				 win = window.open(result.url, result.windowName || '_blank', result.arguments);
+			}
+			else {
+				win = window.open(result.url, result.windowName || '_blank');
+			}
+			if (!win) {
+				alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
+			}
+			else {
+				try {
+					if (win.focusLost) {
+						win.close();
+						win = window.open(result.url, result.windowName || 'commandPopup');
+					}
+					win.focus();
+					win.onblur = function() {
+						this.focusLost = true;
+					}
+				}
+				catch (e) {
+				}
+			}
+		},
+		
+		dialog: function(list, result) {
+			new riot.window.Dialog(result);
+		},
+		
+		notification: function(list, result) {
+			riot.notification.show(result);;
+		},
+		
+		reload: function(list, result) {
+			window.location.reload();
+		},
+		
+		eval: function(list, result) {
+			eval(result.script);
+		},
+		
+		download: function(list, result) {
+			dwr.engine.openInDownload(result.file);
+		}
+	},
+	
 	processCommandResult: function(result) {
 		this.setIdle();
 		if (result) {
-			if (result.action == 'batch') {
-				dwr.engine.beginBatch();
-				result.batch.each(this.processCommandResult.bind(this));
-				dwr.engine.endBatch();
-			}
-			else if (result.action == 'refreshList') {
-				this.refreshList(result.objectId, result.refreshAll);
-			}
-			else if (result.action == 'updateCommands') {
-				this.updateCommandStates();
-			}
-			else if (result.action == 'gotoUrl') {
-				var win = eval(result.target);
-				if (result.replace) {
-					win.location.replace(result.url);
-				}
-				else {
-					win.location.href = result.url;
-				}
-			}
-			else if (result.action == 'popup') {
-				var win;
-				if (result.arguments) {
-					 win = window.open(result.url, result.windowName || '_blank', result.arguments);
-				}
-				else {
-					win = window.open(result.url, result.windowName || '_blank');
-				}
-				if (!win) {
-					alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
-				}
-				else {
-					try {
-						if (win.focusLost) {
-							win.close();
-							win = window.open(result.url, result.windowName || 'commandPopup');
-						}
-						win.focus();
-						win.onblur = function() {
-							this.focusLost = true;
-						}
-					}
-					catch (e) {
-					}
-				}
-			}
-			else if (result.action == 'dialog') {
-				new riot.window.Dialog(result);
-			}
-			else if (result.action == 'notification') {
-				riot.notification.show(result);
-			}
-			else if (result.action == 'reload') {
-				window.location.reload();
-			}
-			else if (result.action == 'eval') {
-				eval(result.script);
+			var handler = this.handlers[result.action];
+			if (handler) {
+				handler(this, result);
 			}
 		}
 	},

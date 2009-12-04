@@ -466,12 +466,7 @@
 	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.core.form.options.RiotDaoOptionsModelAdapter" />
 		
 	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />
- 
-	<bean id="exportController" name="/export/{screenId}/{commandId}" class="org.riotfamily.core.screen.list.command.impl.export.ExportController">
-		<constructor-arg ref="listService" />
-	</bean>
-	<alias alias="/export/{screenId}/{commandId}/{objectId}" name="exportController"/>
- 
+  
 	<!--
 	<bean id="org.directwebremoting.PageNormalizer"
 		class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />

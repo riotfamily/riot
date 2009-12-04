@@ -14,7 +14,6 @@ package org.riotfamily.core.screen.list.command.impl;
 
 import org.riotfamily.core.dao.Constraints;
 import org.riotfamily.core.dao.RiotDao;
-import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.SelectionItem;
@@ -35,8 +34,8 @@ public class AddCommand extends AbstractChildCommand {
 	
 	@Override
 	protected CommandResult execute(CommandContext context, SelectionItem parent) {
-		ScreenContext childContext = context.createNewItemContext(parent.getObject());
-		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
+		return new GotoUrlResult(context.getScreenContext()
+				.createNewItemContext(parent.getObject()));
 	}
 
 }
