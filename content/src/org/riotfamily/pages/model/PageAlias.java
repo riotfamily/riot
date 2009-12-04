@@ -95,4 +95,11 @@ public class PageAlias extends ActiveRecordBeanSupport {
 				.uniqueResult();
 	}
 	
+	public static void deleteAlias(Page page) {
+		PageAlias alias = loadBySiteAndPath(page.getSite(), page.getPath());
+		if (alias != null) {
+			alias.delete();
+		}
+	}
+	
 }

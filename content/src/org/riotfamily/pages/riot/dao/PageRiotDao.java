@@ -23,6 +23,7 @@ import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.SingleRoot;
 import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.pages.model.ContentPage;
+import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
@@ -115,7 +116,19 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 
 	public Object update(Object entity) throws DataAccessException {
 		ContentPage page = (ContentPage) entity;
+		createPageAlias(page);
 		return page.merge();
+	}
+
+	private void createPageAlias(ContentPage page) {
+		if (page.getPath() != null 
+				&& !page.getPath().substring(page.getPath().lastIndexOf("/"))
+				.equals(page.getPathComponent())) {
+			
+			PageAlias.deleteAlias(page);
+			PageAlias alias = new PageAlias(page, page.getSite(), page.getPath());
+			alias.save();
+		}
 	}
 
 	public boolean canSwap(Object entity, Object parent, ListParams params,
