@@ -12,7 +12,6 @@
  */
 package org.riotfamily.core.screen.list.command.impl;
 
-import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractSingleItemCommand;
@@ -27,8 +26,7 @@ public class EditCommand extends AbstractSingleItemCommand<Object> {
 	
 	@Override
 	protected CommandResult execute(CommandContext context, Object item) {
-		ScreenContext childContext = context.createItemContext(item);
-		return new GotoUrlResult(context.getRequest(), childContext.getUrl());
+		return new GotoUrlResult(context.getScreenContext().createItemContext(item));
 	}
 
 }
