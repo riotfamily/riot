@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteMethod;
+import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 
 @DataTransferObject
@@ -33,6 +34,10 @@ public class GotoUrlResult implements CommandResult {
 	
 	public GotoUrlResult(HttpServletRequest request, String url) {
 		this.url = request.getContextPath() + url;
+	}
+	
+	public GotoUrlResult(ScreenContext context) {
+		this(context.getRequest(), context.getLink().getUrl());
 	}
 	
 	@RemoteMethod
