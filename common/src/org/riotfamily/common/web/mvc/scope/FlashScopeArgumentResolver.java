@@ -28,11 +28,11 @@ public class FlashScopeArgumentResolver implements WebArgumentResolver {
 		
 		HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 		if (methodParameter.getParameterType().equals(FlashModel.class)) {
-			return FlashScope.getFlashModel(request);
+			return FlashModel.get(request);
 		}
 		FlashScopeAttribute annotation = getAnnotation(methodParameter.getParameterAnnotations());
 		if (annotation != null) {
-			FlashModel flashModel = FlashScope.getFlashModel(request);
+			FlashModel flashModel = FlashModel.get(request);
 			if (flashModel != null) {
 				String key = annotation.value();
 				if (!StringUtils.hasLength(key)) {

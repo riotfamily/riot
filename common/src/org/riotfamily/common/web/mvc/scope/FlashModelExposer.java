@@ -12,28 +12,23 @@
  */
 package org.riotfamily.common.web.mvc.scope;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-public class FlashModel extends HashMap<String, Object>{
+import org.riotfamily.common.web.mvc.view.ModelPostProcessor;
 
-	private static final String REQUEST_ATTR = FlashModel.class.getName();
-	
-	public FlashModel() {
-	}
-	
-	public FlashModel(Map<String, ?> model) {
-		super(model);
+public class FlashModelExposer implements ModelPostProcessor {
+
+	public void postProcess(Map<String, Object> model,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		
+		FlashModel flash = FlashModel.get(request);
+		if (flash != null) {
+			model.putAll(flash);
+		}
 	}
 
-	void expose(HttpServletRequest request) {
-		request.setAttribute(REQUEST_ATTR, this);
-	}
-	
-	public static FlashModel get(HttpServletRequest request) {
-		return (FlashModel) request.getAttribute(REQUEST_ATTR);
-	}
-	
 }

@@ -12,8 +12,7 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.directwebremoting.org/schema/spring-dwr
-    	http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd
-    	">
+    	http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
 
 	<description>
 		Riot servlet (Riot Core)
@@ -213,6 +212,8 @@
 	</bean>
 		
 	<bean id="templateMacroHelper" class="org.riotfamily.common.web.template.TemplateMacroHelperFactory" />
+	
+	<bean class="org.riotfamily.common.web.mvc.scope.FlashModelExposer" />
 		
 	<!-- Security -->
 
