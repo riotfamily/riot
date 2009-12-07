@@ -70,6 +70,8 @@ public final class FormatUtils {
 			
 	private static final Pattern PARENT_DIR_PATTERN = Pattern.compile("\\.\\./");
 	
+	private static final Pattern DATE_PATTERN = Pattern.compile("^([M|Y|D]*)[^MYD]([M|Y|D]*)[^MYD]([M|Y|D]*)[^MYD]?$");
+	
 	private static final Pattern DATE_DELIMITER_PATTERN = Pattern.compile("^[M|Y|D]*([^MYD])[M|Y|D]*([^MYD])[M|Y|D]*([^MYD])?$");
 	
 	private FormatUtils() {
@@ -590,6 +592,24 @@ public final class FormatUtils {
 	}
 	
 	/**
+	 * Returns the date format as array for the given locale.
+	 * Examples:
+	 *
+	 * <pre>
+	 *  Locale.ENGLISH - &quot;["MM", "DD", "YYYY"]&quot;
+	 *  Locale.GERMAN - &quot;["DD", "MM", "YYYY"]&quot;
+	 * </pre>
+	 * 	 
+	 */
+	public static String[] getDateFormatArray(Locale locale) {
+		Matcher m = DATE_PATTERN.matcher(getDateFormat(locale));
+		if (m.matches()) {	
+			return new String[] {m.group(1), m.group(2), m.group(3)};
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the date delimiter for the given date format
 	 * Examples:
 	 *
@@ -603,6 +623,26 @@ public final class FormatUtils {
 		Matcher m = DATE_DELIMITER_PATTERN.matcher(dateFormat);
 		if (m.matches()) {				
 			return m.group(1);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the date delimiter for the given date format, index indicates
+	 * which (1,2,3), since some countries like Hongkong use different delimiters
+	 * for the first, second and third part
+	 * Examples:
+	 *
+	 * <pre>
+	 *   &quot;MM/DD/YYYY&quot; - &quot;/&quot;
+	 *   &quot;DD.MM.YYYY&quot; - &quot;.&quot;
+	 * </pre>
+	 * 	 
+	 */
+	public static String getDateDelimiter(String dateFormat, int index) {		
+		Matcher m = DATE_DELIMITER_PATTERN.matcher(dateFormat);
+		if (m.matches()) {				
+			return m.group(index);
 		}
 		return null;
 	}

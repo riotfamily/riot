@@ -107,8 +107,8 @@ public class CommonMacroHelper {
 	
 	private String dateFormat;
 	
-	private String dateDelimiter;
-
+	private String[] dateFormatArray;
+	
 	public CommonMacroHelper(ApplicationContext ctx,
 			HttpServletRequest request, HttpServletResponse response, 
 			ServletContext servletContext, ResourceStamper stamper, 
@@ -154,14 +154,25 @@ public class CommonMacroHelper {
 		return dateFormat;
 	}
 	
-	public String getDateDelimiter() {		
-		if (dateDelimiter == null) {
-			if (dateFormat == null) {
-				getDateFormat();
-			}
-			dateDelimiter = FormatUtils.getDateDelimiter(dateFormat);			
+	public String[] getDateFormatArray() {
+		if (dateFormatArray == null) {			
+			dateFormatArray = FormatUtils.getDateFormatArray(getLocale());			
 		}
-		return dateDelimiter;
+		return dateFormatArray;
+	}
+	
+	public String getDateDelimiter() {		
+		if (dateFormat == null) {
+			getDateFormat();
+		}
+		return FormatUtils.getDateDelimiter(dateFormat);			
+	}
+	
+	public String getDateDelimiter(int index) {		
+		if (dateFormat == null) {
+			getDateFormat();
+		}
+		return FormatUtils.getDateDelimiter(dateFormat, index);			
 	}
 	
 	public String getMessage(String code, Collection<?> args) {
