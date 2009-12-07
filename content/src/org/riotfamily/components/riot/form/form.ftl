@@ -20,8 +20,10 @@
 	<body>
 		${html}
 		<script>
-			var dlg = parent.riot.window.getDialog(window);
-			dlg.setSize(${form.dimension.width + 60}, ${form.dimension.height + 100});
+			if (parent != window && parent.riot) {
+				var dlg = parent.riot.window.getDialog(window);
+				dlg.setSize(${form.dimension.width + 60}, ${form.dimension.height + 100});
+			}
 		</script>
 	</body>
 </html>

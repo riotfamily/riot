@@ -239,16 +239,20 @@ var RElement = {
 		}
         return Element._returnOffset(left, top);
 	}
-}
+};
 
-Element.addMethods(RElement);
-if (Prototype.Browser.IE) {
-	// Reset the _extendedByPrototype flag, inn case $() was already invoked before this point
-	for (var i = 0, len = document.all.length; i < len; i++) {
-		var el = document.all[i];
-		if (el._extendedByPrototype) el._extendedByPrototype = false;
+(function() {
+	var UNDEF;
+	Position.cumulativeOffset = RElement.cumulativeOffset;
+	Element.addMethods(RElement);
+	if (Prototype.Browser.IE) {
+		// Reset the _extendedByPrototype flag, inn case $() was already invoked before this point
+		for (var i = 0, len = document.all.length; i < len; i++) {
+			var el = document.all[i];
+			if (el._extendedByPrototype) {
+				el._extendedByPrototype = UNDEF; // delete el._extendedByPrototype doesn't work here
+			}
+		}
 	}
-}
-
-Position.cumulativeOffset = RElement.cumulativeOffset;
+})();
 

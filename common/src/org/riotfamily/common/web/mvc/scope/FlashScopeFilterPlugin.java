@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.filter.FilterPlugin;
 
 /**
- * FilterPlugin that exposes data stored in the {@link FlashScope} as
- * request attributes.
+ * FilterPlugin that exposes the {@link FlashModel} stored in the 
+ * {@link FlashScope} as request attribute.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
