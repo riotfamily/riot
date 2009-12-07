@@ -291,7 +291,9 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	private boolean materializePath() {
 		String path = buildPath();
 		if (!path.equals(this.path)) {
+			String oldPath = this.path;
 			this.path = path;
+			PageAlias.create(this, oldPath);
 			return true;
 		}
 		return false;
@@ -323,6 +325,7 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	}
 	
 	public void onDelete() {
+		PageAlias.resetByPage(this);
 	}
 	
 	// ----------------------------------------------------------------------
