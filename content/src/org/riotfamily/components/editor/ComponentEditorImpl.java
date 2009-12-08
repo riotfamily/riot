@@ -41,6 +41,7 @@ import org.riotfamily.components.model.ContentFragment;
 import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentRenderer;
+import org.riotfamily.components.support.OverrideMethodRequestWrapper;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.session.LoginManager;
@@ -199,7 +200,10 @@ public class ComponentEditorImpl implements ComponentEditor,
 	private String renderComponent(Component component) {
 		try {
 			StringWriter sw = new StringWriter();
-			HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
+			HttpServletRequest request = new OverrideMethodRequestWrapper(
+					WebContextFactory.get().getHttpServletRequest())
+					.setMethod("GET");
+			
 			HttpServletResponse response = getCapturingResponse(sw);
 			renderer.render(component, request, response);
 			return sw.toString();
