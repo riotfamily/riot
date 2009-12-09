@@ -12,44 +12,35 @@
  */
 package org.riotfamily.components.view;
 
+import org.riotfamily.common.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
-import org.riotfamily.components.model.ContentMap;
-import org.springframework.core.Ordered;
+import org.riotfamily.common.web.support.RequestHolder;
+import org.riotfamily.components.model.ContentContainerOwner;
 
-import freemarker.ext.beans.MapModel;
-import freemarker.template.SimpleHash;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * ObjectWrapperPlugin that wraps {@link ContentMap}s with a {@link MapModel} 
- * (instead of a {@link SimpleHash}) so that getOwner(), getId() etc. can be 
- * accessed by a template.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 9.0
  */
-public class ContentMapObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered {
+public class ContentContainerOwnerObjectWrapperPlugin implements ObjectWrapperPlugin {
 
-	private int order = -1;
-	
-	/**
-	 * Sets the order. Default is <code>-1</code>.
-	 */
-	public void setOrder(int order) {
-		this.order = order;
-	}
-	
-	public int getOrder() {
-		return order;
-	}
-	
 	public boolean supports(Object obj) {
-		return obj instanceof ContentMap;
+		return obj instanceof ContentContainerOwner;
 	}
 
-	public TemplateModel wrapSupportedObject(Object obj,
-			PluginObjectWrapper wrapper) throws TemplateModelException {
+	public TemplateModel wrapSupportedObject(Object obj, 
+			PluginObjectWrapper wrapper) 
+			throws TemplateModelException {
 		
-		return new MapModel((ContentMap) obj, wrapper);
+		ContentContainerOwner owner = (ContentContainerOwner) obj;
+		
+		ContentContainerOwnerFacade facade = new ContentContainerOwnerFacade(
+				owner, RequestHolder.getRequest(), RequestHolder.getResponse());
+		
+		return new FacadeTemplateModel(facade, owner, wrapper);
 	}
 
 }
