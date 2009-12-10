@@ -41,6 +41,10 @@ public class SessionIdInsertingResponseWrapper extends HttpServletResponseWrappe
 		super(response);
 		this.sessionIdEncoder = sessionIdEncoder;
 	}
+	
+	@Override
+	public void setContentLength(int len) {
+	}
 
 	@Override
 	public PrintWriter getWriter() throws IOException {
