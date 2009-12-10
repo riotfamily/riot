@@ -181,6 +181,13 @@
 	</#if>
 </#macro>
 
+<#macro use content>
+	<#local previousContent = content />
+	<#global contentMap = content />
+	<#nested />
+	<#global contentMap = previousContent />
+</#macro>
+
 <#macro image key default="" transform=c.resolve attributes... >
 	<#compress>
 		<#local value = (contentMap[key].uri)!default>

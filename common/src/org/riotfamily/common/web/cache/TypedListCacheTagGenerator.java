@@ -10,30 +10,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.common.web.cache;
 
-import java.util.List;
+import org.riotfamily.common.collection.TypedList;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+public class TypedListCacheTagGenerator implements CacheTagGenerator {
 
+	public String generateTag(Object obj) {
+		if (obj instanceof TypedList<?>) {
+			TypedList<?> list = (TypedList<?>) obj;
+			Class<?> itemClass = list.getItemClass();
+			if (itemClass.isAnnotationPresent(TagCacheItems.class)) {
+				return CacheTagUtils.getTag(itemClass);
+			}
+		}
+		return null;
+	}
 
-public interface PageType {
-
-	public String getName();
-
-	public String getForm();
-	
-	public List<String> getSuffixes();
-	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }

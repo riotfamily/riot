@@ -10,30 +10,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.components.support;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+public class OverrideMethodRequestWrapper extends HttpServletRequestWrapper {
 
-
-public interface PageType {
-
-	public String getName();
-
-	public String getForm();
+	private String method;
 	
-	public List<String> getSuffixes();
-	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
+	public OverrideMethodRequestWrapper(HttpServletRequest request) {
+		super(request);
+	}
 
-	public Page getPage(Site site, Object object);
+	@Override
+	public String getMethod() {
+		return method != null ? method : super.getMethod();
+	}
 	
-	void register(SitemapSchema schema, PageType parent);
+	public OverrideMethodRequestWrapper setMethod(String method) {
+		this.method = method;
+		return this;
+	}
 	
 }

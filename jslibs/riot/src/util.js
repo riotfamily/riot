@@ -145,7 +145,7 @@ var RElement = {
 			var e = a[i];
 			if (typeof e.riot_onclick != 'undefined') {
 				e.onclick = e.riot_onclick;
-				delete e.riot_onclick;
+				e.riot_onclick = void(0);
 			}
 		}
 		return el;
@@ -242,7 +242,6 @@ var RElement = {
 };
 
 (function() {
-	var UNDEF;
 	Position.cumulativeOffset = RElement.cumulativeOffset;
 	Element.addMethods(RElement);
 	if (Prototype.Browser.IE) {
@@ -250,7 +249,7 @@ var RElement = {
 		for (var i = 0, len = document.all.length; i < len; i++) {
 			var el = document.all[i];
 			if (el._extendedByPrototype) {
-				el._extendedByPrototype = UNDEF; // delete el._extendedByPrototype doesn't work here
+				el._extendedByPrototype = void(0);
 			}
 		}
 	}

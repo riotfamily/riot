@@ -28,6 +28,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
@@ -65,6 +66,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	private String urlEscapingCharset = "UTF-8";
 
 	private ApplicationContext applicationContext;
+
+	private ObjectWrapper objectWrapper;
 	
 	
 	/**
@@ -92,6 +95,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	 * </p>
 	 * @see freemarker.template.Configuration#setAllSharedVariables
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setFreemarkerVariables(Map variables) {
 		sharedVariables = variables;
@@ -154,16 +158,22 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		this.templateUpdateDelay = templateUpdateDelay;
 	}
 
+	public void setObjectWrapper(ObjectWrapper objectWrapper) {
+		this.objectWrapper = objectWrapper;
+	}
+	
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void postProcessTemplateLoaders(List templateLoaders) {
 		super.postProcessTemplateLoaders(templateLoaders);
 		templateLoaders.add(new ResourceTemplateLoader(getResourceLoader()));
 	}
 	
+	@Override
 	protected void postProcessConfiguration(Configuration config) 
 			throws IOException, TemplateException {
 		
@@ -175,11 +185,9 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		
 		importMacroLibraries(config);
 		config.setTemplateExceptionHandler(exceptionHandler);
-		
-		Collection<ObjectWrapperPlugin> plugins = SpringUtils.orderedBeans(
-				applicationContext, ObjectWrapperPlugin.class);
-		
-		PluginObjectWrapper objectWrapper = new PluginObjectWrapper(plugins);
+		if (objectWrapper == null) {
+			objectWrapper = DefaultObjectWrapper.getDefaultInstance();
+		}
 		config.setObjectWrapper(objectWrapper);
 		
 		if (sharedVariables != null) {
@@ -188,7 +196,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		}
 		
 		if (exposeStaticModels) {
-			config.setSharedVariable("statics", objectWrapper.getStaticModels());
+			config.setSharedVariable("statics", BeansWrapper.getDefaultInstance().getStaticModels());
 		}
 
 		if (exposeBeanFactoryModel) {

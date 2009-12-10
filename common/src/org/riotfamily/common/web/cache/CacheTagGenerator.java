@@ -10,30 +10,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
-
-import java.util.List;
-
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+package org.riotfamily.common.web.cache;
 
 
-public interface PageType {
+public interface CacheTagGenerator {
 
-	public String getName();
+	public String generateTag(Object obj);
 
-	public String getForm();
-	
-	public List<String> getSuffixes();
-	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }
