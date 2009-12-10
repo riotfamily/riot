@@ -57,11 +57,11 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 			}
 			
 			RiotScreen screen = repository.getScreen(screenId);
-			ScreenContext context = new ScreenContext(
+			ScreenContext context = new DefaultScreenContext(
 					screen, request, objectId, parentId, parentIsNode);
 			
 			AccessController.assertIsGranted("viewScreen", screen, context);
-			context.expose();
+			ScreenContext.Binding.expose(context);
 			return screen;
 		}
 		

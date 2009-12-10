@@ -89,12 +89,11 @@ public class InplaceMacroHelper {
 	public String renderComponents(ContentMap contentMap, 
 			String key, Integer minComponents, Integer maxComponents,
 			List<String> initalComponentTypes, 
-			List<?> validComponentTypes)
+			List<?> validComponentTypes, int x, int y)
 			throws Exception {
 		
-		ComponentListConfig config = new ComponentListConfig(
-				minComponents, maxComponents, 
-				initalComponentTypes, validComponentTypes);
+		ComponentListConfig config = new ComponentListConfig(minComponents, 
+				maxComponents, initalComponentTypes, validComponentTypes, x, y);
 		
 		return componentListRenderer.renderComponents(contentMap, key, config, 
 				request, response);

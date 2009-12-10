@@ -26,13 +26,27 @@ body > #riot-notification {
 #riot-toolbar {
 	left: 6px;
 	z-index: 1000;
+}
+
+#riot-toolbar-ie-shadow {
+	position: absolute;
+	width: 40px;
+	height: 290px;
+	background-color: #000;
+	z-index: 1001;
+	filter:progid:DXImageTransform.Microsoft.Blur(
+         pixelRadius=5,MakeShadow=true,ShadowOpacity=0.3);
+}
+
+#riot-toolbar-content {
+	position: absolute;
+	z-index: 1002;
 	text-align: left;
 	width: 40px;
 	background: url(images/toolbar/background.gif) no-repeat;
 	box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
 	-moz-box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
 	-webkit-box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.3);
-	filter: progid:DXImageTransform.Microsoft.Shadow(color=#777777,direction=135,strength=2);
 }
 
 #riot-toolbar-title {
@@ -67,95 +81,94 @@ body > #riot-notification {
 	-moz-outline: none;
 }
 
-#riot-toolbar-button-browse {
+#riot-toolbar-button-browse a {
 	background-position: -62px 0;
 }
-#riot-toolbar-button-browse.toolbar-button:hover {
+#riot-toolbar-button-browse a.toolbar-button:hover {
 	background-position: -31px 0;
 }
-#riot-toolbar-button-browse.toolbar-button-active,
-#riot-toolbar-button-browse.toolbar-button:active {
+#riot-toolbar-button-browse a.toolbar-button-active,
+#riot-toolbar-button-browse a.toolbar-button:active {
 	background-position: 0 0;
 }
 
-#riot-toolbar-button-insert {
+#riot-toolbar-button-insert a {
 	background-position: -62px -31px;
 }
-#riot-toolbar-button-insert.toolbar-button:hover {
+#riot-toolbar-button-insert a.toolbar-button:hover {
 	background-position: -31px -31px;
 }
-#riot-toolbar-button-insert.toolbar-button-active,
-#riot-toolbar-button-insert.toolbar-button:active {
+#riot-toolbar-button-insert a.toolbar-button:active,
+#riot-toolbar-button-insert a.toolbar-button-active {
 	background-position: 0 -31px;
 }
 
-
-#riot-toolbar-button-remove {
+#riot-toolbar-button-remove a {
 	background-position: -62px -62px;
 }
-#riot-toolbar-button-remove.toolbar-button:hover {
+#riot-toolbar-button-remove a.toolbar-button:hover {
 	background-position: -31px -62px;
 }
-#riot-toolbar-button-remove.toolbar-button-active,
-#riot-toolbar-button-remove.toolbar-button:active {
+#riot-toolbar-button-remove a.toolbar-button-active,
+#riot-toolbar-button-remove a.toolbar-button:active {
 	background-position: 0 -62px;
 }
 
 
-#riot-toolbar-button-edit {
+#riot-toolbar-button-edit a {
 	background-position: -62px -93px;
 }
-#riot-toolbar-button-edit.toolbar-button:hover {
+#riot-toolbar-button-edit a.toolbar-button:hover {
 	background-position: -31px -93px;
 }
-#riot-toolbar-button-edit.toolbar-button-active,
-#riot-toolbar-button-edit.toolbar-button:active {
+#riot-toolbar-button-edit a.toolbar-button-active,
+#riot-toolbar-button-edit a.toolbar-button:active {
 	background-position: 0 -93px;
 }
 
-#riot-toolbar-button-properties {
+#riot-toolbar-button-properties a {
 	background-position: -62px -124px;
 }
-#riot-toolbar-button-properties.toolbar-button:hover {
+#riot-toolbar-button-properties a.toolbar-button:hover {
 	background-position: -31px -124px;
 }
-#riot-toolbar-button-properties.toolbar-button-active,
-#riot-toolbar-button-properties.toolbar-button:active {
+#riot-toolbar-button-properties a.toolbar-button-active,
+#riot-toolbar-button-properties a.toolbar-button:active {
 	background-position: 0 -124px;
 }
 
-#riot-toolbar-button-move {
+#riot-toolbar-button-move a {
 	background-position: -62px -155px;
 }
-#riot-toolbar-button-move.toolbar-button:hover {
+#riot-toolbar-button-move a.toolbar-button:hover {
 	background-position: -31px -155px;
 }
-#riot-toolbar-button-move.toolbar-button-active,
-#riot-toolbar-button-move.toolbar-button:active {
+#riot-toolbar-button-move a.toolbar-button-active,
+#riot-toolbar-button-move a.toolbar-button:active {
 	background-position: 0 -155px;
 }
 
-#riot-toolbar-button-preview {
+#riot-toolbar-button-preview a {
 	background-position: -62px -186px;
 }
-#riot-toolbar-button-preview.toolbar-button:hover {
+#riot-toolbar-button-preview a.toolbar-button:hover {
 	background-position: -31px -186px;
 }
-#riot-toolbar-button-preview.toolbar-button-active,
-#riot-toolbar-button-preview.toolbar-button:active {
+#riot-toolbar-button-preview a.toolbar-button-active,
+#riot-toolbar-button-preview a.toolbar-button:active {
 	background-position: 0 -186px;
 }
-#riot-toolbar-button-preview.toolbar-button-disabled {
+#riot-toolbar-button-preview a.toolbar-button-disabled {
 	background-position: -93px -186px;
 }
 
-#riot-toolbar-button-logout {
+#riot-toolbar-button-logout a {
 	background-position: -62px -217px;
 }
-#riot-toolbar-button-logout.toolbar-button:hover {
+#riot-toolbar-button-logout a.toolbar-button:hover {
 	background-position: -31px -217px;
 }
-#riot-toolbar-button-logout.toolbar-button:active {
+#riot-toolbar-button-logout a.toolbar-button:active {
 	background-position: 0 -217px;
 }
 
@@ -228,13 +241,13 @@ body > #riot-notification {
 .riot-insert-button {
 	clear: both;
 	display: block;
-	height: 32px;
-	width: 32px;
+	height: 24px;
+	width: 24px;
 	background: url(images/toolbar/add_glow.png) left center no-repeat;
 	background-image: url(images/toolbar/add.png);
 	_background-image: none;
 	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}style/images/toolbar/add.png', sizingMethod='image');
-	margin: -16px 0 0 -16px;
+	margin: -12px 0 0 -12px;
 	position: absolute;
 	z-index: 99999;
 }

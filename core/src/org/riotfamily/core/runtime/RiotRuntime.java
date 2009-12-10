@@ -50,7 +50,7 @@ public class RiotRuntime implements ServletContextAware {
 	
 	public void setServletContext(ServletContext context) {
 		Assert.notNull(resourceMapping, "A resourceMapping must be specified.");
-		servletPrefix = (String) context.getInitParameter(SERVLET_PREFIX_ATTRIBUTE);
+		servletPrefix = context.getInitParameter(SERVLET_PREFIX_ATTRIBUTE);
 		if (servletPrefix == null) {
 			servletPrefix = DEFAULT_SERVLET_PREFIX;
 		}
@@ -66,11 +66,11 @@ public class RiotRuntime implements ServletContextAware {
 	}
     
 	private String getRiotVersion() {
-		return RiotVersion.getVersionString();
+		return RiotVersion.getVersionString().replace('.', '-');
 	}	
 	
 	public static RiotRuntime getRuntime(ApplicationContext context) {
-		return (RiotRuntime) BeanFactoryUtils.beanOfTypeIncludingAncestors(
+		return BeanFactoryUtils.beanOfTypeIncludingAncestors(
 				context, RiotRuntime.class);
 	}
 }

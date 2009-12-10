@@ -16,8 +16,8 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
+import org.riotfamily.core.screen.DefaultScreenContext;
 import org.riotfamily.core.screen.ListScreen;
-import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenRepository;
 import org.riotfamily.core.screen.ScreenUtils;
 import org.riotfamily.core.screen.form.FormScreen;
@@ -104,7 +104,7 @@ public class ObjectChooser extends AbstractChooser
 		ChooserSettings settings = new ChooserSettings(targetId, rootId);
 		String url = HandlerUrlUtils.getUrlResolver(applicationContext)
 				.getUrlForHandler(rootList.getId(),
-				new ScreenContext(null, null, null, getRootObjectId(), false));
+				new DefaultScreenContext(null, null, null, getRootObjectId(), false));
 		
 		return settings.appendTo(url);
 	}

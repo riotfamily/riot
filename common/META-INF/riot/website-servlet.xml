@@ -97,6 +97,8 @@
 		<property name="filterName" value="website-filter" />
 	</bean>
 	
+	<bean class="org.riotfamily.common.web.mvc.scope.FlashModelExposer" />
+	
 	<bean id="cssTemplateController" name="/**/*.css" 
 			class="org.riotfamily.common.web.css.CssTemplateController">
 
@@ -159,23 +161,16 @@
 			</props>
 		</property>
 		<property name="whitespaceStripping" value="true" />
+		<property name="objectWrapper">
+			<bean class="org.riotfamily.common.web.cache.freemarker.TaggingPluginObjectWrapper" />
+		</property>
 	</bean>
 	
-	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.common.web.cache.freemarker.TaggingObjectWrapperPlugin">
-		<description>
-			ObjectWrapperPlugin that tags cache items whenever a class with the
- 			@TagCacheItems annotation is accessed by a FreeMarker template.
-		</description>
-		<property name="sessionFactory" ref="sessionFactory" />
+	<bean class="org.riotfamily.common.web.cache.AnnotationCacheTagGenerator">
+		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
-	<bean id="queryResultObjectWrapperPlugin" class="org.riotfamily.common.web.cache.freemarker.TypedListObjectWrapperPlugin">
-		<description>
-			ObjectWrapperPlugin that tags cache items whenever a QueryResult
-			for items with a @TagCacheItems annotation is accessed by a 
-			FreeMarker template.
-		</description>
-	</bean>
+	<bean class="org.riotfamily.common.web.cache.TypedListCacheTagGenerator" />
 	
 	<bean class="org.riotfamily.common.freemarker.MapEntityObjectWrapperPlugin">
 		<description>

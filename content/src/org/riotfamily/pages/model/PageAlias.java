@@ -15,10 +15,10 @@ package org.riotfamily.pages.model;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.criterion.Restrictions;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 
 
@@ -32,10 +32,11 @@ import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
  * @since 6.5
  */
 @Entity
-@Table(name="riot_page_aliases")
+@Table(name="riot_page_aliases", uniqueConstraints={
+	@UniqueConstraint(columnNames={"site_id","path"})
+})
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 public class PageAlias extends ActiveRecordBeanSupport {
-
 
 	private ContentPage page;
 	
@@ -46,9 +47,9 @@ public class PageAlias extends ActiveRecordBeanSupport {
 	public PageAlias() {
 	}
 	
-	public PageAlias(ContentPage page, Site site, String path) {
+	public PageAlias(ContentPage page, String path) {
 		this.page = page;
-		this.site = site;
+		this.site = page.getSite();
 		this.path = path;
 	}
 
@@ -78,6 +79,7 @@ public class PageAlias extends ActiveRecordBeanSupport {
 		this.path = path;
 	}
 
+	@Override
 	public String toString() {
 		return "PageAlias[" + page + " --> " + path + "]";
 	}
@@ -87,12 +89,28 @@ public class PageAlias extends ActiveRecordBeanSupport {
 	// ----------------------------------------------------------------------
 	
 	public static PageAlias loadBySiteAndPath(Site site, String path) {
-		return (PageAlias) getSession().createCriteria(PageAlias.class)
+		return (PageAlias) createQuery(
+				"from PageAlias where site = ? and path = ?", site, path)
 				.setCacheable(true)
 				.setCacheRegion("pages")
-				.add(Restrictions.eq("site", site))
-				.add(Restrictions.eq("path", path))
 				.uniqueResult();
+	}
+
+	private static void deleteBySiteAndPath(Site site, String path) {
+		createQuery("delete from PageAlias where site = ? and path = ?", site, path).executeUpdate();
+	}
+	
+	public static void create(ContentPage page, String oldPath) {
+		deleteBySiteAndPath(page.getSite(), page.getPath());
+		if (oldPath != null) {
+			deleteBySiteAndPath(page.getSite(), oldPath);
+			PageAlias alias = new PageAlias(page, oldPath);
+			alias.save();
+		}
+	}
+	
+	public static void resetByPage(ContentPage page) {
+		createQuery("update PageAlias set page = null where page = ?", page).executeUpdate();
 	}
 	
 	public static void deleteAlias(Page page) {

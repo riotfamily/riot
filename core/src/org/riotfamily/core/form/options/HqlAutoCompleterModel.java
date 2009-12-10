@@ -43,7 +43,7 @@ public class HqlAutoCompleterModel extends HibernateDaoSupport
 		Query query = getSession().createQuery(hql);
 		query.setParameter("search", "%" + search  + "%");
 		if (hql.indexOf(":parent") != -1) {
-			query.setParameter("parent", ScreenContext.get(request).getParent());	
+			query.setParameter("parent", ScreenContext.Binding.get(request).getParent());	
 		}
 		return query.list();
 	}

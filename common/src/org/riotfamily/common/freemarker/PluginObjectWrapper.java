@@ -14,6 +14,10 @@ package org.riotfamily.common.freemarker;
 
 import java.util.Collection;
 
+import org.riotfamily.common.util.SpringUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
@@ -22,14 +26,20 @@ import freemarker.template.TemplateModelException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PluginObjectWrapper extends DefaultObjectWrapper {
+public class PluginObjectWrapper extends DefaultObjectWrapper 
+		implements ApplicationContextAware {
 
 	private Collection<ObjectWrapperPlugin> plugins;
 	
-	public PluginObjectWrapper(Collection<ObjectWrapperPlugin> plugins) {
+	public void setApplicationContext(ApplicationContext ctx) {
+		setPlugins(SpringUtils.orderedBeans(ctx, ObjectWrapperPlugin.class));
+	}
+	
+	public void setPlugins(Collection<ObjectWrapperPlugin> plugins) {
 		this.plugins = plugins;
 	}
 	
+	@Override
 	public TemplateModel wrap(Object obj) throws TemplateModelException {
 		if (obj == null) {
 			return null;

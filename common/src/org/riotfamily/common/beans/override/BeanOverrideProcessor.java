@@ -88,7 +88,7 @@ public class BeanOverrideProcessor implements BeanFactoryPostProcessor, Priority
 		
 		MutablePropertyValues pvs = target.getPropertyValues();
 		if (!merge) {
-			pvs.clear();
+			pvs.getPropertyValueList().clear();
 		}
 		pvs.addPropertyValues(source.getPropertyValues());
 	}

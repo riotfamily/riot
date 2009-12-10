@@ -66,6 +66,10 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 			}
 		}
 		if (rootNodeTreeDao != null) {
+			if (expanded == null && expandedId != null) {
+				// The id of the rootNode was passed as expandedId
+				return createItems(null);
+			}
 			return Collections.singletonList(expanded);
 		}
 		List<ListItem> items = createChildItems(getParent(), expanded);

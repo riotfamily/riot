@@ -161,7 +161,8 @@ public class ListService {
 	@RemoteMethod
 	public CommandResult execCommand(String key,
 			String commandId, List<ListItem> items, 
-			HttpServletRequest request,	HttpServletResponse response) {
+			HttpServletRequest request,	HttpServletResponse response) 
+			throws Exception {
 
 		return new ChooserCommandHandler(this, key, request)
 				.execCommand(commandId, items);

@@ -134,7 +134,7 @@ public class FormScreen extends AjaxFormController
 	protected Form createForm(HttpServletRequest request) {
 		Form form = formRepository.createForm(getFormId());
 		form.addButton("save");
-		ScreenContext context = ScreenContext.get(request);
+		ScreenContext context = ScreenContext.Binding.get(request);
 		form.setAttribute("screenContext", context);
 		return form;
 	}
@@ -145,7 +145,7 @@ public class FormScreen extends AjaxFormController
 	
 	@Override
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		return ScreenContext.get(request).getObject();
+		return ScreenContext.Binding.get(request).getObject();
 	}
 	
 	@Override
@@ -157,7 +157,7 @@ public class FormScreen extends AjaxFormController
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject("form", sw.toString());
 		
-		ScreenContext context = ScreenContext.get(request);
+		ScreenContext context = ScreenContext.Binding.get(request);
 		if (context.getObject() != null) {
 			if (childScreens != null) {
 				List<ScreenLink> childLinks = Generics.newArrayList();
@@ -176,7 +176,7 @@ public class FormScreen extends AjaxFormController
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
-		ScreenContext context = ScreenContext.get(request);
+		ScreenContext context = ScreenContext.Binding.get(request);
 		try {
 			return handleFormSubmissionInternal(form, request, response, context);
 		}
@@ -213,7 +213,6 @@ public class FormScreen extends AjaxFormController
 				Object parent = context.getParent();
 				Object bean = form.populateBackingObject();				
 				dao.save(bean, parent);
-				context.setObject(bean);
 			}
 			else {
 				log.debug("Updating entity ...");
@@ -238,6 +237,10 @@ public class FormScreen extends AjaxFormController
 		
 		ModelAndView mv;
 		String focus = request.getParameter("focus");
+		
+		// Recreate context to make sure it includes the objectId (in case of newly created objects)
+		context = context.createParentContext().createItemContext(form.getBackingObject());
+		
 		if (focus != null || (save && hasChildScreens())) {
 			mv = reloadForm(form, context, focus);
 		}
@@ -254,12 +257,13 @@ public class FormScreen extends AjaxFormController
 	}
 
 	protected ModelAndView showParentList(ScreenContext context) {
-		String listUrl = context.createParentContext().getUrl();
+		
+		String listUrl = context.createParentContext().getLink().getUrl();
 		return new ModelAndView(new FlashScopeView(listUrl, true));
 	}
 
 	protected ModelAndView reloadForm(Form form, ScreenContext context, String focus) {
-		return new ModelAndView(new FlashScopeView(context.getUrl(), true))
+		return new ModelAndView(new FlashScopeView(context.getLink().getUrl(), true))
 				.addObject("focus", focus);
 	}
 

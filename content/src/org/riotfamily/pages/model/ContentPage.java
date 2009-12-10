@@ -275,7 +275,9 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	}
 	
 	private void updatePath() {
+		String oldPath = this.path;
 		if (materializePath()) {
+			PageAlias.create(this, oldPath);
 			updateChildPaths();
 		}
 	}
@@ -314,15 +316,16 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	
 	public void onSave() {
 		setCreationDate(new Date());
-		updatePath();
-	}
-	
-	public void onUpdate(Object oldState) {
-		materializePath();
+		PageAlias.create(this, null);
 		updateChildPaths();
 	}
 	
+	public void onUpdate(Object oldState) {
+		updatePath();
+	}
+	
 	public void onDelete() {
+		PageAlias.resetByPage(this);
 	}
 	
 	// ----------------------------------------------------------------------

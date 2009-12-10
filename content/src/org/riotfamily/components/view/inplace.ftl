@@ -62,15 +62,15 @@
 <#---
  - @deprecated Please use @inplace.components instead.
  -->
-<#macro componentList key min=0 max=1000 initial=[] valid=[]>
-	<@components key min max initial valid />
+<#macro componentList key min=0 max=1000 initial=[] valid=[] x=0 y=0>
+	<@components key min max initial valid x y />
 </#macro>
 
-<#macro components key min=0 max=1000 initial=[] valid=[]>
+<#macro components key min=0 max=1000 initial=[] valid=[] x=0 y=0>
 	<#if !contentMap??>
 		<#stop "No contentMap found in model">
 	</#if>
-	${inplaceMacroHelper.renderComponents(contentMap, key, min, max, initial, valid)!}
+	${inplaceMacroHelper.renderComponents(contentMap, key, min, max, initial, valid, x, y)!}
 </#macro>
 
 <#---
@@ -179,6 +179,13 @@
 	<#else>
 		<#nested />
 	</#if>
+</#macro>
+
+<#macro use content>
+	<#local previousContent = content />
+	<#global contentMap = content />
+	<#nested />
+	<#global contentMap = previousContent />
 </#macro>
 
 <#macro image key default="" transform=c.resolve attributes... >

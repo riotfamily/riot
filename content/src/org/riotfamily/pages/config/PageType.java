@@ -28,6 +28,8 @@ public interface PageType {
 	
 	public Object getHandler();
 	
+	public PageType getParent();
+	
 	public List<? extends PageType> getChildTypes();
 
 	public Page getPage(Site site, Object object);

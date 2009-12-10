@@ -10,19 +10,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.core.screen.list.command.impl.export;
+package org.riotfamily.common.web.cache;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
+public interface CacheTagGenerator {
 
-public interface Exporter {
+	public String generateTag(Object obj);
 
-	public String getFileExtension();
-	
-	public void export(String objectId, Collection<?> items, Object parent, 
-			List<String> properties, HttpServletResponse response) 
-			throws IOException;
 }

@@ -17,13 +17,20 @@ riot.Toolbar = Class.create({
 		this.disablePreviewButton();
 		
 		var buttonsDiv = new Element('div', {id: 'riot-toolbar-buttons'});
-		this.buttons.values().each(function(b) {
-			buttonsDiv.insert(b.element);
-		});
+		this.buttons.values().invoke('insert', buttonsDiv);
 		
-		document.body.appendChild(this.element = new Element('div', {id: 'riot-toolbar'})
-			.insert(new Element('div', {id: 'riot-toolbar-title'}))
-			.insert(buttonsDiv));
+		this.element = new Element('div', {id: 'riot-toolbar'});
+		if (Prototype.Browser.IE) {
+			this.element.insert(new Element('div', {id: 'riot-toolbar-ie-shadow'}));
+		}
+		
+		this.element.insert(
+			new Element('div', {id: 'riot-toolbar-content'})
+				.insert(new Element('div', {id: 'riot-toolbar-title'}))
+				.insert(buttonsDiv)
+		);
+		
+		document.body.appendChild(this.element);
 
 		var cookie = new CookieJar({expires: 604800});
 		var pos = cookie.get('toolbarPos');
@@ -103,10 +110,11 @@ riot.ToolbarButton = Class.create({
 	},
 	
 	createElement: function() {
-		return new Element('a', {
-			id: 'riot-toolbar-button-' + this.handler,
-			title: this.title
-		}).addClassName(this.getClassName());
+		return new Element('a', {title: this.title}).addClassName(this.getClassName());
+	},
+	
+	insert: function(target) {
+		target.insert(this.element.wrap(new Element('div', {id: 'riot-toolbar-button-' + this.handler})));
 	},
 	
 	getClassName: function() {

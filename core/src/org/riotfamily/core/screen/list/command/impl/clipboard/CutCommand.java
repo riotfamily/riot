@@ -89,7 +89,7 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 			}
 		}
 		else {
-			ScreenContext ctx = context.createParentContext();
+			ScreenContext ctx = context.getScreenContext().createParentContext();
 			while (ctx != null) {
 				ancestors.add(ctx.getObject());
 				ctx = ctx.createParentContext();

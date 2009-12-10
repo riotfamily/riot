@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.screen.DefaultScreenContext;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenLink;
@@ -93,7 +94,7 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		}
 		
 		public CommandResult execute(CommandContext context, Selection selection) {
-			ScreenContext nextContext = new ScreenContext(nextList, 
+			ScreenContext nextContext = new DefaultScreenContext(nextList, 
 					null, selection.getSingleItem().getObject(), false, screenContext);
 			
 			ChooserSettings settings = new ChooserSettings(chooserTarget.getId(), null);

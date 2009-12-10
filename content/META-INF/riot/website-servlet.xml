@@ -68,6 +68,7 @@
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
 	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
 	<bean id="pageFacadeObjectWrapperPlugin" class="org.riotfamily.pages.view.PageFacadeObjectWrapperPlugin" />
+	<bean id="contentContainerOwnerObjectWrapperPlugin" class="org.riotfamily.components.view.ContentContainerOwnerObjectWrapperPlugin" />
 		 
 	<override:add ref="inplaceMacroHelper" property="dynamicToolbarScripts" append="true">
 		<bean class="org.riotfamily.pages.view.PageToolbarScript" />

@@ -31,7 +31,7 @@ import org.riotfamily.common.web.support.ServletUtils;
  */
 public class FlashScope {
 
-	private static final String ATTRIBUTE_NAME = FlashScope.class.getName();
+	private static final String SESSION_ATTR = FlashScope.class.getName();
 
 	private Map<String, FlashModel> models = Generics.newHashMap();
 		
@@ -47,17 +47,13 @@ public class FlashScope {
 		flashScope.models.put(url, new FlashModel(model));
 	}
 
-	public static FlashModel getFlashModel(HttpServletRequest request) {
-		return (FlashModel) request.getAttribute(ATTRIBUTE_NAME);
-	}
-	
 	static void expose(HttpServletRequest request) {
 		FlashScope flashScope = getFlashScope(request, false);
 		if (flashScope != null) {
 			String url = ServletUtils.getRequestUrlWithQueryString(request);
 			FlashModel model = flashScope.models.remove(url);
 			if (model != null) {
-				request.setAttribute(ATTRIBUTE_NAME, model);
+				model.expose(request);
 			}
 		}
 	}
@@ -66,10 +62,10 @@ public class FlashScope {
 		FlashScope flashScope = null;
 		HttpSession session = request.getSession(create);
 		if (session != null) {
-			flashScope = (FlashScope) session.getAttribute(ATTRIBUTE_NAME);
+			flashScope = (FlashScope) session.getAttribute(SESSION_ATTR);
 			if (flashScope == null && create) {
 				flashScope = new FlashScope();
-				session.setAttribute(ATTRIBUTE_NAME, flashScope);
+				session.setAttribute(SESSION_ATTR, flashScope);
 			}
 		}
 		return flashScope;

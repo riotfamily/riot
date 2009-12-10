@@ -10,30 +10,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.common.web.mvc.scope;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.riotfamily.components.support;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
-public class FlashModel extends HashMap<String, Object>{
+public class OverrideMethodRequestWrapper extends HttpServletRequestWrapper {
 
-	private static final String REQUEST_ATTR = FlashModel.class.getName();
+	private String method;
 	
-	public FlashModel() {
-	}
-	
-	public FlashModel(Map<String, ?> model) {
-		super(model);
+	public OverrideMethodRequestWrapper(HttpServletRequest request) {
+		super(request);
 	}
 
-	void expose(HttpServletRequest request) {
-		request.setAttribute(REQUEST_ATTR, this);
+	@Override
+	public String getMethod() {
+		return method != null ? method : super.getMethod();
 	}
 	
-	public static FlashModel get(HttpServletRequest request) {
-		return (FlashModel) request.getAttribute(REQUEST_ATTR);
+	public OverrideMethodRequestWrapper setMethod(String method) {
+		this.method = method;
+		return this;
 	}
 	
 }

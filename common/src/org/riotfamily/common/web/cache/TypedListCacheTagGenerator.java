@@ -10,15 +10,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.core.screen.list.command;
+package org.riotfamily.common.web.cache;
 
+import org.riotfamily.common.collection.TypedList;
 
-public interface Command {
+public class TypedListCacheTagGenerator implements CacheTagGenerator {
 
-	public CommandInfo getInfo(CommandContext context);
-	
-	public boolean isEnabled(CommandContext context, Selection selection);
-	
-	public CommandResult execute(CommandContext context, Selection selection) throws Exception;
+	public String generateTag(Object obj) {
+		if (obj instanceof TypedList<?>) {
+			TypedList<?> list = (TypedList<?>) obj;
+			Class<?> itemClass = list.getItemClass();
+			if (itemClass.isAnnotationPresent(TagCacheItems.class)) {
+				return CacheTagUtils.getTag(itemClass);
+			}
+		}
+		return null;
+	}
 
 }
