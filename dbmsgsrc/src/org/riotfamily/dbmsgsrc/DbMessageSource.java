@@ -10,28 +10,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.dbmsgsrc.support;
+package org.riotfamily.dbmsgsrc;
 
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.riotfamily.common.web.cache.CacheTagUtils;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.StringUtils;
 
 public class DbMessageSource extends AbstractMessageSource {
 
+	private static final DefaultTransactionDefinition TX_DEF =
+			new DefaultTransactionDefinition(
+			TransactionDefinition.PROPAGATION_REQUIRED);
+	
 	public static final String DEFAULT_BUNDLE = "default";
 	
-	private TransactionTemplate transactionTemplate;
+	private PlatformTransactionManager transactionManager;
 	
 	private String bundle = DEFAULT_BUNDLE;
 	
@@ -40,7 +42,7 @@ public class DbMessageSource extends AbstractMessageSource {
 	private boolean escapeSingleQuotes = true;
 	
 	public DbMessageSource(PlatformTransactionManager tx) {
-		this.transactionTemplate = new TransactionTemplate(tx); 
+		this.transactionManager = tx; 
 	}
 	
 	public void setBundle(String bundle) {
@@ -68,21 +70,16 @@ public class DbMessageSource extends AbstractMessageSource {
 	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
 		MessageBundleEntry result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 		if (result == null) {
+			TransactionStatus status = transactionManager.getTransaction(TX_DEF);
 			try {
-				result = transactionTemplate.execute(new TransactionCallback<MessageBundleEntry>() {
-					public MessageBundleEntry doInTransaction(TransactionStatus status) {
-						MessageBundleEntry entry = new MessageBundleEntry(bundle, code, defaultMessage);
-						entry.save();
-						return entry;
-					}
-				});
+				result = new MessageBundleEntry(bundle, code, defaultMessage);
+				result.save();
 			}
-			catch (ConstraintViolationException e) {
-				result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
+			catch (Exception e) {
+				transactionManager.rollback(status);
+				return MessageBundleEntry.loadByBundleAndCode(bundle, code);
 			}
-			catch (DataIntegrityViolationException e) {
-				result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
-			}
+			transactionManager.commit(status);
 		}
 		return result;
 	}

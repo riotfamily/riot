@@ -8,7 +8,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		
-	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.DbMessageSource">
+	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.DbMessageSource">
 		<constructor-arg ref="transactionManager" />
 	</override:bean>
 
