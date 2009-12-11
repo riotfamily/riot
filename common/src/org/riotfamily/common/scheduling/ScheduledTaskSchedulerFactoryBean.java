@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.riotfamily.common.log.RiotLog;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -38,6 +37,7 @@ import org.quartz.StatefulJob;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -47,28 +47,28 @@ import org.springframework.scheduling.quartz.JobDetailBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
- * Factory that creates a Quartz scheduler and registers all 
+ * Factory that creates a Quartz scheduler and registers all
  * {@link ScheduledTask} instances found in the ApplicationContext.
  * <p>
- * The factory looks up all Trigger beans with a 
+ * The factory looks up all Trigger beans with a
  * {@link Trigger#getName() trigger name} referenced by one the tasks.
  * You don't have to provide any {@link JobDetail JobDetails} as the
  * factory will create them automatically.
- * </p>  
+ * </p>
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean 
+public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 		implements BeanNameAware {
 
 	private RiotLog log = RiotLog.get(ScheduledTaskSchedulerFactoryBean.class);
-	
+
 	private List<ScheduledTask> tasks;
-	
+
 	private List<Trigger> triggers = Generics.newArrayList();
-	
+
 	private Scheduler scheduler;
-		
+
 	@Override
 	public void setApplicationContext(ApplicationContext ctx) {
 		super.setApplicationContext(ctx);
@@ -91,11 +91,11 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 		throw new BeanCreationException(
 				"This Scheduler does not support manually registered Triggers");
 	}
-	
+
 	public void setBeanName(String name) {
 		setSchedulerName(name);
 	}
-	
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		setJobFactory(new ScheduledTaskJobFactory());
@@ -111,7 +111,7 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 				job.setName(trigger.getName());
 				job.setJobClass(ScheduledTaskQueueJob.class);
 				scheduler.scheduleJob(job, trigger);
-			} 
+			}
 			catch (SchedulerException e) {
 				log.error("Error adding Trigger", e);
 				throw new BeanCreationException("Error adding Trigger", e);
@@ -119,39 +119,43 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 		}
 		return scheduler;
 	}
-		
+
 	private class ScheduledTaskJobFactory implements JobFactory {
 
 		private Map<String, ScheduledTaskQueueJob> jobs = Generics.newHashMap();
-		
+
 		public ScheduledTaskJobFactory() {
 			for (ScheduledTask task : tasks) {
 				for (String triggerName : task.getTriggerNames()) {
 					ScheduledTaskQueueJob job = jobs.get(triggerName);
 					if (job == null) {
-						job = new ScheduledTaskQueueJob(triggerName);
+						job = getScheduledTaskQueueJobNewInstance(triggerName);
 						jobs.put(triggerName, job);
 					}
 					job.addTask(task);
 				}
 			}
 		}
-		
+
 		public Job newJob(TriggerFiredBundle tfb) throws SchedulerException {
 			String triggerName = tfb.getTrigger().getName();
 			return jobs.get(triggerName);
 		}
-		
+
 	}
-	
+
+	protected ScheduledTaskQueueJob getScheduledTaskQueueJobNewInstance(String triggerName) {
+		return new ScheduledTaskQueueJob(triggerName);
+	}
+
 	public static class ScheduledTaskQueueJob implements StatefulJob {
-		
+
 		private RiotLog log = RiotLog.get(ScheduledTaskQueueJob.class);
-		
+
 		private List<ScheduledTask> tasks = Generics.newArrayList();
-		
+
 		private String triggerName;
-		
+
 		public ScheduledTaskQueueJob(String triggerName) {
 			this.triggerName = triggerName;
 		}
@@ -160,10 +164,10 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 			log.info(String.format("Adding %s to %s trigger", task.getClass(), triggerName));
 			tasks.add(task);
 		}
-		
+
 		public void execute(JobExecutionContext context)
 				throws JobExecutionException {
-			
+
 			for (ScheduledTask task : tasks) {
 				try {
 					task.execute();
