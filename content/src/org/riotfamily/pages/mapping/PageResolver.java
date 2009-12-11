@@ -76,10 +76,10 @@ public final class PageResolver {
 		return (Page) page;
 	}
 	
-	public static Page resolvePage(Site site, String type, Object... args) {
-		return site.getSchema().getPageType(type).getPage(site, args);
+	public static Page resolvePage(Site site, String type, Object object) {
+		return site.getSchema().getPageType(type).getPage(site, object);
 	}
-	
+		
 	protected static void exposePage(Page page, HttpServletRequest request) {
 		expose(page, request, PAGE_ATTRIBUTE);
 	}

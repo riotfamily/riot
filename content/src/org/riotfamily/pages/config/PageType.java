@@ -30,7 +30,7 @@ public interface PageType {
 	
 	public List<? extends PageType> getChildTypes();
 
-	public Page getPage(Site site, Object... args);
+	public Page getPage(Site site, Object object);
 	
 	void register(SitemapSchema schema, PageType parent);
 	
