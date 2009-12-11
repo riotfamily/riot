@@ -33,6 +33,7 @@ import freemarker.template.ObjectWrapper;
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateModel;
 
 /**
  * FreeMarkerConfigurer that supports some additional settings. 
@@ -196,7 +197,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		}
 		
 		if (exposeStaticModels) {
-			config.setSharedVariable("statics", BeansWrapper.getDefaultInstance().getStaticModels());
+			config.setSharedVariable("statics", getStaticsModel(objectWrapper));
 		}
 
 		if (exposeBeanFactoryModel) {
@@ -221,6 +222,13 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		
 	}
 	
+	private TemplateModel getStaticsModel(ObjectWrapper wrapper) {
+		if (wrapper instanceof BeansWrapper) {
+			return ((BeansWrapper) wrapper).getStaticModels();
+		}
+		return BeansWrapper.getDefaultInstance().getStaticModels();
+	}
+
 	protected void importMacroLibraries(Configuration config) {
 		if (macroLibraries != null) {
 			Enumeration<?> names = macroLibraries.propertyNames();
