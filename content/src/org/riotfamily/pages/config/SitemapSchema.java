@@ -23,7 +23,6 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -116,12 +115,6 @@ public class SitemapSchema {
 	
 	void syncSystemPages(Site site) {
 		rootPage.sync(site);
-	}
-
-	public VirtualPageType getVirtualPageType(String name) {
-		PageType pageType = getPageType(name);
-		Assert.isInstanceOf(VirtualPageType.class, pageType);
-		return (VirtualPageType) pageType;
 	}
 	
 	public VirtualPageType getVirtualChildType(Page page) {

@@ -3,8 +3,8 @@
   - @namespace pages
   -->
  
-<#function resolve type arg site=currentSite>
-	<#return site.getSchema().getVirtualPageType(type).resolve(site, arg) />
+<#function resolve type args...>
+	<#return statics["org.riotfamily.pages.mapping.PageResolver"].resolvePage(currentSite, type, args) />
 </#function>
 
 <#function get type site=currentSite>
