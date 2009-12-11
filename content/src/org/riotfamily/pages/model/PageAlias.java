@@ -113,4 +113,11 @@ public class PageAlias extends ActiveRecordBeanSupport {
 		createQuery("update PageAlias set page = null where page = ?", page).executeUpdate();
 	}
 	
+	public static void deleteAlias(Page page) {
+		PageAlias alias = loadBySiteAndPath(page.getSite(), page.getPath());
+		if (alias != null) {
+			alias.delete();
+		}
+	}
+	
 }
