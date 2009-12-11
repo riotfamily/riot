@@ -56,7 +56,7 @@
 	<classpathentry kind="lib" path="lib/spring-expression.jar" sourcepath="lib/spring-expression.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-jdbc.jar"/>
 	<classpathentry kind="lib" path="lib/spring-orm.jar" sourcepath="lib/spring-orm.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-transaction.jar"/>
+	<classpathentry kind="lib" path="lib/spring-transaction.jar" sourcepath="lib/spring-transaction.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-web-servlet.jar" sourcepath="lib/spring-web-servlet.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-web.jar" sourcepath="lib/spring-web.src.zip"/>
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
