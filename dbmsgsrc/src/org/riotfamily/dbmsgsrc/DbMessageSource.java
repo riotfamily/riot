@@ -70,16 +70,21 @@ public class DbMessageSource extends AbstractMessageSource {
 	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
 		MessageBundleEntry result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 		if (result == null) {
-			TransactionStatus status = transactionManager.getTransaction(TX_DEF);
 			try {
-				result = new MessageBundleEntry(bundle, code, defaultMessage);
-				result.save();
+				TransactionStatus status = transactionManager.getTransaction(TX_DEF);
+				try {
+					result = new MessageBundleEntry(bundle, code, defaultMessage);
+					result.save();
+				}
+				catch (Exception e) {
+					transactionManager.rollback(status);
+					throw e;
+				}
+				transactionManager.commit(status);
 			}
 			catch (Exception e) {
-				transactionManager.rollback(status);
-				return MessageBundleEntry.loadByBundleAndCode(bundle, code);
+				result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 			}
-			transactionManager.commit(status);
 		}
 		return result;
 	}
