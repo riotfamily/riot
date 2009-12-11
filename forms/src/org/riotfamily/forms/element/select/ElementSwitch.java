@@ -138,7 +138,6 @@ public class ElementSwitch extends Container
 		}
 		selectBox.setValue(value);
 		activateCase(value);
-		activeCase.initEditors();
 	}
 	
 	// ---------------------------------------------------------------------
