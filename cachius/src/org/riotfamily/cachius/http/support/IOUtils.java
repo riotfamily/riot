@@ -24,8 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.SocketException;
 
-import org.springframework.util.FileCopyUtils;
-
 public class IOUtils {
 	
 	public static final int BUFFER_SIZE = 4096;
@@ -114,7 +112,7 @@ public class IOUtils {
 	
 	/**
 	 * Copies the content of the given Reader to a Writer.
-	 * Unlike {@link FileCopyUtils#copy(Reader, Writer)} this method does not 
+	 * Unlike FileCopyUtils.copy(Reader, Writer) this method does not 
 	 * close the Writer (only the Reader).
 	 * @param in the Reader to copy from
 	 * @param out the Writer to copy to
