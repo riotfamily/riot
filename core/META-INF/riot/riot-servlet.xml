@@ -281,6 +281,12 @@
 		<constructor-arg ref="loginManager" />
 	</bean>
 	
+	<bean name="/ping" class="org.riotfamily.common.web.controller.SessionKeepAliveController">
+		<description>
+			Controller that keeps the HTTP session alive.		
+		</description>
+	</bean>	
+	
 	<bean id="logoutController" name="/logout" class="org.riotfamily.core.security.ui.LogoutController">
 		<description>
 			Controller that performs a logout.		
