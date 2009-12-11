@@ -75,17 +75,13 @@ public class VirtualPageType extends AbstractPageType {
 		}
 		return page;
 	}
-
-	public Page resolve(Site site, Object arg) {
-		return resolver.getPage(this, site, arg);
-	}
 	
 	public Collection<Page> listChildren(Page parent) {
 		return Generics.emptyIfNull(resolver.listChildren(this, parent));
 	}
 	
-	public Page getPage(Site site, Object object) {
-		return resolver.getPage(this, site, object);
+	public Page getPage(Site site, Object... args) {
+		return resolver.getPage(this, site, args);
 	}
 
 }

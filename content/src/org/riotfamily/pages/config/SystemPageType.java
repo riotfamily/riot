@@ -68,7 +68,7 @@ public class SystemPageType extends ContentPageType implements VirtualPageParent
 	}
 	
 	@Override
-	public Page getPage(Site site, Object object) {
+	public Page getPage(Site site, Object... args) {
 		return ContentPage.loadByTypeAndSite(getName(), site);
 	}
 

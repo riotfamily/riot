@@ -12,33 +12,12 @@
  */
 package org.riotfamily.pages.config;
 
-import java.util.List;
-
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
 
-public class ContentPageType extends AbstractPageType {
+public interface PageSuffixSchema {
 
-	private List<PageType> childTypes;
+	public boolean isValidSuffix(Page page, String suffix);
 	
-	public ContentPageType() {
-	}
+	public String getDefaultSuffix(Page page);
 
-	public ContentPageType(String name) {
-		setName(name);
-	}
-
-	@Override
-	public List<PageType> getChildTypes() {
-		return childTypes;
-	}
-
-	public void setChildTypes(List<PageType> childTypes) {
-		this.childTypes = childTypes;
-	}
-
-	public Page getPage(Site site, Object... args) {
-		throw new IllegalStateException("Operation not supported");
-	}
-	
 }
