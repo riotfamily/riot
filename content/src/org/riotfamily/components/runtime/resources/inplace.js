@@ -377,7 +377,12 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 						var html = this.cleanUp(c.innerHTML);
 						if (html.length > 0) {
 							var tag = c.nodeName.toLowerCase();
-							chunks.push('<'+tag+'>' + html + '</'+tag+'>');
+							if (c.className) {
+								chunks.push('<'+tag+' class="'+c.className+'">' + html + '</'+tag+'>');
+							}
+							else {
+								chunks.push('<'+tag+'>' + html + '</'+tag+'>');
+							}
 						}
 					}
 					else if (c.nodeType == 3) {
