@@ -64,6 +64,7 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 			formErrors.addError(error);
 		}
 		setVisible(true);
+		initEditors();
 	}
 	
 	public void deactivate() {
