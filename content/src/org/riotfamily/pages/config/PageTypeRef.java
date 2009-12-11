@@ -28,7 +28,6 @@ public class PageTypeRef extends ContentPageType {
 	private void copyFrom(ContentPageType ref) {
 		setLabel(ref.getLabel());
 		setHandler(ref.getHandler());
-		setSuffixes(ref.getSuffixes());
 		setChildTypes(ref.getChildTypes());
 	}
 	

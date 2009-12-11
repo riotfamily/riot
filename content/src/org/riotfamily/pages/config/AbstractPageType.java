@@ -26,8 +26,6 @@ public abstract class AbstractPageType implements PageType {
 	
 	private Object handler;
 	
-	private List<String> suffixes;
-	
 	private PageType parent;
 	
 	public String getName() {
@@ -67,19 +65,7 @@ public abstract class AbstractPageType implements PageType {
 	public void setHandler(Object handler) {
 		this.handler = handler;
 	}
-	
-	public List<String> getSuffixes() {
-		return suffixes;
-	}
-
-	public void setSuffixes(List<String> suffixes) {
-		this.suffixes = suffixes;
-	}
-	
-	public void setSuffix(String suffix) {
-		this.suffixes = FormatUtils.tokenizeCommaDelimitedList(suffix);
-	}
-	
+		
 	public List<? extends PageType> getChildTypes() {
 		return null;
 	}

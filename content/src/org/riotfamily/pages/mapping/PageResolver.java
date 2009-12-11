@@ -100,10 +100,7 @@ public final class PageResolver {
 		if (page == null) {
 			page = resolveVirtualChildPage(site, lookupPath);
 		}
-		if (page == null 
-				|| !(page.isPublished() || AccessController.isAuthenticatedUser())
-				|| !site.getSchema().suffixMatches(page, path)) {
-			
+		if (page == null || !(page.isPublished() || AccessController.isAuthenticatedUser())) {
 			return null;
 		}
 		return page;

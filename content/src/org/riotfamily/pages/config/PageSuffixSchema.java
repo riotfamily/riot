@@ -12,27 +12,12 @@
  */
 package org.riotfamily.pages.config;
 
-import org.riotfamily.pages.model.ContentPage;
-import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.model.Page;
 
-public class RootPageType extends SystemPageType {
+public interface PageSuffixSchema {
 
-	@Override
-	public String getName() {
-		return "root";
-	}
+	public boolean isValidSuffix(Page page, String suffix);
 	
-	@Override
-	public String getPathComponent() {
-		return "";
-	}
-		
-	public void sync(Site site) {
-		ContentPage page = site.getRootPage();
-		if (page == null) {
-			page = createPage(site, null);
-			site.setRootPage(page);
-		}
-		update(page);
-	}
+	public String getDefaultSuffix(Page page);
+
 }

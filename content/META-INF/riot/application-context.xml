@@ -53,10 +53,15 @@
 	
 	<bean class="org.riotfamily.pages.config.SystemPageSyncListener" />
 	
+	<bean id="pageSuffixSchema" class="org.riotfamily.pages.config.DefaultPageSuffixSchema">
+		<property name="defaultSuffix" value="/" />
+	</bean>
+	
 	<!-- Entity prototypes; see: org.riotfamily.common.beans.config.ConfigurableBean -->
 
 	<bean class="org.riotfamily.pages.model.Site" scope="prototype">
 		<property name="schemaRepository" ref="sitemapSchemaRepository" />
+		<property name="suffixSchema" ref="pageSuffixSchema" />
 	</bean>
 	
 	<bean class="org.riotfamily.components.model.Content" scope="prototype">

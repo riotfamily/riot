@@ -23,17 +23,13 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 public class SitemapSchema {
 
 	private String name;
 	
 	private String label;
-	
-	private String defaultSuffix;
-	
+		
 	private RootPageType rootPage;
 	
 	private Map<String, PageType> typeMap = Generics.newHashMap();
@@ -59,15 +55,7 @@ public class SitemapSchema {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
-	public String getDefaultSuffix() {
-		return defaultSuffix;
-	}
-
-	public void setDefaultSuffix(String defaultSuffix) {
-		this.defaultSuffix = defaultSuffix;
-	}
-
+	
 	public void setRootPage(RootPageType rootPage) {
 		this.rootPage = rootPage;
 		rootPage.register(this, null);
@@ -125,14 +113,6 @@ public class SitemapSchema {
 		return null;
 	}
 
-	public String getDefaultSuffix(Page page) {
-		List<String> suffixes = page.getPageType().getSuffixes();
-		if (suffixes != null && !suffixes.isEmpty()) {
-			return suffixes.get(0);
-		}
-		return defaultSuffix;
-	}
-
 	public boolean isSystemPage(Page page) {
 		return page.getPageType() instanceof SystemPageType;
 	}
@@ -153,27 +133,4 @@ public class SitemapSchema {
 		return getChildTypes(parent).contains(child.getPageType());
 	}
 	
-	public boolean suffixMatches(Page page, String path) {
-		String suffix = null;
-		int i = page.getPath().length();
-		if (i < path.length()) {
-			suffix = path.substring(i);
-		}
-		List<String> suffixes = page.getPageType().getSuffixes();
-		if (suffixes != null && !suffixes.isEmpty()) {
-			for (String s : suffixes) {
-				if (nullSafeEquals(suffix, s)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		return nullSafeEquals(suffix, defaultSuffix);
-	}
-	
-	private static boolean nullSafeEquals(String s1, String s2) {
-		return ObjectUtils.nullSafeEquals(s1, s2)
-				|| (!StringUtils.hasText(s1) && !StringUtils.hasText(s2));
-	}
-
 }
