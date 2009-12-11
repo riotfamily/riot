@@ -24,15 +24,13 @@ public interface PageType {
 
 	public String getForm();
 	
-	public List<String> getSuffixes();
-	
 	public Object getHandler();
 	
 	public PageType getParent();
 	
 	public List<? extends PageType> getChildTypes();
 
-	public Page getPage(Site site, Object object);
+	public Page getPage(Site site, Object... args);
 	
 	void register(SitemapSchema schema, PageType parent);
 	

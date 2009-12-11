@@ -28,6 +28,6 @@ public interface ChildPageResolver {
 	
 	public Collection<Page> listChildren(VirtualPageType type, Page parent);
 	
-	public Page getPage(VirtualPageType type, Site site, Object object);
+	public Page getPage(VirtualPageType type, Site site, Object[] object);
 
 }

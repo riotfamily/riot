@@ -43,6 +43,13 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		}
 		Page page = PageResolver.getPage(request);
 		String path = PageResolver.getLookupPath(request);
+		if (page != null) {
+			String suffix = path.substring(page.getPath().length());
+			if (!page.getSite().isValidSuffix(page, suffix)) {
+				String url = new PageFacade(page, request).getUrl();
+				return new RedirectController(url);
+			}
+		}
 		if (page == null) {
 			Site site = PageResolver.getSite(request);
 			if (site == null) {

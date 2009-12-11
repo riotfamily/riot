@@ -68,7 +68,7 @@ public class GotoVirtualPageCommand extends AbstractBatchCommand<Object> {
 		if (site == null) {
 			site = Site.loadDefaultSite();
 		}
-		Page page = PageResolver.getVirtualPage(site, pageType, object);
+		Page page = PageResolver.resolvePage(site, pageType, object);
 		String url = new PageFacade(page, context.getRequest()).getUrl();
 		return new PopupResult(url);
 	}

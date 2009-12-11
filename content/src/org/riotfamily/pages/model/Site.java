@@ -31,6 +31,8 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.pages.config.DefaultPageSuffixSchema;
+import org.riotfamily.pages.config.PageSuffixSchema;
 import org.riotfamily.pages.config.SitemapSchema;
 import org.riotfamily.pages.config.SitemapSchemaRepository;
 import org.springframework.util.ObjectUtils;
@@ -64,6 +66,8 @@ public class Site extends ActiveRecordBeanSupport {
 
 	private SitemapSchemaRepository schemaRepository;
 	
+	private PageSuffixSchema suffixSchema;
+	
 	@Transient
 	public void setSchemaRepository(SitemapSchemaRepository schemaRepository) {
 		this.schemaRepository = schemaRepository;
@@ -83,6 +87,18 @@ public class Site extends ActiveRecordBeanSupport {
 
 	public void setSchemaName(String schemaName) {
 		this.schemaName = schemaName;
+	}
+	
+	public void setSuffixSchema(PageSuffixSchema suffixSchema) {
+		this.suffixSchema = suffixSchema;
+	}
+	
+	@Transient
+	private PageSuffixSchema getSuffixSchema() {
+		if (suffixSchema == null) {
+			suffixSchema = new DefaultPageSuffixSchema();
+		}
+		return suffixSchema;
 	}
 
 	public boolean isEnabled() {
@@ -218,6 +234,20 @@ public class Site extends ActiveRecordBeanSupport {
         }
 		url.append(path);
 		return url.toString();
+	}
+	
+	public String getDefaultSuffix(Page page) {
+		if (page.getParent() == null) {
+			return "";
+		}
+		return getSuffixSchema().getDefaultSuffix(page);
+	}
+
+	public boolean isValidSuffix(Page page, String suffix) {
+		if (page.getParent() == null) {
+			return suffix.length() == 0;
+		}
+		return getSuffixSchema().isValidSuffix(page, suffix);
 	}
 		
 	// ----------------------------------------------------------------------

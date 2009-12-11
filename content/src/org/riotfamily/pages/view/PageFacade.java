@@ -60,7 +60,7 @@ public class PageFacade extends ContentContainerOwnerFacade {
 	public String getRelativeUrl() {
 		StringBuilder url = new StringBuilder();
 		url.append(page.getPath());
-		String suffix = page.getSite().getSchema().getDefaultSuffix(page);
+		String suffix = page.getSite().getDefaultSuffix(page);
 		if (suffix != null) {
 			url.append(suffix);
 		}

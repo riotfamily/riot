@@ -12,9 +12,6 @@
  */
 package org.riotfamily.pages.config;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Site;
 
@@ -29,12 +26,7 @@ public class RootPageType extends SystemPageType {
 	public String getPathComponent() {
 		return "";
 	}
-	
-	@Override
-	public List<String> getSuffixes() {
-		return Collections.singletonList(null);
-	}
-	
+		
 	public void sync(Site site) {
 		ContentPage page = site.getRootPage();
 		if (page == null) {

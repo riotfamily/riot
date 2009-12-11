@@ -76,8 +76,8 @@ public final class PageResolver {
 		return (Page) page;
 	}
 	
-	public static Page getVirtualPage(Site site, String type, Object arg) {
-		return site.getSchema().getVirtualPageType(type).resolve(site, arg);
+	public static Page resolvePage(Site site, String type, Object... args) {
+		return site.getSchema().getPageType(type).getPage(site, args);
 	}
 	
 	protected static void exposePage(Page page, HttpServletRequest request) {
@@ -100,10 +100,7 @@ public final class PageResolver {
 		if (page == null) {
 			page = resolveVirtualChildPage(site, lookupPath);
 		}
-		if (page == null 
-				|| !(page.isPublished() || AccessController.isAuthenticatedUser())
-				|| !site.getSchema().suffixMatches(page, path)) {
-			
+		if (page == null || !(page.isPublished() || AccessController.isAuthenticatedUser())) {
 			return null;
 		}
 		return page;
