@@ -106,6 +106,7 @@
 			<group title="Cachius" packages="org.riotfamily.cachius*" />
 			<group title="Forms" packages="org.riotfamily.forms*" />
 			<group title="Hibernate" packages="org.riotfamily.riot.hibernate*" />
+			<group title="Swarm" packages="org.riotfamily.riot.swarm*" />
 
 			<link href="http://java.sun.com/j2ee/1.4/docs/api" />
 			<link href="http://java.sun.com/j2se/1.4.2/docs/api" />

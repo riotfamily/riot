@@ -16,6 +16,7 @@
 	<classpathentry kind="src" path="crawler/src"/>
 	<classpathentry kind="src" path="search/src"/>
 	<classpathentry kind="src" path="job/src"/>
+	<classpathentry kind="src" path="swarm/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/dwr.jar"/>
