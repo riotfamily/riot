@@ -49,6 +49,11 @@
 			<a href="${c.urlForHandler('logoutController')}" class="logout"><@c.message "logout">Logout</@c.message></a>
 		</div>
 	</div>
+	<script>
+		new PeriodicalExecuter(function() {
+			new Ajax.Request('${c.resolve(riot.resource("/ping"))}');
+		}, 180);
+	</script>
 	<#if notification??>
 		<script language="JavaScript" type="text/javascript">
 			riot.notification.show(${c.toJSON(notification)});
