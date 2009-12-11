@@ -1,0 +1,37 @@
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:override="http://www.riotfamily.org/schema/common/override"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.riotfamily.org/schema/common/override
+        http://www.riotfamily.org/schema/common/override-8.0.xsd">
+
+    <bean id="riotChannel" 
+          class="org.riotfamily.swarm.jgroups.JGroupsChannel">
+        <property name="name" 
+                  value="riot" />
+    </bean>
+
+    <bean id="riotChannelAdapter" 
+          class="org.riotfamily.swarm.CacheChannelAdapter">
+        <constructor-arg ref="riotChannel" />
+    </bean>
+
+    <override:bean ref="cacheService" 
+                   class="org.riotfamily.swarm.cachius.DistributableCacheService">
+        <description>
+            A Cachius CacheService instance to cache and serve content.
+        </description>
+        <constructor-arg ref="websiteCache" />
+        <constructor-arg ref="riotChannelAdapter" />
+        <property name="checkInvolvedFiles" 
+                  value="${riot.resources.reloadable=false}" />
+        <property name="staleWhileRevalidate" 
+                  value="${riot.websiteCache.staleWhileRevalidate=false}" />
+        <property name="staleUnlessExpired" 
+                  value="${riot.websiteCache.staleUnlessExpired=false}" />
+    </override:bean>
+
+</beans>

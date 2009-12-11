@@ -1,0 +1,7 @@
+<project name="riot-swarm" default="compile">
+
+	<property name="module.title" value="Riot Swarm" />
+	
+	<import file="../module-build.xml" />
+
+</project>
