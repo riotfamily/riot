@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -30,33 +29,27 @@ import org.springframework.web.servlet.mvc.Controller;
 public class RedirectController implements Controller {
 
 	private boolean permanent = false;
+	
 	private boolean http10Compatible = true;
 	
 	private boolean addContextPath = false;
-	
-	private boolean addServletMapping = false;
 	
 	private String encodingScheme = "UTF-8";
 		
 	private String url;
 	
 	public RedirectController(String url) {
-		this.url = url;
+		this(url, false);
 	}
 	
-	public RedirectController(String url, boolean addContextPath, 
-			boolean addServletMapping) {
-		
-		this(url, addContextPath, addServletMapping, false);
+	public RedirectController(String url, boolean permanent) {
+		this(url, permanent, false);
 	}
-
-	public RedirectController(String url, boolean addContextPath, 
-			boolean addServletMapping, boolean permanent) {
-		
+	
+	public RedirectController(String url, boolean permanent, boolean addContextPath) {
 		this.url = url;
-		this.addContextPath = addContextPath;
-		this.addServletMapping = addServletMapping;
 		this.permanent = permanent;
+		this.addContextPath = addContextPath;
 	}
 
 	protected RedirectController() {
@@ -93,10 +86,6 @@ public class RedirectController implements Controller {
 		this.addContextPath = contextRelative;
 	}
 
-	public void setAddServletMapping(boolean addServletMapping) {
-		this.addServletMapping = addServletMapping;
-	}
-
 	/**
 	 * Set the encoding to be used for parameter values.
 	 */
@@ -118,15 +107,7 @@ public class RedirectController implements Controller {
 		if (addContextPath && destination.startsWith("/")) {
 			url.append(request.getContextPath());
 		}
-		if (addServletMapping) {
-			url.append(ServletUtils.getServletPrefix(request));
-		}
-		
 		url.append(destination);
-		
-		if (addServletMapping) {
-			url.append(ServletUtils.getServletSuffix(request));
-		}
 		appendParameters(url, request);
 		sendRedirect(request, response, url.toString());
 		return null;
