@@ -16,6 +16,14 @@
   -->
 <#assign editMode = inplaceMacroHelper.isEditMode() />
 
+<#macro register content>
+	<#if editMode && content.container??>
+		<object class="riot-container" style="display:none">
+			<param name="id" value="${content.container.id}" />
+		</object>
+	</#if>
+</#macro>
+
 <#---
   - Macro that renders the Riot toolbar if the page is requested in edit-mode.
   - If no user is logged in, a JavaScript block is rendered that identifies the
@@ -24,6 +32,9 @@
   -->
 <#macro toolbar bookmarklet=true>
 	<#if editMode>
+		<#if contentMap??>
+			<@register contentMap />
+		</#if>
 		<#list inplaceMacroHelper.toolbarScripts as src>
 			<@riot.script src = src + "?lang=" + .lang />
 		</#list>
@@ -31,13 +42,6 @@
 			var riotComponentFormParams = {};
 			${inplaceMacroHelper.initScript}
 			<#nested />
-			function riotToolbarLoaded(toolbar) {
-				<#if contentMap??>
-					riot.components.registerContainer(${contentMap.container.id});
-				</#if>
-				<#-- TODO Register additional custom containers -->
-				riot.components.init();
-			}
 		</script>
 	<#elseif inplaceMacroHelper.liveMode>
 		<script type="text/javascript" language="JavaScript">
@@ -182,8 +186,9 @@
 </#macro>
 
 <#macro use content>
-	<#local previousContent = content />
+	<#local previousContent = contentMap!{} />
 	<#global contentMap = content />
+	<@register content />
 	<#nested />
 	<#global contentMap = previousContent />
 </#macro>

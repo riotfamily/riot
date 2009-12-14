@@ -732,7 +732,6 @@ riot.components = (function() {
 	adoptFloatsAndClears();
 	
 	function setState(state) {
-		containersToPublish.clear();
 		state.containerIds.each(function(id) {containersToPublish.push(id)});
 		riot.toolbar.setState(state);
 	}
@@ -816,7 +815,8 @@ riot.components = (function() {
 		},
 		
 		init: function() {
-			ComponentEditor.getState(containersToPublish, setState);
+			var containerIds = $$('object.riot-container > param[name=id]').invoke('getAttribute', 'value');
+			ComponentEditor.getState(containerIds, setState);
 		},
 		
 		editProperties: function(e) {
