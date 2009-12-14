@@ -60,7 +60,6 @@ public class VirtualPageType extends AbstractPageType {
 	
 	public Page resolve(ContentPage parent, String pathTail) {
 		String[] path = StringUtils.tokenizeToStringArray(pathTail, "/");
-		
 		if (getDepth() < path.length) {
 			return null;
 		}
@@ -80,8 +79,8 @@ public class VirtualPageType extends AbstractPageType {
 		return Generics.emptyIfNull(resolver.listChildren(this, parent));
 	}
 	
-	public Page getPage(Site site, Object... args) {
-		return resolver.getPage(this, site, args);
+	public Page getPage(Site site, Object object) {
+		return resolver.getPage(this, site, object);
 	}
 
 }

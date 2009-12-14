@@ -58,12 +58,16 @@ public class PageFacade extends ContentContainerOwnerFacade {
 	}
 	
 	public String getRelativeUrl() {
+		return getRelativeUrl(null);
+	}
+	
+	public String getRelativeUrl(String suffix) {
 		StringBuilder url = new StringBuilder();
 		url.append(page.getPath());
-		String suffix = page.getSite().getDefaultSuffix(page);
-		if (suffix != null) {
-			url.append(suffix);
+		if (suffix == null) {
+			suffix = page.getSite().getDefaultSuffix(page);
 		}
+		url.append(suffix);
 		if (response != null) {
 			return ServletUtils.resolveAndEncodeUrl(url.toString(), request, response);
 		}
@@ -71,26 +75,38 @@ public class PageFacade extends ContentContainerOwnerFacade {
 	}	
 	
 	public String getUrl() {
+		return getUrl(null);
+	}
+	
+	public String getUrl(String suffix) {
 		if (!page.getSite().hostNameMatches(request.getServerName())) {
-			return getAbsoluteUrl();
+			return getAbsoluteUrl(suffix);
 		}
-		return getRelativeUrl();
+		return getRelativeUrl(suffix);
 	}
 	
 	public String getAbsoluteUrl() {
+		return getAbsoluteUrl(null);
+	}
+	
+	public String getAbsoluteUrl(String suffix) {
 		return page.getSite().makeAbsolute(request.isSecure(), 
 				ServletUtils.getServerNameAndPort(request),
-				request.getContextPath(), getRelativeUrl());
+				request.getContextPath(), getRelativeUrl(suffix));
 	}
 
 	public String getSecureUrl() {
+		return getSecureUrl(null);
+	}
+	
+	public String getSecureUrl(String suffix) {
 		if (request.isSecure() && request.getServerName().equals(
 				page.getSite().getHostName())) {
 			
-			return getUrl();
+			return getUrl(suffix);
 		}
 		return page.getSite().makeAbsolute(true, ServletUtils.getServerNameAndPort(request), 
-				request.getContextPath(), getRelativeUrl());
+				request.getContextPath(), getRelativeUrl(suffix));
 	}
 	
 	public Collection<Page> getAncestors() {

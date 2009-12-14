@@ -76,10 +76,10 @@ public final class PageResolver {
 		return (Page) page;
 	}
 	
-	public static Page resolvePage(Site site, String type, Object... args) {
-		return site.getSchema().getPageType(type).getPage(site, args);
+	public static Page resolvePage(Site site, String type, Object object) {
+		return site.getSchema().getPageType(type).getPage(site, object);
 	}
-	
+		
 	protected static void exposePage(Page page, HttpServletRequest request) {
 		expose(page, request, PAGE_ATTRIBUTE);
 	}
@@ -94,8 +94,7 @@ public final class PageResolver {
 		if (site == null) {
 			return null;
 		}
-		String path = ServletUtils.getPathWithinApplication(request);
-		String lookupPath = getLookupPath(FormatUtils.stripTrailingSlash(path));
+		String lookupPath = getLookupPath(request);
 		Page page = ContentPage.loadBySiteAndPath(site, lookupPath);
 		if (page == null) {
 			page = resolveVirtualChildPage(site, lookupPath);
@@ -118,11 +117,9 @@ public final class PageResolver {
 	}
 
 	public static String getLookupPath(HttpServletRequest request) {
-		return getLookupPath(ServletUtils.getPathWithinApplication(request));
-	}
-	
-	public static String getLookupPath(String path) {
-		String s = FormatUtils.stripExtension(path);
+		String s = FormatUtils.stripExtension(FormatUtils.stripTrailingSlash(
+				ServletUtils.getPathWithinApplication(request)));
+		
 		return s.length() > 0 ? s : "/";
 	}
 	

@@ -3,8 +3,8 @@
   - @namespace pages
   -->
  
-<#function resolve type args...>
-	<#return statics["org.riotfamily.pages.mapping.PageResolver"].resolvePage(currentSite, type, args) />
+<#function resolve type object={}>
+	<#return statics["org.riotfamily.pages.mapping.PageResolver"].resolvePage(currentSite, type, object) />
 </#function>
 
 <#function get type site=currentSite>

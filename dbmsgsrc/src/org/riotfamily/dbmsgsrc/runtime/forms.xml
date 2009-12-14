@@ -33,7 +33,7 @@
 	<form id="riotMessageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
 		<textfield bind="code" read-only="true" />
 		<map bind="messages" label-renderer="localeRenderer">
-			<key-options class="org.riotfamily.dbmsgsrc.support.CurrentLocaleOptionsModel" />
+			<key-options class="org.riotfamily.dbmsgsrc.riot.CurrentLocaleOptionsModel" />
 			<nested-form indent="false" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">
 				<textarea bind="text" />
 			</nested-form>

@@ -40,9 +40,7 @@
 	}
 	
 	function activateToolbar() {
-		if (window.riotToolbarLoaded) {
-			riotToolbarLoaded(riot.toolbar);
-		}
+		riot.components.init();
 	}
 	
 })();

@@ -18,9 +18,9 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.hibernate.AbstractHqlDao;
+import org.riotfamily.dbmsgsrc.DbMessageSource;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
-import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.pages.model.Site;
 
 public class LocalMessageDao extends AbstractHqlDao {

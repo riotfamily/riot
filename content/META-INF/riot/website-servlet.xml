@@ -53,16 +53,6 @@
 		<property name="order" value="2" />
 	</bean>
 	
-	<bean id="viewNameTranslator" class="org.riotfamily.pages.view.PageRequestToViewNameTranslator">
-		<property name="prefix" value="pages/" />
-		<property name="suffix" value=".ftl" />
-		<property name="noPageTranslator" ref="noPageViewNameTranslator" />
-	</bean>
-	
-	<bean id="noPageViewNameTranslator" class="org.riotfamily.pages.view.SiteRequestToViewNameTranslator">
-		<property name="suffix" value=".ftl" />
-	</bean>
-	
 	<bean id="noSiteHandlerMapping" class="org.riotfamily.pages.mapping.NoSiteHandlerMapping" />
 			
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />

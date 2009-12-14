@@ -9,7 +9,6 @@ import org.riotfamily.pages.config.VirtualPageType;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.model.VirtualPage;
-import org.springframework.util.Assert;
 
 public abstract class VirtualPageResolver<T extends ContentContainerOwner> 
 		implements ChildPageResolver {
@@ -23,11 +22,8 @@ public abstract class VirtualPageResolver<T extends ContentContainerOwner>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Page getPage(VirtualPageType type, Site site, Object[] args) {
-		Assert.isTrue(args != null && args.length == 1 
-				&& args[0] instanceof ContentContainerOwner);
-		
-		T entity = (T) args[0];
+	public Page getPage(VirtualPageType type, Site site, Object object) {
+		T entity = (T) object;
 		Page parent = type.getParent().getPage(site, getParent(entity));
 		return new VirtualPage(type, parent, entity, getPathComponent(entity),
 				getTitle(entity));

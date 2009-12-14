@@ -37,7 +37,7 @@ public class ContentPageType extends AbstractPageType {
 		this.childTypes = childTypes;
 	}
 
-	public Page getPage(Site site, Object... args) {
+	public Page getPage(Site site, Object object) {
 		throw new IllegalStateException("Operation not supported");
 	}
 	

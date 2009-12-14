@@ -21,7 +21,7 @@
 		<constructor-arg ref="resourcePath" />
 	</bean>
 	
-	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.RiotDbMessageSource">
+	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.RiotDbMessageSource">
 		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="handlerUrlResolver" />
 		<property name="parentMessageSource">
