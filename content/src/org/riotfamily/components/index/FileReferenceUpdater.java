@@ -16,10 +16,25 @@ import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.RiotFileReference;
 import org.riotfamily.media.model.RiotFile;
 
-public class FileReferenceUpdater extends AbstractContentIndexer {
+public class FileReferenceUpdater extends ContentIndexerSupport {
 
 	@Override
-	protected void createIndex(Content content) throws Exception {
+	public void contentCreated(Content content) {
+		createIndex(content);
+	}
+
+	@Override
+	public void contentDeleted(Content content) {
+		deleteIndex(content);
+	}
+
+	@Override
+	public void contentModified(Content content) {
+		deleteIndex(content);
+		createIndex(content);
+	}
+	
+	private void createIndex(Content content) {
 		for (Object obj : content.getReferences()) {
 			if (obj instanceof RiotFile) {
 				new RiotFileReference(content, (RiotFile) obj).save();
@@ -27,8 +42,7 @@ public class FileReferenceUpdater extends AbstractContentIndexer {
 		}
 	}
 
-	@Override
-	protected void deleteIndex(Content content) {
+	private void deleteIndex(Content content) {
 		RiotFileReference.deleteByContent(content);
 	}
 

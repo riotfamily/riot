@@ -12,54 +12,56 @@
  */
 package org.riotfamily.components.index;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.riotfamily.common.hibernate.TypedEntityListener;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.components.model.Content;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-public class ContentListener extends TypedEntityListener<Content> 
-		implements ApplicationContextAware {
+public class ContentListener extends TypedEntityListener<Content> implements ApplicationContextAware {
 
-	private Collection<ContentIndexer> indexers;
+	private List<ContentIndexer> indexers;
 	
-	public void setApplicationContext(ApplicationContext ctx) {
-		indexers = SpringUtils.listBeansOfType(ctx, ContentIndexer.class);
+	private ApplicationContext applicationContext;
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
 	}
 	
-	@Override
-	protected void entitySaved(Content content, Session session)
-		throws Exception {
-		
-		if (indexers != null) {
-			for (ContentIndexer indexer : indexers) {
-				indexer.contentCreated(content);
+	private List<ContentIndexer> getIndexers() {
+		if (indexers == null) {
+			indexers = Generics.newArrayList();
+			for (ContentIndexer indexer : SpringUtils.listBeansOfType(applicationContext, ContentIndexer.class)) {
+				if (indexer != this) {
+					indexers.add(indexer);
+				}
 			}
+		}
+		return indexers;
+	}
+
+	@Override
+	protected void entitySaved(Content content, Session session) {
+		for (ContentIndexer indexer : getIndexers()) {
+			indexer.contentCreated(content);
 		}
 	}
 	
 	@Override
-	protected void entityDeleted(Content content, Session session)
-			throws Exception {
-		
-		if (indexers != null) {
-			for (ContentIndexer indexer : indexers) {
-				indexer.contentDeleted(content);
-			}
+	protected void entityDeleted(Content content, Session session) {
+		for (ContentIndexer indexer : getIndexers()) {
+			indexer.contentDeleted(content);
 		}
 	}
 	
 	@Override
-	protected void entityUpdated(Content content, Content oldState, 
-			Session session) throws Exception {
-		
-		if (indexers != null) {
-			for (ContentIndexer indexer : indexers) {
-				indexer.contentModified(content);
-			}
+	protected void entityUpdated(Content content, Content oldState, Session session) {
+		for (ContentIndexer indexer : getIndexers()) {
+			indexer.contentModified(content);
 		}
 	}
 }

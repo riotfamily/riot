@@ -14,23 +14,15 @@ package org.riotfamily.components.index;
 
 import org.riotfamily.components.model.Content;
 
-public abstract class AbstractContentIndexer implements ContentIndexer {
+public abstract class ContentIndexerSupport implements ContentIndexer {
 
-	public void contentCreated(Content content) throws Exception {
-		createIndex(content);
+	public void contentCreated(Content content) {
 	}
 
-	public void contentDeleted(Content content) throws Exception {
-		deleteIndex(content);
+	public void contentDeleted(Content content) {
 	}
 
-	public void contentModified(Content content) throws Exception {
-		deleteIndex(content);
-		createIndex(content);
+	public void contentModified(Content content) {
 	}
-
-	protected abstract void createIndex(Content content) throws Exception;
-
-	protected abstract void deleteIndex(Content content) throws Exception;
 
 }
