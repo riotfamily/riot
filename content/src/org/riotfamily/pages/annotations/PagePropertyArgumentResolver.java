@@ -36,7 +36,7 @@ public class PagePropertyArgumentResolver implements WebArgumentResolver {
 			Page page = PageResolver.getPage(request);
 			Assert.notNull(page, "No Page found for request");
 			String name = getPropertName(annotation, methodParameter);
-			return new PageFacade(page, request).get(name);
+			return new PageFacade(page, request).getContent().get(name);
 		}
 		return UNRESOLVED;
 	}

@@ -12,10 +12,10 @@
  */
 package org.riotfamily.pages.view;
 
-import org.riotfamily.common.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
 import org.riotfamily.common.web.support.RequestHolder;
+import org.riotfamily.components.view.ContentFacadeTemplateModel;
 import org.riotfamily.pages.model.Page;
 import org.springframework.core.Ordered;
 
@@ -44,7 +44,7 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered {
 		PageFacade facade = new PageFacade(page, RequestHolder.getRequest(), 
 				RequestHolder.getResponse());
 		
-		return new FacadeTemplateModel(facade, page, wrapper);
+		return new ContentFacadeTemplateModel(facade, wrapper);
 	}
 
 }

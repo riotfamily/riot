@@ -12,9 +12,9 @@
  */
 package org.riotfamily.pages.view;
 
-import org.riotfamily.common.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
+import org.riotfamily.components.view.ContentFacadeTemplateModel;
 import org.springframework.core.Ordered;
 
 import freemarker.template.TemplateModel;
@@ -39,7 +39,7 @@ public class PageFacadeObjectWrapperPlugin implements ObjectWrapperPlugin, Order
 			throws TemplateModelException {
 		
 		PageFacade facade = (PageFacade) obj;
-		return new FacadeTemplateModel(facade, facade.getPage(), wrapper);
+		return new ContentFacadeTemplateModel(facade, wrapper);
 	}
 
 }

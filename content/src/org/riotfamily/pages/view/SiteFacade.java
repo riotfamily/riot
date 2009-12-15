@@ -16,9 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.cache.CacheTagUtils;
 import org.riotfamily.common.web.support.ServletUtils;
+import org.riotfamily.components.model.Content;
+import org.riotfamily.components.view.ContentFacade;
 import org.riotfamily.pages.model.Site;
 
-public class SiteFacade {
+public class SiteFacade implements ContentFacade {
 	
 	private Site site;
 
@@ -40,11 +42,12 @@ public class SiteFacade {
 				request.getContextPath(), path);
 	}
 		
-	/**
-	 * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
-	 */
-	public Object get(String key) {
-		return site.getProperty(key);
+	public Content getContent() {
+		return site.getProperties();
+	}
+	
+	public Object getDelegate() {
+		return site;
 	}
 
 	@Override

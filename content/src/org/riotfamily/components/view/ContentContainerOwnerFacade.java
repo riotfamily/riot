@@ -25,7 +25,7 @@ import org.riotfamily.components.support.EditModeUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */
-public class ContentContainerOwnerFacade {
+public class ContentContainerOwnerFacade implements ContentFacade {
 	
 	protected ContentContainerOwner owner;
 
@@ -69,13 +69,10 @@ public class ContentContainerOwnerFacade {
 		return content;
 	}
 	
-	/**
-	 * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
-	 */
-	public Object get(String key) {
-		return getContent().get(key);
+	public Object getDelegate() {
+		return owner;
 	}
-
+	
 	@Override
 	public String toString() {
 		return owner.toString();

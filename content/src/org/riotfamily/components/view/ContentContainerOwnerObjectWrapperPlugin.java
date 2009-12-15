@@ -12,7 +12,6 @@
  */
 package org.riotfamily.components.view;
 
-import org.riotfamily.common.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
 import org.riotfamily.common.web.support.RequestHolder;
@@ -40,7 +39,7 @@ public class ContentContainerOwnerObjectWrapperPlugin implements ObjectWrapperPl
 		ContentContainerOwnerFacade facade = new ContentContainerOwnerFacade(
 				owner, RequestHolder.getRequest(), RequestHolder.getResponse());
 		
-		return new FacadeTemplateModel(facade, owner, wrapper);
+		return new ContentFacadeTemplateModel(facade, wrapper);
 	}
 
 }

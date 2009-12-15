@@ -12,10 +12,10 @@
  */
 package org.riotfamily.pages.view;
 
-import org.riotfamily.common.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
 import org.riotfamily.common.web.support.RequestHolder;
+import org.riotfamily.components.view.ContentFacadeTemplateModel;
 import org.riotfamily.pages.model.Site;
 
 import freemarker.template.TemplateModel;
@@ -37,7 +37,7 @@ public class SiteObjectWrapperPlugin implements ObjectWrapperPlugin {
 		
 		Site site = (Site) obj;
 		SiteFacade facade = new SiteFacade(site, RequestHolder.getRequest());
-		return new FacadeTemplateModel(facade, site, wrapper);
+		return new ContentFacadeTemplateModel(facade, wrapper);
 	}
 
 }
