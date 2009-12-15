@@ -73,14 +73,6 @@ public class VirtualPage implements Page {
 		return object.getContentContainer();
 	}
 
-	public boolean isPublished() {
-		return object.isPublished();
-	}
-
-	public void setPublished(boolean published) {
-		object.setPublished(published);
-	}
-
 	public Collection<? extends Page> getChildren() {
 		return pageType.listChildren(this);
 	}

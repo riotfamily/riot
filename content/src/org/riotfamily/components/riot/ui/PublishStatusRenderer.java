@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.ui.ObjectRenderer;
 import org.riotfamily.common.ui.RenderContext;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.core.screen.list.ListRenderContext;
 
@@ -32,10 +33,11 @@ public class PublishStatusRenderer implements ObjectRenderer {
 	}
 	
 	protected String getStyleClass(ContentContainerOwner owner, ListRenderContext context) {
-		if (!owner.isPublished()) {
+		ContentContainer container = owner.getContentContainer();
+		if (container.getLiveVersion() == null) {
 			return "new";
 		}
-		if (owner.getContentContainer().getPreviewVersion().isDirty()) {
+		if (container.getPreviewVersion().isDirty()) {
 			return "dirty";
 		}
 		return "published";

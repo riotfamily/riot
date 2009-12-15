@@ -170,11 +170,7 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 
 	@Transient
 	public String getTitle() {
-		return getTitle(true);
-	}
-	
-	public String getTitle(boolean preview) {
-		Object title = getContentContainer().getContent(preview).get(TITLE_PROPERTY);
+		Object title = getContentContainer().getContent(true).get(TITLE_PROPERTY);
 		if (title != null) {
 			return title.toString();
 		}

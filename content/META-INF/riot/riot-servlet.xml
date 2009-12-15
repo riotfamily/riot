@@ -198,7 +198,7 @@
 			<s:column property="title" />
 			<s:column property="pathComponent" />
 			<s:column>
-				<bean class="org.riotfamily.pages.riot.ui.PagePublishStatusRenderer" />
+				<bean class="org.riotfamily.components.riot.ui.PublishStatusRenderer" />
 			</s:column>
 		</s:columns>
 		<s:commands>
@@ -229,7 +229,6 @@
 			</s:columns>
 			<s:commands>
 				<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
-				<!-- <bean class="org.riotfamily.pages.riot.command.GotoSiteCommand" /> -->
 				<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />

@@ -39,14 +39,14 @@ public class UnpublishCommand extends AbstractBatchCommand<ContentContainerOwner
 	protected boolean isEnabled(CommandContext context, 
 			ContentContainerOwner owner, int index, int selectionSize) {
 		
-		return owner.isPublished();
+		return owner.getContentContainer().getLiveVersion() != null;
 	}
 	
 	@Override
 	protected CommandResult execute(CommandContext context, 
 			ContentContainerOwner owner, int index, int selectionSize) {
 
-		owner.setPublished(false);
+		owner.getContentContainer().setLiveVersion(null);
 		return new RefreshListResult();
 	}
 }

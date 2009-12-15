@@ -99,7 +99,10 @@ public final class PageResolver {
 		if (page == null) {
 			page = resolveVirtualChildPage(site, lookupPath);
 		}
-		if (page == null || !(page.isPublished() || AccessController.isAuthenticatedUser())) {
+		if (page == null || 
+				(page.getContentContainer().getLiveVersion() == null
+				&& !AccessController.isAuthenticatedUser())) {
+			
 			return null;
 		}
 		return page;

@@ -19,8 +19,8 @@ public interface ContentContainerOwner {
 
 	public ContentContainer getContentContainer();
 	
-	public boolean isPublished();
+	//public boolean isPublished();
 	
-	public void setPublished(boolean published);
+	//public void setPublished(boolean published);
 
 }

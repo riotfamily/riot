@@ -12,6 +12,7 @@
  */
 package org.riotfamily.components.riot.command;
 
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
@@ -34,16 +35,16 @@ public class PublishCommand extends AbstractBatchCommand<ContentContainerOwner> 
 	protected boolean isEnabled(CommandContext context, ContentContainerOwner owner, int index,
 			int selectionSize) {
 		
-		return !owner.isPublished() || owner.getContentContainer().isDirty();
+		return owner.getContentContainer().isDirty();
 	}
 	
 	@Override
 	protected CommandResult execute(CommandContext context, ContentContainerOwner owner,
 			int index, int selectionSize) {
 
-		owner.setPublished(true);
-		if (owner.getContentContainer().isDirty()) {
-			owner.getContentContainer().publish();
+		ContentContainer container = owner.getContentContainer();
+		if (container.isDirty()) {
+			container.publish();
 		}
 		return new RefreshListResult();
 	}

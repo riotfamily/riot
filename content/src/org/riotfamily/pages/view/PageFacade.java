@@ -53,7 +53,8 @@ public class PageFacade extends ContentContainerOwnerFacade {
 	}
 
 	public boolean isRequestable() {
-		return (page.isPublished() && page.getSite().isEnabled()) 
+		return (page.getContentContainer().getLiveVersion() != null 
+				&& page.getSite().isEnabled())
 				|| AccessController.isAuthenticatedUser();
 	}
 	
@@ -159,7 +160,7 @@ public class PageFacade extends ContentContainerOwnerFacade {
 	protected List<PageFacade> createFacades(Collection<? extends Page> pages) {
 		ArrayList<PageFacade> result = Generics.newArrayList();
 		for (Page page : pages) {
-			if (page.isPublished() || isPreview(page)) {
+			if (page.getContentContainer().getLiveVersion() != null || isPreview(page)) {
 				result.add(new PageFacade(page, request, response));
 			}
 		}

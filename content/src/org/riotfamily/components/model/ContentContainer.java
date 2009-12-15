@@ -116,9 +116,6 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 				oldLiveVersion.delete();
 			}
 		}
-		if (owner != null && !owner.isPublished()) {
-			owner.setPublished(true);
-		}
 	}
 	
 	public void discard() {		
