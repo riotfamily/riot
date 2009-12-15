@@ -31,6 +31,11 @@ public class HibernateCacheRegionDao extends AbstractStatsItemDao {
 		this.sessionFactory = sessionFactory;
 	}
 
+	@Override
+	public boolean canSortBy(String property) {
+		return true;
+	}
+
 	public Class<?> getEntityClass() {
 		return CacheRegionStatsItem.class;
 	}

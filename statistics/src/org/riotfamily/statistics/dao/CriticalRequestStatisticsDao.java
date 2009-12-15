@@ -26,6 +26,11 @@ public class CriticalRequestStatisticsDao extends AbstractStatsItemDao {
 	}
 
 	@Override
+	public boolean canSortBy(String property) {
+		return true;
+	}
+
+	@Override
 	protected List<? extends StatsItem> getStats() {
 		return filterPlugin.getCriticalRequests();
 	}

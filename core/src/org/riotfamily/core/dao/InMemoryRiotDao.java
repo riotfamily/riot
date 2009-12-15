@@ -12,8 +12,8 @@
  */
 package org.riotfamily.core.dao;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.util.Generics;
@@ -45,7 +45,7 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 			throws DataAccessException {
 		
 		try {
-			return listInternal(parent).size();
+			return listFilteredAndOrdered(parent, params).size();
 		}
 		catch (Exception e) {
 			throw new RecoverableDataAccessException(e.getMessage(), e);
@@ -57,8 +57,27 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 			throws DataAccessException {
 		
 		try {
+			List<?> items = listFilteredAndOrdered(parent, params);
+			if (params.getPageSize() > 0) {
+				int end = params.getOffset() + params.getPageSize();
+				if (end > items.size()) {
+					end = items.size();
+				}
+				return items.subList(params.getOffset(), end);
+			}
+			return items;
+		}
+		catch (Exception e) {
+			throw new RecoverableDataAccessException(e.getMessage(), e);
+		}
+	}
+	
+	protected List<?> listFilteredAndOrdered(Object parent, ListParams params)
+			throws DataAccessException {
+		
+		try {
 			Collection<?> items = listInternal(parent);
-			ArrayList<Object> list = Generics.newArrayList(items.size());
+			List<Object> list = Generics.newArrayList(items.size());
 			for (Object item : items) {
 				if (filterMatches(item, params) && searchMatches(item, params)) {
 					list.add(item);
@@ -67,14 +86,6 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 			if (params.getOrder() != null && params.getOrder().size() > 0) {
 				Order order = params.getOrder().get(0);
 				PropertyComparator.sort(list, order);
-			}
-			
-			if (params.getPageSize() > 0) {
-				int end = params.getOffset() + params.getPageSize();
-				if (end > list.size()) {
-					end = list.size();
-				}
-				return list.subList(params.getOffset(), end);
 			}
 			return list;
 		}
@@ -113,7 +124,9 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 		PropertyAccessor itemAccessor = PropertyUtils.createAccessor(item);
 		for (String prop : getSearchableProperties()) {
 			Object itemValue = itemAccessor.getPropertyValue(prop);
-			if (itemValue != null && itemValue.toString().indexOf(params.getSearch()) >= 0) {
+			if (itemValue != null && itemValue.toString().toLowerCase().indexOf(
+					params.getSearch().toLowerCase()) >= 0) {
+				
 				return true;
 			}
 		}
