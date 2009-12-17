@@ -14,8 +14,12 @@ package org.riotfamily.components.xstream;
 
 import java.io.Serializable;
 
-import org.riotfamily.common.hibernate.ActiveRecord;
-import org.riotfamily.common.hibernate.ActiveRecordUtils;
+import javax.persistence.Entity;
+
+import org.hibernate.SessionFactory;
+import org.riotfamily.common.hibernate.HibernateUtils;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.context.ApplicationContext;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -26,25 +30,29 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
 
-public class ActiveRecordConverter implements Converter {
+public class HibernateEntityConverter implements Converter {
 
 	private Mapper mapper;
 	
-	public ActiveRecordConverter(Mapper mapper) {
+	private ApplicationContext applicationContext;
+	
+	private SessionFactory sessionFactory;
+	
+	public HibernateEntityConverter(Mapper mapper, ApplicationContext applicationContext) {
 		this.mapper = mapper;
+		this.applicationContext = applicationContext;
 	}
 
 	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class type) {
-		return ActiveRecord.class.isAssignableFrom(type);
+		return type.isAnnotationPresent(Entity.class);
 	}
 	
 	public void marshal(Object source, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		
-		ActiveRecord record = (ActiveRecord) source;
-		XStreamMarshaller.addReference(context, record);
-		Serializable id = ActiveRecordUtils.getIdAndSaveIfNecessary(record);
+		XStreamMarshaller.addReference(context, source);
+		Serializable id = HibernateUtils.getId(getSessionFactory(), source);
 		if (id instanceof Long) {
 			writer.addAttribute("id", id.toString());
 		}
@@ -56,12 +64,17 @@ public class ActiveRecordConverter implements Converter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	private SessionFactory getSessionFactory() {
+		if (sessionFactory == null) {
+			sessionFactory = BeanFactoryUtils.beanOfType(applicationContext, SessionFactory.class);
+		}
+		return sessionFactory;
+	}
+
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 		
-		Class<? extends ActiveRecord> recordType =
-				mapper.realClass(reader.getNodeName());
+		Class<?> entityClass = mapper.realClass(reader.getNodeName());
 		
 		Serializable id;
 		String s = reader.getAttribute("id");
@@ -74,9 +87,9 @@ public class ActiveRecordConverter implements Converter {
 	        id = (Serializable) context.convertAnother(null, idType);
 	        reader.moveUp();
 		}
-		ActiveRecord record = ActiveRecordUtils.load(recordType, id);
-		XStreamMarshaller.addReference(context, record);
-		return record;
+		Object entity = getSessionFactory().getCurrentSession().load(entityClass, id);
+		XStreamMarshaller.addReference(context, entity);
+		return entity;
 	}
 
 }

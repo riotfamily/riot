@@ -22,6 +22,8 @@ import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.model.ContentMapImpl;
 import org.riotfamily.components.model.ContentMapMarshaller;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.DataHolder;
@@ -33,16 +35,23 @@ import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 public class XStreamMarshaller implements ContentMapMarshaller, 
-		InitializingBean {
+		InitializingBean, ApplicationContextAware {
 
 	private XStream xstream;
 	
 	private HierarchicalStreamDriver driver;
 
+	private ApplicationContext applicationContext;
+	
+
 	public void setDriver(HierarchicalStreamDriver driver) {
 		this.driver = driver;
 	}
-	
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+		
 	public void afterPropertiesSet() throws Exception {
 		if (driver == null) {
 			driver = new DomDriver("UTF-8");
@@ -61,7 +70,7 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		
 		Mapper mapper = xstream.getMapper();
 		
-		xstream.registerConverter(new ActiveRecordConverter(mapper), 1);
+		xstream.registerConverter(new HibernateEntityConverter(mapper, applicationContext), 1);
 		xstream.registerConverter(new ComponentListConverter(mapper), 1);
 		xstream.registerConverter(new ComponentConverter(mapper), 2);
 		xstream.registerConverter(new ContentMapConverter(mapper), 1);
