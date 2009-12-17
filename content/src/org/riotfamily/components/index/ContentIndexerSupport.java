@@ -23,6 +23,8 @@ public abstract class ContentIndexerSupport implements ContentIndexer {
 	}
 
 	public void contentModified(Content content) {
+		contentDeleted(content);
+		contentCreated(content);
 	}
 
 }
