@@ -38,19 +38,6 @@
 			</list> 	
 		</property>
 		<property name="hibernateProperties" value="${hibernate.*}" />
-		<property name="filterDefinitions">
-			<list>
-				<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
-					<property name="filterName" value="liveMode" />
-					<property name="defaultFilterCondition" value="published = :published" />
-					<property name="parameterTypes">
-						<props>
-							<prop key="published">boolean</prop>
-						</props>
-					</property>
-				</bean>
-			</list>
-		</property>
 		<property name="entityInterceptor">
 			<bean class="org.riotfamily.common.hibernate.ChainedInterceptor">
 				<property name="interceptors" ref="hibernateInterceptors" />
