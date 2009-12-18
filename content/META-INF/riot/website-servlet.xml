@@ -16,6 +16,10 @@
 		<entry key="pages" value="classpath:org/riotfamily/pages/view/pages.ftl" />
 	</override:put>
 	
+	<bean class="org.riotfamily.components.index.ContentIndexRequestInterceptor">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+	
 	<bean class="org.riotfamily.components.view.ContentMapObjectWrapperPlugin">
 		<description>
 			ObjectWrapperPlugin that wraps ContentMaps with a MapModel 

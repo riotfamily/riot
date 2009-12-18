@@ -45,6 +45,26 @@
 		</description>
 	</bean>
 	
+	<bean class="org.riotfamily.components.index.HibernateContentIndexer">
+		<description>
+			Indexer that extracts content properties and stores them 
+			in a ContentIndex entity.
+		</description>
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<override:add ref="sessionFactory" property="filterDefinitions">
+		<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
+			<property name="filterName" value="contentIndex" />
+			<property name="defaultFilterCondition" value="live = :live" />
+			<property name="parameterTypes">
+				<props>
+					<prop key="live">boolean</prop>
+				</props>
+			</property>
+		</bean> 
+	</override:add>
+	
 	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository" />
 	
 	<bean class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">

@@ -15,6 +15,7 @@ package org.riotfamily.components.index;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.riotfamily.common.hibernate.EntityListener;
 import org.riotfamily.common.hibernate.TypedEntityListener;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
@@ -22,6 +23,10 @@ import org.riotfamily.components.model.Content;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * {@link EntityListener} that notifies all {@link ContentIndexer} instances
+ * if a Content is created, modified or deleted.
+ */
 public class ContentListener extends TypedEntityListener<Content> implements ApplicationContextAware {
 
 	private List<ContentIndexer> indexers;
