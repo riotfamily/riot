@@ -12,28 +12,25 @@
  */
 package org.riotfamily.core.security.session;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.filter.PathMatchingFilterPlugin;
+import org.riotfamily.common.web.mvc.interceptor.PathMatchingRequestInterceptor;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.Ordered;
 
 /**
- * FilterPlugin that sends a redirect to the login URL in case the user is 
+ * RequestInterceptor that sends a redirect to the login URL in case the user is 
  * not logged in.
  */
-public final class LoginFilterPlugin extends PathMatchingFilterPlugin 
-		implements ApplicationContextAware {
+public final class LoginRequestInterceptor extends PathMatchingRequestInterceptor 
+		implements ApplicationContextAware, Ordered {
 
-	private static final String INTERCEPTED_URL_ATTR = LoginFilterPlugin.class 
+	private static final String INTERCEPTED_URL_ATTR = LoginRequestInterceptor.class 
 			+ ".interceptedUrl";
 
 	private String loginHandlerName;
@@ -42,8 +39,14 @@ public final class LoginFilterPlugin extends PathMatchingFilterPlugin
 
 	private ApplicationContext applicationContext;
 	
-	public LoginFilterPlugin() {
-		setOrder(1);
+	private int order = 1;
+	
+	public void setOrder(int order) {
+		this.order = order;
+	}
+	
+	public int getOrder() {
+		return order;
 	}
 	
 	public void setLoginHandlerName(String loginHandlerName) {
@@ -59,20 +62,18 @@ public final class LoginFilterPlugin extends PathMatchingFilterPlugin
 	}
 	
 	@Override
-	protected void filterInternal(HttpServletRequest request,
-		HttpServletResponse response, FilterChain filterChain)
-		throws IOException, ServletException {
+	protected boolean preHandleMatch(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		
 		RiotUser user = SecurityContext.getCurrentUser();
 		if (user != null) {
-			filterChain.doFilter(request, response);	
+			return true;	
 		}
-		else {
-			request.getSession().setAttribute(INTERCEPTED_URL_ATTR, 
-					request.getRequestURL().toString());
-		
-			ServletUtils.sendRedirect(request, response, getLoginUrl(request));
-		}
+		request.getSession().setAttribute(INTERCEPTED_URL_ATTR, 
+				request.getRequestURL().toString());
+	
+		ServletUtils.sendRedirect(request, response, getLoginUrl(request));
+		return false;
 	}
 
 	private String getLoginUrl(HttpServletRequest request) {

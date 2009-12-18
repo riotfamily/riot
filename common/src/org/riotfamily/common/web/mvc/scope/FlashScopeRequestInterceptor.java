@@ -12,30 +12,25 @@
  */
 package org.riotfamily.common.web.mvc.scope;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.filter.FilterPlugin;
+import org.riotfamily.common.web.mvc.interceptor.RequestInterceptorAdapter;
 
 /**
- * FilterPlugin that exposes the {@link FlashModel} stored in the 
+ * RequestInterceptor that exposes the {@link FlashModel} stored in the 
  * {@link FlashScope} as request attribute.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */
-public class FlashScopeFilterPlugin extends FilterPlugin {
+public class FlashScopeRequestInterceptor extends RequestInterceptorAdapter {
 
 	@Override
-	public void doFilter(HttpServletRequest request,
-			HttpServletResponse response, FilterChain filterChain)
-			throws IOException, ServletException {
+	public boolean preHandle(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		FlashScope.expose(request);
-		filterChain.doFilter(request, response);
+		return true;
 	}
 }

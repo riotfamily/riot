@@ -31,7 +31,7 @@ import org.riotfamily.statistics.domain.RequestStatsItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RequestCountFilterPlugin extends FilterPlugin {
+public class RequestCountFilterPlugin implements FilterPlugin {
 
 	private static Logger log = LoggerFactory.getLogger(RequestCountFilterPlugin.class);
 
@@ -196,7 +196,7 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 
 	public long getAvgResponseTime() {
 		if (totalRequestCount > 0) {
-			return totalResponseTime / ((long) totalRequestCount);
+			return totalResponseTime / (totalRequestCount);
 		}
 		return -1;
 	}
@@ -295,21 +295,25 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 			super(response);
 		}
 
+		@Override
 		public void	sendError(int sc) throws IOException {
 			super.sendError(sc);
 			setStatusInternal(sc);
 		}
 
+		@Override
 		public void	sendError(int sc, String msg) throws IOException {
 			super.sendError(sc, msg);
 			setStatusInternal(sc);
 		}
 		
+		@Override
 		public void setStatus(int sc) {
 			super.setStatus(sc);
 			setStatusInternal(sc);
 		}
 		
+		@Override
 		public void setStatus(int sc, String sm) {
 			super.setStatus(sc, sm);
 			setStatusInternal(sc);

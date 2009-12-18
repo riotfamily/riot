@@ -13,7 +13,7 @@
 package org.riotfamily.common.web.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletContext;
@@ -21,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.core.OrderComparator;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
@@ -52,8 +51,6 @@ public final class PluginFilter extends OncePerRequestFilter {
 	
 	private AntPathMatcher pathMatcher = new AntPathMatcher();
 	
-	private OrderComparator orderComparator = new OrderComparator();
-	
 	private FilterPlugin[] plugins = new FilterPlugin[0];
 	
 	/**
@@ -63,36 +60,24 @@ public final class PluginFilter extends OncePerRequestFilter {
 		this.exclude = exclude;
 	}
 	
+	@Override
 	protected void initFilterBean() throws ServletException {
-		getServletContext().setAttribute(
-				ATTRIBUTE_PREFIX + getFilterName(), this);
+		getServletContext().setAttribute(ATTRIBUTE_PREFIX + getFilterName(), this);
 	}
 	
-	synchronized void addPlugin(FilterPlugin plugin) {
-		int n = plugins.length;
-        FilterPlugin[] newPlugins = new FilterPlugin[n + 1];
-        System.arraycopy(plugins, 0, newPlugins, 0, n);
-        newPlugins[n++] = plugin;
-        Arrays.sort(newPlugins, orderComparator);
-		plugins = newPlugins;
+	public void setPlugins(List<FilterPlugin> plugins) {
+		int size = plugins != null ? plugins.size() : 0;
+		this.plugins = new FilterPlugin[size];
+		for (int i = 0; i < size; i++) {
+			this.plugins[i] = plugins.get(i); 
+		}
 	}
 	
-	synchronized void removePlugin(FilterPlugin plugin) {
-		int n = plugins.length;
-		FilterPlugin[] newPlugins = new FilterPlugin[n - 1];
-		int j = 0;
-        for (int i = 0; i < n; i++) {
-        	if (plugins[i] != plugin) {
-        		newPlugins[j++] = plugins[i];
-        	}
-        }
-		plugins = newPlugins;
-	}
-
 	/**
 	 * Skips the filter if the requested path matches one of the Ant-style
 	 * pattern set via {@link #setExclude}.
 	 */
+	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		if (exclude != null) {
 			String path = urlPathHelper.getPathWithinApplication(request);
@@ -105,6 +90,7 @@ public final class PluginFilter extends OncePerRequestFilter {
 		return false;
 	}
 	
+	@Override
 	protected void doFilterInternal(HttpServletRequest request, 
 			HttpServletResponse response, FilterChain filterChain) 
 			throws ServletException, IOException {

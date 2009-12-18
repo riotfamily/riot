@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  * register legacy filters without having to modify the web.xml deployment
  * descriptor.
  */
-public class DelegatingFilterPlugin extends FilterPlugin  {
+public class DelegatingFilterPlugin implements FilterPlugin {
 
 	Filter filter;
 	
@@ -33,7 +33,6 @@ public class DelegatingFilterPlugin extends FilterPlugin  {
 		this.filter = filter;
 	}
 
-	@Override
 	public void doFilter(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {

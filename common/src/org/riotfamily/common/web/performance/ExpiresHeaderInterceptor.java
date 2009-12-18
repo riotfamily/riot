@@ -12,21 +12,18 @@
  */
 package org.riotfamily.common.web.performance;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.filter.FilterPlugin;
+import org.riotfamily.common.web.mvc.interceptor.RequestInterceptorAdapter;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Filter plugin that sets a far future Expires header for request URLs that 
+ * RequestInterceptor that sets a far future Expires header for request URLs that 
  * contain a timestamp. URLs are considered as 'stamped' if they match the 
  * configured pattern.
  * <p>
@@ -37,10 +34,10 @@ import org.slf4j.LoggerFactory;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class ExpiresHeaderFilterPlugin extends FilterPlugin {
+public class ExpiresHeaderInterceptor extends RequestInterceptorAdapter 
+		implements InitializingBean {
 
-	private Logger log = LoggerFactory.getLogger(
-			ExpiresHeaderFilterPlugin.class);
+	private Logger log = LoggerFactory.getLogger(ExpiresHeaderInterceptor.class);
 	
 	public static final String DEFAULT_EXPIRATION = "10Y";
 
@@ -59,9 +56,8 @@ public class ExpiresHeaderFilterPlugin extends FilterPlugin {
 	public void setStamper(ResourceStamper stamper) {
 		this.stamper = stamper;
 	}
-
-	@Override
-	protected void initPlugin() {
+	
+	public void afterPropertiesSet() throws Exception {
 		if (stamper == null) {
 			stamper = new ResourceStamper();
 		}
@@ -70,10 +66,7 @@ public class ExpiresHeaderFilterPlugin extends FilterPlugin {
 	}
 
 	@Override
-	public void doFilter(HttpServletRequest request,
-			HttpServletResponse response, FilterChain filterChain)
-			throws IOException, ServletException {
-		
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response) {
 		if (isStamped(request)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Setting Expires header for " 
@@ -81,7 +74,7 @@ public class ExpiresHeaderFilterPlugin extends FilterPlugin {
 			}
 			response.setDateHeader(EXPIRES_HEADER, expires);
 		}
-		filterChain.doFilter(request, response);
+		return true;
 	}
 	
 	protected boolean isStamped(HttpServletRequest request) {

@@ -15,9 +15,13 @@ package org.riotfamily.common.web.support;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.mvc.interceptor.RequestHolderInterceptor;
 import org.springframework.util.Assert;
 
 /**
+ * Provides thread-local access to the current request and response.
+ * 
+ * @see RequestHolderInterceptor
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */

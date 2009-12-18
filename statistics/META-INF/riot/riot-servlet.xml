@@ -17,7 +17,6 @@
 
 	<!-- FilterPlugin to collect request statistics -->
 	<bean id="requestCountFilterPlugin" class="org.riotfamily.statistics.web.RequestCountFilterPlugin">
-		<property name="filterName" value="website-filter" />
         <property name="enabled" value="${riot.statistics.request.enabled=false}" />
         <property name="ignoreUploads" value="${riot.statistics.request.ignoreUploads=false}" />
         		        

@@ -12,20 +12,15 @@
  */
 package org.riotfamily.common.web.mvc.servlet;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.beans.reload.BeanConfigurationWatcher;
 import org.riotfamily.common.beans.reload.ConfigurableBean;
-import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * DispatcherServlet that checks whether one of the configuration files has
@@ -42,13 +37,14 @@ import org.springframework.web.servlet.DispatcherServlet;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  */
-public class ReloadableDispatcherServlet extends DispatcherServlet
+public class ReloadableDispatcherServlet extends InterceptingDispatcherServlet
 		implements ConfigurableBean {
 
 	private boolean reloadable = true;
 
 	private BeanConfigurationWatcher watcher = new BeanConfigurationWatcher(this);
 
+	@Override
 	public Class<? extends ApplicationContext> getContextClass() {
 		return ResourceAwareContext.class;
 	}
@@ -64,9 +60,8 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 	private void configureFromContext(ApplicationContext context) {
 		try {
 			ReloadableDispatcherServletConfig config =
-					(ReloadableDispatcherServletConfig)
 					BeanFactoryUtils.beanOfType(context,
-					ReloadableDispatcherServletConfig.class);
+			ReloadableDispatcherServletConfig.class);
 
 			setReloadable(config.isReloadable());
 		}
@@ -74,6 +69,7 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 		}
 	}
 
+	@Override
 	protected void onRefresh(ApplicationContext context) throws BeansException {
 		super.onRefresh(context);
 		configureFromContext(context);
@@ -81,6 +77,7 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 		watcher.setResources(ctx.getConfigResources());
 	}
 
+	@Override
 	protected void doDispatch(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -92,18 +89,4 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 		refresh();
 	}
 	
-	/**
-	 * 
-	 */
-	@Override
-	protected void doHead(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		if (ServletUtils.isDirectRequest(request)) {
-			super.doHead(request, response);
-		}
-		else {
-			doGet(request, response);
-		}
-	}
 }

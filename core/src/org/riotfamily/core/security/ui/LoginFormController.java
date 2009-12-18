@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
-import org.riotfamily.core.security.session.LoginFilterPlugin;
+import org.riotfamily.core.security.session.LoginRequestInterceptor;
 import org.riotfamily.core.security.session.LoginManager;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -58,7 +58,7 @@ public class LoginFormController implements Controller {
 					return new ModelAndView(successViewName);
 				}
 				else {
-					String successUrl = LoginFilterPlugin.getInterceptedUrl(request);
+					String successUrl = LoginRequestInterceptor.getInterceptedUrl(request);
 					if (successUrl == null) {
 						successUrl = HandlerUrlUtils.getUrl(request, "home");
 					}

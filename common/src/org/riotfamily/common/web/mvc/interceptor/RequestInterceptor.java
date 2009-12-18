@@ -15,23 +15,18 @@ package org.riotfamily.common.web.mvc.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.support.RequestHolder;
-
 /**
- * RequestInterceptor that stores the current request and response in the
- * thread-local {@link RequestHolder}.
+ * Interface for general servlet request interception. Use this interface if
+ * you want to intercept every request, regardless of the HandlerMapping.
+ * 
+ * @see RequestInterceptorFilterPlugin
  */
-public class RequestHolderInterceptor extends RequestInterceptorAdapter {
-
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response) {
-		RequestHolder.set(request, response);
-		return true;
-	}
+public interface RequestInterceptor {
 	
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Exception ex) {
-		RequestHolder.unset();
-	}
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response) throws Exception;
+	
+	public void postHandle(HttpServletRequest request, HttpServletResponse response) throws Exception;
+	
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Exception ex) throws Exception;
 
 }

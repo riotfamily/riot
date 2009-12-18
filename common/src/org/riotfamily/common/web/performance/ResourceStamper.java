@@ -22,7 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * Utility class that can be used to add a timestamp to a URL.
  * 
- * @see ExpiresHeaderFilterPlugin
+ * @see ExpiresHeaderInterceptor
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */

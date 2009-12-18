@@ -31,20 +31,22 @@
 		<property name="contextOverride" value="true" />
 	</bean>
 	
-	<bean id="expiresHeaderFilterPlugin" class="org.riotfamily.common.web.performance.ExpiresHeaderFilterPlugin">
+	<bean class="org.riotfamily.common.web.filter.PluginFilterInitializer">
+		<property name="filterName" value="website-filter" />
+	</bean>
+	
+	<bean class="org.riotfamily.common.web.performance.ExpiresHeaderInterceptor">
 		<description>
 			FilterPlugin that sets a far-future expires header for all stamped URLs.
 		</description>
-		<property name="filterName" value="website-filter" />
 	</bean>
 
-	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.common.web.filter.OpenSessionInViewFilterPlugin">
+	<bean class="org.riotfamily.common.web.mvc.interceptor.OpenSessionInViewRequestInterceptor">
 		<description>
-			FilterPlugin that binds a Hibernate Session to the thread for the 
-			entire processing of the request just like Spring's OpenSessionInViewFilter.
+			ReuestInterceptor that binds a Hibernate Session to the thread for the 
+			entire processing of the request.
 		</description>
-		<constructor-arg ref="sessionFactory" />
-		<property name="filterName" value="website-filter" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
@@ -57,9 +59,7 @@
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
 	</bean>
 	
-	<bean name="riotAccessControlFilterPlugin" class="org.riotfamily.core.security.session.AccessControlFilterPlugin">
-		<property name="filterName" value="website-filter" />
-	</bean>
+	<bean class="org.riotfamily.core.security.session.SecurityContextInterceptor" />
 	
 	<bean id="cacheKeyAugmentor" class="org.riotfamily.common.web.cache.NoOpCacheKeyAugmentor" />
 	
@@ -93,9 +93,7 @@
 	
 	<bean class="org.riotfamily.common.web.mvc.mapping.ReverseUrlHanderMappingAdapter" />
 	
-	<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeFilterPlugin">
-		<property name="filterName" value="website-filter" />
-	</bean>
+	<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeRequestInterceptor" />
 	
 	<bean class="org.riotfamily.common.web.mvc.scope.FlashModelExposer" />
 	

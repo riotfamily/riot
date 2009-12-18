@@ -17,11 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.UrlPathHelper;
 
-public class PathMatchingInterceptor extends HandlerInterceptorAdapter {
-	
+public abstract class PathMatchingRequestInterceptor extends RequestInterceptorAdapter {
+
 	private PathMatcher pathMatcher = new AntPathMatcher();
 	
 	private UrlPathHelper urlPathHelper = new UrlPathHelper();
@@ -39,29 +38,9 @@ public class PathMatchingInterceptor extends HandlerInterceptorAdapter {
 	public void setIncludes(String[] includes) {
 		this.includes = includes;
 	}
-
+	
 	public void setPathMatcher(PathMatcher pathMatcher) {
 		this.pathMatcher = pathMatcher;
-	}
-	
-	public void setIncludesOverwriteExcludes(boolean includesOverwriteExcludes) {
-		this.includesOverwriteExcludes = includesOverwriteExcludes;
-	}
-
-	public final boolean preHandle(HttpServletRequest request, 
-			HttpServletResponse response, Object handler) throws Exception {
-		
-		String lookupPath = urlPathHelper.getLookupPathForRequest(request);
-		if (include(lookupPath)) {
-			return doPreHandle(request, response, handler);	
-		}
-		return true;
-	}
-	
-	protected boolean doPreHandle(HttpServletRequest request, 
-			HttpServletResponse response, Object handler) throws Exception {
-		
-		return true;
 	}
 	
 	private boolean include(String path) {
@@ -82,5 +61,19 @@ public class PathMatchingInterceptor extends HandlerInterceptorAdapter {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean preHandle(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+		String lookupPath = urlPathHelper.getLookupPathForRequest(request);
+		if (include(lookupPath)) {
+				return preHandleMatch(request, response);
+		}
+		return true;
+	}
+	
+	protected abstract boolean preHandleMatch(HttpServletRequest request,
+			HttpServletResponse response) throws Exception;
 
 }

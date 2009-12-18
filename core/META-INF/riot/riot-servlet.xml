@@ -36,7 +36,11 @@
 	<bean class="org.riotfamily.common.web.mvc.servlet.ReloadableDispatcherServletConfig">
 		<property name="reloadable" value="${riot-servlet.reloadable=true}" />
 	</bean>
-	  	
+	
+	<bean class="org.riotfamily.common.web.filter.PluginFilterInitializer">
+		<property name="filterName" value="riot-filter" />
+	</bean>
+	
 	<!-- I18N -->
 	
 	<util:list id="messageBasenames">
@@ -58,13 +62,10 @@
 
 	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
 	
-	<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeFilterPlugin">
-		<property name="filterName" value="riot-filter" />
-	</bean>
+	<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeRequestInterceptor" />
 
-	<bean class="org.riotfamily.common.web.filter.OpenSessionInViewFilterPlugin">
-		<constructor-arg ref="sessionFactory" />
-		<property name="filterName" value="riot-filter" />
+	<bean class="org.riotfamily.common.web.mvc.interceptor.OpenSessionInViewRequestInterceptor">
+		<property name="sessionFactory" ref="sessionFactory" />			
 	</bean>
 
 	<!-- Spring Web-MVC Setup -->
@@ -80,36 +81,24 @@
     	<property name="defaultLocale"><value>en_US</value></property>
     </bean>
     
-    <util:list id="handlerInterceptors">
-    	<bean class="org.riotfamily.common.web.mvc.interceptor.RequestHolderInterceptor" />
-	</util:list>
+	<bean class="org.riotfamily.common.web.mvc.interceptor.RequestHolderInterceptor" />
 			
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">
 		<constructor-arg ref="screenRepository" />
 		<property name="order" value="1" />
 		<property name="servletPrefix" ref="riotServletPrefix" />
 		<property name="interceptors">
-			<bean class="org.riotfamily.common.beans.factory.JoinedListFactoryBean">
-				<property name="lists">
-					<list>
-						<ref bean="handlerInterceptors" />
-						<list>
-							<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
-						</list>
-					</list>
-				</property>
-			</bean>
+			<list>
+				<bean class="org.riotfamily.core.view.NoCacheHeaderInterceptor" />
+			</list>
 		</property>
 	</bean>
 	
 	<bean id="beanNameHandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
 		<property name="order" value="2" />
-		<property name="interceptors" ref="handlerInterceptors" />
 	</bean>
 	
-	<bean class="org.directwebremoting.spring.DwrHandlerMapping">
-		<property name="interceptors" ref="handlerInterceptors" />
-	</bean>
+	<bean class="org.directwebremoting.spring.DwrHandlerMapping" />
     
     <bean class="org.riotfamily.common.web.mvc.mapping.ReverseUrlHanderMappingAdapter">
     	<property name="servletPrefix" ref="riotServletPrefix" />
@@ -217,16 +206,13 @@
 		
 	<!-- Security -->
 
-	<bean class="org.riotfamily.core.security.session.AccessControlFilterPlugin">
-		<property name="filterName" value="riot-filter" />
-	</bean>
+	<bean class="org.riotfamily.core.security.session.SecurityContextInterceptor" />
 	
-	<bean id="loginFilterPlugin" class="org.riotfamily.core.security.session.LoginFilterPlugin">
+	<bean id="loginFilterPlugin" class="org.riotfamily.core.security.session.LoginRequestInterceptor">
 		<description>
 			FilterPlugin that ensures that only authenticated users can
 	  		access the Riot admin pages.
 		</description>
-		<property name="filterName" value="riot-filter" />
 		<property name="loginHandlerName">
 			<idref bean="loginFormController"/>
 		</property>

@@ -21,7 +21,7 @@ import org.riotfamily.core.security.policy.AuthorizationPolicy;
 import org.riotfamily.core.security.policy.InteractivePolicy;
 import org.riotfamily.core.security.policy.PermissionDeniedException;
 import org.riotfamily.core.security.policy.AuthorizationPolicy.Permission;
-import org.riotfamily.core.security.session.AccessControlFilterPlugin;
+import org.riotfamily.core.security.session.SecurityContextInterceptor;
 import org.riotfamily.core.security.session.SecurityContext;
 import org.springframework.util.Assert;
 
@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
  * Provides static methods to check permissions and associate a user
  * with the current Thread. 
  * <p>
- * This class is only usable if an {@link AccessControlFilterPlugin} or 
+ * This class is only usable if an {@link SecurityContextInterceptor} or 
  * {@link AccessControlInterceptor} is configured.  
  */
 public final class AccessController {
