@@ -24,6 +24,7 @@ import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.dbmsgsrc.DbMessageSource;
@@ -63,6 +64,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 		fileUpload.setRequired(true);
 		form.addElement(fileUpload, "data");
 		form.addElement(new Checkbox(), "addNewMessages");
+		addButton(form, "import");
 		return form;
 	}
 	
@@ -81,7 +83,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 		}
 		catch (IOException e) {			
 		}
-		return null;
+		return new RefreshListResult();
 	}
 	
 	private void updateMessages(byte[] data, boolean addNewMessages) throws IOException {
