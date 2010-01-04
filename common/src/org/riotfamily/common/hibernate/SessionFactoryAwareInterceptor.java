@@ -15,6 +15,12 @@ package org.riotfamily.common.hibernate;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 
+/**
+ * Interface that can be implemented by an {@link Interceptor} that needs
+ * a reference to the SessionFactory.
+ * 
+ * @see RiotSessionFactoryBean
+ */
 public interface SessionFactoryAwareInterceptor extends Interceptor {
 
 	public void setSessionFactory(SessionFactory sessionFactory);
