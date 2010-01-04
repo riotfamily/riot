@@ -52,7 +52,8 @@ public class HibernateEntityConverter implements Converter {
 			MarshallingContext context) {
 		
 		XStreamMarshaller.addReference(context, source);
-		Serializable id = HibernateUtils.getId(getSessionFactory(), source);
+		Serializable id = HibernateUtils.getIdAndSaveIfNecessary(getSessionFactory(), source);
+		
 		if (id instanceof Long) {
 			writer.addAttribute("id", id.toString());
 		}

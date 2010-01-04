@@ -63,6 +63,14 @@ public final class HibernateUtils {
 		return metadata.getIdentifier(bean, EntityMode.POJO);
 	}
 	
+	public static Serializable getIdAndSaveIfNecessary(SessionFactory sessionFactory, Object bean) {
+		Serializable id = getId(sessionFactory, bean);
+		if (id == null) {
+			sessionFactory.getCurrentSession().save(bean);
+		}
+		return getId(sessionFactory, bean);
+	}
+	
 	public static String getIdAsString(SessionFactory sessionFactory, Object bean) {
 		Serializable id = getId(sessionFactory, bean);
 		return (id != null) ? id.toString() : null;
