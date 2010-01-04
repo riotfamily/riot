@@ -13,10 +13,7 @@
 package org.riotfamily.common.hibernate;
 
 import java.io.Serializable;
-import java.util.List;
 
-import org.hibernate.LockMode;
-import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -81,19 +78,6 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	}
 	
 	/**
-	 * Updates the persistent instance with the same identifier as this 
-	 * detached instance. If there is a persistent instance with the same 
-	 * identifier, an exception is thrown.
-	 *
-	 * @see Session#update(Object)
-	 * @deprecated Please use {@link #merge()} instead to ensure JPA compatibility.
-	 */
-	@Deprecated
-	public final void update() {
-		getSession().update(this);
-	}
-
-	/**
 	 * Removes this persistent instance from the data store.
 	 * <p>
 	 * Why is this method <code>final</code>? Changing the implementation of
@@ -105,56 +89,6 @@ public abstract class ActiveRecord extends ConfigurableBean {
 		getSession().delete(this);
 	}
 	
-	/**
-	 * Obtains the specified lock level upon this persistent instance.
-	 * <p>
-	 * Why is this method <code>final</code>? Changing the implementation of
-	 * this method could seriously defect the whole persistence mechanism.
-	 * 
-	 * @param lockMode a {@link LockMode}
-	 * 
-	 * @see Session#lock(Object, LockMode)
-	 */
-	public final void lock(LockMode lockMode) {
-		getSession().lock(this, lockMode);
-	}
-	
-	/**
-	 * Creates a HQL {@link Query}, binding a number of values to "?"
-	 * parameters in the query string. 
-	 * 
-	 * @param hql a query expressed in Hibernate's query language that may
-	 *            contain one or more '?' parameter placeholders
-	 * @param params the values of the parameters
-	 * @return a newly created {@link Query}
-	 */
-	protected static Query createQuery(String hql, Object... params) {
-		Query query = getSession().createQuery(hql);
-		
-		if (params != null) {
-			int index = 0;
-			for (Object param : params) {
-				query.setParameter(index++, param);
-			}
-		}
-
-		return new QueryWrapper(query);
-	}
-	
-	/**
-	 * Executes a HQL query, binding a number of values to "?" parameters in
-	 * the query string.
-	 * 
-	 * @param hql a query expressed in Hibernate's query language that may
-	 *            contain one or more '?' parameter placeholders
-	 * @param params the values of the parameters
-	 * @return a {@link List} containing the results of the query execution
-	 */
-	@SuppressWarnings("unchecked")
-	protected static<T> List<T> find(String hql, Object... params) {
-		return createQuery(hql, params).list();
-	}
-
 	/**
 	 * Returns the persistent instance of the given entity class with the given
 	 * identifier, or null if there is no such persistent instance.
@@ -175,42 +109,34 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	protected static<T> T load(Class<T> clazz, Serializable id) {
 		return (T) getSession().get(clazz, id);
 	}
-	
-	/**
-	 * Convenience method to return a single instance that matches the query,
-	 * or null if the query returns no results.
-	 * 
-	 * @param hql a query expressed in Hibernate's query language that may
-	 *        contain one or more '?' parameter placeholders
-	 * @param params the values of the parameters 
-	 * @return the single result or <code>null</code>
-	 * @throws NonUniqueResultException if there is more than one matching result
-	 */
-	@SuppressWarnings("unchecked")
-	protected static<T> T load(String hql, Object... params)
-		throws NonUniqueResultException {
-		
-		return (T) createQuery(hql, params).uniqueResult();
-	}
-	
-	/**
-	 * Convenience method to return a single instance with the given property
-	 * value or null if the query returns no results.
-	 * 
-	 * @param clazz a persistent class 
-	 * @param property the property name
-	 * @param value the property value
-	 * @return the single result or <code>null</code>
-	 * @throws NonUniqueResultException if there is more than one matching result
-	 */
-	@SuppressWarnings("unchecked")
-	protected static<T> T loadByProperty(Class<T> clazz, String property, 
-			Object value) throws NonUniqueResultException {
-		
-		return (T) createQuery("from " + clazz.getName() 
-				+ " where " + property + " = ?", value).uniqueResult();
-	}
 
+	/**
+	 * Creates a {@link TypedQuery} from the given HQL string and sets the
+	 * varargs as positional parameters. All occurrences of <code>{}</code> will
+	 * be replaced with the entity name of the given class.
+	 * <p>
+	 * <b>Example:</b>
+	 * <pre>
+	 * public static Foo loadByName(String name) {
+	 *   return query(Foo.class, "from {} where name = ?", name).load();
+	 * }
+	 * </pre>
+	 * @param type The entity class
+	 * @param hql The HQL query string
+	 * @param params Positional parameters 
+	 */
+	protected static<T> TypedQuery<T> query(Class<T> type, String hql, Object... params) {
+		String entityName = sessionFactory.getClassMetadata(type).getEntityName();
+		Query query = getSession().createQuery(hql.replace("{}", entityName));
+		if (params != null) {
+			int index = 0;
+			for (Object param : params) {
+				query.setParameter(index++, param);
+			}
+		}
+		return new TypedQuery<T>(query, type);
+	}
+		
 	/**
 	 * Convenience method to perform some code for every single result obtained
 	 * by the given query. It's save to call this method on a result set of
@@ -224,22 +150,18 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 * Hibernate {@link Session}.
 	 * 
 	 * @param <T> a mapped type or {@link Object[]} if the query returns more
-	 *            than 1 column per row
+	 *        than 1 column per row
+	 * @param query the Query to execute
 	 * @param callback a {@link ForEachCallback} to call for every entity
-	 *                 returned by the given query
-	 * @param hql a query expressed in Hibernate's query language that may
-	 *            contain one or more '?' parameter placeholders
-	 * @param params the values of the parameters
+	 *        returned by the given query
+	 * 
 	 * @see Query#scroll()
 	 * @see Session#evict(Object)
 	 * @see ForEachCallback
 	 */
 	@SuppressWarnings("unchecked")
-	protected static <T> void forEach(ForEachCallback<T> callback, String hql,
-		Object... params) {
-		
-		ScrollableResults results = createQuery(hql, params).scroll();
-		
+	protected static <T> void forEach(Query query, ForEachCallback<T> callback) {
+		ScrollableResults results = query.scroll();
 		while (results.next()) {
 			Object[] row = results.get();
 			callback.execute(row.length > 1? (T) row: (T) row[0]);

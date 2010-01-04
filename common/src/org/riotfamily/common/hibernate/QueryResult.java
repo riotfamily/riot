@@ -31,4 +31,9 @@ public class QueryResult<T> extends TypedList<T> {
 		super(query.list(), query.getReturnTypes()[0].getReturnedClass());
 	}
 	
+	@SuppressWarnings("unchecked")
+	public QueryResult(Query query, Class<T> type) {
+		super(query.list(), type);
+	}
+	
 }

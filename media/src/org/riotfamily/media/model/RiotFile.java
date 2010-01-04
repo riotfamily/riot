@@ -323,11 +323,11 @@ public class RiotFile extends ActiveRecordBeanSupport {
 	// ----------------------------------------------------------------------
 	
 	public static RiotFile loadByUri(String uri) {
-		return loadByProperty(RiotFile.class, "uri", uri);
+		return query(RiotFile.class, "from {} where uri = ?", uri).load();
 	}
 	
 	public static RiotFile loadByMd5(String md5) {
-		return loadByProperty(RiotFile.class, "md5", md5);
+		return query(RiotFile.class, "from {} where md5 = ?", md5).load();
 	}
 	
 }

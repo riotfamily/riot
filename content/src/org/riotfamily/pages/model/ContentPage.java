@@ -144,7 +144,7 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="parent_id")
 	@IndexColumn(name="pos")
-	//@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public List<ContentPage> getChildren() {
 		return children;
 	}
@@ -340,22 +340,26 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	}
 	
 	public static ContentPage loadBySiteAndPath(Site site, String path) {
-		return load("from ContentPage where site = ? and path = ?", site, path);
+		return query(ContentPage.class, 
+				"from {} where site = ? and path = ?", site, path)
+				.cache().load();
 	}
 	
 	public static ContentPage loadByTypeAndSite(String pageType, Site site) {
-		return load("from ContentPage where pageType = ? and site = ?", pageType, site);
+		return query(ContentPage.class, 
+				"from {} where pageType = ? and site = ?", pageType, site)
+				.cache().load();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<ContentPage> findByTypesAndSite(Collection<String> types, Site site) {
 		if (types == null || types.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return createQuery("from ContentPage where pageType in (:types) and site = :site")
+		return query(ContentPage.class,
+				"from {} where pageType in (:types) and site = :site")
 				.setParameterList("types", types)
 				.setParameter("site", site)
-				.list();
+				.cache().find();
 	}
 
 }

@@ -294,28 +294,28 @@ public class Site extends ActiveRecordBeanSupport {
 	}
 	
 	public static Site loadDefaultSite() {
-		return (Site) getSession().createCriteria(Site.class)
-				.setCacheable(true)
-				.setCacheRegion("pages")
-				.setMaxResults(1)
-				.uniqueResult();
+		return query(Site.class, "from {}").setMaxResults(1).cache().load();
 	}
 	
 	public static Site loadByLocale(Locale locale) {
-		return load("from Site where locale = ?", locale);
+		return query(Site.class, "from {} where locale = ?", locale).load();
 	}
 	
 	public static List<Site> findAll() {
-		return find("from Site order by position");
+		return query(Site.class, "from {} order by position").cache().find();
 	}
 	
 	public static Site loadByHostName(String hostName) {
+		Site catchAll = null;
 		for (Site site : findAll()) {
-			if (site.hostNameMatches(hostName)) {
+			if (site.hostNameMatches(hostName, false)) {
 				return site;
 			}
+			if (site.getHostName() == null && catchAll == null) {
+				catchAll = site;
+			}
 		}
-		return null;
+		return catchAll;
 	}
 
 }

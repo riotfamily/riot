@@ -111,11 +111,13 @@ public class PersistentSessionMetaData extends ActiveRecord
 	// ----------------------------------------------------------------------
 	
 	public static List<PersistentSessionMetaData> findAll() {
-		return find("from PersistentSessionMetaData");
+		return query(PersistentSessionMetaData.class, "from {}").find();
 	}
 	
 	public static PersistentSessionMetaData loadByUser(RiotUser user) {
-		return load(PersistentSessionMetaData.class, user.getUserId());
+		return query(PersistentSessionMetaData.class,
+				"from {} where userId = ?", user.getUserId())
+				.load();
 	}
 	
 }

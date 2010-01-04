@@ -89,15 +89,15 @@ public class PageAlias extends ActiveRecordBeanSupport {
 	// ----------------------------------------------------------------------
 	
 	public static PageAlias loadBySiteAndPath(Site site, String path) {
-		return (PageAlias) createQuery(
-				"from PageAlias where site = ? and path = ?", site, path)
-				.setCacheable(true)
-				.setCacheRegion("pages")
-				.uniqueResult();
+		return query(PageAlias.class,
+				"from {} where site = ? and path = ?", site, path)
+				.cache().load();
 	}
 
 	private static void deleteBySiteAndPath(Site site, String path) {
-		createQuery("delete from PageAlias where site = ? and path = ?", site, path).executeUpdate();
+		query(PageAlias.class, 
+				"delete from {} where site = ? and path = ?", site, path)
+				.executeUpdate();
 	}
 	
 	public static void create(ContentPage page, String oldPath) {
@@ -110,7 +110,8 @@ public class PageAlias extends ActiveRecordBeanSupport {
 	}
 	
 	public static void resetByPage(ContentPage page) {
-		createQuery("update PageAlias set page = null where page = ?", page).executeUpdate();
+		query(PageAlias.class, "update {} set page = null where page = ?", page)
+				.executeUpdate();
 	}
 	
 	public static void deleteAlias(Page page) {
