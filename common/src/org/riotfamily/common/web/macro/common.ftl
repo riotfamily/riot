@@ -18,12 +18,6 @@
  -->
 <#assign includeUri = commonMacroHelper.getPathWithinApplication() />
 
-<#--- 
-  - The name of the current FreeMarker template (may be useful for debugging).
-  - @see <a href="http://www.riotfamily.org/api/latest/org/riotfamily/common/web/view/freemarker/RiotFreeMarkerView.html">RiotFreeMarkerView</a>
- -->
-<#assign templateName = .data_model['org.riotfamily.common.web.mvc.view.RiotFreeMarkerView.templateName']! />
-
 <#---
   - Includes the given path using a RequestDispatcher. 
   - @param path The path to include
@@ -457,6 +451,31 @@
 			<script src="${resource(src)?xml}" type="${type}"${joinAttributes(attributes)}></script>
 		</#list>
 	</#if>
+</#macro>
+
+<#---
+ - Renders a body tag with condtional comments to target different IE versions via CSS selectors.
+ - The output will look like this:
+ - <pre>
+ - &lt;!--[if lt IE 7]&gt;  &lt;body class="noscript ie ie6"&gt; &lt;![endif]--&gt; 
+ - &lt;!--[if IE 7]&gt;     &lt;body class="noscript ie ie7"&gt; &lt;![endif]--&gt; 
+ - &lt;!--[if IE 8]&gt;     &lt;body class="noscript ie ie8"&gt; &lt;![endif]--&gt; 
+ - &lt;!--[if !IE]&gt;&lt;!--&gt; &lt;body class="noscript"&gt;&lt;!--    &lt;![endif]--&gt;
+ - 	...
+ - &lt;/body&gt;
+ - </pre>
+ - Inside the body tag a script will be rendered that removes the 'noscript' class
+ - (see <a href="#removeNoscriptClass">&lt;@c.removeNoscriptClass /&gt;</a>).
+ -->
+<#macro body class="" attributes...>
+<#local class = (class + " noscript")?trim />
+<!--[if lt IE 7]>  <body class="${class} ie ie6"${joinAttributes(attributes)}> <![endif]--> 
+<!--[if IE 7]>     <body class="${class} ie ie7"${joinAttributes(attributes)}> <![endif]--> 
+<!--[if IE 8]>     <body class="${class} ie ie8"${joinAttributes(attributes)}> <![endif]--> 
+<!--[if !IE]><!--> <body class="${class}"${joinAttributes(attributes)}><!--    <![endif]-->
+	<@removeNoscriptClass />
+	<#nested>
+</body>
 </#macro>
 
 <#---
