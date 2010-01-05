@@ -334,7 +334,7 @@ riot.components = (function() {
 		hideOutline: function(ev) {
 			if (Event.stop) { 
 				Event.stop(ev);
-				riot.outline.scheduleHide();
+				riot.outline.hide();
 			}
 		},
 		
@@ -347,8 +347,8 @@ riot.components = (function() {
 				this.targetElement = this.element;
 			}
 			Event.observe(this.targetElement, 'click', this.bOnClick);
-			Event.observe(this.targetElement, 'mouseover', this.bShowOutline);
-			Event.observe(this.targetElement, 'mouseout', this.bHideOutline);
+			Event.observe(this.targetElement, 'mouseenter', this.bShowOutline);
+			Event.observe(this.targetElement, 'mouseleave', this.bHideOutline);
 		},
 		
 		onClick: function(ev) {
@@ -359,8 +359,8 @@ riot.components = (function() {
 		removeClickHandler: function() {
 			if (this.targetElement) {
 				Event.stopObserving(this.targetElement, 'click', this.bOnClick);
-				Event.stopObserving(this.targetElement, 'mouseover', this.bShowOutline);
-				Event.stopObserving(this.targetElement, 'mouseout', this.bHideOutline);
+				Event.stopObserving(this.targetElement, 'mouseenter', this.bShowOutline);
+				Event.stopObserving(this.targetElement, 'mouseleave', this.bHideOutline);
 			}
 			this.clickHandler = null;
 			this.element.enableLinks();

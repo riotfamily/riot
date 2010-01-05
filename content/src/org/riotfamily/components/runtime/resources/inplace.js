@@ -13,7 +13,6 @@ riot.outline = {
 	
 	show: function(el, onclick, excludes) {
 		if (!window.riot || riot.outline.suspended) return;
-		riot.outline.cancelHide();
 
 		// el.offsetHeight may be 0, descend until an element with a height is found.		
 		var h = el.offsetHeight;
@@ -41,17 +40,6 @@ riot.outline = {
 		if (window.riot && riot.outline) { 
 			riot.outline.divs.invoke('hide');
 		}
-	},
-	
-	scheduleHide: function(ev) {
-		riot.outline.timeout = setTimeout(riot.outline.hide, 1);
-	},
-
-	cancelHide: function() {
-		if (riot.outline.timeout) {
-			clearTimeout(riot.outline.timeout);
-			riot.outline.timeout = null;
-		}
 	}
 }
 
@@ -73,8 +61,8 @@ riot.InplaceEditor = Class.create({
 		this.element.disableLinks();
 		this.element.onclick = this.onclickHandler;
 		this.element.addClassName('riot-editable-text');
-		this.element.observe('mouseover', this.bShowOutline);
-		this.element.observe('mouseout', this.bHideOutline);
+		this.element.observe('mouseenter', this.bShowOutline);
+		this.element.observe('mouseleave', this.bHideOutline);
 	},
 	
 	editOff: function() {
@@ -84,8 +72,8 @@ riot.InplaceEditor = Class.create({
 		this.element.onclick = null;
 		this.element.enableLinks();
 		this.element.removeClassName('riot-editable-text');
-		this.element.stopObserving('mouseover', this.bShowOutline);
-		this.element.stopObserving('mouseout', this.bHideOutline);
+		this.element.stopObserving('mouseenter', this.bShowOutline);
+		this.element.stopObserving('mouseleave', this.bHideOutline);
 	},
 
 	showOutline: function(ev) {
@@ -95,7 +83,7 @@ riot.InplaceEditor = Class.create({
 	
 	hideOutline: function(ev) {
 		if (ev) Event.stop(ev);
-		if (window.riot) riot.outline.scheduleHide();
+		if (window.riot) riot.outline.hide();
 	},
 
 	/* Handler that is invoked when an enabled editor is clicked */
