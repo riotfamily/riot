@@ -13,7 +13,6 @@ riot.Toolbar = Class.create({
 			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}')
 		});
 		
-		this.buttons.get('logout').applyHandler = this.logout;
 		this.disablePreviewButton();
 		
 		var buttonsDiv = new Element('div', {id: 'riot-toolbar-buttons'});

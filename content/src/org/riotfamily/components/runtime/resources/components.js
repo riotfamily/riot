@@ -144,13 +144,13 @@ riot.components = (function() {
 		},
 		
 		findComponentElements: function() {
-			//Note: Element.findChildren is defined in dragdrop.js
-			this.componentElements = Element.findChildren(this.element, 'riot-component', false, 'div') || [];
+			this.componentElements = Selector.findChildElements(this.element, ['.riot-component']);
+			
 		},
 			
 		insertOn: function() {
 			if (!this.config.max || this.componentElements.length < this.config.max) {
-				this.element.addClassName('riot-mode-insert');
+				this.element.addClassName('riot-mode-insert').disableLinks();
 				this.insertButton = new InsertButton(this);
 			}
 			if (this.componentElements.length == 0) {
@@ -160,10 +160,11 @@ riot.components = (function() {
 		
 		insertOff: function() {
 			if (this.insertButton) {
-				this.element.removeClassName('riot-mode-insert');
-				this.element.removeClassName('riot-empty-list');
-				this.insertButton.remove();
-				this.insertButton = null;
+				this.element.removeClassName('riot-mode-insert')
+					.removeClassName('riot-empty-list')
+					.enableLinks();
+				
+				delete this.insertButton.remove();
 			}
 		},
 
@@ -761,6 +762,14 @@ riot.components = (function() {
 			return null;
 		},
 		
+		browseOn: function() {
+			document.fire('components:browse');
+		},
+		
+		browseOff: function() {
+			document.fire('components:edit');
+		},
+		
 		previewOn: function() {
 			var h = Math.max(document.viewport.getHeight(), Element.getHeight(document.body));
 			
@@ -777,6 +786,12 @@ riot.components = (function() {
 			previewFrame.setStyle({display: 'block'});
 			
 			riotPreviewFrame.init(containersToPublish);
+		},
+		
+		logoutOn: function() {
+			ComponentEditor.logout(function() {
+				location.reload();
+			});
 		},
 		
 		showPreviewFrame: function() {
