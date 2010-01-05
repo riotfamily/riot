@@ -56,7 +56,7 @@
 	</script>
 	<#if notification??>
 		<script language="JavaScript" type="text/javascript">
-			riot.notification.show(${c.toJSON(notification)});
+			riot.notification.show(${FormatUtils.toJSON(notification)});
 		</script>
 	</#if>
 </body>

@@ -29,6 +29,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -390,6 +392,24 @@ public final class FormatUtils {
 		}
 		sb.append(seconds);
 		return sb.toString();
+	}
+	
+	/**
+	 * Strips directory names and the query-string from a path.
+	 * <p>
+  	 * <b>Example:</b>
+     * <code>"/hello/world.html?foo=bar"</code> -&gt; <code>"world.html"</code>
+	 */
+	public static String baseName(String path) {
+		int begin = path.lastIndexOf('/') + 1;
+		int end = path.indexOf(';');
+		if (end == -1) {
+			end = path.indexOf('?');
+			if (end == -1) {
+				end = path.length();
+			}
+		}
+		return path.substring(begin, end);
 	}
 
 	/**
@@ -889,5 +909,11 @@ public final class FormatUtils {
 		}
 		return sb.toString();
 	}
-	
+
+	/**
+	 * Returns the given object as JSON String.
+	 */
+	public static String toJSON(Object obj) {
+		return JSONObject.fromObject(obj).toString();
+	}
 }

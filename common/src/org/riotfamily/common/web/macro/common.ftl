@@ -173,21 +173,6 @@
 </#function>
 
 <#---
-  - Tries to replace the given parameter's value in the given URL's query string
-  - with the given new value or adds the parameter if it is not yet contained. 
-  -->
-<#function setParameter url name value>
-	<#return commonMacroHelper.setParameter(url, name, value) />
-</#function>
-
-<#---
-  - Adds the given parameter to the given URL's query string.
-  -->
-<#function addParameter url name value>
-	<#return commonMacroHelper.addParameter(url, name, value) />
-</#function>
-
-<#---
   - Adds all request parameters to the given URLs query string.
   -->
 <#function addRequestParameters url>
@@ -243,17 +228,6 @@
 </#function>
 
 <#---
-  - Strips directory names and the query-string from a path.
-  - <h4>Example:</h4>
-  - <pre>${baseName('/hello/world.html?foo=bar')}
-  - ==> world.html
-  - </pre>  
-  -->
-<#function baseName path>
-	<#return commonMacroHelper.baseName(path) />
-</#function>
-
-<#---
   - Returns the extension of the given file-name. If the validExtensions 
   - parameter is specified, the defaultExtension will be returned if the actual
   - extension is invalid.
@@ -263,23 +237,11 @@
   - </pre>
   -->
 <#function fileExtension filename validExtension=[] defaultExtension="">
-	<#return commonMacroHelper.getFileExtension(filename, validExtension, defaultExtension) />
-</#function>
-
-<#---
-  - Returns a formatted string using an appropriate unit (Bytes, KB or MB).
-  -->
-<#function formatByteSize bytes>
-	<#return commonMacroHelper.formatByteSize(bytes) />
-</#function>
-
-<#---
-  - Returns a formatted string using the pattern hh:mm:ss. The hours are
-  - omitted if they are zero, the minutes are padded with a '0' character
-  - if they are less than 10.
-  -->
-<#function formatMillis millis>
-	<#return commonMacroHelper.formatMillis(millis) />
+	<#local ext = FormatUtils.getExtension(filename) />
+	<#if !validExtensions?has_content || validExtensions?seq_contains(ext)>
+		<#return ext />
+	</#if>
+	<#return defaultExtension />
 </#function>
 
 <#---
@@ -294,41 +256,6 @@
   -->
 <#function round number>
 	<#return commonMacroHelper.round(number) />
-</#function>
-
-<#---
-  - Converts the given string to title case. Example:
-  - <pre>
-  -  foo.bar     -&gt; Foo Bar
-  -  foo-foo_bar -&gt; Foo Foo Bar
-  -  foo.barBar  -&gt; Foo Bar Bar
-  - </pre>
-  -->
-<#function toTitleCase s>
-	<#return commonMacroHelper.toTitleCase(s) />
-</#function>
-
-<#---
-  - XML-escapes dangling ampersands, i.e. '&amp;' chars that don't mark the
-  - beginning of an entity.
-  -->
-<#function xmlEscapeDanglingAmps s>
-	<#return commonMacroHelper.xmlEscapeDanglingAmps(s) />
-</#function>
-
-<#---
-  - Returns the given object as JSON String. 
-  -->
-<#function toJSON obj>
-	<#return commonMacroHelper.toJSON(obj) />
-</#function>
-
-
-<#---
-  - Strips HTML tags and whitespaces from the given String
-  -->
-<#function stripTagsAndWhitespaces s>
-	<#return commonMacroHelper.stripTagsAndWhitespaces(s) />
 </#function>
 
 <#function toDelimitedString collection delim=",">

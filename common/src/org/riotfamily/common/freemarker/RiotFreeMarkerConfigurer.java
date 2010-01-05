@@ -14,16 +14,13 @@ package org.riotfamily.common.freemarker;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.riotfamily.common.util.SpringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import freemarker.ext.beans.BeansWrapper;
@@ -33,7 +30,7 @@ import freemarker.template.ObjectWrapper;
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.TemplateModel;
+import freemarker.template.TemplateHashModel;
 
 /**
  * FreeMarkerConfigurer that supports some additional settings. 
@@ -43,14 +40,14 @@ import freemarker.template.TemplateModel;
 public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer 
 		implements ApplicationContextAware {
 
-	private Logger log = LoggerFactory.getLogger(RiotFreeMarkerConfigurer.class);
-	
 	private TemplateExceptionHandler exceptionHandler = 
 			new ErrorPrintingExceptionHandler();
 	
-	private Properties macroLibraries;
+	private Map<String, String> macroLibraries;
 	
 	private Map<String, ?> sharedVariables;
+	
+	private Collection<Class<?>> utilityClasses;
 		
 	private boolean whitespaceStripping = false;
 	
@@ -58,7 +55,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	
 	private boolean useComputerNumberFormat = true;
 	
-	private boolean exposeStaticModels = true;
+	private boolean exposeStaticsModel = true;
 	
 	private boolean exposeBeanFactoryModel = true;
 	
@@ -74,10 +71,17 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	/**
 	 * Sets the macro libraries to be auto-imported, keyed by their namespace.
 	 */
-	public void setMacroLibraries(Properties macroLibraries) {
+	public void setMacroLibraries(Map<String, String> macroLibraries) {
 		this.macroLibraries = macroLibraries;
 	}
 
+	/**
+	 * Sets the classes to be exposed as freemarker.ext.beans.StaticModel.
+	 */
+	public void setUtilityClasses(Collection<Class<?>> utilityClasses) {
+		this.utilityClasses = utilityClasses;
+	}
+	
 	/**
 	 * Sets the {@link TemplateExceptionHandler} to be used. By default an
 	 * {@link ErrorPrintingExceptionHandler} will be used. 
@@ -131,8 +135,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	 * Whether {@link BeansWrapper#getStaticModels()} should be exposed as
 	 * <tt>statics</tt>.
 	 */
-	public void setExposeStaticModels(boolean exposeStaticModels) {
-		this.exposeStaticModels = exposeStaticModels;
+	public void setExposeStaticsModel(boolean exposeStaticsModel) {
+		this.exposeStaticsModel = exposeStaticsModel;
 	}
 	
 	/**
@@ -184,7 +188,12 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 			config.setNumberFormat("#0.#");
 		}
 		
-		importMacroLibraries(config);
+		if (macroLibraries != null) {
+			for(Map.Entry<String, String> entry : macroLibraries.entrySet()) {
+				config.addAutoImport(entry.getKey(), entry.getValue());
+			}
+		}
+		
 		config.setTemplateExceptionHandler(exceptionHandler);
 		if (objectWrapper == null) {
 			objectWrapper = DefaultObjectWrapper.getDefaultInstance();
@@ -196,8 +205,17 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 					new SimpleHash(sharedVariables, objectWrapper));
 		}
 		
-		if (exposeStaticModels) {
-			config.setSharedVariable("statics", getStaticsModel(objectWrapper));
+		TemplateHashModel staticsModel = getStaticsModel(objectWrapper);
+		if (exposeStaticsModel) {
+			config.setSharedVariable("statics", staticsModel);
+		}
+		
+		if (utilityClasses != null) {
+			for (Class<?> clazz : utilityClasses) {
+				config.setSharedVariable(
+						ClassUtils.getShortName(clazz),
+						staticsModel.get(clazz.getName())); 
+			}
 		}
 
 		if (exposeBeanFactoryModel) {
@@ -222,23 +240,11 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		
 	}
 	
-	private TemplateModel getStaticsModel(ObjectWrapper wrapper) {
+	private TemplateHashModel getStaticsModel(ObjectWrapper wrapper) {
 		if (wrapper instanceof BeansWrapper) {
 			return ((BeansWrapper) wrapper).getStaticModels();
 		}
 		return BeansWrapper.getDefaultInstance().getStaticModels();
 	}
 
-	protected void importMacroLibraries(Configuration config) {
-		if (macroLibraries != null) {
-			Enumeration<?> names = macroLibraries.propertyNames();
-			while (names.hasMoreElements()) {
-				String namespace = (String) names.nextElement();
-				String lib = macroLibraries.getProperty(namespace);
-				log.info(lib + " imported under namespace " + namespace);
-				config.addAutoImport(namespace, lib);	
-			}
-		}
-	}
-	
 }

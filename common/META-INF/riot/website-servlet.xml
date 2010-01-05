@@ -151,12 +151,19 @@
 		<property name="freemarkerSettings" value="${website-servlet.freemarker.(*)}" />
 		<property name="useTemplateCache" value="${website-servlet.useTemplateCache=true}" />
 		<property name="macroLibraries">
-			<props>
-				<prop key="c">classpath:org/riotfamily/common/web/macro/common.ftl</prop>
-				<prop key="form">classpath:org/riotfamily/common/web/macro/form.ftl</prop>
-				<prop key="template">classpath:org/riotfamily/common/web/template/template.ftl</prop>
-				<prop key="txt2img">classpath:org/riotfamily/common/web/txt2img/txt2img.ftl</prop>
-			</props>
+			<map>
+				<entry key="c" value="classpath:org/riotfamily/common/web/macro/common.ftl" />
+				<entry key="form" value="classpath:org/riotfamily/common/web/macro/form.ftl" />
+				<entry key="template" value="classpath:org/riotfamily/common/web/template/template.ftl" />
+				<entry key="txt2img" value="classpath:org/riotfamily/common/web/txt2img/txt2img.ftl" />
+			</map>
+		</property>
+		<property name="utilityClasses">
+			<list>
+				<value>org.springframework.util.StringUtils</value>
+				<value>org.riotfamily.common.util.FormatUtils</value>
+				<value>org.riotfamily.common.web.support.ServletUtils</value>
+			</list>
 		</property>
 		<property name="whitespaceStripping" value="true" />
 		<property name="objectWrapper">

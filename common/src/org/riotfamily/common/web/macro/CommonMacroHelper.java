@@ -14,7 +14,6 @@ package org.riotfamily.common.web.macro;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -34,8 +33,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.ui.ObjectGroup;
@@ -50,7 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
-import org.springframework.util.MethodInvoker;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -245,14 +241,6 @@ public class CommonMacroHelper {
 		return ServletUtils.getPathWithinApplication(request);
 	}
 
-	public String setParameter(String url, String name, String value) {
-		return ServletUtils.setParameter(url, name, value);
-	}
-
-	public String addParameter(String url, String name, String value) {
-		return ServletUtils.addParameter(url, name, value);
-	}
-
 	public String addRequestParameters(String url) {
 		return ServletUtils.addRequestParameters(url, request);
 	}
@@ -332,17 +320,6 @@ public class CommonMacroHelper {
 		return groups;
 	}
     
-    public Object invokeStaticMethod(String method, Collection<?> args) 
-    		throws ClassNotFoundException, NoSuchMethodException, 
-    		InvocationTargetException, IllegalAccessException {
-    	
-    	MethodInvoker methodInvoker = new MethodInvoker();
-    	methodInvoker.setStaticMethod(method);
-    	methodInvoker.setArguments(args.toArray());
-    	methodInvoker.prepare();
-    	return methodInvoker.invoke();
-    }
-    
     public String toDelimitedString(Collection<?> c, String delim) {
     	return StringUtils.collectionToDelimitedString(c, delim);
     }
@@ -357,37 +334,6 @@ public class CommonMacroHelper {
 		List<?> result = new ArrayList<Object>(collection);
 		Collections.shuffle(result);
 		return result;
-	}    
-
-	public String getFileExtension(String filename, 
-			Collection<String> validExtensions,
-			String defaultExtension) {
-
-		String ext = FormatUtils.getExtension(filename);
-		if (validExtensions.isEmpty() || validExtensions.contains(ext)) {
-			return ext;
-		}
-		return defaultExtension;
-	}
-
-	public String baseName(String path) {
-		int begin = path.lastIndexOf('/') + 1;
-		int end = path.indexOf(';');
-		if (end == -1) {
-			end = path.indexOf('?');
-			if (end == -1) {
-				end = path.length();
-			}
-		}
-		return path.substring(begin, end);
-	}
-
-	public String formatByteSize(long bytes) {
-		return FormatUtils.formatByteSize(bytes);
-	}
-	
-	public String formatMillis(long millis) {
-		return FormatUtils.formatMillis(millis);
 	}
 
 	public String formatNumber(Number number, String pattern, String localeString) {
@@ -417,22 +363,6 @@ public class CommonMacroHelper {
 			sb.append(matcher.group(2));
 		}
 		return sb.toString();
-	}
-	
-	public String toTitleCase(String s) {
-		return FormatUtils.fileNameToTitleCase(s);
-	}
-	
-	public String stripTagsAndWhitespaces(String s) {
-		return FormatUtils.stripWhitespaces(FormatUtils.stripTags(s));
-	}
-		
-	public String xmlEscapeDanglingAmps(String s) {
-		return FormatUtils.xmlEscapeDanglingAmps(s);
-	}
-		
-	public String toJSON(Object obj) {
-		return JSONObject.fromObject(obj).toString();
 	}
 	
 	/**
