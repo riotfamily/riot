@@ -55,6 +55,7 @@ div#list {
 #list td {
 	padding: 2px 3px 2px 18px;
 	margin: 0;
+	max-width: 500px;
 }
 #list th {
 	border-bottom: 1px solid #dadada;
