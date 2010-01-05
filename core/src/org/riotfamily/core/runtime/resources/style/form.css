@@ -61,7 +61,7 @@
 
 div.form-error,
 label.error {
-	color: ${error_color};
+	color: #ef3b40;
 }
 div.form-error {
 	margin:15px 0;
@@ -74,14 +74,13 @@ ul.errors {
 ul.errors li {
 	margin: 5px 0;
 	list-style-type: none;
-	color: ${error_color};
+	color: #ef3b40;
 	font-weight: normal;
 }
 
 label {
 	font-size: 13px;
 	font-weight: bold;
-	color: ${label_color};
 	-moz-user-select: none;
 	vertical-align: middle;
 }
@@ -200,7 +199,7 @@ input.password{
 }
 .spinButtons .increase:hover,
 .spinButtons .decrease:hover {
-	background-color: ${highlight_color};
+	background-color: #8eb5e5;
 	background-position: -13px center;
 }
 
@@ -267,7 +266,6 @@ ul.checkboxGroup label {
 }
 .indent label {
 	font-weight: bold;
-	color: ${label_color};
 }
 
 
@@ -362,7 +360,7 @@ table.item td.removeButton {
 .listEditor td.hover,
 .listEditor td.hover div {
     color: #fff;
-    background-color: ${highlight_color};
+    background-color: #8eb5e5;
     background-position: -32px center;
 }
 
@@ -499,7 +497,6 @@ ul.radioButtonGroup {
 .password p {
 	display: block;
 	margin: 10px 0 5px 0;
-	color: ${label_color};
 }
 .password .button-change {
 	margin-top: 5px; 
@@ -589,7 +586,7 @@ div.autocomplete ul li.selected {
 }
 
 .uploadProgress .gauge .bar {
-	background-color: ${highlight_color};
+	background-color: #8eb5e5;
 	background-image: url(images/progress.gif);
 	height: 100%;
 }

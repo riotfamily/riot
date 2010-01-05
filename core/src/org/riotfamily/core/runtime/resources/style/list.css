@@ -65,6 +65,7 @@ div#list {
 }
 #list td {
 	height: 32px;
+	word-wrap: break-word;
 }
 #list tr.selected {
 	background-color: #f5f8da;
@@ -139,12 +140,9 @@ tr.copied {
 	color: #000000;
 	padding: 1px 4px;
 }
-.pager a:hover {
-	color: ${highlight_color};
-} 
 .pager .current-page {
-	color: #F9F9F5;
-	background-color: ${highlight_color};
+	color: #fff;
+	background-color: #777;
 	font-weight: bold;
 }
 .pager .gap {
