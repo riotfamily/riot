@@ -14,7 +14,7 @@ public abstract class VirtualPageResolver<T extends ContentContainerOwner>
 		implements ChildPageResolver {
 
 	public Page resolvePage(VirtualPageType type, Page parent, String pathComponent) {
-		T entity = load(pathComponent);
+		T entity = load(parent, pathComponent);
 		if (entity == null) {
 			return null;
 		}
@@ -47,7 +47,7 @@ public abstract class VirtualPageResolver<T extends ContentContainerOwner>
 		return pages;
 	}
 	
-	protected abstract T load(String pathComponent);
+	protected abstract T load(Page parent, String pathComponent);
 
 	protected abstract String getPathComponent(T entity);
 	
