@@ -42,7 +42,6 @@ public class ContentContainerOwnerFacade implements ContentFacade {
 		this.request = request;
 		this.response = response;
 		this.preview = isPreview(owner);
-		CacheTagUtils.tagIfSupported(owner);
 	}
 	
 	protected HttpServletRequest getRequest() {
@@ -69,27 +68,13 @@ public class ContentContainerOwnerFacade implements ContentFacade {
 		return content;
 	}
 	
-	public Object getDelegate() {
+	public Object getOwner() {
 		return owner;
 	}
 	
 	@Override
 	public String toString() {
 		return owner.toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof ContentContainerOwnerFacade) {
-			ContentContainerOwnerFacade other = (ContentContainerOwnerFacade) o; 
-			return owner.equals(other.owner) && preview == other.preview;
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return owner.hashCode() + (preview ? 1 : 0);
 	}
 
 }

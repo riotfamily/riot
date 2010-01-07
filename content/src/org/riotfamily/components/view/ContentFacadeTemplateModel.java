@@ -52,7 +52,7 @@ public class ContentFacadeTemplateModel implements TemplateHashModelEx, Template
 		strictWrapper.setOuterIdentity(wrapper);
 		
 		this.facadeModel = new BeanModel(facade, strictWrapper);
-		this.delegateModel = new BeanModel(facade.getDelegate(), wrapper);
+		this.delegateModel = new BeanModel(facade.getOwner(), wrapper);
 	}
 	
 	public TemplateModel get(String key) throws TemplateModelException {
@@ -78,11 +78,11 @@ public class ContentFacadeTemplateModel implements TemplateHashModelEx, Template
 
 	@SuppressWarnings("unchecked")
 	public Object getAdaptedObject(Class hint) {
-		return facade.getDelegate();
+		return facade.getOwner();
 	}
 
 	public String getAsString() throws TemplateModelException {
-		return facade.getDelegate().toString();
+		return facade.getOwner().toString();
 	}
 	
 	public boolean isEmpty() throws TemplateModelException {

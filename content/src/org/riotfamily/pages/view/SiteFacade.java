@@ -14,7 +14,7 @@ package org.riotfamily.pages.view;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.cache.CacheTagUtils;
+import org.riotfamily.common.web.cache.tags.CacheTagUtils;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.view.ContentFacade;
@@ -46,7 +46,7 @@ public class SiteFacade implements ContentFacade {
 		return site.getProperties();
 	}
 	
-	public Object getDelegate() {
+	public Object getOwner() {
 		return site;
 	}
 

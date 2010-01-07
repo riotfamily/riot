@@ -18,6 +18,6 @@ public interface ContentFacade {
 
 	public Content getContent();
 	
-	public Object getDelegate();
+	public Object getOwner();
 
 }
