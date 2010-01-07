@@ -166,16 +166,19 @@
 			</list>
 		</property>
 		<property name="whitespaceStripping" value="true" />
-		<property name="objectWrapper">
-			<bean class="org.riotfamily.common.web.cache.freemarker.TaggingPluginObjectWrapper" />
+		<property name="objectWrapper" ref="freemarkerObjectWrapper" />
+	</bean>
+	
+	<bean id="freemarkerObjectWrapper" class="org.riotfamily.common.web.cache.freemarker.TaggingPluginObjectWrapper">
+		<property name="tagGenerators">
+			<list>
+				<bean class="org.riotfamily.common.web.cache.tags.AnnotationCacheTagGenerator">
+					<constructor-arg ref="sessionFactory" />
+				</bean>
+				<bean class="org.riotfamily.common.web.cache.tags.TypedListCacheTagGenerator" />
+			</list>
 		</property>
 	</bean>
-	
-	<bean class="org.riotfamily.common.web.cache.AnnotationCacheTagGenerator">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-	
-	<bean class="org.riotfamily.common.web.cache.TypedListCacheTagGenerator" />
 	
 	<bean class="org.riotfamily.common.freemarker.MapEntityObjectWrapperPlugin">
 		<description>

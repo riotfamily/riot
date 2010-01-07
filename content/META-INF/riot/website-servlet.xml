@@ -16,6 +16,12 @@
 		<entry key="pages" value="classpath:org/riotfamily/pages/view/pages.ftl" />
 	</override:put>
 	
+	<override:add ref="freemarkerObjectWrapper" property="tagGenerators">
+		<bean class="org.riotfamily.components.cache.ContentFacadeCacheTagGenerator">
+			<constructor-arg ref="sessionFactory" />
+		</bean>
+	</override:add>
+	
 	<bean class="org.riotfamily.components.index.ContentIndexRequestInterceptor">
 		<constructor-arg ref="sessionFactory" />
 	</bean>

@@ -15,7 +15,7 @@ package org.riotfamily.components.view;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.cache.CacheTagUtils;
+import org.riotfamily.common.web.cache.tags.CacheTagUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentContainerOwner;

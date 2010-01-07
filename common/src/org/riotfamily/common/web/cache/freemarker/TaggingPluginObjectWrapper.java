@@ -16,25 +16,22 @@ import java.util.Collections;
 import java.util.List;
 
 import org.riotfamily.common.freemarker.PluginObjectWrapper;
-import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.web.cache.CacheTagGenerator;
-import org.springframework.context.ApplicationContext;
+import org.riotfamily.common.web.cache.tags.CacheTagGenerator;
 import org.springframework.util.Assert;
 
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
+/**
+ * Extension of the {@link PluginObjectWrapper} that creates 
+ * {@link TaggingTemplateModelProxy} objects if a {@link CacheTagGenerator} 
+ * returns a tag for the wrapped object.
+ */
 public class TaggingPluginObjectWrapper extends PluginObjectWrapper {
 
 	private List<CacheTagGenerator> tagGenerators = Collections.emptyList();
 
-	@Override
-	public void setApplicationContext(ApplicationContext ctx) {
-		setTagGenerators(SpringUtils.orderedBeans(ctx, CacheTagGenerator.class));
-		super.setApplicationContext(ctx);
-	}
-	
-	private void setTagGenerators(List<CacheTagGenerator> tagGenerators) {
+	public void setTagGenerators(List<CacheTagGenerator> tagGenerators) {
 		Assert.notNull(tagGenerators, "tagGenerators must not be null");
 		this.tagGenerators = tagGenerators;
 	}

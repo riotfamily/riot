@@ -10,9 +10,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.common.web.cache;
+package org.riotfamily.common.web.cache.tags;
 
+import org.riotfamily.common.web.cache.freemarker.TaggingPluginObjectWrapper;
 
+/**
+ * Interface used by the {@link TaggingPluginObjectWrapper} to tag cache items.
+ */
 public interface CacheTagGenerator {
 
 	public String generateTag(Object obj);

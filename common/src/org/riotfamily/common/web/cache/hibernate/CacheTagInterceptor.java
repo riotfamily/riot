@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.common.web.cache;
+package org.riotfamily.common.web.cache.hibernate;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -30,6 +30,8 @@ import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.HibernateUtils;
 import org.riotfamily.common.hibernate.SessionFactoryAwareInterceptor;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.cache.TagCacheItems;
+import org.riotfamily.common.web.cache.tags.CacheTagUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 

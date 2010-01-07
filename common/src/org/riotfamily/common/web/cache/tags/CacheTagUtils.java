@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.common.web.cache;
+package org.riotfamily.common.web.cache.tags;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -21,6 +21,7 @@ import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.collection.TypedList;
 import org.riotfamily.common.hibernate.ActiveRecord;
 import org.riotfamily.common.hibernate.ActiveRecordUtils;
+import org.riotfamily.common.web.cache.TagCacheItems;
 import org.springframework.util.ClassUtils;
 
 /**

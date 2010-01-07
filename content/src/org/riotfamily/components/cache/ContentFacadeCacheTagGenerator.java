@@ -10,19 +10,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.common.web.cache;
+package org.riotfamily.components.cache;
 
-import org.riotfamily.common.collection.TypedList;
+import org.hibernate.SessionFactory;
+import org.riotfamily.common.web.cache.tags.AnnotationCacheTagGenerator;
+import org.riotfamily.components.view.ContentFacade;
 
-public class TypedListCacheTagGenerator implements CacheTagGenerator {
+public class ContentFacadeCacheTagGenerator extends AnnotationCacheTagGenerator {
 
+	public ContentFacadeCacheTagGenerator(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
+	@Override
 	public String generateTag(Object obj) {
-		if (obj instanceof TypedList<?>) {
-			TypedList<?> list = (TypedList<?>) obj;
-			Class<?> itemClass = list.getItemClass();
-			if (itemClass.isAnnotationPresent(TagCacheItems.class)) {
-				return CacheTagUtils.getTag(itemClass);
-			}
+		if (obj instanceof ContentFacade) {
+			Object owner = ((ContentFacade) obj).getOwner();
+			return super.generateTag(owner);
 		}
 		return null;
 	}

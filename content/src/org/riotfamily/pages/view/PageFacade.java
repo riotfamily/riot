@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.cache.CacheTagUtils;
+import org.riotfamily.common.web.cache.tags.CacheTagUtils;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.view.ContentContainerOwnerFacade;
 import org.riotfamily.core.security.AccessController;

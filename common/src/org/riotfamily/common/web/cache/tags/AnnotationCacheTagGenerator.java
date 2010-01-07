@@ -10,12 +10,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.common.web.cache;
+package org.riotfamily.common.web.cache.tags;
 
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.hibernate.HibernateUtils;
+import org.riotfamily.common.web.cache.TagCacheItems;
 import org.springframework.util.Assert;
 
+/**
+ * CacheTagGenerator that handles classes annotated with {@link TagCacheItems}.
+ * 
+ * @see CacheTagUtils#getTag(Class, java.io.Serializable)
+ * @see HibernateUtils#getIdAsString(SessionFactory, Object)
+ */
 public class AnnotationCacheTagGenerator implements CacheTagGenerator {
 
 	private SessionFactory sessionFactory;

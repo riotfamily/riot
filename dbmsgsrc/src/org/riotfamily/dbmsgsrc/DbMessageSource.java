@@ -16,7 +16,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 
-import org.riotfamily.common.web.cache.CacheTagUtils;
+import org.riotfamily.common.web.cache.tags.CacheTagUtils;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.springframework.transaction.PlatformTransactionManager;

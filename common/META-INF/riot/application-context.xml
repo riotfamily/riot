@@ -55,7 +55,7 @@
 	
 	<util:list id="hibernateInterceptors">
 		<ref bean="entityListenerInterceptor" />
-		<bean class="org.riotfamily.common.web.cache.CacheTagInterceptor">
+		<bean class="org.riotfamily.common.web.cache.hibernate.CacheTagInterceptor">
 	    	<description>
 	    		EntityListener that invalidates tagged cache items whenever an 
 	    		entity with @TagCacheItems annotation is modified or deleted.
