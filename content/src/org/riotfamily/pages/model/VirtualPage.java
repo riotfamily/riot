@@ -19,6 +19,10 @@ import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.pages.config.PageType;
 import org.riotfamily.pages.config.VirtualPageType;
 
+/**
+ * Page that is backed by a {@link ContentContainerOwner}.
+ *
+ */
 public class VirtualPage implements Page {
 
 	private VirtualPageType pageType;

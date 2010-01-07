@@ -81,6 +81,14 @@ public class TypedQuery<T> implements Query {
 	}
 
 	/**
+	 * Sets firstResult and maxResults in a single call.
+	 */
+	public TypedQuery<T> limit(int first, int max) {
+		query.setFirstResult(first).setMaxResults(max);
+		return this;
+	}
+
+	/**
 	 * Casts the {@link #uniqueResult()} to <code>java.lang.Number</code> and
 	 * returns the <code>intValue()</code>, or <code>0</code> if the result is null.
 	 */

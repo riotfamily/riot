@@ -23,6 +23,17 @@ import org.springframework.util.ClassUtils;
 
 import freemarker.template.TemplateModel;
 
+/**
+ * Dynamic proxy that tags the current cache item if one of the following 
+ * methods is invoked:
+ * <ul>
+ * <li>get</li>
+ * <li>size</li>
+ * <li>getAsString</li>
+ * <li>getAdaptedObject</li>
+ * <li>getWrappedObject</li>
+ * </ul>
+ */
 public class TaggingTemplateModelProxy implements InvocationHandler {
 
 	private static List<String> taggingMethods = Arrays.asList(new String[] {
