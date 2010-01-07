@@ -17,10 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.AccessType;
-import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.ActiveRecord;
-import org.riotfamily.common.web.cache.CacheTagUtils;
 
 /**
  * Base class for entities that act as {@link ContentContainerOwner}s.
@@ -31,19 +28,6 @@ public abstract class ContentEntity extends ActiveRecord
 
 	private ContentContainer contentContainer;
 
-	private boolean published;
-	
-	private CacheService cacheService;
-	
-	public void setCacheService(CacheService cacheService) {
-		this.cacheService = cacheService;
-	}
-
-	@Transient
-	protected CacheService getCacheService() {
-		return cacheService;
-	}
-	
 	@ManyToOne(cascade=CascadeType.ALL)
 	public ContentContainer getContentContainer() {
 		if (contentContainer == null) {
@@ -56,22 +40,9 @@ public abstract class ContentEntity extends ActiveRecord
 		this.contentContainer = contentContainer;
 	}
 
-	@AccessType("field")
+	@Transient
 	public boolean isPublished() {
-		return published;
-	}
-
-	public void setPublished(boolean published) {
-		this.published = published;
-		invalidateCacheItems();
-	}
-
-	protected void invalidateCacheItems() {
-		CacheTagUtils.invalidate(cacheService, this);
-	}
-
-	public void tag() {
-		CacheTagUtils.tag(this);
+		return getContentContainer().isPublished();
 	}
 	
 }

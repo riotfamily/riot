@@ -104,8 +104,4 @@
 		</property>
 	</bean>
 
-	<bean class="org.riotfamily.components.model.ContentEntity" scope="prototype">
-		<property name="cacheService" ref="cacheService" />
-	</bean>
-
 </beans>

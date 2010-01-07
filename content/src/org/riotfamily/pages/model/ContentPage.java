@@ -39,7 +39,6 @@ import org.hibernate.annotations.IndexColumn;
 import org.riotfamily.common.hibernate.Lifecycle;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.cache.CacheTagUtils;
 import org.riotfamily.common.web.cache.TagCacheItems;
 import org.riotfamily.components.model.ContentEntity;
 import org.riotfamily.core.security.AccessController;
@@ -217,8 +216,6 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 			children = Generics.newArrayList();
 		}
 		children.add(child);
-		//deleteAlias(page);
-		invalidateCacheItems();
 	}
 	
 	public void removePage(ContentPage child) {
@@ -227,15 +224,7 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 			child.setParent(null);
 		}
 	}
-	
-	@Override
-	public void invalidateCacheItems() {
-		super.invalidateCacheItems();
-		if (getParent() != null) {
-			CacheTagUtils.invalidate(getCacheService(), getParent());
-		}
-	}
-	
+		
 	// ----------------------------------------------------------------------
 	// Schema methods
 	// ----------------------------------------------------------------------
