@@ -101,8 +101,13 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	}
 	
 	@Transient
+	public boolean isPublished() {
+		return liveVersion != null;
+	}
+	
+	@Transient
 	public boolean isDirty() {
-		return liveVersion == null || getPreviewVersion().isDirty();
+		return !isPublished()|| getPreviewVersion().isDirty();
 	}
 		
 	// -----------------------------------------------------------------------
