@@ -49,7 +49,7 @@ public class HqlIndexedListDao extends HqlCollectionDao
 	
 	@Override
 	protected String getOrderBy(ListParams params) {
-		return "order by " + indexColumn;
+		return indexColumn;
 	}
 	
 	public boolean canSwap(Object entity, Object parent,
