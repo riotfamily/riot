@@ -72,8 +72,6 @@ public class TextRenderer implements InitializingBean {
 	
 	private boolean antiAlias = true;
 	
-	private boolean subpixel = false;
-	
 	private Boolean resample;
 	
 	private Boolean fractional;
@@ -186,10 +184,6 @@ public class TextRenderer implements InitializingBean {
 		this.antiAlias = antiAlias;
 	}
 	
-	public void setSubpixel(boolean subpixel) {
-		this.subpixel = subpixel;
-	}
-	
 	public void setFractional(boolean fractional) {
 		this.fractional = fractional;
 	}
@@ -266,9 +260,6 @@ public class TextRenderer implements InitializingBean {
 	}
 	
 	public void afterPropertiesSet() {
-		if (subpixel) {
-			resample = false;
-		}
 		if (resample == null) {
 			resample = fontSize < 22;
 		}
@@ -401,13 +392,9 @@ public class TextRenderer implements InitializingBean {
         		? RenderingHints.VALUE_ANTIALIAS_ON
         		: RenderingHints.VALUE_ANTIALIAS_OFF);
         
-        Object aa = RenderingHints.VALUE_TEXT_ANTIALIAS_OFF;
-        if (antiAlias) {
-        	aa = subpixel 
-        		? RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB
-        		: RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
-        }
-        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, aa);
+        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAlias  
+        		? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+                : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         
         graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, fractional 
         		? RenderingHints.VALUE_FRACTIONALMETRICS_ON
@@ -423,13 +410,4 @@ public class TextRenderer implements InitializingBean {
 				BufferedImage.TYPE_INT_ARGB);
 	}
 	
-	/*
-	public static void main(String[] args) throws Exception {
-		TextRenderer tr = new TextRenderer();
-		tr.setSubpixel(true);
-		tr.setFractional(false);
-		tr.afterPropertiesSet();
-		ImageUtils.write(tr.generate("Hello World", 500, "#fff"), new File("/Users/flx/Desktop/test.png"));
-	}
-	*/
 }
