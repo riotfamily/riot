@@ -23,8 +23,23 @@ import org.riotfamily.common.beans.injection.ConfigurableBean;
 /**
  * Use as base class for persistent entity beans if you prefer the
  * active record pattern.
- * 
+ * <p>
+ * By convention, subclasses should define a static load method:
+ * <pre>
+ * public static Foo load(Long id) {
+ *     return load(Foo.class, id);
+ * }
+ * </pre>
+ * <p>
+ * To look up a list of entities, subclasses should define finder-methods
+ * according to the following pattern:
+ * <pre>
+ * public static List<Foo> findByName(String name) {
+ *     return query(Foo.class, "from {} where name = ?", name).find();
+ * }
+ * </pre> 
  * @author Alf Werder [alf dot werder at artundweise dot de]
+ * @author Felix Gnass [felix.gnass at riotfamily dot org]
  * @since 8.0
  */
 public abstract class ActiveRecord extends ConfigurableBean {
