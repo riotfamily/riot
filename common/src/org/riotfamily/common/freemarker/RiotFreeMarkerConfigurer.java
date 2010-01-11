@@ -59,7 +59,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	
 	private boolean exposeBeanFactoryModel = true;
 	
-	private int templateUpdateDelay = 5;
+	private int templateUpdateDelay = 0;
 	
 	private String urlEscapingCharset = "UTF-8";
 
@@ -157,7 +157,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	
 	/**
 	 * Set the time in seconds that must elapse before checking whether there 
-	 * is a newer version of a template file. Default is <code>5</code>.
+	 * is a newer version of a template file. Default is <code>0</code>.
 	 */
 	public void setTemplateUpdateDelay(int templateUpdateDelay) {
 		this.templateUpdateDelay = templateUpdateDelay;
