@@ -67,7 +67,11 @@
 	
 	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository" />
 	
-	<bean class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
+	<bean id="defaultSiteCreator" class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean class="org.riotfamily.pages.config.SystemPageSynchronizer" depends-on="defaultSiteCreator" >
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
