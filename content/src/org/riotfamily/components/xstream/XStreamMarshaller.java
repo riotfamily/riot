@@ -37,7 +37,6 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 public class XStreamMarshaller implements ContentMapMarshaller, 
 		InitializingBean, ApplicationContextAware {
 
-	private XStream xstream;
 	
 	private HierarchicalStreamDriver driver;
 
@@ -56,8 +55,44 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		if (driver == null) {
 			driver = new DomDriver("UTF-8");
 		}
-		
-		xstream = new XStream(driver) {
+
+	}
+	
+	private DataHolder createDataHolder(Content content, XStream xstream) {
+		DataHolder dataHolder = xstream.newDataHolder();
+		dataHolder.put("content", content);
+		return dataHolder;
+	}
+	
+	public ContentMap unmarshal(Content owner, String xml) {
+
+		owner.getReferences().clear();
+		HierarchicalStreamReader reader = driver.createReader(new StringReader(
+				xml));
+		XStream xstream = getXStreamInstance();
+		return (ContentMap) xstream.unmarshal(reader, null, createDataHolder(
+				owner, xstream));
+
+	}
+	
+	public String marshal(ContentMap contentMap) {
+		Content owner = contentMap.getContent();
+		owner.getReferences().clear();
+		StringWriter sw = new StringWriter();
+		HierarchicalStreamWriter writer = driver.createWriter(sw);
+		XStream xstream = getXStreamInstance();
+		xstream.marshal(contentMap, writer, createDataHolder(owner, xstream));
+		return sw.toString();
+	}
+	
+	public static void addReference(DataHolder dataHolder, Object ref) {
+		Content content = (Content) dataHolder.get("content");
+		content.getReferences().add(ref);
+	}
+
+	private XStream getXStreamInstance() {
+
+		XStream xstream = new XStream(driver) {
 			@Override
 			protected MapperWrapper wrapMapper(MapperWrapper next) {
 				return new HibernateProxyMapper(next);
@@ -67,38 +102,16 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		xstream.alias("component", Component.class);
 		xstream.alias("component-list", ComponentList.class);
 		xstream.alias("content-map", ContentMapImpl.class);
-		
+
 		Mapper mapper = xstream.getMapper();
-		
-		xstream.registerConverter(new HibernateEntityConverter(mapper, applicationContext), 1);
+
+		xstream.registerConverter(new HibernateEntityConverter(mapper,
+				applicationContext), 1);
 		xstream.registerConverter(new ComponentListConverter(mapper), 1);
 		xstream.registerConverter(new ComponentConverter(mapper), 2);
 		xstream.registerConverter(new ContentMapConverter(mapper), 1);
-	}
-	
-	private DataHolder createDataHolder(Content content) {
-		DataHolder dataHolder = xstream.newDataHolder();
-		dataHolder.put("content", content);
-		return dataHolder;
-	}
-	
-	public ContentMap unmarshal(Content owner, String xml) {
-		owner.getReferences().clear();
-		HierarchicalStreamReader reader = driver.createReader(new StringReader(xml));
-		return (ContentMap) xstream.unmarshal(reader, null, createDataHolder(owner));	
-	}
-	
-	public String marshal(ContentMap contentMap) {
-		Content owner = contentMap.getContent();
-		owner.getReferences().clear();
-		StringWriter sw = new StringWriter();
-		HierarchicalStreamWriter writer = driver.createWriter(sw);
-		xstream.marshal(contentMap, writer, createDataHolder(owner));
-		return sw.toString();
-	}
-	
-	public static void addReference(DataHolder dataHolder, Object ref) {
-		Content content = (Content) dataHolder.get("content");
-		content.getReferences().add(ref);
+
+		return xstream;
+
 	}
 }
