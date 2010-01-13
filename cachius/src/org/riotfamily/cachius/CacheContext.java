@@ -81,4 +81,9 @@ public class CacheContext {
 	public static boolean exists() {
 		return currentItem.get() != null;
 	}
+	
+	public static String getCacheKey() {
+		CacheItem item = getItem();
+		return item != null ? item.getKey() : null;
+	}
 }

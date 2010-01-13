@@ -19,22 +19,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface Cache {
+public @interface CacheRegion {
 
-	String ttl() default "";
-	
-	String cron() default "";
-	
-	boolean gzip() default false;
-	
-	boolean serveStaleOnError() default false;
-	
-	boolean serveStaleUntilExpired() default false;
-	
-	boolean serveStaleWhileRevalidate() default true;
-	
+	String value() default "";
+
 }
