@@ -88,7 +88,7 @@
 		<property name="marshaller" ref="contentMarshaller" />
 	</bean>
     
-     <bean id="contentMarshaller" class="org.riotfamily.components.xstream.XStreamMarshaller">
+    <bean id="contentMarshaller" class="org.riotfamily.components.xstream.XStreamMarshaller">
         <property name="driver">
             <bean class="com.thoughtworks.xstream.io.xml.Dom4JDriver">
                 <property name="outputFormat">
