@@ -19,6 +19,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * HashMap that can be serialized even if it contains non-serializable keys or
+ * values. Only entries where both key and value are either serializable or null
+ * will be retained.
+ */
 public class SerializationSafeHashMap<K, V> extends HashMap<K, V> {
 
 	public SerializationSafeHashMap() {
