@@ -62,6 +62,10 @@
 					<prop key="live">boolean</prop>
 				</props>
 			</property>
+		</bean>
+		<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
+			<property name="filterName" value="publishedContent" />
+			<property name="defaultFilterCondition" value="0 = (select count(*) from riot_content_containers c where c.id = contentcontainer_id and c.live_version is null)" />
 		</bean> 
 	</override:add>
 	

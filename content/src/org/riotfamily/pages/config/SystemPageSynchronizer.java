@@ -20,9 +20,8 @@ import org.riotfamily.common.hibernate.AbstractSetupBean;
 import org.riotfamily.pages.model.Site;
 
 /*
- * Synchronizes persitent system pages with
- * those defined in setup.xml during application 
- * startup
+ * SystemPageSynchronizer creates missing system pages
+ * defined in setup.xml during application startup
  * 
  */
 

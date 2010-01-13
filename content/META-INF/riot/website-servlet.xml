@@ -22,7 +22,7 @@
 		</bean>
 	</override:add>
 	
-	<bean class="org.riotfamily.components.index.ContentIndexRequestInterceptor">
+	<bean class="org.riotfamily.components.index.ContentFilterRequestInterceptor">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
