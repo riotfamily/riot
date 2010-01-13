@@ -12,12 +12,13 @@
  */
 package org.riotfamily.common.web.mvc.scope;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class FlashModel extends HashMap<String, Object>{
+import org.riotfamily.common.collection.SerializationSafeHashMap;
+
+public class FlashModel extends SerializationSafeHashMap<String, Object>{
 
 	private static final String REQUEST_ATTR = FlashModel.class.getName();
 	
