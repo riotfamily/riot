@@ -44,6 +44,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
     
     private boolean setPositionOnSave;
 
+    private boolean invertSorting;
     
     public HqlDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
@@ -95,6 +96,10 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
 	protected boolean isSetPositionOnSave() {
 		return setPositionOnSave;
 	}
+	
+	public void setInvertSorting(boolean invertSorting) {
+		this.invertSorting = invertSorting;
+	}
 
     /**
      * Builds a HQL query string to retrieve the maximal position property value
@@ -124,7 +129,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
 	@Override
 	protected String getOrderBy(ListParams params) {
         if (positionProperty != null) {
-        	return positionProperty;	
+        	return invertSorting ? positionProperty + " desc" : positionProperty;	
         }
         return super.getOrderBy(params);
     }
