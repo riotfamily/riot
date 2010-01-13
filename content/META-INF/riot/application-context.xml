@@ -93,23 +93,23 @@
 	</bean>
 	
 	<bean class="org.riotfamily.components.model.Content" scope="prototype">
-		<property name="marshaller">
-			<bean class="org.riotfamily.components.xstream.XStreamMarshaller">
-				<property name="driver">
-					<bean class="com.thoughtworks.xstream.io.xml.Dom4JDriver">
-						<property name="outputFormat">
-							<bean class="org.dom4j.io.OutputFormat">
-								<property name="suppressDeclaration" value="true" />
-								<property name="encoding" value="UTF-8" />
-								<property name="indent" value="\t" />
-								<property name="indentSize" value="1" />
-								<property name="newlines" value="true" />
-							</bean>
-						</property>
-					</bean>
-				</property>
-			</bean>
-		</property>
+		<property name="marshaller" ref="xStreamMarshaller" />
 	</bean>
+    
+     <bean id="xStreamMarshaller" class="org.riotfamily.components.xstream.XStreamMarshaller">
+        <property name="driver">
+            <bean class="com.thoughtworks.xstream.io.xml.Dom4JDriver">
+                <property name="outputFormat">
+                    <bean class="org.dom4j.io.OutputFormat">
+                        <property name="suppressDeclaration" value="true" />
+                        <property name="encoding" value="UTF-8" />
+                        <property name="indent" value="\t" />
+                        <property name="indentSize" value="1" />
+                        <property name="newlines" value="true" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
 
 </beans>

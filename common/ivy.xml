@@ -18,7 +18,8 @@
     	<dependency org="apache" name="log4j" rev="1.2.15" conf="build->default" />
         <dependency org="riotfamily" name="cachius" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="riotfamily" name="revolt" rev="${dep.riot.revision}" conf="*->@" />
-        <dependency org="springsource" name="springframework" rev="${dep.spring.revision}" conf="*->default" />
+        <dependency org="springsource" name="springframework" rev="${dep.spring.revision}" conf="test->test;%->default" />
+        <dependency org="junit" name="junit" rev="${dep.junit.revision}" conf="test->default" />
         <dependency org="hibernate" name="hibernate" rev="${dep.hibernate.revision}" conf="*->standalone,c3p0,javassist,src" />
 		<dependency org="hibernate" name="hibernate-annotations" rev="${dep.hibernate-annotations.revision}" conf="*->default" />
 		<dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="build->default,src" />

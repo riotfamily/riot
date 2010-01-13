@@ -12,6 +12,7 @@
  */
 package org.riotfamily.common.web.mvc.scope;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,7 @@ import org.riotfamily.common.web.support.ServletUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */
-public class FlashScope {
+public class FlashScope implements Serializable {
 
 	private static final String SESSION_ATTR = FlashScope.class.getName();
 

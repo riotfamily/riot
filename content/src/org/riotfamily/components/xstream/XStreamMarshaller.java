@@ -56,7 +56,7 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		if (driver == null) {
 			driver = new DomDriver("UTF-8");
 		}
-		
+
 		xstream = new XStream(driver) {
 			@Override
 			protected MapperWrapper wrapMapper(MapperWrapper next) {
@@ -67,10 +67,11 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		xstream.alias("component", Component.class);
 		xstream.alias("component-list", ComponentList.class);
 		xstream.alias("content-map", ContentMapImpl.class);
-		
+
 		Mapper mapper = xstream.getMapper();
-		
-		xstream.registerConverter(new HibernateEntityConverter(mapper, applicationContext), 1);
+
+		xstream.registerConverter(new HibernateEntityConverter(mapper,
+				applicationContext), 1);
 		xstream.registerConverter(new ComponentListConverter(mapper), 1);
 		xstream.registerConverter(new ComponentConverter(mapper), 2);
 		xstream.registerConverter(new ContentMapConverter(mapper), 1);
@@ -84,8 +85,10 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 	
 	public ContentMap unmarshal(Content owner, String xml) {
 		owner.getReferences().clear();
-		HierarchicalStreamReader reader = driver.createReader(new StringReader(xml));
-		return (ContentMap) xstream.unmarshal(reader, null, createDataHolder(owner));	
+		HierarchicalStreamReader reader = driver.createReader(new StringReader(
+				xml));
+		return (ContentMap) xstream.unmarshal(reader, null,
+				createDataHolder(owner));
 	}
 	
 	public String marshal(ContentMap contentMap) {
