@@ -49,7 +49,7 @@
 	<classpathentry kind="lib" path="lib/javamail.jar"/>
 	<classpathentry kind="lib" path="lib/xstream.jar" sourcepath="lib/xstream.src.zip"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/spring-aop.jar"/>
+	<classpathentry kind="lib" path="lib/spring-aop.jar" sourcepath="lib/spring-aop.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-beans.jar" sourcepath="lib/spring-beans.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-context-support.jar" sourcepath="lib/spring-context-support.src.zip"/>
 	<classpathentry kind="lib" path="lib/spring-context.jar" sourcepath="lib/spring-context.src.zip"/>
@@ -63,5 +63,9 @@
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/aop-api.jar"/>
+	<classpathentry kind="lib" path="lib/spring-test.jar"/>
+	<classpathentry kind="lib" path="lib/spring-asm.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-nodep.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

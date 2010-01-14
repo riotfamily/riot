@@ -85,7 +85,7 @@ public final class Generics {
 	public static <V> ArrayList<V> newArrayList(Collection<? extends V> c) {
 		return new ArrayList<V>(c);
 	}
-
+	
 	public static <V> LinkedList<V> newLinkedList() {
 		return new LinkedList<V>();
 	}
@@ -162,7 +162,7 @@ public final class Generics {
 	}
 	
 	public static Class<?> getClass(Type type) {
-		if (type instanceof Class) {
+		if (type instanceof Class<?>) {
 			return (Class<?>) type;
 		}
 		else if (type instanceof ParameterizedType) {
@@ -198,7 +198,7 @@ public final class Generics {
 		Type type = childClass;
 		
 		while (!getClass(type).equals(baseClass)) {
-			if (type instanceof Class) {
+			if (type instanceof Class<?>) {
 				type = ((Class<?>) type).getGenericSuperclass();
 			}
 			else {
@@ -219,7 +219,7 @@ public final class Generics {
 		}
 
 		Type[] actualTypeArguments;
-		if (type instanceof Class) {
+		if (type instanceof Class<?>) {
 			actualTypeArguments = ((Class<?>) type).getTypeParameters();
 		}
 		else {

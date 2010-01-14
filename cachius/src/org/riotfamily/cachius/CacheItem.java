@@ -59,6 +59,13 @@ public class CacheItem implements Serializable {
     }
     
     /**
+     * Returns the item's cacheKey.
+     */
+    public String getKey() {
+		return key;
+	}
+    
+    /**
      * Returns the last modification time.
      */
 	public long getLastModified() {

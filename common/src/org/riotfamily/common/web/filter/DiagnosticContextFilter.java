@@ -47,7 +47,7 @@ public class DiagnosticContextFilter extends HttpFilterBean {
 		MDC.put(MDC_IS_CLEARED_ON_EACH_REQUEST, "true");
 		
 		String ip = request.getRemoteAddr();
-		String url = ServletUtils.getRequestUrlWithQueryString(request);
+		String url = ServletUtils.getOriginatingRequestUrlWithQueryString(request);
 		String referer = ServletUtils.getReferer(request);
 		String userAgent = ServletUtils.getUserAgent(request);
 		HttpSession session = request.getSession(false);

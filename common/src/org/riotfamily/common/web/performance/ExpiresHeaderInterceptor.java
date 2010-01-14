@@ -78,7 +78,7 @@ public class ExpiresHeaderInterceptor extends RequestInterceptorAdapter
 	}
 	
 	protected boolean isStamped(HttpServletRequest request) {
-		String url = ServletUtils.getRequestUrlWithQueryString(request);
+		String url = ServletUtils.getOriginatingRequestUrlWithQueryString(request);
 		return stamper.isStamped(url);
 	}
 }

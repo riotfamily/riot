@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.ImageUtils;
 import org.riotfamily.common.xml.DocumentReader;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.web.context.support.ServletContextResource;
@@ -115,6 +114,25 @@ public final class ServletUtils {
 		return urlPathHelper.getOriginatingRequestUri(request);
 	}
 
+	public static StringBuffer getRequestUrl(HttpServletRequest request) {
+		return getAbsoluteUrlPrefix(request).append(getRequestUri(request));
+	}
+
+	public static StringBuffer getOriginatingRequestUrl(HttpServletRequest request) {
+		return getAbsoluteUrlPrefix(request).append(getOriginatingRequestUri(request));
+	}
+	
+	public static String getOriginatingRequestUrlWithQueryString(
+			HttpServletRequest request) {
+
+		StringBuffer sb = getOriginatingRequestUrl(request);
+		String queryString = urlPathHelper.getOriginatingQueryString(request);
+		if (queryString != null) {
+			sb.append('?').append(queryString);
+		}
+		return sb.toString();
+	}
+	
 	public static String getOriginatingServletPath(HttpServletRequest request) {
 		String servletPath = (String) request.getAttribute(
 				WebUtils.FORWARD_SERVLET_PATH_ATTRIBUTE);
@@ -691,31 +709,6 @@ public final class ServletUtils {
 		}
 	}
 
-	public static String getRequestUrlWithQueryString(
-			HttpServletRequest request) {
-
-		StringBuffer sb = request.getRequestURL();
-		String queryString = request.getQueryString();
-		if (queryString != null) {
-			sb.append('?').append(queryString);
-		}
-		return sb.toString();
-	}
-	
-	public static String getRequiredStringAttribute(HttpServletRequest request, String name) {
-		Object attr = request.getAttribute(name);
-		Assert.notNull(attr, "Missing request attribute: " + name);
-		Assert.isInstanceOf(String.class, attr, "Request attribute " + name + " must be a String");
-		return (String) attr;
-	}
-	
-	public static Long getRequiredLongAttribute(HttpServletRequest request, String name) {
-		Object attr = request.getAttribute(name);
-		Assert.notNull(attr, "Missing request attribute: " + name);
-		Assert.isInstanceOf(Long.class, attr, "Request attribute " + name + " must be a Longg");
-		return (Long) attr;
-	}
-	
 	public static void serveTransparentPixelGif(HttpServletResponse response) {
 		response.setContentType("image/gif");
 		response.setContentLength(ImageUtils.PIXEL_GIF.length);

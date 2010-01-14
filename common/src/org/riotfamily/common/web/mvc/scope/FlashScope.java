@@ -51,7 +51,7 @@ public class FlashScope implements Serializable {
 	static void expose(HttpServletRequest request) {
 		FlashScope flashScope = getFlashScope(request, false);
 		if (flashScope != null) {
-			String url = ServletUtils.getRequestUrlWithQueryString(request);
+			String url = ServletUtils.getOriginatingRequestUrlWithQueryString(request);
 			FlashModel model = flashScope.models.remove(url);
 			if (model != null) {
 				model.expose(request);

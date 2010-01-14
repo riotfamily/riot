@@ -11,6 +11,7 @@ import org.riotfamily.cachius.invalidation.DefaultItemInvalidator;
 import org.riotfamily.cachius.invalidation.ItemIndex;
 import org.riotfamily.cachius.invalidation.ItemInvalidator;
 import org.riotfamily.cachius.persistence.DiskStore;
+import org.riotfamily.cachius.persistence.SimpleDiskStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,10 @@ public class CacheService {
 	
 	private ItemInvalidator invalidator = new DefaultItemInvalidator();
 
+	public CacheService() {
+		this(new SimpleDiskStore());
+	}
+	
 	public CacheService(DiskStore diskStore) {
 		this(diskStore, Collections.singletonList(new Region("default")));
 	}
@@ -50,10 +55,10 @@ public class CacheService {
 	}
 
 	private CacheEntry getCacheEntry(CacheHandler handler) {
-		Cache cache = getCache(handler.getCacheRegion());
-		String cacheKey = handler.getCacheKey();
 		CacheEntry entry = null;
+		String cacheKey = handler.getCacheKey();
 		if (cacheKey != null) {
+			Cache cache = getCache(handler.getCacheRegion());
 			entry = cache.getEntry(cacheKey);
 		}
 		return entry;
