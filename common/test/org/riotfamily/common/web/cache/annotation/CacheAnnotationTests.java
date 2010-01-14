@@ -80,9 +80,21 @@ public class CacheAnnotationTests {
 	}
 	
 	@Test
+	public void lastModified() throws Exception {
+		String t1 = get("/time/interval");
+		assertTrue("Result must start with 'Cached'", t1.startsWith("Interval"));
+		Thread.sleep(10);
+		String t2 = get("/time/interval");
+		assertEquals(t1, t2);
+		TimeController.lastModified = System.currentTimeMillis();
+		t2 = get("/time/interval");
+		assertTrue("Result must differ after changing lastModified: " + t1, !t1.equals(t2));
+	}
+	
+	@Test
 	public void key() throws Exception {
 		String key = get("/key/generated", "name", "world");
-		assertTrue(key.endsWith("{world}"));
+		assertTrue(key.endsWith("{world;}"));
 	}
 
 	@Test(expected=NestedServletException.class)
@@ -125,6 +137,8 @@ public class CacheAnnotationTests {
 	@RequestMapping("/time/*")
 	public static class TimeController {
 
+		public static long lastModified = System.currentTimeMillis();
+		
 		@RequestMapping
 		public void uncached(Writer out) throws Exception {
 			out.write("Uncached: " + String.valueOf(System.currentTimeMillis()));
@@ -134,6 +148,16 @@ public class CacheAnnotationTests {
 		@RequestMapping
 		public void cached(Writer out) throws Exception {
 			out.write("Cached: " + String.valueOf(System.currentTimeMillis()));
+		}
+		
+		@Cache
+		@RequestMapping
+		public void interval(Writer out) throws Exception {
+			out.write("Interval: " + String.valueOf(System.currentTimeMillis()));
+		}
+		
+		public long getLastModifiedForInterval(Writer out) throws Exception {
+			return lastModified;
 		}
 	}
 	

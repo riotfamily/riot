@@ -34,10 +34,12 @@ import org.quartz.CronExpression;
 import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.http.AbstractHttpHandler;
+import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.cache.CacheKeyAugmentor;
 import org.riotfamily.common.web.mvc.view.ViewResolverHelper;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ProxyFactory;
@@ -62,6 +64,26 @@ import org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAda
 /**
  * Subclass of the {@link AnnotationMethodHandlerAdapter} that supports the
  * {@link Cache} annotation.
+ * <p>
+ * By default, the cacheKey is automatically constructed from the URL and the
+ * arguments passed to the handler method:
+ * <p>
+ * <code><i>&lt;request-url&gt;</i><b>#</b><i>&lt;method-name&gt;</i><b>@RequestMapping(</b><i>&lt;mapping&gt;</i><b>) {</b><i>&lt;method-args&gt;</i><b>}</b></code>
+ * <p>
+ * ... where <i>&lt;method-args&gt;</i> is a list of the String-representations 
+ * of all {@link #isSupportedArgument(Annotation[], Class) supported} handlerMethod arguments (separated by semicolons).
+ * <p>
+ * In case the argument list contains an unsupported argument, you have to provide a method
+ * that manually constructs the <i>&lt;method-args&gt;</i> part. To do so, implement
+ * a method with the following signature:
+ * <p>
+ * <code><b>public</b> <i>&lt;? extends CharSequence&gt;</i> getCacheKeyFor<i>&lt;method-name&gt;</i><b>(</b><i>&lt;method-args&gt;</i><b>)</b></code>
+ * <p>
+ * ... where the argument-list must be exactly the same as for the handler-method.
+ * <p>
+ * The same mechanism can be used to provide a last-modified date for a handler-method:
+ * <p>
+ * <code><b>public</b> long getLastModifiedFor<i>&lt;method-name&gt;</i><b>(</b><i>&lt;method-args&gt;</i><b>)</b></code>
  */
 @SuppressWarnings("unchecked")
 public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapter
@@ -170,6 +192,60 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 		return super.handle(request, response, handler);
 	}
 	
+	protected String getDefaultCacheKeyPrefix(HttpServletRequest request, Method handlerMethod) {
+		return ServletUtils.getOriginatingRequestUrl(request)
+			.append('#').append(handlerMethod.getName())
+			.append('@').append(StringUtils.unqualify(handlerMethod.getAnnotation(RequestMapping.class).toString()))
+			.toString();
+	}
+	
+	protected CharSequence getDefaultMethodLevelCacheKey(Method handlerMethod, Object[] args) {
+		StringBuilder key = new StringBuilder();
+		key.append(" {");
+		Class<?>[] types = handlerMethod.getParameterTypes();
+		Annotation[][] ann = handlerMethod.getParameterAnnotations();
+		for (int i = 0; i < types.length; i++) {
+			if (isSupportedArgument(ann[i], types[i])) {
+				key.append(String.valueOf(args[i])).append(';');
+			}
+		}
+		key.append('}');
+		return key;
+	}
+	
+	protected boolean isSupportedArgument(Annotation[] annotations, Class<?> type) {
+		return containsSupportedAnnotation(annotations) || isSupportedType(type);
+	}
+	
+	private boolean containsSupportedAnnotation(Annotation[] annotations) {
+		for (Annotation annotation : annotations) {
+			if (isSupportedAnnotation(annotation)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isSupportedAnnotation(Annotation annotation) {
+		if (supportedAnnotations.contains(annotation.annotationType())) {
+			return true;
+		}
+		else if (!ignoredAnnotations.contains(annotation.annotationType())) {
+			throw new IllegalStateException("Unsupported annotation: " + annotation); 
+		}
+		return false;
+	}
+	
+	private boolean isSupportedType(Class<?> type) {
+		if (supportedTypes.contains(type)) {
+			return true;
+		}
+		if (!ignoredTypes.contains(type)) {
+			throw new IllegalStateException("Unsupported parameter type: " + type);
+		}
+		return false;
+	}
+	
 	// ----------------------------------------------------------------------
 	
 	private class AnnotationCacheHandler extends AbstractHttpHandler {
@@ -181,6 +257,8 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 		private Object[] args;
 		
 		private Cache annotation;
+		
+		private Method lastModifiedMethod;
 		
 		public AnnotationCacheHandler(HttpServletRequest request, 
 				HttpServletResponse response, Object handler) {
@@ -200,9 +278,11 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 				handlerMethod = invocation.getMethod();
 				args = invocation.getArguments();
 				annotation = handlerMethod.getAnnotation(Cache.class);
+				String name = "getLastModifiedFor" + StringUtils.capitalize(handlerMethod.getName());
+				lastModifiedMethod = ReflectionUtils.findMethod(handler.getClass(), name, handlerMethod.getParameterTypes());
 			}
-			catch(Exception e) {
-				log.error(e.getMessage(), e);
+			catch (Exception e) {
+				throw ExceptionUtils.wrapReflectionException(e);
 			}
 		}
 		
@@ -210,6 +290,20 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 		public String getCacheRegion() {
 			CacheRegion region = handler.getClass().getAnnotation(CacheRegion.class);
 			return region != null ? region.value() : null;
+		}
+		
+		@Override
+		public long getLastModified() {
+			try {
+				if (lastModifiedMethod != null) {
+					Assert.isAssignable(Long.TYPE, lastModifiedMethod.getReturnType());
+					return (Long) lastModifiedMethod.invoke(handler, args);
+				}
+				return System.currentTimeMillis();
+			}
+			catch (Exception e) {
+				throw ExceptionUtils.wrapReflectionException(e);
+			}
 		}
 		
 		@Override
@@ -232,7 +326,7 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 					prefix = (CharSequence) method.invoke(handler, getRequest(), handlerMethod);
 				}
 				else {
-					prefix = getDefaultCacheKeyPrefix();
+					prefix = getDefaultCacheKeyPrefix(getRequest(), handlerMethod);
 				}
 				if (prefix == null) {
 					return null;
@@ -260,18 +354,10 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 				return key.toString();
 			}
 			catch (Exception e) {
-				ReflectionUtils.handleReflectionException(e);
-				return null;
+				throw ExceptionUtils.wrapReflectionException(e);
 			}
 		}
 		
-		private String getDefaultCacheKeyPrefix() {
-			return getRequest().getRequestURL()
-				.append('#').append(handlerMethod.getName())
-				.append('@').append(StringUtils.unqualify(handlerMethod.getAnnotation(RequestMapping.class).toString()))
-				.toString();
-		}
-
 		private CharSequence getMethodLevelCacheKey() {
 			String name = "getCacheKeyFor" + StringUtils.capitalize(handlerMethod.getName());
 			Method method = ReflectionUtils.findMethod(handler.getClass(), name, handlerMethod.getParameterTypes());
@@ -279,34 +365,7 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 				Assert.isAssignable(CharSequence.class, method.getReturnType());
 				return (CharSequence) ReflectionUtils.invokeMethod(method, handler, args);
 			}
-			return getDefaultMethodLevelCacheKey();
-		}
-		
-		private CharSequence getDefaultMethodLevelCacheKey() {
-			StringBuilder key = new StringBuilder();
-			key.append(" {");
-			Class<?>[] types = handlerMethod.getParameterTypes();
-			Annotation[][] ann = handlerMethod.getParameterAnnotations();
-			types: for (int i = 0; i < types.length; i++) {
-				for (Annotation annotation : ann[i]) {
-					if (supportedAnnotations.contains(annotation.annotationType())) {
-						key.append(String.valueOf(args[i]));
-						continue types;
-					}
-					else if (!ignoredAnnotations.contains(annotation.annotationType())) {
-						throw new IllegalStateException("Unsupported annotation: " + annotation); 
-					}
-				}
-				if (supportedTypes.contains(types[i])) {
-					key.append(String.valueOf(args[i])).append(';');
-					continue;
-				}
-				if (!ignoredTypes.contains(types[i])) {
-					throw new IllegalStateException("Unsupported parameter type: " + types[i]);
-				}
-			}
-			key.append('}');
-			return key;
+			return getDefaultMethodLevelCacheKey(handlerMethod, args);
 		}
 		
 		@Override
@@ -349,6 +408,9 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 				
 				if (expireIn != null) {
 					CacheContext.expireIn(expireIn);
+				}
+				else if (lastModifiedMethod != null) {
+					CacheContext.expireIn(0);
 				}
 			}
 		}
