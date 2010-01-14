@@ -24,13 +24,11 @@ import org.riotfamily.components.support.EditModeUtils;
  * RequestInterceptor that enables the <code>contentIndex</code> 
  * Hibernate filter.
  */
-public class ContentIndexRequestInterceptor extends RequestInterceptorAdapter {
+public class ContentFilterRequestInterceptor extends RequestInterceptorAdapter {
 
-	public static final String FILTER_NAME = "contentIndex";
-	
 	private SessionFactory sessionFactory;
 	
-	public ContentIndexRequestInterceptor(SessionFactory sessionFactory) {
+	public ContentFilterRequestInterceptor(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 
@@ -41,7 +39,10 @@ public class ContentIndexRequestInterceptor extends RequestInterceptorAdapter {
 		Session session = sessionFactory.getCurrentSession();
 		if (session != null) {
 			boolean live = !EditModeUtils.isEditMode(request);
-			session.enableFilter(FILTER_NAME).setParameter("live", live);
+			session.enableFilter("contentIndex").setParameter("live", live);
+			if (live) {
+				session.enableFilter("publishedContent");
+			} 
 		}
 		return true;
 	}

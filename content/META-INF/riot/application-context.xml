@@ -62,12 +62,20 @@
 					<prop key="live">boolean</prop>
 				</props>
 			</property>
+		</bean>
+		<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
+			<property name="filterName" value="publishedContent" />
+			<property name="defaultFilterCondition" value="0 = (select count(*) from riot_content_containers c where c.id = contentcontainer_id and c.live_version is null)" />
 		</bean> 
 	</override:add>
 	
 	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository" />
 	
-	<bean class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
+	<bean id="defaultSiteCreator" class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean class="org.riotfamily.pages.config.SystemPageSynchronizer" depends-on="defaultSiteCreator" >
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	

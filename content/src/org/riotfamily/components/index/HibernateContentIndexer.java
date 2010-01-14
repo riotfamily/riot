@@ -13,7 +13,6 @@
 package org.riotfamily.components.index;
 
 import static org.hibernate.EntityMode.POJO;
-import static org.riotfamily.components.index.ContentIndexRequestInterceptor.FILTER_NAME;
 
 import java.util.Map;
 
@@ -93,9 +92,9 @@ public class HibernateContentIndexer extends HibernateDaoSupport
 			Class<?> indexClass = meta.getMappedClass(POJO);
 			if (ContentIndex.class.isAssignableFrom(indexClass)) {
 				Filter filter = indexClass.getAnnotation(Filter.class);
-				Assert.isTrue(filter != null && FILTER_NAME.equals(filter.name()),
-						String.format("%s must be annotated with @Filter(name=\"%s\")",
-						indexClass.getName(), FILTER_NAME));
+				Assert.isTrue(filter != null && filter.name().equals("contentIndex"),
+						String.format("%s must be annotated with @Filter(name=\"contentIndex\")",
+						indexClass.getName()));
 			}
 			else {
 				meta = null;
