@@ -19,6 +19,11 @@ import org.riotfamily.statistics.domain.Statistics;
 public abstract class AbstractPropertiesDao extends AbstractSimpleStatsDao {
 
 	@Override
+	public boolean canSortBy(String property) {
+		return true;
+	}
+
+	@Override
 	protected void populateStats(Statistics stats) throws Exception {
 		for (Map.Entry<String, String> entry : getProperties().entrySet()) {
 			stats.add(entry.getKey(), entry.getValue());
@@ -26,4 +31,5 @@ public abstract class AbstractPropertiesDao extends AbstractSimpleStatsDao {
 	}
 	
 	protected abstract Map<String, String> getProperties() throws Exception;
+
 }

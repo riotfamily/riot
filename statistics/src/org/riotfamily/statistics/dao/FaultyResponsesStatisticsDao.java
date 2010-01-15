@@ -26,6 +26,11 @@ public class FaultyResponsesStatisticsDao extends AbstractStatsItemDao {
 	}
 
 	@Override
+	public boolean canSortBy(String property) {
+		return true;
+	}
+
+	@Override
 	protected List<? extends StatsItem> getStats() {
 		return filterPlugin.getFaultyResponses();
 	}

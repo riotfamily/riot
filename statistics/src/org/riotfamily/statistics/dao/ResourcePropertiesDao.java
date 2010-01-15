@@ -30,4 +30,5 @@ public class ResourcePropertiesDao extends AbstractPropertiesDao {
 	protected Map<String, String> getProperties() throws Exception {
 		return (Map) PropertiesLoaderUtils.loadProperties(resource);
 	}
+
 }

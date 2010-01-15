@@ -77,7 +77,9 @@
 			<s:group id="properties">
 				<s:list id="systemProperties" icon="table_gear">
 					<s:dao>
-						<bean class="org.riotfamily.statistics.dao.SystemPropertiesDao" />
+						<bean class="org.riotfamily.statistics.dao.SystemPropertiesDao">
+							<property name="search" value="name,value" />
+						</bean>
 					</s:dao>
 					<s:columns>
 						<s:column property="name" />
@@ -87,7 +89,9 @@
 				</s:list>
 				<s:list id="environmentProperties" icon="picture">
 					<s:dao>
-						<bean class="org.riotfamily.statistics.dao.EnvironmentPropertiesDao" />
+						<bean class="org.riotfamily.statistics.dao.EnvironmentPropertiesDao">
+							<property name="search" value="name,value" />
+						</bean>
 					</s:dao>
 					<s:columns>
 						<s:column property="name" />
