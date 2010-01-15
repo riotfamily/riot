@@ -88,17 +88,20 @@
 	</target>
 
 	<target name="javadoc">
-		<javadoc destdir="${build.dir}/api" classpathref="classpath" breakiterator="true">
+		<javadoc destdir="${build.dir}/docs/api" classpathref="classpath" breakiterator="true">
 			<packageset dir="common/src" />
 			<packageset dir="cachius/src" />
 			<packageset dir="content/src" />
 			<packageset dir="forms/src" />
 			<packageset dir="core/src" />
+			<packageset dir="media/src" />
 
 			<group title="Common" packages="org.riotfamily.common*" />
 			<group title="Cachius" packages="org.riotfamily.cachius*" />
 			<group title="Forms" packages="org.riotfamily.forms*" />
 			<group title="Core" packages="org.riotfamily.core*" />
+			<group title="Content" packages="org.riotfamily.components*:org.riotfamily.pages*" />
+			<group title="Media" packages="org.riotfamily.media*" />
 
 			<link href="http://java.sun.com/j2ee/1.4/docs/api" />
 			<link href="http://java.sun.com/j2se/1.4.2/docs/api" />
@@ -109,7 +112,7 @@
 	<target name="fmdoc" depends="-configure-ivy">
 		<ivy:retrieve organisation="riotfamily" module="fmdoc" revision="1.0" inline="true" log="quiet" pattern="${lib.dir}/[artifact].[ext]" />
 		<taskdef name="fmdoc" classpathref="classpath" classname="org.riotfamily.fmdoc.ant.FreeMarkerDocTask" />
-		<fmdoc destdir="${build.dir}/fmdoc">
+		<fmdoc destdir="${build.dir}/docs/fm">
 			<fileset dir=".">
         		<include name="*/src/**/*.ftl" />		
         	</fileset>

@@ -97,7 +97,7 @@
 	</target>
 	
 	<target name="report" depends="resolve">
-		<ivy:report todir="${build.dir}/reports" dot="true" conf="build" />
+		<ivy:report todir="${build.dir}/docs/ivy" outputpattern="[module].[ext]" dot="false" graph="false" conf="build" />
 	</target>
 
 	<!--
