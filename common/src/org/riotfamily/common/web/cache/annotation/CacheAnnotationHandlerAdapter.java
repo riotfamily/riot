@@ -270,6 +270,7 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 		
 		private void init() {
 			ProxyFactory proxyFactory = new ProxyFactory(handler);
+			proxyFactory.setProxyTargetClass(true);
 			HandlerMethodInterceptor interceptor = new HandlerMethodInterceptor();
 			proxyFactory.addAdvice(interceptor);
 			try {
