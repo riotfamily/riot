@@ -114,7 +114,7 @@ public class HibernateContentIndexer extends HibernateDaoSupport
 				String ownerClassName = Hibernate.getClass(owner).getName();
 				ClassMetadata meta = getIndexClassMetadata(ownerClassName);
 				if (meta != null) {
-					return getSession().load(meta.getEntityName(), content.getId());
+					return getSession().get(meta.getEntityName(), content.getId());
 				}
 			}
 		}
