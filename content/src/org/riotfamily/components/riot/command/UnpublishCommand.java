@@ -46,7 +46,7 @@ public class UnpublishCommand extends AbstractBatchCommand<ContentContainerOwner
 	protected CommandResult execute(CommandContext context, 
 			ContentContainerOwner owner, int index, int selectionSize) {
 
-		owner.getContentContainer().setLiveVersion(null);
+		owner.getContentContainer().unpublish();
 		return new RefreshListResult();
 	}
 }
