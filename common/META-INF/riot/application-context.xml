@@ -28,7 +28,7 @@
 		<property name="automatic" value="${riot.revolt.automatic=false}" />
 		<property name="dataSource" ref="c3p0" />
 	</bean>
-  	
+
 	<!-- The Hibernate SessionFactory -->
 	<bean id="sessionFactory" class="org.riotfamily.common.hibernate.RiotSessionFactoryBean">
 		<property name="dataSource" ref="riotDataSource" />
