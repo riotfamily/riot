@@ -203,7 +203,7 @@ public class DefaultScreenContext implements ScreenContext {
 	
 	@Override
 	public String toString() {
-		return String.format("ScreenContext[screen=%s]", getScreen().getId());
+		return String.format("ScreenContext[screen=%s]", getScreen() != null ? getScreen().getId() : null);
 	}
 	
 }

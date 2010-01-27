@@ -19,14 +19,13 @@ import org.riotfamily.core.screen.DefaultScreenContext;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.auth.User;
-import org.riotfamily.core.security.policy.AuthorizationPolicy.Permission;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
 public class ReflectionPolicyTest {
 
-	private AuthorizationPolicy policy = new TestPolicy();
+	private TestPolicy policy = new TestPolicy();
 	
 	private RiotUser user = new User();
 	
@@ -34,33 +33,63 @@ public class ReflectionPolicyTest {
 	
 	@Test
 	public void test() {
-		Assert.assertEquals(Permission.GRANTED, policy.getPermission(user, "edit", new ContentPage(), context));
-		Assert.assertEquals(Permission.DENIED, policy.getPermission(user, "edit", new Site(), context));
-		Assert.assertEquals(Permission.DENIED, policy.getPermission(user, "delete", new Site(), context));
-		Assert.assertEquals(Permission.GRANTED, policy.getPermission(user, "delete", new ContentPage(), context));
+		policy.getPermission(user, "edit", new ContentPage(), context);
+		Assert.assertEquals(1, policy.getInvokedMethod());
+		
+		policy.getPermission(user, "edit", null, context);
+		Assert.assertEquals(2, policy.getInvokedMethod());
+		
+		policy.getPermission(user, "edit", new Site(), context);
+		Assert.assertEquals(2, policy.getInvokedMethod());
+		
+		policy.getPermission(user, "delete", new Site(), context);
+		Assert.assertEquals(3, policy.getInvokedMethod());
+				
+		policy.getPermission(user, "delete", new ContentPage(), context);
+		Assert.assertEquals(4, policy.getInvokedMethod());
+		
+		policy.getPermission(user, "edit", new ContentPage(), null);
+		Assert.assertEquals(0, policy.getInvokedMethod());
 	}
 	
 	public class TestPolicy extends ReflectionPolicy {
 		
+		private int invokedMethod;
+		
+		public int getInvokedMethod() {
+			int i = invokedMethod;
+			invokedMethod = 0;
+			return i;
+		}
+		
 		public Permission edit(User user, Page page, ScreenContext context) {
+			invokedMethod = 1;
 			return Permission.GRANTED;
 		}
 		
 		public Permission edit(User user, ScreenContext context) {
+			invokedMethod = 2;
 			return Permission.DENIED;
 		}
 		
+		public Permission getPermission(User user, String action, Site site, ScreenContext context) {
+			invokedMethod = 3;
+			return Permission.DENIED;
+		}
+		
+		public Permission getPermission(User user, String action, ScreenContext context) {
+			invokedMethod = 4;
+			return Permission.GRANTED;
+		}
+
 		public Permission getPermission(User user, Site site, ScreenContext context) {
 			Assert.fail("Must not be invoked because the second argument is not a String");
 			return null;
 		}
 		
-		public Permission getPermission(User user, String action, Site site, ScreenContext context) {
-			return Permission.DENIED;
-		}
-		
-		public Permission getPermission(User user, String action, ScreenContext context) {
-			return Permission.GRANTED;
+		public Permission getPermission(User user, String action) {
+			Assert.fail("Must not be invoked because at least one argument is missing");
+			return null;
 		}
 		
 	}

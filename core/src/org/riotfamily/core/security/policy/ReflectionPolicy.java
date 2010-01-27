@@ -208,13 +208,19 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 		
 		private boolean paramTypesMatch(Class<?>[] paramTypes, int offset, Arguments arguments) {
 			int i = offset;
-			if (arguments.object && objectClass != null) {
+			if (arguments.object) {
+				if (objectClass == null) {
+					return false;
+				}
 				if (paramTypes.length <= i || !paramTypes[i].isAssignableFrom(objectClass)) {
 					return false;
 				}
 				i++;
 			}
-			if (arguments.context && contextClass != null) {
+			if (arguments.context) {
+				if (contextClass == null) {
+					return false;
+				}
 				if (paramTypes.length <= i || !paramTypes[i].isAssignableFrom(contextClass)) {
 					return false;
 				}
