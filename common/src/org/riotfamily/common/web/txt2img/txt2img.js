@@ -33,6 +33,7 @@ var Txt2ImgConfig = Class.create({
 		this.pixelImage = new Image();
 		this.pixelImage.src = pixelUrl;
 		this.selectors = selectors;
+		this.afterSelectors = new Hash();
 		try {
 			this.createHoverRules();
 		}
@@ -43,6 +44,21 @@ var Txt2ImgConfig = Class.create({
 	},
 
 	createHoverRules: function() {
+		
+		var appendRule = function(sheet, newSel, newStyle) {
+			var method = "";
+			try {			
+				if (sheet.insertRule) {
+					method ="insertRule";
+					sheet.insertRule(newSel + ' {' + newStyle + '}', sheet.cssRules.length);
+				}
+				else if (sheet.addRule) {
+					method ="addRule";
+					sheet.addRule(newSel, newStyle);
+				}
+			} catch (e) {}
+		};
+		
 		var processRule = function(sheet, rule) {
 			if (rule.selectorText) {
 				rule.selectorText.split(',').each(function(sel) {
@@ -50,12 +66,15 @@ var Txt2ImgConfig = Class.create({
 						if (rule.style.color) {
 							var newSel = sel.replace(/:hover/, ' .txt2imgHover');
 							var newStyle = 'color: ' + rule.style.color;
-							if (sheet.insertRule) {
-								sheet.insertRule(newSel + ' {' + newStyle + '}', sheet.cssRules.length);
-							}
-							else if (sheet.addRule) {
-								sheet.addRule(newSel, newStyle);
-							}
+							appendRule(sheet, newSel, newStyle);
+						}
+					}
+					if (sel.include(':after')) {
+						if (rule.style.content) {
+							var newSel = sel.replace(/\:*after/, '.txt2imgAfter:after');
+							var newStyle = 'content: ' + "''";
+							appendRule(sheet, newSel, newStyle);
+							afterSelectors.set(sel.replace(/\:*after/, ''), rule.style.content);
 						}
 					}
 				});
@@ -69,6 +88,8 @@ var Txt2ImgConfig = Class.create({
 				}
 			}
 		};
+		
+		var afterSelectors = this.afterSelectors;
 		$A(document.styleSheets).each(function(sheet) {
 			var a = $A(sheet.rules || sheet.cssRules);
 			for (var i = 0; i < a.length; i++) {
@@ -114,6 +135,11 @@ var Txt2ImgReplacement = Class.create({
 			text = this.el.innerHTML.strip().gsub(/<br\/?>/i, '\n').stripTags();
 		}
 		this.text = text;
+		if (this.config.afterSelectors.get(this.sel)) {
+			this.text = this.text + this.config.afterSelectors.get(this.sel).gsub(/\'|\"/i, '');
+			this.el.addClassName("txt2imgAfter");
+		}
+ 		
 		this.update();
 	},
 	
