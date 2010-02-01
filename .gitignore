@@ -1,3 +1,7 @@
 build
-lib
+/bin
 .DS_Store
+.classpath
+.classpath.old
+.project
+.gradle

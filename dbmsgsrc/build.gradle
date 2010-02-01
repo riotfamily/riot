@@ -1,0 +1,4 @@
+dependencies {
+	compile project(':content'), lib('apache_poi')
+}
+

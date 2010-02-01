@@ -1,0 +1,43 @@
+boolean isUpToDate(FileCollection dest, FileCollection src) {
+	destDate = dest.collect{ it.lastModified() }.max()
+	srcDate = src.collect{ it.lastModified() }.max()
+	destDate != null && destDate >= srcDate
+}
+
+subprojects {
+	// Nothing to compile
+	compileJava.enabled = false
+	compileTestJava.enabled = false
+	
+	// Add -js suffix to archive names
+	// Doesn't work with MavenDeployer as suffix is also added to module names 
+	//archivesBaseName = name + '-js'
+	
+	unpackDir = file('build/unpack')
+	baseDirInDist = ''
+	resourceSubPackage = name
+	
+	task unpack << {
+		p = it.project
+		fileTree(p.projectDir).include('*.zip').files.each{
+			ant.unzip(src: it, dest: p.unpackDir)
+		}
+	}
+	unpack.onlyIf{ task ->
+		!isUpToDate(fileTree(dir: task.project.libsDir), fileTree(dir: task.project.projectDir))
+	}
+	
+	task processResources(dependsOn: unpack, overwrite: true) << {
+		p = it.project
+		copy {
+			from "$p.unpackDir/$p.baseDirInDist"
+			from "$p.projectDir/src"
+			into "$p.sourceSets.main.classesDir/org/riotfamily/resources/$p.resourceSubPackage"
+		}
+	}
+	
+	clean << { task ->
+		ant.delete(dir: task.project.unpackDir)
+	}
+	
+}

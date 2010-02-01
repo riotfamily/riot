@@ -1,0 +1,5 @@
+dependencies {
+	compile lib('slf4j')
+	provided lib('servlet_api')
+}
+
