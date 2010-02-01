@@ -20,8 +20,8 @@ import freemarker.ext.beans.BeanModel;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.CollectionModel;
 import freemarker.ext.beans.InvalidPropertyException;
-import freemarker.ext.beans.MapModel;
 import freemarker.template.AdapterTemplateModel;
+import freemarker.template.SimpleHash;
 import freemarker.template.TemplateCollectionModel;
 import freemarker.template.TemplateHashModelEx;
 import freemarker.template.TemplateModel;
@@ -39,7 +39,7 @@ public class ContentFacadeTemplateModel implements TemplateHashModelEx, Template
 	
 	private BeanModel facadeModel;
 
-	private MapModel contentModel;
+	private SimpleHash contentModel;
 	
 	private BeanModel delegateModel;
 	
@@ -69,9 +69,9 @@ public class ContentFacadeTemplateModel implements TemplateHashModelEx, Template
 		return result;
 	}
 	
-	private BeanModel getContentModel() {
+	private SimpleHash getContentModel() {
 		if (contentModel == null) {
-			contentModel = new MapModel(facade.getContent(), wrapper);
+			contentModel = new SimpleHash(facade.getContent(), wrapper);
 		}
 		return contentModel;
 	}

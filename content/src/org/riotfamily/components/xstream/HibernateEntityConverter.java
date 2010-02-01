@@ -88,8 +88,10 @@ public class HibernateEntityConverter implements Converter {
 	        id = (Serializable) context.convertAnother(null, idType);
 	        reader.moveUp();
 		}
-		Object entity = getSessionFactory().getCurrentSession().load(entityClass, id);
-		XStreamMarshaller.addReference(context, entity);
+		Object entity = getSessionFactory().getCurrentSession().get(entityClass, id);
+		if (entity != null) {
+			XStreamMarshaller.addReference(context, entity);
+		}
 		return entity;
 	}
 
