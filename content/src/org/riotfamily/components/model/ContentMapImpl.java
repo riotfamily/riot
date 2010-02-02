@@ -34,7 +34,7 @@ public class ContentMapImpl extends DirtyCheckMap<String, Object>
 		Assert.notNull(fragmentId, "fragmentId must not be null");
 		this.owner = owner;
 		this.fragmentId = fragmentId;
-		owner.registerfragment(this);
+		owner.registerFragment(this);
 	}
 
 	/**

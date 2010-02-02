@@ -36,7 +36,7 @@ public class ComponentList extends DirtyCheckList<Component>
 		Assert.notNull(owner, "owner must not be null");
 		Assert.notNull(fragmentId, "fragmentId must not be null");
 		this.path = parent.getPath() != null ? parent.getPath() + " " + key : key;
-		owner.registerfragment(this);
+		owner.registerFragment(this);
 	}
 	
 	public ComponentList(Content owner, String fragmentId, String path) {
@@ -46,7 +46,7 @@ public class ComponentList extends DirtyCheckList<Component>
 		this.owner = owner;
 		this.fragmentId = fragmentId;
 		this.path = path;
-		owner.registerfragment(this);
+		owner.registerFragment(this);
 	}
 
 	@Override

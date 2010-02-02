@@ -252,6 +252,7 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	}
 	
 	void registerfragment(ContentFragment fragment) {
+	void registerFragment(ContentFragment fragment) {
 		String id = fragment.getFragmentId();
 		Assert.notNull(id);
 		Assert.isTrue(!getFragments().containsKey(id));
