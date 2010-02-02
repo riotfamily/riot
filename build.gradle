@@ -150,8 +150,10 @@ gradle.taskGraph.whenReady {taskGraph ->
 /**
  * Creates the gradlew wrapper scripts
  */
-task wrapper(type: Wrapper) << {
-	gradleVersion = '0.9'
+task wrapper(type: Wrapper) {
+	gradleVersion = '0.9-20100126192055+0100'
+	urlRoot = 'http://riotfamily.org/downloads/gradle'
+	jarPath = 'wrapper'
 }
 
 // ---------------------------------------------------------------------------
