@@ -15,14 +15,14 @@ package org.riotfamily.statistics.dao;
 import java.util.List;
 
 import org.riotfamily.statistics.domain.StatsItem;
-import org.riotfamily.statistics.web.RequestCountFilterPlugin;
+import org.riotfamily.statistics.web.RequestStats;
 
 public class FaultyResponsesStatisticsDao extends AbstractStatsItemDao {
 
-	private RequestCountFilterPlugin filterPlugin;
+	private RequestStats requestStats;
 
-	public FaultyResponsesStatisticsDao(RequestCountFilterPlugin filterPlugin) {
-		this.filterPlugin = filterPlugin;
+	public FaultyResponsesStatisticsDao(RequestStats requestStats) {
+		this.requestStats = requestStats;
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class FaultyResponsesStatisticsDao extends AbstractStatsItemDao {
 
 	@Override
 	protected List<? extends StatsItem> getStats() {
-		return filterPlugin.getFaultyResponses();
+		return requestStats.getFaultyResponses();
 	}
 	
 }
