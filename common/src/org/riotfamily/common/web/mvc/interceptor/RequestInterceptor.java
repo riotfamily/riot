@@ -18,8 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Interface for general servlet request interception. Use this interface if
  * you want to intercept every request, regardless of the HandlerMapping.
- * 
- * @see RequestInterceptorFilterPlugin
+ * <p>
+ * Use the {@link Intercept} annotation to specify which types of requests
+ * should be intercepted.
  */
 public interface RequestInterceptor {
 	
