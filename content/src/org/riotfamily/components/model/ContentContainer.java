@@ -116,7 +116,8 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 		if (isDirty()) {
 			Content preview = getPreviewVersion();
 			Content oldLiveVersion = liveVersion;
-			liveVersion = preview.createCopy();
+			liveVersion = new Content(preview);
+			preview.setDirty(false);
 			if (oldLiveVersion != null) {
 				oldLiveVersion.delete();
 			}
@@ -135,7 +136,7 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 		Content live = getLiveVersion();
 		if (live != null) {
 			Content oldPreviewVersion = previewVersion;
-			previewVersion = live.createCopy();
+			previewVersion = new Content(live);
 			if (oldPreviewVersion != null) {
 				oldPreviewVersion.delete();
 			}
