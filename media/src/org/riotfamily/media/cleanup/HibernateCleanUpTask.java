@@ -57,6 +57,7 @@ public class HibernateCleanUpTask extends HibernateTask {
 		init();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void doWithoutResult(final Session session) throws Exception {
 		
@@ -94,8 +95,8 @@ public class HibernateCleanUpTask extends HibernateTask {
 	
 	private void delete(final Session session, final Long id) {
 		try {
-			RiotFile file = (RiotFile) transactionTemplate.execute(new TransactionCallback() {
-				public Object doInTransaction(TransactionStatus status) {
+			RiotFile file = transactionTemplate.execute(new TransactionCallback<RiotFile>() {
+				public RiotFile doInTransaction(TransactionStatus status) {
 					log.debug("Deleting orphaned file: " + id);
 					RiotFile file = (RiotFile) session.load(RiotFile.class, id);
 					session.delete(file);

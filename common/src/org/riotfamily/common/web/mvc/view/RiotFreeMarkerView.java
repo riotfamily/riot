@@ -84,8 +84,8 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		this.modelPostProcessors = modelPostProcessors;
 	}
 
-	@SuppressWarnings("unchecked")
-	public final void render(Map model, HttpServletRequest request, 
+	@Override
+	public final void render(Map<String, ?> model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 	
 		if (allowModelOverride) {
@@ -120,8 +120,8 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		return super.getTemplate(locale);
 	}
 	
-	@SuppressWarnings("unchecked")
-	protected void renderMergedTemplateModel(final Map model, 
+	@Override
+	protected void renderMergedTemplateModel(final Map<String, Object> model, 
 			final HttpServletRequest request, 
 			final HttpServletResponse response) 
 			throws Exception {
