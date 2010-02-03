@@ -15,7 +15,7 @@
 				<options ref="sitemapSchemaRepository" />
 			</selectbox>
 		</editable-if-new>
-		<textfield bind="locale" required="true" max-length="8" />
+		<textfield bind="locale" required="true" />
 		<textfield bind="hostName" />
 		<checkbox bind="enabled" default="checked" />
 		<list bind="aliases" sortable="false">
