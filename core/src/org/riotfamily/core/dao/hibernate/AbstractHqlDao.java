@@ -45,14 +45,14 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     }
 
     protected String getSelect() {
-    	return "this";
+    	return "distinct this";
     }
 
     protected String getFrom(ListParams params) {
-    	StringBuffer from = new StringBuffer();
+    	StringBuilder from = new StringBuilder();
     	from.append(getEntityClass().getName());
     	from.append(" as this");
-    	HibernateUtils.appendJoinsForSearch(from, "this", getSearchableProperties());    	    	
+    	HqlUtils.appendJoinsForSearch(from, "this", getSearchableProperties());    	    	
     	return from.toString() ;
     }
     
@@ -129,10 +129,10 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
      * Builds a HQL query string to retrieve the total number of items.
      */
     protected final String buildCountHql(Object parent, ListParams params) {
-    	StringBuffer hql = new StringBuffer();
-    	hql.append("select count(*)");
+    	StringBuilder hql = new StringBuilder();
+    	hql.append("select count(").append(getSelect()).append(')');
     	appendFromClause(hql, params);
-    	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
+    	HqlUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	log.debug(hql.toString());
         return hql.toString();
     }
@@ -141,35 +141,35 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
      * Builds a HQL query string to retrieve a list of items.
      */
     protected final String buildHql(Object parent, ListParams params) {
-    	StringBuffer hql = new StringBuffer();
+    	StringBuilder hql = new StringBuilder();
     	hql.append("select ");
     	hql.append(getSelect());
     	appendFromClause(hql, params);
-    	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
-    	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
+    	HqlUtils.appendHql(hql, "where", getWhereClause(parent, params));
+    	HqlUtils.appendHql(hql, "order by", getOrderBy(params));
     	log.debug(hql.toString());
         return hql.toString();
     }
 
-	protected void appendFromClause(StringBuffer hql, ListParams params) {
+	protected void appendFromClause(StringBuilder hql, ListParams params) {
 		hql.append(" from ");
     	hql.append(getFrom(params));
 	}
 
     protected String getWhereClause(Object parent, ListParams params) {
-        StringBuffer sb = new StringBuffer();
-        HibernateUtils.appendHql(sb, null, getWhere());
+        StringBuilder sb = new StringBuilder();
+        HqlUtils.appendHql(sb, null, getWhere());
 
     	if (params.getFilter() != null) {
-    		HibernateUtils.appendHql(sb, "and", getFilterWhereClause(params));
+    		HqlUtils.appendHql(sb, "and", getFilterWhereClause(params));
     	}
 
     	if (params.getSearch() != null) {
-    		HibernateUtils.appendHql(sb, "and", getSearchWhereClause(params));
+    		HqlUtils.appendHql(sb, "and", getSearchWhereClause(params));
         }
 
         if (!isPolymorph()) {
-        	HibernateUtils.appendHql(sb, "and", "(this.class = ")
+        	HqlUtils.appendHql(sb, "and", "(this.class = ")
         		.append(getEntityClass().getName()).append(')');
         }
 
@@ -177,7 +177,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     }
     
     protected String getFilterWhereClause(ListParams params) {
-    	return HibernateUtils.getExampleWhereClause(getEntityClass(),
+    	return HqlUtils.getExampleWhereClause(getEntityClass(),
     				params.getFilter(), "this",	params.getFilteredProperties());
     }
     
@@ -195,19 +195,17 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
 			query.setProperties(params.getFilter());
 		}
 
-		HibernateUtils.setCollectionValueParams(query,
+		HqlUtils.setCollectionValueParams(query,
 				params.getFilteredProperties(), getEntityClass(), 
 				params.getFilter());
     }
     
     protected final String getSearchWhereClause(ListParams params) {
-    	return HibernateUtils.getSearchWhereClause("this", 
-    				getSearchableProperties(), "search");
-    	
+    	return HqlUtils.getSearchWhereClause("this", "search", getSearchableProperties());
     }
-
+    
     protected String getOrderBy(ListParams params) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (params.hasOrder()) {
         	Iterator<Order> it = params.getOrder().iterator();
         	while (it.hasNext()) {

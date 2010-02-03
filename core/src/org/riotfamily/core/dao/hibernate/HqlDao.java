@@ -17,7 +17,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.property.PropertyUtils;
-import org.riotfamily.common.hibernate.HibernateUtils;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.Swapping;
 import org.riotfamily.core.screen.list.ListParamsImpl;
@@ -36,7 +35,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
 	
     private boolean polymorph = true;
 
-    private String select = "this";
+    private String select = "distinct this";
     
     private String where;
 
@@ -105,11 +104,11 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
      * Builds a HQL query string to retrieve the maximal position property value
      */
     protected String buildMaxPositionHql(Object parent) {
-    	StringBuffer hql = new StringBuffer();
+    	StringBuilder hql = new StringBuilder();
     	hql.append("select max(").append(positionProperty).append(") from ");
     	hql.append(getEntityClass().getName());
     	hql.append(" as this");
-    	HibernateUtils.appendHql(
+    	HqlUtils.appendHql(
     		hql, "where", getWhereClause(parent, new ListParamsImpl()));
     	log.debug(hql.toString());
         return hql.toString();

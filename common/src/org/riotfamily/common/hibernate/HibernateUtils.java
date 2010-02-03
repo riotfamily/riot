@@ -13,23 +13,16 @@
 package org.riotfamily.common.hibernate;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
 
-import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.springframework.beans.PropertyAccessorUtils;
-import org.springframework.util.StringUtils;
 
 public final class HibernateUtils {
 
@@ -102,227 +95,12 @@ public final class HibernateUtils {
 		}
 	}
 
-	/**
-	 * Returns a HQL term that can be used within a where-clause to perform
-	 * a query-by-example.
-	 * @since 6.4
-	 */
-	@SuppressWarnings("unchecked")
-	public static String getExampleWhereClause(Class<?> entityClass, 
-			Object example , String alias, String[] propertyNames) {
-
-		if (example == null || propertyNames == null) {
-			return null;
-		}
-		StringBuffer hql = new StringBuffer();
-		Map properties;
-		if (example instanceof Map) {
-			properties = (Map) example;
-		}
-		else {
-			properties = PropertyUtils.getProperties(example, propertyNames);
-		}
-		for (int i = 0; i < propertyNames.length; i++) {
-			String name = propertyNames[i];
-			Object value = properties.get(name);
-			if (value != null) {
-				Class<?> propertyClass = PropertyUtils.getPropertyType(entityClass, name);
-				if (propertyClass != null) {
-					if (hql.length() > 0) {
-						hql.append(" and ");
-					}
-					if (Collection.class.isAssignableFrom(propertyClass)) {
-						Collection<?> c = null;
-						if (value instanceof Collection) {
-							c = (Collection<?>) value;
-						}
-						else {
-							c = Collections.singleton(value);
-						}					
-						hql.append("1 = 1");
-						for (int j = 0; j < c.size(); j++) {
-							hql.append(" and :").append(name).append("_").append(j)
-									.append(" in elements(").append(alias)
-									.append('.').append(name).append(')');
-						}
-					}
-					else {
-						hql.append(alias).append('.').append(name);
-						hql.append(" = :").append(name.replaceAll("\\.", "_dot_"));
-					}
-				}
-			}
-		}
-		return hql.length() > 0 ? hql.toString() : null;
-	}
-
-	/**
-	 * Sets collection values as individual query parameters. Use this method
-	 * together with {@link #getExampleWhereClause(Object, String, String[])}
-	 * when your example contains collections.
-	 * <p>
-	 * The method iterates over the provides names array and inspects the given
-	 * bean (or map). If there's a property (or map entry) of the type
-	 * <code>java.util.Collection</code>, the methods iterates over the
-	 * collection and sets a query parameter for each item. The name is suffixed
-	 * with an underscore and the item's index.
-	 *
-	 * @since 6.4
-	 */
-	@SuppressWarnings("unchecked")
-	public static void setCollectionValueParams(Query query,
-			String[] names, Class<?> entityClass, Object object) {
-
-		for (int i = 0; i < names.length; i++) {
-			String name = names[i];
-			Object value;
-			if (object instanceof Map) {
-				value = ((Map) object).get(name);
-			}
-			else {
-				value = PropertyUtils.getProperty(object, name);
-			}
-			if (value != null) {
-				Class<?> propertyClass = PropertyUtils.getPropertyType(entityClass, name);
-				if (propertyClass != null && Collection.class.isAssignableFrom(propertyClass)) {
-					Collection<?> c = null;
-					if (value instanceof Collection) {
-						c = (Collection<?>) value;
-					}
-					else {
-						c = Collections.singleton(value);
-					}
-					int j = 0;
-					Iterator<?> values = c.iterator();
-					while (values.hasNext()) {
-						query.setParameter(name + "_" + j++, values.next());
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Returns a HQL term that can be used within a where-clause to perform
-	 * a search. Example: <code>"(lower(str(&lt;alias&gt;.&lt;property[0]&gt;))
-	 * like :&lt;searchParamName&gt; or lower(str(&lt;alias&gt;.&lt;property[1]&gt;))
-	 * like :&lt;searchParamName&gt; or ...)"</code>
-	 * @since 6.4
-	 */
-	public static String getSearchWhereClause(String alias,
-			String[] propertyNames, String searchParamName) {
-
-		if (propertyNames == null || propertyNames.length == 0) {
-			return null;
-		}
-		StringBuffer hql = new StringBuffer("(");
-		for (int i = 0; i < propertyNames.length; i++) {
-			String name = propertyNames[i];
-			if (i > 0) {
-				hql.append(" or ");
-			}
-			
-			hql.append('(');
-			if (name.indexOf('.') != -1) {				
-				String[] path = name.split("\\.");
-				for (int j = 0; j < path.length - 1; j++) {
-					hql.append(alias).append('.');
-					for (int k = 0; k <= j; k++) {
-						hql.append(path[k]);
-						if (k < j) {
-							hql.append('.');
-						}
-					}
-					hql.append(" is not null ");
-					if (j < path.length - 2) {
-						hql.append(" and ");
-					}
-				}
-				hql.append(" and ");
-			}
-			hql.append("lower(str(").append(alias).append('.').append(name);
-			hql.append(")) like :").append(searchParamName).append(')');;
-		}
-		hql.append(')');		
-		return hql.toString();
+	public static boolean queryContainsParameter(Query query, String name) {
+		return query.getQueryString().matches(".+:" + name + "\\b.*");
 	}
 	
-	/**
-	 * Joins all path properties requested by the search property names
-	 * Example: search should be foo.bar = :search -&gt <code>join this.foo</code>	 * 
-	 */
-	public static StringBuffer appendJoinsForSearch(StringBuffer hql, String alias, String[] propertyNames) {
-		if (propertyNames == null || propertyNames.length == 0) {
-			return hql;
-		}		
-		for (int i = 0; i < propertyNames.length; i++) {
-			String name = propertyNames[i];			
-			
-			if (name.indexOf('.') != -1) {				
-				String[] path = name.split("\\.");
-				for (int j = 0; j < path.length - 1; j++) {
-					hql.append(" left join ").append(alias).append('.');
-					for (int k = 0; k <= j; k++) {
-						hql.append(path[k]);
-						if (k < j) {
-							hql.append('.');
-						}
-					}					
-				}				
-			}			
-		}				
-		return hql;
-	}
-
-	/**
-	 * Appends the given term to the StringBuffer. If the buffer is not empty,
-	 * the provided expression is inserted right before the term (surrounded
-	 * by spaces).
-	 * @since 6.4
-	 */
-	public static StringBuffer appendHql(StringBuffer hql,
-			String expression, String term) {
-
-		if (StringUtils.hasText(term)) {
-			if (expression != null && hql.length() > 0) {
-				hql.append(' ').append(expression);
-			}
-			hql.append(' ');
-			hql.append(term);
-		}
-		return hql;
-	}
-	
-	/**
-	 * Appends the given term to the StringBuffer. If the buffer is not empty,
-	 * the provided expression is inserted right before the term (surrounded
-	 * by spaces).
-	 * @since 8.0.1
-	 */
-	public static StringBuilder appendHql(StringBuilder hql,
-			String expression, String term) {
-
-		if (StringUtils.hasText(term)) {
-			if (expression != null && hql.length() > 0) {
-				hql.append(' ').append(expression);
-			}
-			hql.append(' ');
-			hql.append(term);
-		}
-		return hql;
-	}
-
-	public static void addEqOrNull(Criteria c, String name, Object val) {
-		if (val != null) {
-			c.add(Restrictions.eq(name, val));
-		}
-		else {
-			c.add(Restrictions.isNull(name));
-		}
-	}
-
 	public static void setParameter(Query query, String name, Object value) {
-		if (value != null && query.getQueryString().matches(".+:" + name + "\\b.*")) {
+		if (value != null && queryContainsParameter(query, name)) {
 			query.setParameter(name, value);
 		}
 	}
