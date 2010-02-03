@@ -16,35 +16,24 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 
+import org.riotfamily.common.hibernate.ActiveRecordUtils;
 import org.riotfamily.common.web.cache.tags.CacheTagUtils;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+@Transactional
 public class DbMessageSource extends AbstractMessageSource {
 
-	private static final DefaultTransactionDefinition TX_DEF =
-			new DefaultTransactionDefinition(
-			TransactionDefinition.PROPAGATION_REQUIRED);
-	
 	public static final String DEFAULT_BUNDLE = "default";
-	
-	private PlatformTransactionManager transactionManager;
 	
 	private String bundle = DEFAULT_BUNDLE;
 	
 	private boolean fallbackToDefaultCountry = true;
 	
 	private boolean escapeSingleQuotes = true;
-	
-	public DbMessageSource(PlatformTransactionManager tx) {
-		this.transactionManager = tx; 
-	}
-	
+
 	public void setBundle(String bundle) {
 		this.bundle = bundle;
 	}
@@ -66,25 +55,13 @@ public class DbMessageSource extends AbstractMessageSource {
 	public void setEscapeSingleQuotes(boolean escapeSingleQuotes) {
 		this.escapeSingleQuotes = escapeSingleQuotes;
 	}
-	
+		
 	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
 		MessageBundleEntry result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 		if (result == null) {
-			try {
-				TransactionStatus status = transactionManager.getTransaction(TX_DEF);
-				try {
-					result = new MessageBundleEntry(bundle, code, defaultMessage);
-					result.save();
-				}
-				catch (Exception e) {
-					transactionManager.rollback(status);
-					throw e;
-				}
-				transactionManager.commit(status);
-			}
-			catch (Exception e) {
-				result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
-			}
+			result = new MessageBundleEntry(bundle, code, defaultMessage);
+			result.save();
+			ActiveRecordUtils.flushSession();
 		}
 		return result;
 	}
@@ -116,43 +93,43 @@ public class DbMessageSource extends AbstractMessageSource {
 		if (messages == null) {
 			return null;
 		}
-		Message message = messages.get(locale);
-		if (message == null) {
-			String country = locale.getCountry();
-			String lang = locale.getLanguage();
-			if (fallbackToDefaultCountry && (!StringUtils.hasLength(country)
-					|| !lang.equals(country.toLowerCase()))) {
-				
-				message = messages.get(new Locale(lang, lang.toUpperCase()));
-			}
-			if (message == null) {
-				message = messages.get(new Locale(lang));
-			}
+		Message message = null;
+		while (message == null && locale != null) {
+			message = messages.get(locale);
+			locale = getFallbackLocale(locale);
 		}
 		return message;
 	}
 	
+	/**
+	 * Returns the fallback for the given Locale.
+	 */
+	protected Locale getFallbackLocale(Locale locale) {
+		String country = locale.getCountry();
+		String lang = locale.getLanguage();
+		if (StringUtils.hasLength(locale.getVariant())) {
+			return new Locale(lang, country);
+		}
+		if (StringUtils.hasLength(country)) {
+			if (fallbackToDefaultCountry && !lang.equals(country.toLowerCase())) {
+				return new Locale(lang, lang.toUpperCase());	
+			}
+			return new Locale(lang);
+		}
+		return null;
+	}
+	
 	@Override
 	protected String getMessageFromParent(String code, Object[] args, Locale locale) {
-		String s = super.getMessageFromParent(code, args, locale);
-		if (s == null) {
+		String result = super.getMessageFromParent(code, args, locale);
+		if (result == null) {
 			MessageBundleEntry entry = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 			Message message = entry.getDefaultMessage();
 			if (message != null) {
-				if (args != null) {
-					MessageFormat messageFormat = message.getMessageFormat(escapeSingleQuotes);
-					if (messageFormat != null) {
-						synchronized (messageFormat) {
-							return messageFormat.format(args);
-						}
-					}
-				}
-				else {
-					return message.getText();
-				}
+				result = message.format(args, escapeSingleQuotes);
 			}
 		}
-		return s;
+		return result;
 	}
 	
 }

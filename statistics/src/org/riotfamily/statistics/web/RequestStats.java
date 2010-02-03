@@ -12,28 +12,23 @@
  */
 package org.riotfamily.statistics.web;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.statistics.domain.FaultyRepsonseStatsItem;
 import org.riotfamily.statistics.domain.RequestStatsItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RequestCountFilterPlugin implements FilterPlugin {
+public class RequestStats {
 
-	private static Logger log = LoggerFactory.getLogger(RequestCountFilterPlugin.class);
+	private static Logger log = LoggerFactory.getLogger(RequestStats.class);
 
 	private long warnThreshold;
 	
@@ -55,7 +50,6 @@ public class RequestCountFilterPlugin implements FilterPlugin {
 	
 	private boolean ignoreUploads = false;
 	
-	/* LinkedLists perform better than ArrayLists when modified often. */
 	private LinkedList<RequestStatsItem> currentRequests = Generics.newLinkedList();
 
 	private LinkedList<RequestStatsItem> criticalRequests = Generics.newLinkedList();
@@ -65,52 +59,20 @@ public class RequestCountFilterPlugin implements FilterPlugin {
 	private List<Integer> faultStatusCodes = Collections.singletonList(
 			HttpServletResponse.SC_NOT_FOUND);
 	
-	public void doFilter(HttpServletRequest request, 
-			HttpServletResponse response, FilterChain filterChain) 
-			throws IOException, ServletException {
-
-		if (!isEnabled()) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-
-		RequestStatsItem reqStats = new RequestStatsItem(request);
-
-		synchronized (this) {
-			if (currentRequests.size() > maxRequests 
-					&& monitoredUrl.equalsIgnoreCase(reqStats.getName())) {
-				
-				log.error("Maximum number of currentRequests reached (" 
-						+ maxRequests + "). Signalling failure...");
-
-				/* Temporarily not available */
-				response.sendError(503);
-				return;
-			}
-		}
-		
-		updateStatsBefore(reqStats);
-		StatusResponseWrapper statusResponse = new StatusResponseWrapper(response);
-		try {
-			filterChain.doFilter(request, statusResponse);
-		} 
-		finally {
-			updateStatsAfter(reqStats);
-			checkFaultyResponse(request, statusResponse);			
+	
+	boolean signalFailure(String url) {
+		return currentRequests.size() > maxRequests && monitoredUrl.equalsIgnoreCase(url); 
+	}
+	
+	synchronized void updateStatsBefore(RequestStatsItem reqStats) {
+		totalRequestCount++;
+		currentRequests.add(reqStats);
+		if (parallelRequestsHWM < currentRequests.size()) {
+			parallelRequestsHWM = currentRequests.size();
 		}
 	}
 
-	private void updateStatsBefore(RequestStatsItem reqStats) {
-		synchronized (this) {
-			totalRequestCount++;
-			currentRequests.add(reqStats);
-			if (parallelRequestsHWM < currentRequests.size()) {
-				parallelRequestsHWM = currentRequests.size();
-			}
-		}
-	}
-
-	private void updateStatsAfter(RequestStatsItem reqStats) {
+	void updateStatsAfter(RequestStatsItem reqStats) {
 		reqStats.responseDone();
 		synchronized (this) {
 			totalResponseTime += reqStats.getResponseTime();
@@ -156,14 +118,12 @@ public class RequestCountFilterPlugin implements FilterPlugin {
 		return null;
 	}
 
-	private void checkFaultyResponse(HttpServletRequest request,
-			StatusResponseWrapper response) {
-		
-		if (faultStatusCodes.contains(response.getStatus())) {
+	void checkFaultyResponse(HttpServletRequest request, Integer status) {
+		if (faultStatusCodes.contains(status)) {
 			synchronized (this) {
 				faultyResonseCount++;
 				addFaultyResponse(
-						new FaultyRepsonseStatsItem(request, response.getStatus()));
+						new FaultyRepsonseStatsItem(request, status));
 			}
 		}
 	}
@@ -287,46 +247,4 @@ public class RequestCountFilterPlugin implements FilterPlugin {
 		}
 	}
 
-	private class StatusResponseWrapper extends HttpServletResponseWrapper {
-
-		private int status = HttpServletResponse.SC_OK;
-		
-		public StatusResponseWrapper(HttpServletResponse response) {
-			super(response);
-		}
-
-		@Override
-		public void	sendError(int sc) throws IOException {
-			super.sendError(sc);
-			setStatusInternal(sc);
-		}
-
-		@Override
-		public void	sendError(int sc, String msg) throws IOException {
-			super.sendError(sc, msg);
-			setStatusInternal(sc);
-		}
-		
-		@Override
-		public void setStatus(int sc) {
-			super.setStatus(sc);
-			setStatusInternal(sc);
-		}
-		
-		@Override
-		public void setStatus(int sc, String sm) {
-			super.setStatus(sc, sm);
-			setStatusInternal(sc);
-		}
-		
-		private void setStatusInternal(int status) {
-			this.status = status;
-		}
-		
-		public int getStatus() {
-			return status;
-		}
-		 
-	}
-	
 }

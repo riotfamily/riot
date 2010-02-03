@@ -83,7 +83,7 @@ public class HqlTreeDao extends HqlDao implements Tree {
 	
     @Override
 	protected String getWhereClause(Object parent, ListParams params) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (parentPropertyMapped) {
         	sb.append("this.");
        		sb.append(parentProperty);
@@ -94,7 +94,7 @@ public class HqlTreeDao extends HqlDao implements Tree {
         		sb.append(" = :parent ");
         	}
         }
-        HibernateUtils.appendHql(sb, "and", super.getWhereClause(parent, params));
+        HqlUtils.appendHql(sb, "and", super.getWhereClause(parent, params));
         
         return sb.toString().replaceAll(":parent\\.(\\w+)", ":parent_$1");
     }

@@ -15,18 +15,18 @@ package org.riotfamily.statistics.dao;
 import java.util.List;
 
 import org.riotfamily.statistics.domain.StatsItem;
-import org.riotfamily.statistics.web.RequestCountFilterPlugin;
+import org.riotfamily.statistics.web.RequestStats;
 
 public class CurrentRequestStatisticsDao extends AbstractStatsItemDao {
 
-	private RequestCountFilterPlugin filterPlugin;
+	private RequestStats requestStats;
 
-	public CurrentRequestStatisticsDao(RequestCountFilterPlugin filterPlugin) {
-		this.filterPlugin = filterPlugin;
+	public CurrentRequestStatisticsDao(RequestStats requestStats) {
+		this.requestStats = requestStats;
 	}
 
 	@Override
 	protected List<? extends StatsItem> getStats() {
-		return filterPlugin.getCurrentRequests();
+		return requestStats.getCurrentRequests();
 	}
 }

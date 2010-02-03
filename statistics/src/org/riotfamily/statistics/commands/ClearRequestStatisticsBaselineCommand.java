@@ -17,14 +17,14 @@ import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
 import org.riotfamily.core.screen.list.command.result.RefreshListResult;
-import org.riotfamily.statistics.web.RequestCountFilterPlugin;
+import org.riotfamily.statistics.web.RequestStats;
 
 public class ClearRequestStatisticsBaselineCommand extends AbstractCommand  {
 
-	private RequestCountFilterPlugin filterPlugin;
+	private RequestStats requestStats;
 
-	public ClearRequestStatisticsBaselineCommand(RequestCountFilterPlugin filterPlugin) {
-		this.filterPlugin = filterPlugin;
+	public ClearRequestStatisticsBaselineCommand(RequestStats requestStats) {
+		this.requestStats = requestStats;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class ClearRequestStatisticsBaselineCommand extends AbstractCommand  {
 	}
 
 	public CommandResult execute(CommandContext context, Selection selection) {
-		filterPlugin.reset();
+		requestStats.reset();
 		return new RefreshListResult();
 	}
 

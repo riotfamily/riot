@@ -23,6 +23,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+import freemarker.cache.TemplateLoader;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -172,8 +173,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
-	protected void postProcessTemplateLoaders(List templateLoaders) {
+	protected void postProcessTemplateLoaders(List<TemplateLoader> templateLoaders) {
 		super.postProcessTemplateLoaders(templateLoaders);
 		templateLoaders.add(new ResourceTemplateLoader(getResourceLoader()));
 	}

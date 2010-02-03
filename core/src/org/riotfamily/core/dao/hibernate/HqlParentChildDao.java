@@ -63,18 +63,21 @@ public class HqlParentChildDao extends HqlDao implements Hierarchy,
 		return PropertyUtils.getProperty(entity, parentProperty);
 	}
 	
+	@Override
 	public void save(Object entity, Object parent) {
 		PropertyUtils.setProperty(entity, parentProperty, parent);
 		super.save(entity, parent);
 	}
 	
+	@Override
 	public void delete(Object entity, Object parent) {
 		PropertyUtils.setProperty(entity, parentProperty, null);
 		super.delete(entity, parent);
 	}
 	
-    protected String getWhereClause(Object parent, ListParams params) {
-        StringBuffer sb = new StringBuffer();
+    @Override
+	protected String getWhereClause(Object parent, ListParams params) {
+        StringBuilder sb = new StringBuilder();
         if (parentPropertyMapped) {
         	sb.append("this.");
        		sb.append(parentProperty);
@@ -85,12 +88,13 @@ public class HqlParentChildDao extends HqlDao implements Hierarchy,
         		sb.append(" = :parent ");
         	}
         }
-        HibernateUtils.appendHql(sb, "and", super.getWhereClause(parent, params));
+        HqlUtils.appendHql(sb, "and", super.getWhereClause(parent, params));
         
         return sb.toString().replaceAll(":parent\\.(\\w+)", ":parent_$1");
     }
     
-    protected void setQueryParameters(Query query, Object parent, 
+    @Override
+	protected void setQueryParameters(Query query, Object parent, 
 			ListParams params) {
 		
     	super.setQueryParameters(query, parent, params);

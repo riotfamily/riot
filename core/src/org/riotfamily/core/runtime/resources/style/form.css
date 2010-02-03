@@ -1,6 +1,7 @@
 .extra .box .links a {
 	margin-left: 13px;
 	padding: 2px 0 2px 24px;
+	display: block;
 }
 
 .commands .saveButton {

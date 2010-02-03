@@ -117,7 +117,7 @@ public class HqlCollectionDao extends AbstractHqlDao implements
 		if (parentProperty != null) {
 			return PropertyUtils.getProperty(entity, parentProperty);
 		}
-		StringBuffer hql = new StringBuffer();
+		StringBuilder hql = new StringBuilder();
 		hql.append("select parent from ").append(parentClass.getName());
 		hql.append(" parent join parent.").append(collectionProperty);
 		hql.append(" child where child = :child");
@@ -150,7 +150,7 @@ public class HqlCollectionDao extends AbstractHqlDao implements
 	}
 
 	@Override
-	protected void appendFromClause(StringBuffer hql, ListParams params) {
+	protected void appendFromClause(StringBuilder hql, ListParams params) {
 	}
 	
 	@Override

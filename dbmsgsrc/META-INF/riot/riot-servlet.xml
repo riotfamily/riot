@@ -22,7 +22,6 @@
 	</bean>
 	
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.RiotDbMessageSource">
-		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="handlerUrlResolver" />
 		<property name="parentMessageSource">
 			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -44,6 +43,7 @@
 			<s:dao>
 				<bean class="org.riotfamily.dbmsgsrc.riot.MessageBundleEntryDao">
 					<constructor-arg ref="sessionFactory" />
+					<property name="search" value="code,messages.text" />
 				</bean>
 			</s:dao>
 			<s:columns>

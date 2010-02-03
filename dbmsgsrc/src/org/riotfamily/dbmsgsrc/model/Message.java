@@ -106,6 +106,18 @@ public class Message {
 		return messageFormat;
 	}
 	
+	public String format(Object[] args, boolean escapeSingleQuotes) {
+		if (args != null) {
+			MessageFormat messageFormat = getMessageFormat(escapeSingleQuotes);
+			if (messageFormat != null) {
+				synchronized (messageFormat) {
+					return messageFormat.format(args);
+				}
+			}
+		}
+		return getText();
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {

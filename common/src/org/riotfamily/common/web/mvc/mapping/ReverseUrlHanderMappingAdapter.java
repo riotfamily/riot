@@ -51,7 +51,6 @@ public class ReverseUrlHanderMappingAdapter implements ReverseHandlerMappingAdap
 		
 		private ApplicationContext context;
 		
-		@SuppressWarnings("unchecked")
 		public ReverseUrlHandlerMapping(AbstractUrlHandlerMapping mapping) {
 			context = mapping.getApplicationContext();
 			Map<String, ?> handlers = mapping.getHandlerMap();

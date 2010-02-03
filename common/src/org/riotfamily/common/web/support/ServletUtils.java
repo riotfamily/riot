@@ -537,15 +537,20 @@ public final class ServletUtils {
         return false;
     }
 
-
+	public static boolean isInclude(HttpServletRequest request) {
+		return request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null;
+	}
+	
+	public static boolean isForward(HttpServletRequest request) {
+		return request.getAttribute(WebUtils.FORWARD_REQUEST_URI_ATTRIBUTE) != null;
+	}
 
 	/**
 	 * Returns whether the given request is a direct request, i.e. not 
 	 * dispatched by a RequestDispatcher.
 	 */
 	public static boolean isDirectRequest(HttpServletRequest request) {
-		return request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) == null 
-				&& request.getAttribute(WebUtils.FORWARD_REQUEST_URI_ATTRIBUTE) == null;
+		return !isInclude(request) && !isForward(request);
 	}
 
 	/**

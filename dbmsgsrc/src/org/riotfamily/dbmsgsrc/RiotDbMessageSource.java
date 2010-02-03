@@ -14,16 +14,17 @@ package org.riotfamily.dbmsgsrc;
 
 import java.util.Set;
 
-import org.riotfamily.common.i18n.CodeRevealingMessageSource;
+import org.riotfamily.common.i18n.DefaultCodeRevealingMessageSource;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.springframework.context.MessageSource;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 
-public class RiotDbMessageSource extends CodeRevealingMessageSource {
+@Transactional
+public class RiotDbMessageSource extends DefaultCodeRevealingMessageSource {
 
 	private DbMessageSource dbMessageSource;
 	
@@ -31,10 +32,8 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource {
 
 	private HandlerUrlResolver handlerUrlResolver;
 	
-	public RiotDbMessageSource(PlatformTransactionManager tx, 
-			HandlerUrlResolver handlerUrlResolver) {
-		
-		dbMessageSource = new DbMessageSource(tx);
+	public RiotDbMessageSource(HandlerUrlResolver handlerUrlResolver) {
+		dbMessageSource = new DbMessageSource();
 		dbMessageSource.setBundle("riot");
 		super.setParentMessageSource(dbMessageSource);
 		this.handlerUrlResolver = handlerUrlResolver;

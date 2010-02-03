@@ -71,6 +71,14 @@ public final class ActiveRecordUtils {
 		return ActiveRecord.load(type, id);
 	}
 	
+	public static void flushSession() {
+		ActiveRecord.getSession().flush();
+	}
+	
+	public static void evict(Object object) {
+		ActiveRecord.getSession().evict(object);
+	}
+	
 	/**
 	 * Returns a String representation of the given record with the pattern 
 	 * <code>&lt;className&gt;#&lt;id&gt;</code> for persistent objects, or 

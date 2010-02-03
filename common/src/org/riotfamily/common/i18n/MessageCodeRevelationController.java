@@ -42,7 +42,7 @@ public class MessageCodeRevelationController implements Controller,
 	
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		try {
-			messageSource = (CodeRevealingMessageSource) beanFactory.getBean(
+			messageSource = beanFactory.getBean(
 					"messageSource", CodeRevealingMessageSource.class);
 		}
 		catch (BeanNotOfRequiredTypeException e) {

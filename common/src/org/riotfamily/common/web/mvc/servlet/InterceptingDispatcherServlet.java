@@ -12,14 +12,21 @@
  */
 package org.riotfamily.common.web.mvc.servlet;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
+import org.riotfamily.common.web.mvc.interceptor.Intercept;
 import org.riotfamily.common.web.mvc.interceptor.RequestInterceptor;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -31,7 +38,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 public class InterceptingDispatcherServlet extends HeadDispatcherServlet {
 
-	private RequestInterceptor[] interceptors;
+	private static final String APPLIED_INTERCEPTORS = InterceptingDispatcherServlet.class.getName() + ".appliedInterceptors";
+	
+	private List<RequestInterceptor> interceptors;
 	
 	@Override
 	protected void initStrategies(ApplicationContext context) {
@@ -43,52 +52,113 @@ public class InterceptingDispatcherServlet extends HeadDispatcherServlet {
 	 * Looks up all {@link RequestInterceptor} beans in the given ApplicationContext.
 	 */
 	protected void initInterceptors(ApplicationContext context) {
-		List<RequestInterceptor> list = SpringUtils.orderedBeans(context, RequestInterceptor.class);
-		this.interceptors = list.toArray(new RequestInterceptor[list.size()]);
+		this.interceptors = SpringUtils.orderedBeans(context, RequestInterceptor.class);
 	}
 	
 	@Override
 	protected void doDispatch(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		
-		int interceptorIndex = -1;
+		InterceptorChain chain = new InterceptorChain(request, response);
 		try {
-			for (int i = 0; i < interceptors.length; i++) {
-				if (!interceptors[i].preHandle(request, response)) {
-					triggerAfterCompletion(interceptorIndex, request, response, null);
-					return;
-				}
-				interceptorIndex = i;
+			if (chain.preHandle()) {
+				super.doDispatch(request, response);
+				chain.postHandle();
 			}
-			
-			super.doDispatch(request, response);
-			
-			for (int i = interceptors.length - 1; i >= 0; i--) {
-				interceptors[i].postHandle(request, response);
-			}
-
-			triggerAfterCompletion(interceptorIndex, request, response, null);
 		}
 		catch (Exception ex) {
-			triggerAfterCompletion(interceptorIndex, request, response, ex);
+			chain.handleException(ex);
 			throw ex;
 		}
 	}
 	
-	private void triggerAfterCompletion(
-			int interceptorIndex,
-			HttpServletRequest request,
-			HttpServletResponse response,
-			Exception ex) throws Exception {
-
-		for (int i = interceptorIndex; i >= 0; i--) {
-			try {
-				interceptors[i].afterCompletion(request, response, ex);
+	private class InterceptorChain {
+		
+		private HttpServletRequest request;
+		
+		private HttpServletResponse response;
+		
+		private Set<RequestInterceptor> appliedInterceptors;
+		
+		private LinkedList<RequestInterceptor> preHandled = Generics.newLinkedList();
+		
+		@SuppressWarnings("unchecked")
+		public InterceptorChain(HttpServletRequest request,
+				HttpServletResponse response) {
+			
+			this.request = request;
+			this.response = response;
+			
+			appliedInterceptors = (Set<RequestInterceptor>) request.getAttribute(APPLIED_INTERCEPTORS);
+			if (appliedInterceptors == null) {
+				appliedInterceptors = Generics.newHashSet();
+				request.setAttribute(APPLIED_INTERCEPTORS, appliedInterceptors);
 			}
-			catch (Throwable e) {
-				logger.error("RequestInterceptor.afterCompletion threw exception", e);
+		}
+
+		public boolean preHandle() throws Exception {
+			for (RequestInterceptor interceptor : interceptors) {
+				if (isEligible(interceptor)) {
+					if (!interceptor.preHandle(request, response)) {
+						afterCompletion(null);
+						return false;
+					}
+					preHandled.addFirst(interceptor);
+					appliedInterceptors.add(interceptor);
+				}
+			}
+			return true;
+		}
+		
+		private boolean isEligible(RequestInterceptor interceptor) {
+			Intercept intercept = AnnotationUtils.findAnnotation(interceptor.getClass(), Intercept.class);
+			if (intercept == null) {
+				// No annotation present - default is to apply the interceptor once
+				return !alreadyApplied(interceptor);
+			}
+			
+			if (intercept.once() && alreadyApplied(interceptor)) {
+				return false;
+			}
+			
+			boolean include = ServletUtils.isInclude(request);
+			boolean forward = ServletUtils.isForward(request);
+			boolean direct = !include && !forward;
+			
+			return (forward && intercept.forward())
+					|| (include && intercept.include())
+					|| (direct && intercept.request());
+		}
+
+		private boolean alreadyApplied(RequestInterceptor interceptor) {
+			return appliedInterceptors.contains(interceptor);
+		}
+		
+		public void postHandle() throws Exception {
+			for (RequestInterceptor interceptor : preHandled) {
+				interceptor.postHandle(request, response);
+			}
+			afterCompletion(null);
+		}
+		
+		public void handleException(Exception ex) {
+			afterCompletion(ex);
+		}
+		
+		private void afterCompletion(Exception ex) {
+			Iterator<RequestInterceptor> it = preHandled.iterator();
+			while(it.hasNext()) {
+				try {
+					RequestInterceptor interceptor = it.next();
+					it.remove();
+					interceptor.afterCompletion(request, response, ex);
+				}
+				catch (Throwable e) {
+					logger.error("RequestInterceptor.afterCompletion threw exception", e);
+				}				
 			}
 		}
 	}
 	
+
 }

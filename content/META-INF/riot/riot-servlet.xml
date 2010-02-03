@@ -223,8 +223,8 @@
 				<ref bean="siteRiotDao" />
 			</s:dao>
 			<s:columns>
-				<s:column property="locale" />
 				<s:column property="name" />
+				<s:column property="locale" />
 				<s:column property="enabled" />
 			</s:columns>
 			<s:commands>

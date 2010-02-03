@@ -12,24 +12,24 @@
  */
 package org.riotfamily.statistics.commands;
 
-import org.riotfamily.statistics.web.RequestCountFilterPlugin;
+import org.riotfamily.statistics.web.RequestStats;
 
 public class ToggleRequestStatisticsCommand extends AbstractSwitchCommand  {
 
-	private RequestCountFilterPlugin filterPlugin;
+	private RequestStats requestStats;
 	
-	public ToggleRequestStatisticsCommand(RequestCountFilterPlugin filterPlugin) {
-		this.filterPlugin = filterPlugin;
+	public ToggleRequestStatisticsCommand(RequestStats requestStats) {
+		this.requestStats = requestStats;
 	}
 
 	@Override
 	protected boolean isEnabled() {
-		return filterPlugin.isEnabled();
+		return requestStats.isEnabled();
 	}
 	
 	@Override
 	protected void setEnabled(boolean enabled) {
-		filterPlugin.setEnabled(enabled);
+		requestStats.setEnabled(enabled);
 	}
 
 }

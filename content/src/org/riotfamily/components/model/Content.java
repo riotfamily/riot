@@ -53,11 +53,9 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 
 	private boolean xmlRequiresUpdate;
 	
-	private transient boolean unmarshalling;
-	
 	private transient ContentMap map;
 	
-	private transient Map<String, ContentFragment> fragments;
+	private transient Map<String, ContentFragment> fragments = Generics.newHashMap();
 
 	private transient Set<Object> references;
 	
@@ -69,9 +67,8 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	}
 	
 	public Content(Content other) {
-		setContainer(other.getContainer());
+		this(other.getContainer());
 		setXml(other.getXml());
-		dirty = false;
 	}
 	
 	@Transient
@@ -88,11 +85,6 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 		this.version = version;
 	}
 
-	Content createCopy() {
-		dirty = false;
-		return new Content(this);
-	}
-	
 	@ManyToOne(fetch=FetchType.LAZY)
 	public ContentContainer getContainer() {
 		return container;
@@ -104,29 +96,43 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	
 	@Type(type="text")
 	public String getXml() {
-		if (xml == null || xmlRequiresUpdate) {
-			xml = marshaller.marshal(getMap());
-			xmlRequiresUpdate = false;
-		}
+		marshal();
 		return xml;
 	}
 
 	public void setXml(String xml) {
+		Assert.isTrue(!xmlRequiresUpdate, "setXml() must not be called if xmlRequiresUpdate");
 		this.xml = xml;
-		unmarshalling = true;
-		if (fragments != null) {
-			fragments.clear();
+		this.map = null;
+	}
+	
+	private void marshal() {
+		if (xml == null || xmlRequiresUpdate) {
+			dirty |= xmlRequiresUpdate;
+			xml = marshaller.marshal(getMap());
+			xmlRequiresUpdate = false;
 		}
-		map = marshaller.unmarshal(this, xml);
-		xmlRequiresUpdate = false;
-		unmarshalling = false;
+	}
+	
+	private void unmarshal() {
+		if (map == null) {
+			if (xml == null) {
+				map = new ContentMapImpl(this);
+			}
+			else {
+				Assert.isTrue(!xmlRequiresUpdate, "xmlRequiresUpdate must be false if map is null");
+				fragments.clear();
+				map = marshaller.unmarshal(this, xml);
+				xmlRequiresUpdate = false;
+			}
+		}
 	}
 	
 	public boolean isDirty() {
-		return dirty;
+		return dirty || xmlRequiresUpdate;
 	}
 	
-	protected void setDirty(boolean dirty) {
+	void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
 	
@@ -134,18 +140,7 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	 * ContentFragments invoke this method when they are modified.
 	 */
 	void fragmentModified() {
-		if (!unmarshalling) {
-			xmlRequiresUpdate = true;
-			setDirty(true);
-		}
-	}
-	
-	@Transient
-	private ContentMap getMap() {
-		if (map == null) {
-			map = new ContentMapImpl(this);
-		}
-		return map;
+		xmlRequiresUpdate = true;
 	}
 	
 	@Transient
@@ -157,11 +152,9 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	}
 	
 	@Transient
-	private Map<String, ContentFragment> getFragments() {
-		if (fragments == null) {
-			fragments = Generics.newHashMap();
-		}
-		return fragments;
+	private ContentMap getMap() {
+		unmarshal();
+		return map;
 	}
 	
 	// -----------------------------------------------------------------------
@@ -244,18 +237,18 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 	// -----------------------------------------------------------------------
 	
 	String nextFragmentId() {
-		return version + "_" + getFragments().size();
+		return version + "_" + fragments.size();
 	}
 
 	String getCompositeId(ContentFragment part) {
 		return getId() + "_" + part.getFragmentId();
 	}
 	
-	void registerfragment(ContentFragment fragment) {
+	void registerFragment(ContentFragment fragment) {
 		String id = fragment.getFragmentId();
 		Assert.notNull(id);
-		Assert.isTrue(!getFragments().containsKey(id));
-		getFragments().put(id, fragment); 
+		Assert.isTrue(!fragments.containsKey(id));
+		fragments.put(id, fragment); 
 	}
 	
 	private ContentFragment getFragment(String id) {
@@ -263,8 +256,9 @@ public class Content extends ActiveRecordBeanSupport implements ContentMap {
 		if (i == -1) {
 			return this;
 		}
+		unmarshal();
 		String fragmentId = id.substring(i + 1);
-		ContentFragment fragment = getFragments().get(fragmentId);
+		ContentFragment fragment = fragments.get(fragmentId);
 		Assert.notNull(fragment, "Fragment " + fragmentId 
 				+ " does not exist in Content " + getId());
 		

@@ -13,28 +13,28 @@
 package org.riotfamily.statistics.dao;
 
 import org.riotfamily.statistics.domain.Statistics;
-import org.riotfamily.statistics.web.RequestCountFilterPlugin;
+import org.riotfamily.statistics.web.RequestStats;
 
 public class RequestStatisticsDao extends AbstractSimpleStatsDao {
 
-	private RequestCountFilterPlugin requestCountFilterPlugin;
+	private RequestStats requestStats;
 	
-	public RequestStatisticsDao(RequestCountFilterPlugin requestCountFilterPlugin) {
-		this.requestCountFilterPlugin = requestCountFilterPlugin;
+	public RequestStatisticsDao(RequestStats requestStats) {
+		this.requestStats = requestStats;
 	}
 
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
-		stats.add("Total request count", requestCountFilterPlugin.getTotalRequestCount());
-		stats.add("Total faulty response count", requestCountFilterPlugin.getFaultyResponseCount());
-		stats.add("Parallel request count (now)", requestCountFilterPlugin.getCurrentRequestCount());
-		stats.add("Parallel request count (high water mark)", requestCountFilterPlugin.getParallelRequestsHWM());
-		if (requestCountFilterPlugin.getAvgResponseTime() >= 0) {
-			stats.add("Average response time [ms]", requestCountFilterPlugin.getAvgResponseTime());
+		stats.add("Total request count", requestStats.getTotalRequestCount());
+		stats.add("Total faulty response count", requestStats.getFaultyResponseCount());
+		stats.add("Parallel request count (now)", requestStats.getCurrentRequestCount());
+		stats.add("Parallel request count (high water mark)", requestStats.getParallelRequestsHWM());
+		if (requestStats.getAvgResponseTime() >= 0) {
+			stats.add("Average response time [ms]", requestStats.getAvgResponseTime());
 		}
-		stats.add("Total response time [min] ", (requestCountFilterPlugin.getTotalResponseTime() / 1000 / 60));
-		stats.add("Parallel request count (critical threshold)", requestCountFilterPlugin.getMaxRequests());
-		stats.add("Critical request count", requestCountFilterPlugin.getCriticalRequestCount());	
+		stats.add("Total response time [min] ", (requestStats.getTotalResponseTime() / 1000 / 60));
+		stats.add("Parallel request count (critical threshold)", requestStats.getMaxRequests());
+		stats.add("Critical request count", requestStats.getCriticalRequestCount());	
 	}
 	
 }

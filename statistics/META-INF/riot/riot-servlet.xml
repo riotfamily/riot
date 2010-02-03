@@ -15,24 +15,6 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
-	<!-- FilterPlugin to collect request statistics -->
-	<bean id="requestCountFilterPlugin" class="org.riotfamily.statistics.web.RequestCountFilterPlugin">
-        <property name="enabled" value="${riot.statistics.request.enabled=false}" />
-        <property name="ignoreUploads" value="${riot.statistics.request.ignoreUploads=false}" />
-        		        
-        <!-- Requests with response times slower than 10000 ms are logged -->
-        <property name="warnThreshold" value="${riot.statistics.request.warnThreshold=10000}" />
-
-        <!-- When max. number of parallel requests is exceeded a failure is signaled to the monitoring system -->
-        <property name="maxRequests" value="${riot.statistics.request.maxRequests=500}" />
-        
-        <!-- URL called by the monitoring system to ensure system health -->
-        <property name="monitoredUrl" value="${riot.statistics.request.monitoredUrl=/status/application}" />
-        
-        <!-- Response status codes which should be monitored -->
-        <property name="faultStatusCodes" value="${riot.statistics.request.faultStatusCodes=404,410,500}" />
-    </bean>
-
 	<bean id="requestTimestampRenderer" class="org.riotfamily.common.ui.DateRenderer">
 		<property name="pattern" value="dd.MM.yy HH:mm:ss" />
 	</bean>
@@ -204,7 +186,7 @@
 					<s:list id="requestOverviewStatistics" icon="chart_bar">
 					<s:dao>
 						<bean class="org.riotfamily.statistics.dao.RequestStatisticsDao">
-		        			<constructor-arg ref="requestCountFilterPlugin" />
+		        			<constructor-arg ref="requestStats" />
 		        		</bean>
 					</s:dao>
 					<s:columns>
@@ -213,15 +195,15 @@
 					</s:columns>
 					<s:commands>
 						<bean class="org.riotfamily.statistics.commands.ToggleRequestStatisticsCommand">
-	        				<constructor-arg ref="requestCountFilterPlugin" />
+	        				<constructor-arg ref="requestStats" />
 	        				<property name="enablingCommand" value="true" />
 	        			</bean>
 	        			<bean class="org.riotfamily.statistics.commands.ToggleRequestStatisticsCommand">
-	        				<constructor-arg ref="requestCountFilterPlugin" />
+	        				<constructor-arg ref="requestStats" />
 	        				<property name="enablingCommand" value="false" />
 	        			</bean>
 	        			<bean class="org.riotfamily.statistics.commands.ClearRequestStatisticsBaselineCommand">
-	        				<constructor-arg ref="requestCountFilterPlugin" />
+	        				<constructor-arg ref="requestStats" />
 	        			</bean>
 	        			<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />					
 					</s:commands>
@@ -229,7 +211,7 @@
 				<s:list id="requestCriticalStatistics" icon="hourglass">
 					<s:dao>
 						<bean class="org.riotfamily.statistics.dao.CriticalRequestStatisticsDao">
-	            			<constructor-arg ref="requestCountFilterPlugin" />
+	            			<constructor-arg ref="requestStats" />
 	            		</bean>
 					</s:dao>
 					<s:columns>
@@ -245,7 +227,7 @@
 				<s:list id="requestCurrentStatistics" icon="time">
 					<s:dao>
 						<bean class="org.riotfamily.statistics.dao.CurrentRequestStatisticsDao">
-		        			<constructor-arg ref="requestCountFilterPlugin" />
+		        			<constructor-arg ref="requestStats" />
 		        		</bean>
 					</s:dao>
 					<s:columns>
@@ -261,7 +243,7 @@
 				<s:list id="requestFaultyStatistics" icon="error">
 					<s:dao>
 						<bean class="org.riotfamily.statistics.dao.FaultyResponsesStatisticsDao">
-		        			<constructor-arg ref="requestCountFilterPlugin" />
+		        			<constructor-arg ref="requestStats" />
 		        		</bean>
 					</s:dao>
 					<s:columns>
