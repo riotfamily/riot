@@ -56,7 +56,7 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 		this.bundle = bundle;
 		this.code = code;
 		if (StringUtils.hasText(defaultMessage)) {
-			setDefaultMessage(new Message(C_LOCALE, defaultMessage));
+			setDefaultText(defaultMessage);
 		}
 	}
 	
@@ -92,6 +92,17 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 	public String getDefaultText() {
 		Message message = getDefaultMessage();
 		return message != null ? message.getText() : null;
+	}
+	
+	@Transient
+	public void setDefaultText(String text) {
+		Message message = getDefaultMessage();
+		if (message == null) {
+			setDefaultMessage(new Message(C_LOCALE, text));
+		}
+		else {
+			message.setText(text);
+		}
 	}
 	
 	@Transient
@@ -145,7 +156,7 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 	// ------------------------------------------------------------------------
 	// Active record methods
 	// ------------------------------------------------------------------------
-	
+
 	public static MessageBundleEntry loadByBundleAndCode(String bundle, String code) {
 		return (MessageBundleEntry) getSession().createCriteria(MessageBundleEntry.class)
 			.setCacheable(true)
