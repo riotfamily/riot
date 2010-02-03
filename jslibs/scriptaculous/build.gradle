@@ -1,6 +1,8 @@
 version = '1.8.3'
 
-baseDirInDist = "scriptaculous-js-$version/src"
+processResources {
+	baseDirInDist = "scriptaculous-js-$version/src"
+}
 
 dependencies {
 	runtime project(':jslibs:prototype') 

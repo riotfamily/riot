@@ -37,8 +37,8 @@ excludes = [
 	[group: 'com.sun.jdmk']
 ]
 
-usePlugin('java')
-usePlugin('eclipse')
+apply id: 'java'
+apply id: 'eclipse'
 dependsOnChildren()
 
 allprojects {
@@ -56,8 +56,8 @@ allprojects {
 
 subprojects {
 	if (!isMetaProject(project)) {
-		usePlugin('java')
-		usePlugin('maven')
+		apply id: 'java'
+		apply id: 'maven'
 
 		sourceCompatibility = 1.5
 		targetCompatibility = 1.5

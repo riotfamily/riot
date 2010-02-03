@@ -1,2 +1,4 @@
 version = '1.0'
-baseDirInDist = "$name-$version"
+processResources {
+	baseDirInDist = "$project.name-$version"
+}
