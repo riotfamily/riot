@@ -43,6 +43,7 @@
 			<s:dao>
 				<bean class="org.riotfamily.dbmsgsrc.riot.MessageBundleEntryDao">
 					<constructor-arg ref="sessionFactory" />
+					<property name="search" value="code,messages.text" />
 				</bean>
 			</s:dao>
 			<s:columns>
