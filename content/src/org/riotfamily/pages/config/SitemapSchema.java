@@ -23,8 +23,12 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class SitemapSchema {
+public class SitemapSchema implements ApplicationContextAware, InitializingBean {
 
 	private String name;
 	
@@ -35,7 +39,17 @@ public class SitemapSchema {
 	private Map<String, PageType> typeMap = Generics.newHashMap();
 	
 	private Set<String> virtualParents = Generics.newHashSet();
+
+	private SitemapSchemaRepository repository;
 	
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		repository = BeanFactoryUtils.beanOfTypeIncludingAncestors(applicationContext, SitemapSchemaRepository.class);
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		repository.addSchema(this);
+	}
 
 	public String getName() {
 		return name;
@@ -132,5 +146,5 @@ public class SitemapSchema {
 	public boolean isValidChild(ContentPage parent, ContentPage child) {
 		return getChildTypes(parent).contains(child.getPageType());
 	}
-	
+
 }

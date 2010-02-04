@@ -14,19 +14,13 @@ package org.riotfamily.pages.config;
 
 import java.util.Locale;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.riotfamily.common.hibernate.AbstractSetupBean;
 import org.riotfamily.pages.model.Site;
+import org.springframework.transaction.annotation.Transactional;
 
-public class DefaultSiteCreator extends AbstractSetupBean {
+@Transactional
+public class DefaultSiteCreator implements Runnable {
 
-	public DefaultSiteCreator(SessionFactory sessionFactory) {
-		super(sessionFactory);
-	}
-
-	@Override
-	protected void setup(Session session) throws Exception {
+	public void run() {
 		Site site  = Site.loadDefaultSite();
 		if (site == null) {
 			site = new Site();

@@ -69,13 +69,13 @@
 		</bean> 
 	</override:add>
 	
-	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository" />
-	
-	<bean id="defaultSiteCreator" class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
-		<constructor-arg ref="sessionFactory" />
+	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository">
+		<constructor-arg>
+			<bean class="org.riotfamily.pages.config.DefaultSiteCreator" />
+		</constructor-arg>
 	</bean>
-
-	<bean class="org.riotfamily.pages.config.SystemPageSynchronizer" depends-on="defaultSiteCreator" >
+	
+	<bean class="org.riotfamily.pages.config.SystemPageSynchronizer">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	

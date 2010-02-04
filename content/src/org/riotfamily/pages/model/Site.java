@@ -80,7 +80,7 @@ public class Site extends ActiveRecordBeanSupport {
 
 	public String getSchemaName() {
 		if (schemaName == null) {
-			schemaName = schemaRepository.getDefaultSchema().getName(); 
+			schemaName = schemaRepository.getDefaultSchemaName(); 
 		}
 		return schemaName;
 	}
