@@ -21,21 +21,14 @@ import org.riotfamily.forms.options.OptionsModel;
 
 public class SitemapSchemaRepository implements OptionsModel {
 
-	private Runnable defaultSiteCreator;
-	
 	private Map<String, SitemapSchema> schemas = Generics.newHashMap();
 
 	private SitemapSchema defaultSchema;
 	
-	public SitemapSchemaRepository(Runnable defaultSiteCreator) {
-		this.defaultSiteCreator = defaultSiteCreator;
-	}
-
 	public void addSchema(SitemapSchema schema) {
 		schemas.put(schema.getName(), schema);
 		if (defaultSchema == null) {
 			defaultSchema = schema;
-			defaultSiteCreator.run();
 		}
 	}
 

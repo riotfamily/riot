@@ -69,16 +69,8 @@
 		</bean> 
 	</override:add>
 	
-	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository">
-		<constructor-arg>
-			<bean class="org.riotfamily.pages.config.DefaultSiteCreator" />
-		</constructor-arg>
-	</bean>
-	
-	<bean class="org.riotfamily.pages.config.SystemPageSynchronizer">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-	
+	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository" />
+		
 	<bean class="org.riotfamily.pages.config.SystemPageSyncListener" />
 	
 	<bean id="pageSuffixSchema" class="org.riotfamily.pages.config.DefaultPageSuffixSchema">
