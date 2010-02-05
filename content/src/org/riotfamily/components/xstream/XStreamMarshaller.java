@@ -75,6 +75,8 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		xstream.registerConverter(new ComponentListConverter(mapper), 1);
 		xstream.registerConverter(new ComponentConverter(mapper), 2);
 		xstream.registerConverter(new ContentMapConverter(mapper), 1);
+		
+		xstream.setMarshallingStrategy(new NullSafeXPathMarshallingStrategy());
 	}
 	
 	private DataHolder createDataHolder(Content content) {
