@@ -144,8 +144,7 @@ riot.components = (function() {
 		},
 		
 		findComponentElements: function() {
-			this.componentElements = Selector.findChildElements(this.element, ['.riot-component']);
-			
+			this.componentElements = this.element.childElements().findAll(function(el) { return el.hasClassName('riot-component'); });
 		},
 			
 		insertOn: function() {
