@@ -35,7 +35,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
 	
     private boolean polymorph = true;
 
-    private String select = "distinct this";
+    private String select = "this";
     
     private String where;
 
