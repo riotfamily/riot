@@ -158,7 +158,7 @@ public class HqlUtils {
 	}
 
 	
-	public static String getSearchWhereClause(String alias,
+	public static String getSearchWhereClause(String entityName, String alias,
 			String searchParamName, String... propertyNames) {
 
 		if (propertyNames == null || propertyNames.length == 0) {
@@ -174,13 +174,21 @@ public class HqlUtils {
 			hql.append('(');
 			int d = name.lastIndexOf('.');
 			String s = alias;
-			if (d != -1) {				
+			if (d != -1) {	
+				String searchAlias = "s";
+				hql.append(alias).append(".id in (select distinct ").append(searchAlias).append(".id from ");
+				hql.append(entityName).append(' ').append(searchAlias);
+				appendJoinsForSearch(hql, searchAlias, propertyNames);
+				hql.append(" where ");
 				s = name.substring(0, d).replace('.', '_');
 				name = name.substring(d + 1);
 				hql.append(s).append(" is not null and ");
 			}
 			hql.append("lower(str(").append(s).append('.').append(name);
-			hql.append(")) like :").append(searchParamName).append(')');;
+			hql.append(")) like :").append(searchParamName).append(')');
+			if (d != -1) {
+				hql.append(')');
+			}
 		}
 		hql.append(')');		
 		return hql.toString();

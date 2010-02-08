@@ -45,24 +45,17 @@ public class HqlUtilsTest {
 	@Test
 	public void searchWhereClauseWithDot() {
 		assertEquals(
-				"((foo is not null and lower(str(foo.bar)) like :search))", 
-				HqlUtils.getSearchWhereClause("this", "search", "foo.bar"));
+				"((this.id in (select distinct s.id from Cat s left join s.foo as foo where foo is not null and lower(str(foo.bar)) like :search)))", 
+				HqlUtils.getSearchWhereClause("Cat", "this", "search", "foo.bar"));
 	}
 	
 	@Test
 	public void searchWhereClauseWithoutDot() {
 		assertEquals(
 				"((lower(str(this.foo)) like :search))", 
-				HqlUtils.getSearchWhereClause("this", "search", "foo"));
+				HqlUtils.getSearchWhereClause("Cat", "this", "search", "foo"));
 	}
-	
-	@Test
-	public void searchWhereClauseWith2Dots() {
-		assertEquals(
-				"((foo_bar is not null and lower(str(foo_bar.baz)) like :search))", 
-				HqlUtils.getSearchWhereClause("this", "search", "foo.bar.baz"));
-	}
-	
+		
 	@Test
 	public void testExample() {
 		Cat example = new Cat("grey", new Cat("black"));
