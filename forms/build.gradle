@@ -1,10 +1,12 @@
 dependencies {
 	compile project(':common'), libs(['spring_webmvc', 'json_lib'])
+
+	provided libs(['servlet_api'])
 	
-	runtime libs(['commons_fileupload']), 
+	runtime libs(['commons_fileupload']),
+			project(':jslibs:prototype'),
+			project(':jslibs:scriptaculous'),
 			project(':jslibs:riot'), 
 			project(':jslibs:jscalendar'), 
 			project(':jslibs:tiny_mce')
-	
-	provided libs(['servlet_api'])
 }

@@ -45,7 +45,7 @@ allprojects {
 	group = 'org.riotfamily'
 	version = '9.0.0'
 	repositories {
-		mavenCentral()
+		//mavenCentral()
 		mavenRepo urls: 'http://repository.riotfamily.org/cache'
 		mavenRepo urls: 'http://repository.riotfamily.org/external'
 	}
@@ -195,4 +195,3 @@ def lib(String name) {
 def libs(Collection names) {
 	names.collect{ lib(it.toString()) }
 }
-

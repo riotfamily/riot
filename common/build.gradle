@@ -6,6 +6,7 @@ dependencies {
 			      'json_lib', 'quartz', 'yuicompressor', 'texhyphj'])
 	
 	provided libs(['servlet_api', 'javax_mail'])
+	
 	runtime project(':revolt'), libs(['jta', 'hibernate_ehcache', 'ehcache', 'javassist', 'cglib'])
 }
 

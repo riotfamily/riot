@@ -3,5 +3,8 @@ dependencies {
 	compile project(':cachius')
 	compile project(':forms')
 	compile libs(['spring_webmvc', 'freemarker', 'dwr'])
+	
 	provided libs(['servlet_api'])
+	
+	runtime project(':common'), project(':revolt')
 }
