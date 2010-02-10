@@ -1,0 +1,62 @@
+=======
+Caching
+=======
+
+Riot uses a sophisticated caching concept that reduces the number of database 
+queries to the absolute minimum. Unless you update the content on your site, 
+Riot won't hit the database at all.
+
+Riot doesn't cache Java objects, it caches the final output. This can be HTML,
+XML, JSON or any other kind of content such as images or PDFs.
+
+Spring-MVC
+==========
+
+The Riot cache integrates with Spring's MVC and allows you to cache the
+output of handlers. A handler can either be a class that implements the 
+:api:`org.springframework.web.servlet.mvc.Controller` interface or a class 
+that has methods annotated with :api:`org.springframework.web.bind.annotation.@RequestMapping`.
+
+Caching Controllers
+-------------------
+
+In order to cache a Controller, it must implement the 
+:api:`org.riotfamily.common.web.cache.controller.CacheableController` interface.
+
+Caching @RequestMapping methods
+-------------------------------
+
+To cache annotation-based handlers, add the 
+:api:`org.riotfamily.common.web.cache.annotation.@Cache` annotation to your 
+handler method::
+
+	@Cache
+	@RequestMapping
+	public void time(Writer out) throws Exception {
+		out.write(String.valueOf(System.currentTimeMillis()));
+	}
+
+Transparent Invalidation
+========================
+
+The most exciting feature is the transparent cache invalidation. Riot
+automatically invalidates cached content whenever the underlying data is
+modified.
+
+Two hooks are used internally to achieve this:
+
+First, Riot uses a Hibernate interceptor to get notified when data is loaded,
+deleted or modified.
+
+Second, FreeMarker's ObjectWrapper facility is used to detect whenever cacheable
+data is accessed inside a view. 
+
+To use this feature, simply add the @TagCacheItems annotation to your entities.
+
+
+Performance
+===========
+
+In order to keep the memory footprint low, the cached objects are stored in the
+local file system and are streamed to the client when needed (Riot relies on 
+the operating system's file system cache to reduce the actual disk access).
