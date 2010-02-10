@@ -1,0 +1,4 @@
+dependencies {
+	compile project(':core'), project(':common'), libs(['spring_core'])
+}
+
