@@ -19,9 +19,6 @@ import org.riotfamily.core.screen.DefaultScreenContext;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.auth.User;
-import org.riotfamily.pages.model.ContentPage;
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
 
 public class ReflectionPolicyTest {
 
@@ -33,7 +30,7 @@ public class ReflectionPolicyTest {
 	
 	@Test
 	public void test() {
-		policy.getPermission(user, "edit", new ContentPage(), context);
+		policy.getPermission(user, "edit", new Page(), context);
 		Assert.assertEquals(1, policy.getInvokedMethod());
 		
 		policy.getPermission(user, "edit", null, context);
@@ -45,10 +42,10 @@ public class ReflectionPolicyTest {
 		policy.getPermission(user, "delete", new Site(), context);
 		Assert.assertEquals(3, policy.getInvokedMethod());
 				
-		policy.getPermission(user, "delete", new ContentPage(), context);
+		policy.getPermission(user, "delete", new Page(), context);
 		Assert.assertEquals(4, policy.getInvokedMethod());
 		
-		policy.getPermission(user, "edit", new ContentPage(), null);
+		policy.getPermission(user, "edit", new Page(), null);
 		Assert.assertEquals(0, policy.getInvokedMethod());
 	}
 	
@@ -92,5 +89,11 @@ public class ReflectionPolicyTest {
 			return null;
 		}
 		
+	}
+	
+	public static class Site {
+	}
+	
+	public static class Page {
 	}
 }
