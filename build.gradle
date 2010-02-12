@@ -45,30 +45,30 @@ allprojects {
 	group = 'org.riotfamily'
 	version = '9.1.0'
 	repositories {
-		//mavenCentral()
 		mavenRepo urls: 'http://repository.riotfamily.org/cache'
 		mavenRepo urls: 'http://repository.riotfamily.org/external'
 	}
 	excludes.each{
 		configurations.all*.exclude it
 	}
+	
+	task release
 }
 
 subprojects {
+	
 	if (!isMetaProject(project)) {
 		apply id: 'java'
 		apply id: 'maven'
-
+		
+		release.dependsOn(uploadArchives)
+		
 		sourceCompatibility = 1.5
 		targetCompatibility = 1.5
 		
 		configurations.compile.transitive = true
 		configurations.testCompile.transitive = true
-		
-		afterEvaluate {
-			version += "-SNAPSHOT"
-		}
-		
+				
 		// Add a 'provided' configuration
 		configurations {
 			provided {
@@ -121,6 +121,7 @@ subprojects {
 	        uploadArchives {
 				repositories {
 					mavenDeployer {
+						//repository(url: "file://$System.env.HOME/.m2/repository")
 						repository(url: "http://repository.riotfamily.org/releases") {
 							authentication(userName: artifactoryUser, password: artifactoryPass)
 						}
@@ -152,6 +153,11 @@ gradle.taskGraph.whenReady {taskGraph ->
 			it.configurations.findByName('testRuntime')?.getAllDependencies(ExternalDependency.class).each{
 				project.configurations.compile.addDependency(it)
 			}
+		}
+	}
+	if (!taskGraph.hasTask(':release')) {
+		allprojects {
+			version += "-SNAPSHOT"
 		}
 	}
 }
