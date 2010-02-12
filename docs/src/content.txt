@@ -1,0 +1,27 @@
+==================
+Content Management
+==================
+
+Core Concepts
+=============
+
+Content
+-------
+
+A *Content* is basically a persistent Map with String keys and arbitrary values.
+Riot uses the :api:`org.riotfamily.components.model.Content` class to store 
+schema-less, versioned content in a RDBMS.
+
+In order to support versioning, Content can be put into a 
+:api:`org.riotfamily.components.model.ContentContainer`
+which keeps a reference to a live- and a preview-version.
+
+
+
+Content Queries
+===============
+
+
+
+
+

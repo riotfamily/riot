@@ -1,0 +1,41 @@
+========
+Glossary
+========
+
+.. glossary::
+
+   back-office
+      Common term for the Riot admin interface. Authorized users can access the
+      back-office by pointing their browser to ``/riot``.
+      
+   front-office
+      Another term for viewing the website in :term:`edit-mode`.
+      
+   edit-mode
+      When browsing the website while being logged in at the 
+      :term:`back-office`, Riot displays a :term:`toolbar` which allows users to
+      edit the content right :term:`in-place`.
+      
+   toolbar
+      The Riot toolbar provides a set of tools that can be used to edit content
+      :term:`in-place`. There are tools to insert or remove components, 
+      to re-order components by dragging them around, to edit text or the to
+      modify arbitrary content properties.
+      
+   in-place
+      In-place (or inplace) editing means that content is edited directly on the
+      website, right where it is displayed. This is the opposite of
+      :term:`back-office` editing, hence this view is often referred to as 
+      :term:`front-office`.
+      
+   root-page
+      The :term:`page` mapped to ``/``. Every :term:`site` has exactly one
+      root-page. The only difference to other pages is that a root-page has
+      no :term:`path-component`.
+      
+   path-component
+      String that together with other path-components makes up a path. The 
+      complete path is assembled by joining all its components (separated by 
+      slashes) and optionally adding an extension.
+      Given a path like ``/foo/bar.html``, both ``foo`` and ``bar`` are 
+      path-components.

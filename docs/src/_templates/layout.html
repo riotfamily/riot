@@ -1,0 +1,22 @@
+{% extends "!layout.html" %}
+
+{%- block relbar1 %}
+	<div class="relbar1">
+		<div class="relative">
+	      {%- if prev %}
+	      	  <div class="prev">
+	              &laquo; <a href="{{ prev.link|e }}" title="{{ prev.title }}">{{ _('Previous Chapter') }}</a>
+	          </div>
+	      {%- endif %}
+	      {%- if next %}
+	          <div class="next">
+	              <a href="{{ next.link|e }}" title="{{ next.title }}">{{ _('Next Chapter') }}</a> &raquo;
+	          </div>
+	      {%- endif %}
+		</div>
+	</div>
+{% endblock %}      
+      
+{%- block sidebar2 %}{% endblock %}
+
+{%- block relbar2 %}{% endblock %}

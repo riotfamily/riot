@@ -1,0 +1,67 @@
+===============
+Pages And Sites
+===============
+
+*Pages* are used to structure the content of a website in a hierarchical fashion
+and make up the sitemap. Every page has a so-called :term:`path-component` which 
+(together with the path-components of its ancestors) is used to construct the 
+URL under which the page can be requested.
+
+Spring MVC
+==========
+
+The concept of pages integrates with the Spring MVC through a custom 
+:api:`org.springframework.web.servlet.HandlerMapping`.
+
+The :api:`org.riotfamily.pages.mapping.PageHandlerMapping` looks up a page 
+for the incoming request and returns the handler set on the page's 
+:api:`org.riotfamily.pages.config.PageType#getHandler PageType`.
+
+The available PageTypes are defined by the SitemapSchema:
+
+Sitemap Schema
+==============
+
+.. highlight:: xml
+
+The SitemapSchema specifies which PageTypes are allowed at a given point in the
+sitemap. For better readability and IDE support, Riot provides a custom 
+Spring namespace to define a schema::
+   
+   <p:schema name="default">
+     <p:root-page handler="folderController">
+       <p:type name="article" handler="articlePageController" />
+     </p:root-page>
+   </p:schema>
+
+The example above assigns a handler to the root-page and allows
+Riot users to create top-level pages of type *article*.
+
+The *handler*-attribute refers to a Spring-managed bean with the specified id.
+Alternatively you may define the handler inline, using the ``p:handler`` tag::
+
+    <p:root-page>
+      <p:handler>
+        <bean class="org.riotfamily.pages.controller.FolderController" />
+      </p:handler>
+    </p:root-page>
+
+You can define as many types as you like. As soon as more than one type is
+allowed at a certain location, you will see dropdown when you create a new page
+via the :term:`back-office`.
+
+System Pages
+------------
+
+Virtual Pages
+-------------
+ 
+
+Sites
+=====
+
+*Sites* allow you to manage multiple domains within the same application, which is
+especially useful for multi-lingual sites.
+
+Finally Riot has the notion of components. A *Component* is content block that
+can be used to assemble a page.

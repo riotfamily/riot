@@ -1,23 +1,20 @@
-.. Riot documentation master file, created by
-   sphinx-quickstart on Tue Feb  9 16:58:39 2010.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to Riot's documentation!
-================================
+Riot User Guide
+===============
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
    
+   content.txt
+   pages.txt
+   components.txt
    active_records.txt
+   views.txt
+   screens.txt
    caching.txt
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   security.txt
+   configuration.txt
+   
+   glossary.txt
 

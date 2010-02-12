@@ -10,30 +10,20 @@
 body {
     font-family: 'Helvetica','Arial','Freesans','Clean',sans-serif;
     font-size: 90%;
-    background-color: #fff;
+    background: #fff url('bg.png') top left repeat-x;
     color: #000;
     margin: 0;
-    padding: 0;
+    padding: 30px 0 0 0;
 }
 
 div.document {
     background-color: #fff;
-    margin: 50px 0 0 0;
-}
-
-div.documentwrapper {
-    float: left;
-    width: 100%;
-}
-
-div.bodywrapper {
-    margin: 0 230px 0 50px;
 }
 
 div.body {
     background-color: #ffffff;
     color: #000000;
-    padding: 0 20px 30px 20px;
+    padding: 40px 11px 0 11px;
 }
 
 div.footer {
@@ -49,18 +39,37 @@ div.footer a {
     text-decoration: underline;
 }
 
-div.related {
-    background-color: #f2f2f2;
-    line-height: 30px;
-    color: #000;
+div.relbar1 {
+    color: #aaa;
+    font-size: 90%;
+    background: url(dots.gif) bottom left repeat-x;
+    padding: 20px 0 10px 0;
+    overflow: hidden;
 }
 
-div.related a {
+div.relbar1 a {
     color: #4682c5;
+}
+
+div.bodywrapper,
+div.relative {
+	margin: 0 50px 0 50px;
+    max-width: 900px;
+}
+
+div.relative .prev {
+	float:left;
+}
+div.relative .next {
+	float:right;
+    text-align: right;
 }
 
 div.sphinxsidebar {
 	float: right;
+}
+div.sphinxsidebarwrapper {
+	padding: 5px 5px 0 7px;
 }
 
 div.sphinxsidebar h3 {
@@ -89,10 +98,6 @@ div.sphinxsidebar p {
     color: #000;
 }
 
-div.sphinxsidebar p.topless {
-    margin: 5px 10px 10px 10px;
-}
-
 div.sphinxsidebar ul {
     margin-bottom: 40px;
     padding: 0;
@@ -105,10 +110,11 @@ div.sphinxsidebar a {
     color: #4183C4;
 }
 
-div.sphinxsidebar input {
-	border: none;
+div.sphinxsidebar form.search {
+	margin: 30px 0 30px 0;
 }
-div.sphinxsidebar input[type=text] {
+
+form.search input.text {
     border: none;
     background: transparent url(search_field.gif) no-repeat;
     padding: 4px 10px 2px 21px;
@@ -117,14 +123,11 @@ div.sphinxsidebar input[type=text] {
     font-family: sans-serif;
     font-size: 1em;
 }
-div.sphinxsidebar input[type=submit] {
-	display: none;
-}
 
 /* -- body styles ----------------------------------------------------------- */
 
 a {
-    color: #355f7c;
+    color: #4682c5;
     text-decoration: none;
 }
 
@@ -227,4 +230,9 @@ tt {
 
 .note tt {
     background: #d6d6d6;
+}
+
+a.spring {
+	background: url(spring.gif) top right no-repeat;
+	padding-right: 16px;
 }
