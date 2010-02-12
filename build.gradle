@@ -114,11 +114,17 @@ subprojects {
 			}
 		}
 		
-        uploadArchives {
-			repositories {
-				mavenDeployer {
-					repository(url: "file:///Users/flx/test-repo/mvn/releases")
-					snapshotRepository(url: "file:///Users/flx/test-repo/mvn/snapshots")
+		if (rootProject.hasProperty('artifactoryUser') && rootProject.hasProperty('artifactoryPass')) {
+	        uploadArchives {
+				repositories {
+					mavenDeployer {
+						repository(url: "http://repository.riotfamily.org/releases") {
+							authentication(userName: artifactoryUser, password: artifactoryPass)
+						}
+						snapshotRepository(url: "http://repository.riotfamily.org/snapshots") {
+							authentication(userName: artifactoryUser, password: artifactoryPass)
+						}
+					}
 				}
 			}
 		}
