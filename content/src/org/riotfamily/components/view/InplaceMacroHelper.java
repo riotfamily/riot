@@ -71,6 +71,11 @@ public class InplaceMacroHelper {
 		return EditModeUtils.isLiveMode(request);
 	}
 	
+	public boolean isEditable(ContentMap contentMap) {
+		return EditModeUtils.isEditable("edit", 
+				contentMap.getContent().getContainer().getOwner(), request);
+	}
+	
 	public List<String> getToolbarScripts() {
 		return this.toolbarScripts;
 	}

@@ -42,6 +42,10 @@ public final class EditModeUtils {
 		return Arrays.asList(s);
 	}
 	
+	public static boolean isEditable(String action, Object object, HttpServletRequest request) {
+		return AccessController.isGranted(action, object, request);
+	}
+	
 	public static boolean isEditMode(HttpServletRequest request) {
 		return AccessController.isAuthenticatedUser() 
 				&& getMode(request) == null;
@@ -73,4 +77,5 @@ public final class EditModeUtils {
 		return getContainerIds(request).contains(id);
 	}
 		
+	
 }
