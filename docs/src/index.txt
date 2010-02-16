@@ -5,12 +5,11 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-   
+
+   active_records.txt   
    content.txt
    pages.txt
    components.txt
-   active_records.txt
-   views.txt
    screens.txt
    caching.txt
    security.txt

@@ -1,27 +1,94 @@
-==================
-Content Management
-==================
-
-Core Concepts
-=============
-
+=======
 Content
--------
+=======
 
-A *Content* is basically a persistent Map with String keys and arbitrary values.
-Riot uses the :api:`org.riotfamily.components.model.Content` class to store 
-schema-less, versioned content in a RDBMS.
+Throughout this documentation the term *Content* refers to dynamic, 
+**schema-less** data structures, in contrast to *business-data* or *entities* 
+that are mapped to a relational schema.
 
-In order to support versioning, Content can be put into a 
-:api:`org.riotfamily.components.model.ContentContainer`
-which keeps a reference to a live- and a preview-version.
+Riot comes with a :api:`org.riotfamily.components.model.Content` class, that 
+uses the `XStream <http://xstream.codehaus.org/>`_ library to store arbitrary content inside a RDBMS. The class
+is a regular Hibernate entity, so you can use it to add schema-less data to
+your own business entities::
 
+    import java.util.Date;
+    import javax.persistence.Entity;
+    import javax.persistence.GeneratedValue;
+    import javax.persistence.GenerationType;
+    import javax.persistence.Id;
+    import javax.persistence.ManyToOne;
+    import org.riotfamily.common.hibernate.ActiveRecord;
+    import org.riotfamily.components.model.Content;
+    
+    @Entity
+    public class BlogPost extends ActiveRecord {
 
+        @Id @GeneratedValue(strategy=GenerationType.AUTO)
+        private long id;
+
+        private Date date;
+
+        @ManyToOne
+        private Content content;
+        
+        // Methods ...
+    } 
+  
+Preview
+=======
+
+It's often desirable to have two version of the same content, so that changes
+can be previewed before they are published. Riot therefore provides the
+:api:`org.riotfamily.components.model.ContentContainer` class, which keeps a 
+reference to a live- and a preview-version.
+
+Simply use a ContentContainer instead of a Content to add preview-support to
+your objects. You should also implement the
+:api:`org.riotfamily.components.model.ContentContainerOwner` interface to make
+your class work with Riot's built-in publish/discard user-interface and to
+transparently expose the right version to your views, depending on whether it's
+accessed by a visitor or by an authenticated Riot user.
+
+Or even simpler, create a subclass of :api:`org.riotfamily.components.model.ContentEntity`::
+
+    import java.util.Date;
+    import javax.persistence.Entity;
+    import javax.persistence.GeneratedValue;
+    import javax.persistence.GenerationType;
+    import javax.persistence.Id;
+    
+    @Entity
+    public class BlogPost extends ContentEntity {
+
+        @Id @GeneratedValue(strategy=GenerationType.AUTO)
+        private long id;
+
+        private Date date;
+
+        // Methods ...
+    } 
+
+As mentioned above, the right version will be automatically exposed to your
+FreeMarker view. Whenever you access a property that does not exist in your
+class, Riot will look for a value under that key in the associated Content.
+
+For details on how this works, please refer to the 
+:api:`org.riotfamily.components.view.ContentContainerOwnerObjectWrapperPlugin JavaDocs`.
 
 Content Queries
 ===============
 
+While being highly convenient, schema-less content storage usually makes it
+hard to perform queries, especially when dealing with multiple versions.
 
+Riot solves this problem by providing an interface for map/reduce-style queries.
+Whenever a Content object is modified, a ContentListener is invoked that allows
+you to extract all data that is relevant for the queries you want to make.
 
+To illustrate this feature, let's assume we want to add a set of categories to
+our BlogPosts. It shall be possible for blog authors to assign categories via
+the :term:`front-office` but changes made to the category assignment shall not 
+be visible to the public until they are published. Still the post shall appear
+on the newly assigned category pages if that page is viewed by an author.
 
 

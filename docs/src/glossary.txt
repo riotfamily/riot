@@ -27,6 +27,17 @@ Glossary
       website, right where it is displayed. This is the opposite of
       :term:`back-office` editing, hence this view is often referred to as 
       :term:`front-office`.
+   
+   site
+      A site is a collection of pages associated with a certain host-name. 
+      The construct may be used to create multi-lingual websites or to manage
+      several micro-sites with a unified interface.
+      
+   page
+      An object that implements the :api:`org.riotfamily.pages.model.Page` 
+      interface. The object may be an entity itself (like 
+      :api:`org.riotfamily.pages.model.ContentPage`) or it can be a transient
+      object like :api:`org.riotfamily.pages.model.VirtualPage`.
       
    root-page
       The :term:`page` mapped to ``/``. Every :term:`site` has exactly one
