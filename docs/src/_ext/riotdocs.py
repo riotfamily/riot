@@ -2,10 +2,11 @@
 """
 Sphinx plugins for Riot documentation.
 """
-
-import sphinx
 import re
+import sphinx
 from docutils import nodes
+from sphinx.highlighting import lexers
+from freemarker import FreeMarkerHtmlLexer
 
 apirefs = {
     'riot': 'http://riotfamily.org/api/9.0.x',
@@ -14,6 +15,8 @@ apirefs = {
 
 def setup(app):
     app.add_role('api', api_reference_role)
+    lexers['ftl'] = FreeMarkerHtmlLexer()
+
     
 def api_reference_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
     
@@ -31,5 +34,3 @@ def api_reference_role(role, rawtext, text, lineno, inliner, options={}, content
             node = nodes.reference(rawtext, label or classname, refuri=ref, **options)
             node['classes'] += ['api', lib]
             return [node], []
-
-
