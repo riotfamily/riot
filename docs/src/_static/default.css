@@ -43,8 +43,15 @@ div.relbar1 {
     color: #aaa;
     font-size: 90%;
     background: url(dots.gif) bottom left repeat-x;
-    padding: 20px 0 10px 0;
+    padding: 20px 0 10px 62px;
     overflow: hidden;
+}
+div.relbar2 {
+    color: #aaa;
+    font-size: 90%;
+    background: url(dots.gif) top left repeat-x;
+    padding: 10px 0 0;
+    margin-top: 50px;
 }
 
 div.relbar1 a {
@@ -57,12 +64,21 @@ div.relative {
     max-width: 900px;
 }
 
+div.relative .index {
+	display: block;
+	text-align: center;
+}
 div.relative .prev {
 	float:left;
 }
 div.relative .next {
 	float:right;
     text-align: right;
+}
+
+div.relative .title {
+	margin: 3px 12px 0 12px;
+	font-size: 80%;
 }
 
 div.sphinxsidebar {

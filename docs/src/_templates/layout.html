@@ -2,21 +2,30 @@
 
 {%- block relbar1 %}
 	<div class="relbar1">
-		<div class="relative">
-	      {%- if prev %}
-	      	  <div class="prev">
-	              &laquo; <a href="{{ prev.link|e }}" title="{{ prev.title }}">{{ _('Previous Chapter') }}</a>
-	          </div>
-	      {%- endif %}
-	      {%- if next %}
-	          <div class="next">
-	              <a href="{{ next.link|e }}" title="{{ next.title }}">{{ _('Next Chapter') }}</a> &raquo;
-	          </div>
-	      {%- endif %}
-		</div>
+		<a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a>
 	</div>
 {% endblock %}      
       
-{%- block sidebar2 %}{% endblock %}
+{%- block sidebar2 %}
+	<div class="relbar2">
+		<div class="relative">
+			{%- if pagename != "index" %}
+				{%- if prev %}
+					  <div class="prev">
+				        &laquo; <a href="{{ prev.link|e }}">{{ _('Previous Chapter') }}</a>
+				        <div class="title">{{ prev.title }}</div>
+				    </div>
+				{%- endif %}
+				{%- if next %}
+				    <div class="next">
+				        <a href="{{ next.link|e }}">{{ _('Next Chapter') }}</a> &raquo;
+				        <div class="title">{{ next.title }}</div>
+				    </div>
+				{%- endif %}
+				<div class="index"><a href="{{ pathto(master_doc) }}">{{ _('Index') }}</a></div>
+			{%- endif %}
+		</div>
+	</div>
+{% endblock %}
 
 {%- block relbar2 %}{% endblock %}
