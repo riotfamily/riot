@@ -21,6 +21,12 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
 /**
+ * ObjectWrapperPlugin that wraps objects which implement the 
+ * {@link ContentContainerOwner} interface.
+ * 
+ * The plugin creates a {@link ContentContainerOwnerFacade} internally and wraps
+ * it inside a {@link ContentFacadeTemplateModel}.
+ *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */

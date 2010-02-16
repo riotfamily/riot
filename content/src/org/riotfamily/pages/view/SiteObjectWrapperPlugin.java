@@ -22,6 +22,9 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
 /**
+ * ObjectWrapperPlugin that creates a {@link SiteFacade} for a given 
+ * {@link Site} and wraps it inside a {@link ContentFacadeTemplateModel}.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */

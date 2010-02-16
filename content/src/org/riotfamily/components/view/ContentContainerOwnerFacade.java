@@ -22,6 +22,11 @@ import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.components.support.EditModeUtils;
 
 /**
+ * ContentFacade implementation that retrieves either the live- or preview-
+ * version from the wrapped {@link ContentContainer}, depending on whether it
+ * is viewed in {@link EditModeUtils#isPreview(HttpServletRequest, 
+ * ContentContainer) preview-mode}.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 9.0
  */

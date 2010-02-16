@@ -29,6 +29,12 @@ import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateModelIterator;
 import freemarker.template.TemplateScalarModel;
 
+/**
+ * FreeMarker TemplateModel that first looks for a property on the wrapped 
+ * facade. If no such property exists, it looks for a content value with
+ * the same key. Finally, if no such content value is found, it looks for
+ * a property on the facade's {@link ContentFacade#getOwner() owner}.
+ */
 public class ContentFacadeTemplateModel implements TemplateHashModelEx, TemplateScalarModel, AdapterTemplateModel {
 
 	private ContentFacade facade;
