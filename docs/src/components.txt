@@ -38,7 +38,7 @@ human-friendly name and an icon which both will be displayed in the
 
 The example above isn't really useful yet as it always displays the same static
 text. In order to make the text editable we have to replace the hard-coded
-``h1`` tag with a inplace macro::
+``h1`` tag with an inplace macro::
 
 	<#---
 	@name Heading

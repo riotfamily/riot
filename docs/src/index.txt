@@ -6,7 +6,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   active_records.txt   
+   active_records.txt
+   views.txt   
    content.txt
    pages.txt
    components.txt

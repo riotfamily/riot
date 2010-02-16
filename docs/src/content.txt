@@ -68,6 +68,8 @@ Or even simpler, create a subclass of :api:`org.riotfamily.components.model.Cont
         // Methods ...
     } 
 
+.. _transparent-version-access:
+
 As mentioned above, the right version will be automatically exposed to your
 FreeMarker view. Whenever you access a property that does not exist in your
 class, Riot will look for a value under that key in the associated Content.

@@ -36,6 +36,8 @@ handler method::
 		out.write(String.valueOf(System.currentTimeMillis()));
 	}
 
+.. _transparent-cache-invalidation:
+
 Transparent Invalidation
 ========================
 

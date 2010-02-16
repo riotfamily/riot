@@ -1,0 +1,61 @@
+================
+FreeMarker Views
+================
+
+Riot is tightly integrated with FreeMarker and makes heavy use of its 
+ObjectWrapper and TemplateModel API. This allows us to implement features like
+:ref:`transparent cache invalidation <transparent-cache-invalidation>` and
+:ref:`transparent access <transparent-version-access>` to versioned content.
+
+Macro Libraries
+===============
+
+Riot comes with a set of macro libraries that make writing views a lot easier.
+The libraries are documented using fmdoc and the generated docs can be found 
+here: TODO  
+
+Template Macros
+===============
+
+One extremely useful library is the one imported under the "template" namespace.
+These macros allow you to define a base template which contains common mark-up
+and so-called blocks, which can be overwritten in child templates.
+
+.. highlight:: ftl
+
+Lets look at a simple example that illustrates the usage::
+
+	<@template.root>
+	    <html>
+	        <body>
+	            <div id="header">
+	                <@template.block name="header">
+	                    <h1>Welcome</h1>
+	                </@template.block>
+	            </div>
+	            <div id="content">
+	                <@template.block name="content">
+	                    This is the default content from the root template.
+	                </@template.block>
+	            </div>
+	        </body>
+	    </html>
+	</@template.root>
+
+In the example above a block called "content" is defined which can be 
+overwritten in another file::
+
+	<@template.extend file="default.ftl">
+	    <@template.block name="content">
+	        Alternative content
+	    </@template.block>
+	</@template.extend>
+
+Utility Classes
+===============
+
+Invoking Finders
+================
+
+Accessing Spring Beans
+======================
