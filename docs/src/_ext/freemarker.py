@@ -2,7 +2,7 @@
 
 from pygments.lexer import DelegatingLexer, RegexLexer, bygroups
 from pygments.lexers.web import HtmlLexer
-from pygments.token import Punctuation, Text, Comment, Name, String, Other
+from pygments.token import Punctuation, Text, Comment, Name, Literal, String, Number, Other
 
 class FreeMarkerHtmlLexer(DelegatingLexer):
     def __init__(self, **options):
@@ -23,8 +23,8 @@ class FreeMarkerLexer(RegexLexer):
     tokens = {
         'root': [
             (r'(?s)<#--.*?-->', Comment.Multiline),
-            (r'(<#)(\S+)', bygroups(Comment.Preproc, Name.Builtin), 'directive'),
-            (r'(<@)(\S+)', bygroups(Comment.Preproc, Name.Function), 'macro'),
+            (r'(<#)([^>\s]+)', bygroups(Comment.Preproc, Name.Builtin), 'directive'),
+            (r'(<@)([^>\s]+)', bygroups(Comment.Preproc, Name.Function), 'macro'),
             (r'(</#)(.*?)(>)', bygroups(Comment.Preproc, Name.Builtin, Comment.Preproc)), # </#if>
             (r'(</@)(.*?)(>)', bygroups(Comment.Preproc, Name.Function, Comment.Preproc)), # </@foo.bar>
             (r'\$\{', Comment.Preproc, 'expression'),
@@ -41,8 +41,14 @@ class FreeMarkerLexer(RegexLexer):
             (r'[^>]*', Text),
         ],
         'macro': [
-            (r'(\s?=\s?)([^>\s]+)', bygroups(Punctuation, String.Single)),
+            (r'(.+?)(\s?=\s?)', bygroups(Name.Attribute, Punctuation), 'value'),
+            (r'[^>=]+', Text),
             (r'>', Comment.Preproc, '#pop'),
-            (r'[^>=]*', Text),
+        ],
+        'value': [
+            (r'".+?"', String.Double, '#pop'),
+            (r'\'.+?\'', String.Single, '#pop'),
+            (r'\d+', Number, '#pop'),
+            (r'.+', Literal, '#pop'),
         ]
     }
