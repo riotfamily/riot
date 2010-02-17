@@ -18,6 +18,7 @@ import org.riotfamily.common.beans.namespace.ListItemDecorator;
 import org.riotfamily.common.beans.namespace.MapEntryDecorator;
 import org.riotfamily.common.beans.namespace.PropertyDecorator;
 import org.riotfamily.common.beans.namespace.PropertyValueDecorator;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
 /**
  * NamespaceHandler that handles the <code>page</code> namespace as
@@ -27,6 +28,7 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
 		register("schema", SitemapSchema.class)
+				.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR)
 				.setDecorator(new PropertyDecorator("rootPage"));
 		
 		ChildDecorator typeDecorator = new ChildDecorator()
