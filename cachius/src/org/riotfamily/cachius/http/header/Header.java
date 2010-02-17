@@ -24,7 +24,9 @@ class Header implements Serializable {
 
 	private String name;
 	
-	private ArrayList<HeaderValue> values = new ArrayList<HeaderValue>();
+	private HeaderValue value;
+	
+	private ArrayList<HeaderValue> additionalValues = new ArrayList<HeaderValue>();
 
 	public Header(String name) {
 		this.name = name;
@@ -35,16 +37,19 @@ class Header implements Serializable {
 	}
 	
 	public void setValue(HeaderValue value) {
-		values.clear();
-		addValue(value);
+		additionalValues.clear();
+		this.value = value;
 	}
 	
 	public void addValue(HeaderValue value) {
-		values.add(value);
+		additionalValues.add(value);
 	}
 	
 	public void send(HttpServletRequest request, HttpServletResponse response) {
-		for (HeaderValue value : values) {
+		if (value != null) {
+			response.setHeader(name, value.resolve(request));
+		}
+		for (HeaderValue value : additionalValues) {
 			response.addHeader(name, value.resolve(request));	
 		}
 	}
