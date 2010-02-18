@@ -1,32 +1,38 @@
-===============
-Pages And Sites
-===============
+=====
+Pages
+=====
 
-*Pages* are used to structure the content of a website in a hierarchical fashion
-and make up the sitemap. Every page has a so-called :term:`path-component` which 
+Riot uses the concept of *pages* to model the topology of a website. A page is
+responsible for two things: First, it maps an URL to a controller. Second, it
+provides content to be displayed. 
+
+URL Mapping
+===========
+
+Every page has a so-called :term:`path-component` which 
 (together with the path-components of its ancestors) is used to construct the 
-URL under which the page can be requested.
+final URL.
 
-Spring MVC
-==========
+If such an URL is requested, the Spring MVC framework needs to find out
+which controller should be used to handle the request. To perform this lookup,
+Spring uses the :api:`org.springframework.web.servlet.HandlerMapping` interface.
 
-The concept of pages integrates with the Spring MVC through a custom 
-:api:`org.springframework.web.servlet.HandlerMapping`.
+Riot provides :api:`org.riotfamily.pages.mapping.PageHandlerMapping an implementation` 
+of that interface, that looks up a page for the requested URL and returns the
+handler set on the page's *PageType*.
 
-The :api:`org.riotfamily.pages.mapping.PageHandlerMapping` looks up a page 
-for the incoming request and returns the handler set on the page's 
-:api:`org.riotfamily.pages.config.PageType#getHandler PageType`.
-
-The available PageTypes are defined by the SitemapSchema:
-
-Sitemap Schema
-==============
+Page Types
+----------
 
 .. highlight:: xml
 
-The SitemapSchema specifies which PageTypes are allowed at a given point in the
-sitemap. For better readability and IDE support, Riot provides a custom 
-Spring namespace to define a schema::
+A :api:`org.riotfamily.pages.config.PageType` serves multiple purposes. As 
+mentioned above, it specifies a handler to use. Besides that, it also imposes
+constraints on the structure of the sitemap by defining of what kind of
+child-pages are allowed.
+
+Therefore the PageType hierarchy is also referred to as SitemapSchema. In order
+to define such a schema, you can use the custom namespace provided by Riot::
    
    <p:schema name="default">
      <p:root-page handler="folderController">
@@ -62,6 +68,3 @@ Sites
 
 *Sites* allow you to manage multiple domains within the same application, which is
 especially useful for multi-lingual sites.
-
-Finally Riot has the notion of components. A *Component* is content block that
-can be used to assemble a page.

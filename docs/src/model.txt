@@ -1,0 +1,183 @@
+=====
+Model
+=====
+
+When thinking about content management it's important to consider what kind of
+content should be managed and how it should be stored.
+
+Basically there are two common approaches. You can either map all your content
+into a relational schema or you treat everything as documents.
+
+Both approaches have their advantages and it depends on your domain, which one
+suits you best. Unfortunately for most domains it's desirable to mix and match 
+the two. So lets take a closer look at the solution provided by Riot.
+
+Relational Data
+===============
+
+With Hibernate and JPA we have a decent O/R mapping solution to our avail. But
+if you've ever worked with Rails, Grails, Roo or Django you quickly start 
+missing the ease of the ActiveRecord pattern.
+
+Riot comes with a straight-forward, pure-Java implementation that doesn't
+depend on load-time weaving or byte code manipulation.
+
+Before we take a look behind the scenes, let's start with a usage example::
+
+    Cat cat = new Cat();
+    cat.setColor("black");
+    cat.save();
+
+In order to look up ActiveRecords, you need to add static finder methods to your 
+entities. Having such finders allows you to write code like this::
+
+    List<Cat> blackCats = Cat.findByColor("black");
+
+The ActiveRecord base-class provides a protected static method to write such 
+finders::
+
+    public static List<Post> findByColor(String color) {
+        return query(Cat.class, "from {} where color = ?", color).find();
+    }
+    
+All occurrences of the ``{}`` token in the HQL string will be replaced by the
+actual entity name of the given class, making it more refactoring-safe.
+
+.. _content:
+
+Schema-less Data
+================
+
+While some content naturally fits into a relational model very well, it 
+obviously doesn't make sense for everything. Imagine a website with lots of 
+different content boxes all over the place. Some have a headline, some contain 
+an image, some have links while others consist of multiple columns. You
+certainly don't want to model every aspect of your layout in a relational way.
+
+What you need instead is a way to store structured data in a schema-less 
+fashion.  
+
+To solve this problem, Riot provides the
+:api:`org.riotfamily.components.model.Content` class, that  
+uses the `XStream <http://xstream.codehaus.org/>`_ library to store arbitrary
+content inside your RDBMS. The class is a regular Hibernate entity, so you
+can use it to add schema-less data to your own business entities::
+
+    import java.util.Date;
+    import javax.persistence.Entity;
+    import javax.persistence.GeneratedValue;
+    import javax.persistence.GenerationType;
+    import javax.persistence.Id;
+    import javax.persistence.ManyToOne;
+    import org.riotfamily.common.hibernate.ActiveRecord;
+    import org.riotfamily.components.model.Content;
+    
+    @Entity
+    public class BlogPost extends ActiveRecord {
+
+        @Id @GeneratedValue(strategy=GenerationType.AUTO)
+        private long id;
+
+        private Date date;
+
+        @ManyToOne
+        private Content content;
+        
+        // Methods ...
+    } 
+  
+Versioning
+==========
+
+It's often desirable to have two version of the same content, so that changes
+can be previewed before they are published. Riot therefore provides the
+:api:`org.riotfamily.components.model.ContentContainer` class, which keeps a 
+reference to a live- and a preview-version.
+
+Simply use a ContentContainer instead of a Content to add preview-support to
+your objects. You should also implement the
+:api:`org.riotfamily.components.model.ContentContainerOwner` interface to make
+your class work with Riot's built-in publish/discard user-interface and to
+transparently :ref:`expose the right version <transparent-version-access>` to 
+your views, depending on whether it's accessed by a visitor or by an 
+authenticated Riot user.
+
+Or even simpler, create a subclass of :api:`org.riotfamily.components.model.ContentEntity`::
+
+    import java.util.Date;
+    import javax.persistence.Entity;
+    import javax.persistence.GeneratedValue;
+    import javax.persistence.GenerationType;
+    import javax.persistence.Id;
+    
+    @Entity
+    public class BlogPost extends ContentEntity {
+
+        @Id @GeneratedValue(strategy=GenerationType.AUTO)
+        private long id;
+
+        private Date date;
+
+        // Methods ...
+    } 
+
+
+.. _transparent-version-access:
+
+Transparent Access
+==================
+
+As mentioned above, the right version will be automatically exposed to your
+FreeMarker view. Whenever you access a property that does not exist in your
+class, Riot will look for a value under that key in the associated Content.
+
+For details on how this works, please refer to the 
+:api:`org.riotfamily.components.view.ContentContainerOwnerObjectWrapperPlugin JavaDocs`.
+
+Content Queries
+===============
+
+While being highly convenient, schema-less content storage usually makes it
+hard to perform queries, especially when dealing with multiple versions.
+
+Riot solves this problem by providing an interface for map/reduce-style queries.
+Whenever a Content object is modified, a ContentListener is invoked that allows
+you to extract all data that is relevant for the queries you want to make.
+
+To illustrate this feature, let's assume we want to add a set of categories to
+our BlogPosts. It shall be possible for blog authors to assign categories via
+the :term:`front-office` but changes made to the category assignment shall not 
+be visible to the public until they are published. Still the post shall appear
+on the newly assigned category pages if that page is viewed by an author.
+
+* Create a class with the suffix *ContentIndex* that extends 
+  :api:`org.riotfamily.components.index.ContentIndex` and place it in the
+  same package as your entity.
+* Add the @Entity and @Filter annotations.
+* Add a @ManyToOne property with the same name as the entity class.
+* Create fields for each content value you want to index.
+
+The resulting code will look like this::
+
+    @Entity
+    @Filter(name="contentIndex")
+    public class BlogPostContentIndex extends ContentIndex {
+    
+        @ManyToOne
+        private BlogPost blogPost;
+        
+        @ManyToMany
+        private Collection<PostCategory> categories;
+        
+    }
+
+To create a query that uses the index, add a finder like the following to your entity::
+
+    public static List<BlogPost> findByCategory(PostCategory category) {
+        return query(BlogPost.class, 
+                "select idx.blogPost from {}ContentIndex idx " +
+                "join idx.category as cat where cat = ?", category)
+                .find();
+    }
+    
+ 

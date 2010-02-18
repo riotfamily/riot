@@ -193,13 +193,37 @@ div.body p, div.body dd, div.body li {
     line-height: 130%;
 }
 
-div.admonition p.admonition-title + p {
-    display: inline;
+div.note,
+div.admonition { 
+	padding: 11px 10px 9px 65px; 
+	background: #eee url(note.png) 10px 5px no-repeat;
+	border: solid #ccc;
+	border-width: 1px 0;
+	color: #444;
+	font-size: 90%;
 }
 
-div.note {
-    background-color: #eee;
-    border: 1px solid #ccc;
+p.admonition-title { 
+	font-weight: bold;
+	font-size: 100%;
+	margin: 0;
+	-moz-text-shadow: 1px 1px 1px #fff;
+	text-shadow: 1px 1px 1px #fff;
+}
+div.admonition p { 
+	margin-top: 5px; 
+}
+div.admonition p.last { 
+	margin-bottom: 0; 
+}
+
+div.admonition-behind-the-scenes { 
+	background-image: url(internals.png);
+}
+div.admonition-todo { 
+	background-image: url(todo.png);
+	background-color: #ffe4e4;
+    border-color: #f66;
 }
 
 div.seealso {
@@ -214,14 +238,6 @@ div.topic {
 div.warning {
     background-color: #ffe4e4;
     border: 1px solid #f66;
-}
-
-p.admonition-title {
-    display: inline;
-}
-
-p.admonition-title:after {
-    content: ":";
 }
 
 pre {

@@ -2,7 +2,7 @@
 
 from pygments.lexer import DelegatingLexer, RegexLexer, bygroups
 from pygments.lexers.web import HtmlLexer
-from pygments.token import Punctuation, Text, Comment, Name, Literal, String, Number, Other
+from pygments.token import Punctuation, Text, Token, Comment, Name, Literal, String, Number, Other
 
 class FreeMarkerHtmlLexer(DelegatingLexer):
     def __init__(self, **options):
@@ -23,6 +23,7 @@ class FreeMarkerLexer(RegexLexer):
     tokens = {
         'root': [
             (r'(?s)<#--.*?-->', Comment.Multiline),
+            (r'(<#)(list\s+)(.+?\s+)(as)(\s+.+?)(>)', bygroups(Comment.Preproc, Name.Builtin, Text, Token.Keyword, Name.Variable, Comment.Preproc)),
             (r'(<#)([^>\s]+)', bygroups(Comment.Preproc, Name.Builtin), 'directive'),
             (r'(<@)([^>\s]+)', bygroups(Comment.Preproc, Name.Function), 'macro'),
             (r'(</#)(.*?)(>)', bygroups(Comment.Preproc, Name.Builtin, Comment.Preproc)), # </#if>
@@ -34,7 +35,8 @@ class FreeMarkerLexer(RegexLexer):
         ],
         'expression': [
             (r'\}', Comment.Preproc, '#pop'),
-            (r'[^}]+', Name.Function),
+            (r'\w+(?=\.)', Name.Variable),
+            (r'[^}]+', Text),
         ],
         'directive': [
             (r'/?\s*>', Comment.Preproc, '#pop'),

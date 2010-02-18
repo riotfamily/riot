@@ -1,0 +1,21 @@
+========
+Overview
+========
+
+Riot is a framework that extends the Spring/Hibernate stack to build websites
+with content management support.
+
+It allows you to create beautifully looking admin-interfaces without having to
+write any code. Instead of just *scaffolding* a basic CRUD interface, Riot lets
+you to define your UI without adding dependencies to your code.
+
+In addition to this back-office view, Riot also supports in-place editing 
+that allows you to edit content directly on the website, right where it is 
+displayed.
+
+This feature is based on Riot's content-model, which allows you to store 
+arbitrary schema-less data.
+
+Besides that, Riot comes with a bunch of useful tools to solve common tasks like
+dynamic headline image generation, CSS and JavaScript minification, 
+template inheritance and much more.

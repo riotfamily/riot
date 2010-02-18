@@ -4,14 +4,16 @@ Riot User Guide
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   active_records.txt
-   views.txt   
-   content.txt
-   pages.txt
+   overview.txt
+   model.txt
+   views.txt
    components.txt
+   pages.txt
+   
    screens.txt
+   
    caching.txt
    security.txt
    configuration.txt

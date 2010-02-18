@@ -9,7 +9,7 @@ from sphinx.highlighting import lexers
 from freemarker import FreeMarkerHtmlLexer
 
 apirefs = {
-    'riot': 'http://riotfamily.org/api/9.0.x',
+    'riot': 'http://www.riotfamily.org/static/docs/9.1.x/api',
     'spring': 'http://static.springsource.org/spring/docs/3.0.x/javadoc-api'
 }
 
@@ -20,8 +20,12 @@ def setup(app):
     
 def api_reference_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
     
+    #m = re.search('^(?:(.+?)\s*<)?(.+\.(.+))(?:#(\S+))?\s*>?$', text)
+    #(label, fqn, classname, method) = m.group(1, 2, 3, 4)
+    
     m = re.search('^(.*\.(.*?))(?:#(\S*))?(?:\s(.*))?$', text)
     (fqn, classname, method, label) = m.group(1, 2, 3, 4)
+    
     path = fqn.replace('.', '/').replace('@', '')
     hash = ''
     if method:

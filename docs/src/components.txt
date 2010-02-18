@@ -15,37 +15,34 @@ You can define a component list using a FreeMarker macro::
     <@inplace.componentList key="components" valid=["headline","paragraph"] />
 
 The first thing you need to specify is the key under which the list should be
-stored in the :doc:`content <content>` map.
+stored in the :ref:`content <content>` map.
 
 Next you specify a list of component-types that may be inserted. For each 
 component a FreeMarker file must be created under
 :file:`WEB-INF/view/components/{<component-type>}.ftl`. Here's an example for
 a simple headline component::
 
-	<#---
-	@name Heading
-	@icon text_heading_1
-	-->
-	<h1>Headline</h1>
-	
+    <#---
+    @name Heading
+    @icon text_heading_1
+    -->
+    <h1>Headline</h1>
+    
 The leading comment block may contain fmdoc annotations to define a 
 human-friendly name and an icon which both will be displayed in the 
 *insert component* menu.
 
 .. note:: The *@icon* annotation may refer to one of the 
-	`700+ items <http://www.famfamfam.com/lab/icons/silk/previews/index_abc.png>`_
-	from the `Silk <http://www.famfamfam.com/lab/icons/silk/>`_ icon-set.
+    `700+ items <http://www.famfamfam.com/lab/icons/silk/previews/index_abc.png>`_
+    from the `Silk <http://www.famfamfam.com/lab/icons/silk/>`_ icon-set.
 
 The example above isn't really useful yet as it always displays the same static
 text. In order to make the text editable we have to replace the hard-coded
 ``h1`` tag with an inplace macro::
 
-	<#---
-	@name Heading
-	@icon text_heading_1
-	-->
-	<@inplace.text key="headline" tag="h1">Headline</@inplace.text>
-	
-
-
-
+    <#---
+    @name Heading
+    @icon text_heading_1
+    -->
+    <@inplace.text key="headline" tag="h1">Headline</@inplace.text>
+    

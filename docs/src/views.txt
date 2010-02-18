@@ -1,6 +1,6 @@
-================
-FreeMarker Views
-================
+=====
+Views
+=====
 
 Riot is tightly integrated with FreeMarker and makes heavy use of its 
 ObjectWrapper and TemplateModel API. This allows us to implement features like
@@ -12,7 +12,9 @@ Macro Libraries
 
 Riot comes with a set of macro libraries that make writing views a lot easier.
 The libraries are documented using fmdoc and the generated docs can be found 
-here: TODO  
+here: 
+
+.. todo:: Add fmdoc to build script.   
 
 Template Macros
 ===============
@@ -50,12 +52,48 @@ overwritten in another file::
 	        Alternative content
 	    </@template.block>
 	</@template.extend>
-
+	
 Utility Classes
 ===============
 
-Invoking Finders
-================
+Riot automatically exposes some static utility classes so that they can be
+used by views. By default the following classes are available:
 
-Accessing Spring Beans
-======================
+* :api:`org.springframework.util.StringUtils`
+* :api:`org.riotfamily.common.util.FormatUtils`
+* :api:`org.riotfamily.common.web.support.ServletUtils`
+
+You can expose your own classes by adding the following lines to your 
+:file:`website-servlet.xml`:
+
+.. todo:: Think about adding an annotation. Alternatively use beans.* together with Spring's @Component annotation.  
+
+Accessing Reference Data
+========================
+
+The Spring documentation uses the term *reference data* for information added
+to the model that is needed by the view in order to render the user interface
+(e.g. options for a select-box). 
+
+As such data often comes from the database, Riot provides a convenient way to
+invoke finder-methods of ActiveRecords directly within the view:: 
+
+    <#list Countries.findAll() as country>
+    	<option>${country.name}</option>
+    </#list>
+    
+If two ActiveRecord classes with the same name exist in different packages
+only the first one will be exposed and a warning message will be logged.
+In order to access the other (shadowed) class you can write 
+``statics["com.example.MyActiveRecord"]`` instead.
+
+In case your reference data doesn't come from an ActiveRecord, it's also 
+possible to invoke methods on any Spring-managed bean by writing 
+:samp:`beans.{<bean-name>}`.
+ 
+.. admonition:: Behind the scenes
+
+	If you're interested in details on how this works, take a look at the 
+	:api:`org.riotfamily.common.hibernate.ActiveRecordClassExposer` docs. 
+
+
