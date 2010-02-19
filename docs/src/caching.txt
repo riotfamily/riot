@@ -14,13 +14,27 @@ output of handlers. A handler can either be a class that implements the
 :api:`org.springframework.web.servlet.mvc.Controller` interface or a class 
 that has methods annotated with :api:`org.springframework.web.bind.annotation.@RequestMapping`.
 
-Caching Controllers
-===================
+Caching Classic Controllers
+===========================
 
 In order to cache a Controller, it must implement the 
 :api:`org.riotfamily.common.web.cache.controller.CacheableController` interface.
 
-Caching @RequestMapping methods
+The first method, :api:`org.riotfamily.common.web.cache.controller.CacheableController#getCacheKey getCacheKey()` 
+returns a key that uniquely identifies the requested content. Therefore it must
+include all attributes that govern the output, such as request parameters, 
+the requested URL or the controller's name. The key itself is not interpreted 
+in any way and thus can have an arbitrary format.
+
+The second method, :api:`org.riotfamily.common.web.cache.controller.CacheableController#getLastModified getLastModified()`
+returns the last-modified date for a given request. The controller will not 
+be executed unless this date is newer than the timestamp of the cached version.
+
+The third method, :api:`org.riotfamily.common.web.cache.controller.CacheableController#getTimeToLive getTimeToLive()` 
+returns the number of milliseconds that must have elapsed since the last 
+up-to-date check, before ``getLastModified()`` is invoked again.
+
+Caching @RequestMapping Methods
 ===============================
 
 To cache annotation-based handlers, add the 
@@ -50,12 +64,12 @@ deleted or modified.
 Second, FreeMarker's ObjectWrapper facility is used to detect whenever cacheable
 data is accessed inside a view. 
 
-To use this feature, simply add the @TagCacheItems annotation to your entities.
+To use this feature, simply add the :api:`org.riotfamily.common.web.cache.@TagCacheItems` 
+annotation to your entities.
 
+.. note:: 
 
-Performance
-===========
-
-In order to keep the memory footprint low, the cached objects are stored in the
-local file system and are streamed to the client when needed (Riot relies on 
-the operating system's file system cache to reduce the actual disk access).
+    In order to keep the memory footprint low, the cached objects are stored in 
+    the local file system and are streamed to the client when needed (Riot 
+    relies on the operating system's file system cache to reduce the actual 
+    disk access).

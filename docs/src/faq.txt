@@ -1,9 +1,0 @@
-==========================
-Frequently Asked Questions
-==========================
-
-How to install ImageMagick?
-
-Can I use JSPs instead of FreeMarker templates?
-
-Why doesn't Riot use Spring Security?

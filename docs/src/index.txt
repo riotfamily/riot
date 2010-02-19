@@ -12,7 +12,7 @@ Contents:
    components.txt
    pages.txt
    
-   screens.txt
+   admin.txt
    
    caching.txt
    security.txt

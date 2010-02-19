@@ -1,0 +1,30 @@
+===============
+Admin Interface
+===============
+
+One of Riot's core features is the admin interface, which is often also 
+referred to as :term:`back-office`.
+
+It consists of different *screens* that are organized in a hierarchical way.
+Riot comes with three built-in screen types: groups, lists and forms. Of course
+you are free to create your own screen types if needed.
+
+Lists
+=====
+
+List screens allow you to browse or search your data and can be used to add
+new content.
+
+Data Access
+-----------
+
+Columns
+-------
+
+Commands
+--------
+
+Forms
+=====
+ 
+

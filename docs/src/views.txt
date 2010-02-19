@@ -87,13 +87,13 @@ only the first one will be exposed and a warning message will be logged.
 In order to access the other (shadowed) class you can write 
 ``statics["com.example.MyActiveRecord"]`` instead.
 
-In case your reference data doesn't come from an ActiveRecord, it's also 
-possible to invoke methods on any Spring-managed bean by writing 
-:samp:`beans.{<bean-name>}`.
- 
 .. admonition:: Behind the scenes
 
 	If you're interested in details on how this works, take a look at the 
 	:api:`org.riotfamily.common.hibernate.ActiveRecordClassExposer` docs. 
+
+In case your reference data doesn't come from an ActiveRecord, it's also 
+possible to invoke methods on any Spring-managed bean by writing 
+:samp:`beans.{<bean-name>}`.
 
 
