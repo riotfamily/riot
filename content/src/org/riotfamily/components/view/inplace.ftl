@@ -18,9 +18,7 @@
 
 <#macro register content>
 	<#if editMode && content.container??>
-		<object class="riot-container" style="display:none">
-			<param name="id" value="${content.container.id}" />
-		</object>
+		<a class="riot-container" style="display:none" rel="${content.container.id}" />
 	</#if>
 </#macro>
 

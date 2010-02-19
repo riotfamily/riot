@@ -163,7 +163,8 @@ riot.components = (function() {
 					.removeClassName('riot-empty-list')
 					.enableLinks();
 				
-				delete this.insertButton.remove();
+				this.insertButton.remove();
+				this.insertButton = undefined;
 			}
 		},
 
@@ -829,7 +830,7 @@ riot.components = (function() {
 		},
 		
 		init: function() {
-			var containerIds = $$('object.riot-container > param[name=id]').invoke('getAttribute', 'value');
+			var containerIds = $$('a.riot-container').invoke('getAttribute', 'rel');
 			ComponentEditor.getState(containerIds, setState);
 		},
 		
