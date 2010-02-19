@@ -7,3 +7,4 @@ build
 /.project
 /.pydevproject
 *.pyc
+gradle-app.setting
