@@ -41,18 +41,6 @@
 			${inplaceMacroHelper.initScript}
 			<#nested />
 		</script>
-	<#elseif inplaceMacroHelper.liveMode>
-		<script type="text/javascript" language="JavaScript">
-			if (parent && parent.liveLoaded) {
-				parent.liveLoaded();
-			}
-		</script>
-	<#elseif inplaceMacroHelper.previewMode>
-		<script type="text/javascript" language="JavaScript">
-			if (parent && parent.previewLoaded) {
-				parent.previewLoaded();
-			}
-		</script>
 	<#elseif bookmarklet>
 		<script type="text/javascript" language="JavaScript">
 			// This variable is read by the login-bookmarklet:

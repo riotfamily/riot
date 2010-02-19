@@ -38,7 +38,7 @@ public class ContentFilterRequestInterceptor extends RequestInterceptorAdapter {
 		
 		Session session = sessionFactory.getCurrentSession();
 		if (session != null) {
-			boolean live = !EditModeUtils.isEditMode(request);
+			boolean live = !EditModeUtils.isPreview(request, null);
 			session.enableFilter("contentIndex").setParameter("live", live);
 			if (live) {
 				session.enableFilter("publishedContent");

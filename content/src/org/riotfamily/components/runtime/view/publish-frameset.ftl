@@ -26,32 +26,27 @@ function init(ids) {
 	
 	left.location.replace(previewUrl);
 	right.location.replace(liveUrl);
-}
-
-/**
- * Callback that is invoked when the preview version is loaded.
- */
-function previewLoaded() {
-	parent.riot.components.showPreviewFrame();
-	left.onscroll = function(e) {
-		right.scrollTo(left.scrollX, left.scrollY)
-	}
-	if (!leftShown) {
-		left.document.body.style.display = 'none';
-	}
-}
-
-/**
- * Callback that is invoked when the live version is loaded.
- */
-function liveLoaded() {
-	right.onscroll = function(e) {
-		left.scrollTo(right.scrollX, right.scrollY)
-	}
-	Event.observe(right, 'load', function() {
-		right.document.body.style.display = 'none';
+	
+	Event.observe('left', 'load', function() {
+		parent.riot.components.showPreviewFrame();
+		left.onscroll = function(e) {
+			right.scrollTo(left.scrollX, left.scrollY)
+		}
+		if (!leftShown) {
+			left.document.body.style.display = 'none';
+		}
 	});
-	publishToolbar.enable();
+	
+	Event.observe('right', 'load', function() {
+		right.onscroll = function(e) {
+			left.scrollTo(right.scrollX, right.scrollY)
+		}
+		Event.observe('right', 'load', function() {
+			right.document.body.style.display = 'none';
+		});
+		publishToolbar.enable();
+	});
+	
 }
 
 function show(showLeft, showRight) {
@@ -80,6 +75,8 @@ function show(showLeft, showRight) {
 }
 
 function hide() {
+	Event.stopObserving('right', 'load');
+	Event.stopObserving('left', 'load');
 	parent.riot.components.hidePreviewFrame();
 	publishToolbar.disable();
 	left.location.replace('about:blank');

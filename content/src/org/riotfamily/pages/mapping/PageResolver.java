@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.support.ServletUtils;
-import org.riotfamily.core.security.AccessController;
+import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.config.SystemPageType;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
@@ -90,23 +90,23 @@ public final class PageResolver {
 	}
 
 	private static Page resolvePage(HttpServletRequest request) {
-		Site site = getSite(request);
-		if (site == null) {
-			return null;
-		}
-		String lookupPath = getLookupPath(request);
-		Page page = ContentPage.loadBySiteAndPath(site, lookupPath);
-		if (page == null) {
-			page = resolveVirtualChildPage(site, lookupPath);
-		}
-		if (page == null || 
-				(page.getContentContainer().getLiveVersion() == null
-				&& !AccessController.isAuthenticatedUser())) {
-			
-			return null;
-		}
-		return page;
-	}
+        Site site = getSite(request);
+        if (site == null) {
+            return null;
+        }
+        String lookupPath = getLookupPath(request);
+        Page page = ContentPage.loadBySiteAndPath(site, lookupPath);
+        if (page == null) {
+            page = resolveVirtualChildPage(site, lookupPath);
+        }
+        if (page == null || 
+                (!page.getContentContainer().isPublished() && 
+                !EditModeUtils.isPreview(request, null))) {
+            
+            return null;
+        }
+        return page;
+    }
 	
 	private static Page resolveVirtualChildPage(Site site, String lookupPath) {
 		for (ContentPage parent : ContentPage.findByTypesAndSite(site.getSchema().getVirtualParents(), site)) {
