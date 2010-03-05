@@ -31,7 +31,7 @@ public class DirtyCheckSet<E> implements Set<E> {
 	}
 	
 	protected void dirty() {
-		dirty();
+		dirty = true;
 	}
 	
 	// -----------------------------------------------------------------------
@@ -40,6 +40,7 @@ public class DirtyCheckSet<E> implements Set<E> {
 
 	public Iterator<E> iterator() {
 		return new DirtyCheckIterator<E>(collection.iterator()) {
+			@Override
 			protected void dirty() {
 				DirtyCheckSet.this.dirty();
 			}
@@ -100,10 +101,12 @@ public class DirtyCheckSet<E> implements Set<E> {
 		return collection.toArray(a);
 	}
 	
+	@Override
 	public int hashCode() {
 		return collection.hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return collection.equals(o);
 	}
