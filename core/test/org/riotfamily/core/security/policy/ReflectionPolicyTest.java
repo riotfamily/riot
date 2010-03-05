@@ -52,7 +52,7 @@ public class ReflectionPolicyTest {
 		Assert.assertEquals(0, policy.getInvokedMethod());
 	}
 	
-	public class TestPolicy extends ReflectionPolicy {
+	public static class TestPolicy extends ReflectionPolicy {
 		
 		private int invokedMethod;
 		

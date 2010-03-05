@@ -365,7 +365,7 @@ public class FlashInfo {
 	/**
 	 * @author brooks
 	 */
-	public class PackedBitObj {
+	public static class PackedBitObj {
 
 		public int bitIndex = 0;
 

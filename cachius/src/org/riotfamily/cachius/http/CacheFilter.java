@@ -44,7 +44,7 @@ public class CacheFilter implements Filter {
 		}
 	}
 
-	private class FilterHandler extends AbstractHttpHandler {
+	private static class FilterHandler extends AbstractHttpHandler {
 
 		private FilterChain filterChain;
 
