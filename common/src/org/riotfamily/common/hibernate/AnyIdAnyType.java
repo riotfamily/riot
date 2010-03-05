@@ -384,7 +384,7 @@ public class AnyIdAnyType extends AbstractType implements
 			return old != null;
 		}
 		if (old == null) {
-			return current != null;
+			return true;
 		}
 		ObjectTypeCacheEntry holder = (ObjectTypeCacheEntry) old;
 		boolean[] idcheckable = new boolean[checkable.length - 1];
