@@ -71,8 +71,8 @@ public class ContentMapImpl extends DirtyCheckMap<String, Object>
 		if (o == this) {
 			return true;
 		}
-		ContentMapImpl other = (ContentMapImpl) o;
 		if (o instanceof ContentMapImpl) {
+			ContentMapImpl other = (ContentMapImpl) o;
 			return getCompositeId().equals(other.getCompositeId());
 		}
 		return false;
