@@ -59,8 +59,12 @@ public class Clipboard {
 		
 		if (selection != null) {
 			selection.resetObjects();
+			notification.setArgs(selection.size());
 		}
-		notification.setArgs(selection.size());
+		else {
+			notification.setArgs(0);
+		}
+		
 		command.paste(source, selection, context, parent, notification);
 		clear();
 	}
