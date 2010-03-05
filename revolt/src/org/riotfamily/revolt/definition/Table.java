@@ -15,6 +15,8 @@ package org.riotfamily.revolt.definition;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.riotfamily.common.util.Generics;
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * 
@@ -48,7 +50,7 @@ public class Table extends Identifier {
 	}
 
 	public void setColumns(List<Column> columns) {
-		this.columns = new ArrayList<Column>(columns.size());
+		this.columns = Generics.newArrayList();
 		primaryKeys.clear();
 		if (columns != null) {
 			for (Column column : columns) {
@@ -76,7 +78,7 @@ public class Table extends Identifier {
 	}
 	
 	public Column getColumn(String name) {
-		return (Column) columns.get(columns.indexOf(new Identifier(name)));
+		return columns.get(columns.indexOf(new Identifier(name)));
 	}
 	
 	public List<Column> getPrimaryKeys() {

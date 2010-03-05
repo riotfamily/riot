@@ -121,7 +121,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
     		Number maxPosition = (Number) query.uniqueResult();
     		
     		PropertyUtils.setProperty(entity, positionProperty,
-    			new Integer(maxPosition != null? maxPosition.intValue() + 1: 0)); 
+    				Integer.valueOf(maxPosition != null ? maxPosition.intValue() + 1 : 0)); 
     	}
     }
 
