@@ -56,12 +56,14 @@ public class FlashUpload extends FileUpload {
 
 	private int maxHeight;
 
+	@Override
 	protected RiotFile createRiotFile(MultipartFile multipartFile) 
 			throws IOException {
 		
 		return new RiotSwf(multipartFile);
 	}
 	
+	@Override
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
@@ -118,6 +120,7 @@ public class FlashUpload extends FileUpload {
 		this.maxHeight = maxHeight;
 	}
 
+	@Override
 	protected void validateFile(RiotFile file) {
 		RiotSwf swf = (RiotSwf) file;
 		if (!swf.isValid()) {
@@ -191,6 +194,7 @@ public class FlashUpload extends FileUpload {
 			}
 		}
 		
+		@Override
 		protected void renderTemplate(PrintWriter writer) {
 			if (getSwf() != null) {
 				double w = getSwf().getWidth();
@@ -199,8 +203,8 @@ public class FlashUpload extends FileUpload {
 					double scaleX = 150d / w; 
 					double scaleY = 150d / h;
 					double scale = Math.min(Math.min(scaleX, scaleY), 1);
-					setAttribute("previewWidth", new Integer((int) (w * scale)));
-					setAttribute("previewHeight", new Integer((int) (h * scale)));
+					setAttribute("previewWidth", (int) (w * scale));
+					setAttribute("previewHeight", (int) (h * scale));
 				}
 			}
 			super.renderTemplate(writer);
