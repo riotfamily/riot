@@ -161,7 +161,6 @@ class CommandContextHandler extends ListServiceHandler
 			if (selection != null) {
 				selection.resetObjects();
 			}
-			selection.resetObjects();
 			commandId = form.getAttribute("commandId");
 			DialogCommand command = (DialogCommand) getCommands().get(commandId);
 			result = command.handleInput(this, selection, input, 

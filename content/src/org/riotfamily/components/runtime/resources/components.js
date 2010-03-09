@@ -830,7 +830,7 @@ riot.components = (function() {
 		},
 		
 		init: function() {
-			var containerIds = $$('a.riot-container').invoke('getAttribute', 'rel');
+			var containerIds = $$('a.riot-container').invoke('readAttribute', 'rel');
 			ComponentEditor.getState(containerIds, setState);
 		},
 		

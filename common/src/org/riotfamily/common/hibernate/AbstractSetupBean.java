@@ -55,10 +55,8 @@ public abstract class AbstractSetupBean implements ApplicationContextAware, Init
 	
 	public final void afterPropertiesSet() {
 		if (tx == null) {
-			if (tx == null) {
-				tx = SpringUtils.beanOfTypeIncludingAncestors(
-						applicationContext, PlatformTransactionManager.class);
-			}
+			tx = SpringUtils.beanOfTypeIncludingAncestors(
+					applicationContext, PlatformTransactionManager.class);
 		}
 		try {
 			performSetup();
@@ -70,6 +68,7 @@ public abstract class AbstractSetupBean implements ApplicationContextAware, Init
 	
 	private void performSetup() throws Exception {
 		new ThreadBoundHibernateTemplate(sessionFactory).execute(new HibernateCallbackWithoutResult() {
+			@Override
 			public void doWithoutResult(Session session) throws Exception {
 				TransactionStatus status = tx.getTransaction(txdef);
 				try {

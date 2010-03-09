@@ -43,9 +43,6 @@ public final class FormatUtils {
 
 	private static NumberFormat numberFormat = new DecimalFormat("0.#");
 
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm");
-
 	private static final String OP_ADDITION = "+";
 
 	private static final String OP_SUBTRACTION = "-";
@@ -598,7 +595,7 @@ public final class FormatUtils {
 	}
 	
 	public static String formatIsoDate(Date date) {
-		return dateFormat.format(date);
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date);
 	}
 	
 	/**

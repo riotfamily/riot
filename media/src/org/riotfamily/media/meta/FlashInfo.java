@@ -167,7 +167,7 @@ public class FlashInfo {
 				size <<= 8;
 			}
 		}
-		return new Long(size).intValue();
+		return (int) size;
 	}
 	
 	public PackedBitObj readPackedBits(byte[] bytes, int byteMarker, int bitMarker, int length) {
@@ -365,7 +365,7 @@ public class FlashInfo {
 	/**
 	 * @author brooks
 	 */
-	public class PackedBitObj {
+	public static class PackedBitObj {
 
 		public int bitIndex = 0;
 

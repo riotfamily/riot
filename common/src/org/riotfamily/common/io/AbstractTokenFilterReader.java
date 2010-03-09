@@ -32,6 +32,7 @@ public abstract class AbstractTokenFilterReader extends FilterReader {
 		super(in);
 	}
 	
+	@Override
 	public int read() throws IOException {
 	
 		if (replaceIndex != -1) {
@@ -50,10 +51,10 @@ public abstract class AbstractTokenFilterReader extends FilterReader {
 		}
 				
 		// Read ahead to check if next character is '{'
-		char c = (char) super.read();
+		int c = super.read();
 		if (c != '{') {
 			// Just a single '$' so we set the replacement to the second char
-			replacement = Character.toString(c);
+			replacement = Character.toString((char) c);
 			replaceIndex = 0;
 			return '$';
 		}
@@ -62,10 +63,10 @@ public abstract class AbstractTokenFilterReader extends FilterReader {
 		StringBuffer buffer = new StringBuffer();
 		boolean endReached = false;
 		while (!endReached) {
-			c = (char) super.read();
+			c = super.read();
 			endReached = c == -1 || c == '}'; 
 			if (!endReached) {
-				buffer.append(c);
+				buffer.append((char) c);
 			}
 		}
 		
@@ -84,7 +85,8 @@ public abstract class AbstractTokenFilterReader extends FilterReader {
 	/**
      * @see Reader#read(char[], int, int)
      */
-    public final int read(char[] cbuf, int off, int len) throws IOException {
+    @Override
+	public final int read(char[] cbuf, int off, int len) throws IOException {
         for (int i = 0; i < len; i++) {
             final int ch = read();
             if (ch == -1) {

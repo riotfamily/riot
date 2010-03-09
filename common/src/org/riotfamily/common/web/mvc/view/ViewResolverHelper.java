@@ -51,7 +51,7 @@ public class ViewResolverHelper {
         }
 
         try {
-			this.viewNameTranslator = (RequestToViewNameTranslator) beanFactory.getBean(
+			this.viewNameTranslator = beanFactory.getBean(
 					DispatcherServlet.REQUEST_TO_VIEW_NAME_TRANSLATOR_BEAN_NAME,
 					RequestToViewNameTranslator.class);
 		}
@@ -77,7 +77,7 @@ public class ViewResolverHelper {
 				viewName = viewNameTranslator.getViewName(request);
 			}
 			catch (Exception e) {
-				throw new ViewResolutionException(viewName, e);
+				throw new ViewResolutionException(null, e);
 			}
 		}
 		Locale locale = RequestContextUtils.getLocale(request);

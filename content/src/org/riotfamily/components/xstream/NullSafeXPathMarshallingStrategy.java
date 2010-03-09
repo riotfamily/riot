@@ -37,7 +37,7 @@ public class NullSafeXPathMarshallingStrategy extends
 		return new NullSafeXPathUnmarshaller(root, reader, converterLookup, mapper);
 	}
 	
-	private class NullSafeXPathUnmarshaller extends ReferenceByXPathUnmarshaller {
+	private static class NullSafeXPathUnmarshaller extends ReferenceByXPathUnmarshaller {
 
 		public NullSafeXPathUnmarshaller(Object root,
 				HierarchicalStreamReader reader,

@@ -22,7 +22,6 @@ import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.config.PageType;
 import org.riotfamily.pages.model.ContentPage;
-import org.riotfamily.pages.model.Site;
 import org.springframework.util.Assert;
 
 /**
@@ -46,23 +45,12 @@ public class PageFormInitializer implements FormInitializer {
 		PageType pageType = null;
 		SelectBox sb = null;
 		if (form.isNew())  {
-			ContentPage parentPage = null;
 			Object parent = FormScreen.getScreenContext(form).getParent();
-			Site site;
-			if (parent instanceof ContentPage) {
-				parentPage = (ContentPage) parent;
-				site = parentPage.getSite();
-				form.setAttribute("pageId", parentPage.getId());
-				form.setAttribute("siteId", site.getId());
-				addPathComponentField(form);
-			}
-			else if (parent instanceof Site) {
-				site = (Site) parent;
-				form.setAttribute("siteId", site.getId());
-			}
-			else {
-				site = Site.loadDefaultSite();
-			}
+			ContentPage parentPage = (ContentPage) parent;
+			form.setAttribute("pageId", parentPage.getId());
+			form.setAttribute("siteId", parentPage.getSite().getId());
+			addPathComponentField(form);
+			
 			List<? extends PageType> pageTypes = parentPage.getPageType().getChildTypes();
 			Assert.notEmpty(pageTypes, "Sitemap schema does not allow the creation of pages here");
 			sb = createPageTypeBox(form, pageTypes);

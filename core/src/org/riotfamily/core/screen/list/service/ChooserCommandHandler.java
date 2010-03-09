@@ -103,7 +103,7 @@ public class ChooserCommandHandler extends CommandContextHandler {
 		}
 	}
 	
-	private class ChooseCommand extends AbstractCommand {
+	private static class ChooseCommand extends AbstractCommand {
 
 		@Override
 		public boolean isEnabled(CommandContext context, Selection selection) {

@@ -136,6 +136,7 @@ public class NumberField extends TextField implements DHTMLElement,
 	 * So this method had to be overridden.
 	 * TODO Consider changing the parent class.
 	 */
+	@Override
 	protected void setTextFromValue() {
 	    if (getValue() instanceof String) {
 	        setText((String) getValue());
@@ -152,6 +153,7 @@ public class NumberField extends TextField implements DHTMLElement,
 	    }
 	}
 	       
+	@Override
 	protected void afterFormContextSet() {
 		Class<?> type = getEditorBinding().getPropertyType();
 		if (type == null || Object.class.equals(type)) {
@@ -165,7 +167,7 @@ public class NumberField extends TextField implements DHTMLElement,
 					|| type.equals(float.class)	
 					|| type.equals(double.class))) {
 			
-				precision = new Integer(2);
+				precision = 2;
 			}
 			if (type.isPrimitive()) {
 				setRequired(true);

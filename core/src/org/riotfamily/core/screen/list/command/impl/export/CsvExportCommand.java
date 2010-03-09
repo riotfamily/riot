@@ -30,6 +30,10 @@ public class CsvExportCommand extends AbstractExportCommand {
 	
 	private List<String> properties;
 	
+	public void setProperties(List<String> properties) {
+		this.properties = properties;
+	}
+	
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}

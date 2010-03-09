@@ -83,7 +83,7 @@ public class LogTable {
 		InsertData insert = new InsertData(TABLE_NAME);
 		insert.addEntry("module", changeSet.getModuleName());
 		insert.addEntry("change_set_id", changeSet.getId());
-		insert.addEntry("seq_nr", new Integer(changeSet.getSequenceNumber()));
+		insert.addEntry("seq_nr", changeSet.getSequenceNumber());
 		return insert.getScript(dialect, template);
 	}
 

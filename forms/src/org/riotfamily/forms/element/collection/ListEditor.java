@@ -326,8 +326,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 					new Object[] {new Integer(minSize)});
 		}
 		if (maxSize > 0 && size > maxSize) {
-			ErrorUtils.reject(this, "list.size.tooLarge", 
-					new Object[] {new Integer(maxSize)});
+			ErrorUtils.reject(this, "list.size.tooLarge", new Object[] {maxSize});
 		}
 	}
 		
