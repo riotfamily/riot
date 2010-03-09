@@ -20,6 +20,7 @@ public class ItemIndex {
 		Set<String> tags = item.getTags();
 		if (tags != null) {
 			for (String tag : tags) {
+				log.debug("Tagging item with {}", tag);
 				List<CacheItem> items = taggedItems.get(tag);
 				if (items == null) {
 					List<CacheItem> newItems = new ArrayList<CacheItem>();
@@ -51,8 +52,8 @@ public class ItemIndex {
 	}
 	
 	public void invalidate(String tag) {
-		log.debug("Invalidating items tagged with {}", tag);
 		if (tag != null) {
+			log.debug("Invalidating items tagged with {}", tag);
 			List<CacheItem> items = taggedItems.get(tag);
 			if (items != null) {
 				synchronized (items) {
