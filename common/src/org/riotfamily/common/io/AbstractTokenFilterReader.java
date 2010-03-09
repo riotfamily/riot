@@ -66,7 +66,7 @@ public abstract class AbstractTokenFilterReader extends FilterReader {
 			c = super.read();
 			endReached = c == -1 || c == '}'; 
 			if (!endReached) {
-				buffer.append(c);
+				buffer.append((char) c);
 			}
 		}
 		
