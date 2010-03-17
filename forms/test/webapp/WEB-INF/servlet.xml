@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="org.riotfamily.forms2" />
+    
+    <mvc:annotation-driven />
+        
+    <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+    
+    <bean id="multipartResolver" class="org.riotfamily.common.web.mvc.multipart.ProgressMonitoringMultipartResolver" />
+    
+    <bean id="resourceController" name="/resources/**" class="org.riotfamily.common.web.resource.ResourceController">
+        <property name="fileTypeMap">
+	        <bean id="fileTypeMap" class="org.riotfamily.common.io.MimetypesFileTypeMapFactoryBean">
+		        <property name="types">
+		            <list>
+		                <value>text/css css</value>
+		                <value>text/xml xml</value>
+		                <value>text/javascript js</value>
+		                <value>image/png png</value>
+		            </list>
+		        </property>
+		    </bean>
+        </property>
+        <property name="mappings">
+            <list>
+	            <bean class="org.riotfamily.common.web.resource.ResourceMapping">
+		            <property name="path" value="/" />
+		            <property name="location" value="classpath:/org/riotfamily/resources/" />
+		        </bean>
+	            <bean class="org.riotfamily.common.web.resource.ResourceMapping">
+		            <property name="path" value="/forms" />
+		            <property name="location" value="classpath:/org/riotfamily/forms2/resources/" />
+		        </bean>
+            </list>
+        </property>
+    </bean>
+    
+</beans>

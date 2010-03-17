@@ -4,8 +4,8 @@ libraries = [
 	c3p0: 'c3p0:c3p0:0.9.1.2',
 	slf4j: 'org.slf4j:slf4j-api:1.5.10',
 	log4j: 'log4j:log4j:1.2.14',
-	junit: 'junit:junit:4.7',
-	servlet_api: 'javax.servlet:servlet-api:2.4',
+	junit: 'junit:junit:4.8.1',
+	servlet_api: 'javax.servlet:servlet-api:2.5',
 	hibernate: 'org.hibernate:hibernate-core:3.3.2.GA',
 	hibernate_ehcache: 'org.hibernate:hibernate-ehcache:3.3.2.GA',
 	hibernate_annotations: 'org.hibernate:hibernate-annotations:3.4.0.GA',
@@ -34,7 +34,8 @@ libraries = [
 excludes = [
 	[group: 'javax.jms'],
 	[group: 'com.sun.jmx'],
-	[group: 'com.sun.jdmk']
+	[group: 'com.sun.jdmk'],
+	[group: 'org.mortbay.jetty', module: 'servlet-api']
 ]
 
 apply id: 'java'
