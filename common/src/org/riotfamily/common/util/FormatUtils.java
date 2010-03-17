@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.codehaus.jackson.JsonParser.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,11 @@ public final class FormatUtils {
 	private static NumberFormat numberFormat = new DecimalFormat("0.#");
 
 	private static ObjectMapper objectMapper = new ObjectMapper();
-
+	static {
+		objectMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		objectMapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
+	}
+	
 	private static final String OP_ADDITION = "+";
 
 	private static final String OP_SUBTRACTION = "-";
@@ -932,6 +937,9 @@ public final class FormatUtils {
 	}
 
 	public static <T> T parseJSON(String s, Class<T> type) {
+		if (s == null) {
+			return null;
+		}
 		try {
 			return objectMapper.readValue(s, type);
 		}
