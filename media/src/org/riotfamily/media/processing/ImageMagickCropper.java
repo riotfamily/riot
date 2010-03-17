@@ -24,8 +24,14 @@ public class ImageMagickCropper implements ImageCropper {
 
 	private ImageMagick imageMagick;
 	
+	private int quality = 92;
+	
 	public ImageMagickCropper(ImageMagick imageMagick) {
 		this.imageMagick = imageMagick;
+	}
+	
+	public void setQuality(int quality) {
+		this.quality = quality;
 	}
 
 	public void cropImage(File source, File dest, int width, int height,
@@ -44,8 +50,9 @@ public class ImageMagickCropper implements ImageCropper {
 			args.add("-page");
 			args.add("+0+0");
 		}
+		args.add("-strip");
 		args.add("-quality");
-		args.add("100");
+		args.add(String.valueOf(quality));
 		
 		args.add(dest.getAbsolutePath());
 		imageMagick.invoke(args);
