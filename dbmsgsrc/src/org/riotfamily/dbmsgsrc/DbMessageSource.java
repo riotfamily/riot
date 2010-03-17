@@ -86,14 +86,16 @@ public class DbMessageSource extends AbstractMessageSource {
 	}
 	
 	protected Message getMessage(MessageBundleEntry entry, Locale locale) {
-		Map<Locale, Message> messages = entry.getMessages();
-		if (messages == null) {
-			return null;
-		}
 		Message message = null;
-		while (message == null && locale != null) {
-			message = messages.get(locale);
-			locale = getFallbackLocale(locale);
+		Map<Locale, Message> messages = entry.getMessages();
+		if (messages != null) {
+			while (message == null && locale != null) {
+				message = messages.get(locale);
+				locale = getFallbackLocale(locale);
+			}
+		}
+		if (message == null) {
+			message = entry.getDefaultMessage();
 		}
 		return message;
 	}
@@ -114,19 +116,6 @@ public class DbMessageSource extends AbstractMessageSource {
 			return new Locale(lang);
 		}
 		return null;
-	}
-	
-	@Override
-	protected String getMessageFromParent(String code, Object[] args, Locale locale) {
-		String result = super.getMessageFromParent(code, args, locale);
-		if (result == null) {
-			MessageBundleEntry entry = MessageBundleEntry.loadByBundleAndCode(bundle, code);
-			Message message = entry.getDefaultMessage();
-			if (message != null) {
-				result = message.format(args, escapeSingleQuotes);
-			}
-		}
-		return result;
 	}
 	
 }
