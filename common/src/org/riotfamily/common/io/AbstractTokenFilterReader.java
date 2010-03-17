@@ -63,10 +63,10 @@ public abstract class AbstractTokenFilterReader extends FilterReader {
 		StringBuffer buffer = new StringBuffer();
 		boolean endReached = false;
 		while (!endReached) {
-			c = (char) super.read();
+			c = super.read();
 			endReached = c == -1 || c == '}'; 
 			if (!endReached) {
-				buffer.append(c);
+				buffer.append((char) c);
 			}
 		}
 		

@@ -31,9 +31,10 @@ public class ColorPicker extends AbstractTextElement
 
 	public ColorPicker() {
 		setStyleClass("text color-input");
-		setMaxLength(new Integer(6));
+		setMaxLength(6);
 	}
 
+	@Override
 	public void renderInternal(PrintWriter writer) {
 		super.renderInternal(writer);
 		TagWriter tag = new TagWriter(writer);

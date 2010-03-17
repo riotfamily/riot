@@ -26,7 +26,7 @@ import org.slf4j.MDC;
 public class DiagnosticContextFilter extends HttpFilterBean {
 
 	private static final String MDC_IS_CLEARED_ON_EACH_REQUEST = 
-		"MDC is cleared on each request";
+		"_MDC is cleared on each request";
 
 	private static final String URL = "URL";
 	

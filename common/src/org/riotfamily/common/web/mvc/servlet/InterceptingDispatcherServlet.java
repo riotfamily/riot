@@ -12,11 +12,13 @@
  */
 package org.riotfamily.common.web.mvc.servlet;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -56,19 +58,27 @@ public class InterceptingDispatcherServlet extends HeadDispatcherServlet {
 	}
 	
 	@Override
-	protected void doDispatch(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+	protected void service(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		
 		InterceptorChain chain = new InterceptorChain(request, response);
 		try {
 			if (chain.preHandle()) {
-				super.doDispatch(request, response);
+				super.service(request, response);
 				chain.postHandle();
 			}
 		}
-		catch (Exception ex) {
+		catch (ServletException ex) {
 			chain.handleException(ex);
 			throw ex;
+		}
+		catch (IOException ex) {
+			chain.handleException(ex);
+			throw ex;
+		}
+		catch (Exception ex) {
+			chain.handleException(ex);
+			throw new ServletException(ex);
 		}
 	}
 	

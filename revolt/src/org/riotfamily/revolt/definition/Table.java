@@ -76,7 +76,7 @@ public class Table extends Identifier {
 	}
 	
 	public Column getColumn(String name) {
-		return (Column) columns.get(columns.indexOf(new Identifier(name)));
+		return columns.get(columns.indexOf(new Identifier(name)));
 	}
 	
 	public List<Column> getPrimaryKeys() {

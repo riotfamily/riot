@@ -287,14 +287,11 @@ public class CachiusResponse implements HttpServletResponse {
         String language = locale.getLanguage();
         if ((language != null) && (language.length() > 0)) {
             String country = locale.getCountry();
-            StringBuilder sb = new StringBuilder(language);
             if (country != null && country.length() > 0) {
-                sb.append('-');
-                sb.append(country);
+                language += '-' + country;
             }
-            language = sb.toString();
+            setHeader("Content-Language", language);
         }
-        setHeader("Content-Language", language);
 	}
 	
 	public Locale getLocale() {

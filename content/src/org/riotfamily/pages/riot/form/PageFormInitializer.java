@@ -46,19 +46,11 @@ public class PageFormInitializer implements FormInitializer {
 		PageType pageType = null;
 		SelectBox sb = null;
 		if (form.isNew())  {
-			ContentPage parentPage = null;
-			Object parent = ScreenContextHolder.get().getParent();
-			if (parent instanceof ContentPage) {
-				parentPage = (ContentPage) parent;
-				Site site = parentPage.getSite();
-				form.setAttribute("pageId", parentPage.getId());
-				form.setAttribute("siteId", site.getId());
-				addPathComponentField(form);
-			}
-			else if (parent instanceof Site) {
-				Site site = (Site) parent;
-				form.setAttribute("siteId", site.getId());
-			}
+			ContentPage parentPage = (ContentPage) ScreenContextHolder.get().getParent();
+			form.setAttribute("pageId", parentPage.getId());
+			form.setAttribute("siteId", parentPage.getSite().getId());
+			addPathComponentField(form);
+			
 			List<? extends PageType> pageTypes = parentPage.getPageType().getChildTypes();
 			Assert.notEmpty(pageTypes, "Sitemap schema does not allow the creation of pages here");
 			sb = createPageTypeBox(form, pageTypes);

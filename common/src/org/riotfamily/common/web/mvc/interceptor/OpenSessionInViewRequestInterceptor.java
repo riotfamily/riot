@@ -23,6 +23,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 /**
  * RequestInterceper that adapts Spring's {@link OpenSessionInViewInterceptor}.
  */
+@Intercept(once=false)
 public class OpenSessionInViewRequestInterceptor extends OpenSessionInViewInterceptor
 		implements RequestInterceptor, Ordered {
 	

@@ -75,6 +75,8 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		xstream.registerConverter(new ComponentListConverter(mapper), 1);
 		xstream.registerConverter(new ComponentConverter(mapper), 2);
 		xstream.registerConverter(new ContentMapConverter(mapper), 1);
+		
+		xstream.setMarshallingStrategy(new NullSafeXPathMarshallingStrategy());
 	}
 	
 	private DataHolder createDataHolder(Content content) {
@@ -84,7 +86,6 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 	}
 	
 	public ContentMap unmarshal(Content owner, String xml) {
-		owner.getReferences().clear();
 		HierarchicalStreamReader reader = driver.createReader(new StringReader(
 				xml));
 		return (ContentMap) xstream.unmarshal(reader, null,
@@ -93,7 +94,6 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 	
 	public String marshal(ContentMap contentMap) {
 		Content owner = contentMap.getContent();
-		owner.getReferences().clear();
 		StringWriter sw = new StringWriter();
 		HierarchicalStreamWriter writer = driver.createWriter(sw);
 		xstream.marshal(contentMap, writer, createDataHolder(owner));
@@ -102,6 +102,6 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 	
 	public static void addReference(DataHolder dataHolder, Object ref) {
 		Content content = (Content) dataHolder.get("content");
-		content.getReferences().add(ref);
+		content.addReference(ref);
 	}
 }

@@ -144,8 +144,7 @@ riot.components = (function() {
 		},
 		
 		findComponentElements: function() {
-			this.componentElements = Selector.findChildElements(this.element, ['.riot-component']);
-			
+			this.componentElements = this.element.childElements().findAll(function(el) { return el.hasClassName('riot-component'); });
 		},
 			
 		insertOn: function() {
@@ -164,7 +163,8 @@ riot.components = (function() {
 					.removeClassName('riot-empty-list')
 					.enableLinks();
 				
-				delete this.insertButton.remove();
+				this.insertButton.remove();
+				this.insertButton = undefined;
 			}
 		},
 
@@ -830,7 +830,7 @@ riot.components = (function() {
 		},
 		
 		init: function() {
-			var containerIds = $$('object.riot-container > param[name=id]').invoke('getAttribute', 'value');
+			var containerIds = $$('a.riot-container').invoke('readAttribute', 'rel');
 			ComponentEditor.getState(containerIds, setState);
 		},
 		

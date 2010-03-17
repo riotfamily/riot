@@ -70,15 +70,7 @@
 	</override:add>
 	
 	<bean id="sitemapSchemaRepository" class="org.riotfamily.pages.config.SitemapSchemaRepository" />
-	
-	<bean id="defaultSiteCreator" class="org.riotfamily.pages.config.DefaultSiteCreator" depends-on="activeRecordInitializer">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
-	<bean class="org.riotfamily.pages.config.SystemPageSynchronizer" depends-on="defaultSiteCreator" >
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-	
+		
 	<bean class="org.riotfamily.pages.config.SystemPageSyncListener" />
 	
 	<bean id="pageSuffixSchema" class="org.riotfamily.pages.config.DefaultPageSuffixSchema">

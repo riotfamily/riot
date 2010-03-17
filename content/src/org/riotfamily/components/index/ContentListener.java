@@ -12,12 +12,11 @@
  */
 package org.riotfamily.components.index;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.hibernate.Session;
 import org.riotfamily.common.hibernate.EntityListener;
 import org.riotfamily.common.hibernate.TypedEntityListener;
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.components.model.Content;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +28,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class ContentListener extends TypedEntityListener<Content> implements ApplicationContextAware {
 
-	private List<ContentIndexer> indexers;
+	private Collection<ContentIndexer> indexers;
 	
 	private ApplicationContext applicationContext;
 
@@ -37,14 +36,9 @@ public class ContentListener extends TypedEntityListener<Content> implements App
 		this.applicationContext = applicationContext;
 	}
 	
-	private List<ContentIndexer> getIndexers() {
+	private Collection<ContentIndexer> getIndexers() {
 		if (indexers == null) {
-			indexers = Generics.newArrayList();
-			for (ContentIndexer indexer : SpringUtils.listBeansOfType(applicationContext, ContentIndexer.class)) {
-				if (indexer != this) {
-					indexers.add(indexer);
-				}
-			}
+			indexers = SpringUtils.listBeansOfType(applicationContext, ContentIndexer.class);
 		}
 		return indexers;
 	}

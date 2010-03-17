@@ -80,7 +80,7 @@ public class Site extends ActiveRecordBeanSupport {
 
 	public String getSchemaName() {
 		if (schemaName == null) {
-			schemaName = schemaRepository.getDefaultSchema().getName(); 
+			schemaName = schemaRepository.getDefaultSchemaName(); 
 		}
 		return schemaName;
 	}
@@ -297,12 +297,27 @@ public class Site extends ActiveRecordBeanSupport {
 		return query(Site.class, "from {}").setMaxResults(1).cache().load();
 	}
 	
+	public static Site loadOrCreateDefaultSite() {
+		Site site  = Site.loadDefaultSite();
+		if (site == null) {
+			site = new Site();
+			site.setLocale(Locale.getDefault());
+			site.setName("default");
+			site.save();
+		}
+		return site;
+	}
+	
 	public static Site loadByLocale(Locale locale) {
 		return query(Site.class, "from {} where locale = ?", locale).load();
 	}
 	
 	public static List<Site> findAll() {
 		return query(Site.class, "from {} order by position").cache().find();
+	}
+	
+	public static List<Site> findBySchema(SitemapSchema schema) {
+		return query(Site.class, "from {} where schemaName = ?", schema.getName()).find();
 	}
 	
 	public static Site loadByHostName(String hostName) {

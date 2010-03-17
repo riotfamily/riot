@@ -18,26 +18,26 @@ import java.util.Map;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.options.OptionsModel;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
-public class SitemapSchemaRepository implements ApplicationContextAware, OptionsModel {
+public class SitemapSchemaRepository implements OptionsModel {
 
 	private Map<String, SitemapSchema> schemas = Generics.newHashMap();
 
 	private SitemapSchema defaultSchema;
 	
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		for (SitemapSchema schema : applicationContext.getBeansOfType(SitemapSchema.class).values()) {
-			schemas.put(schema.getName(), schema);
-			if (defaultSchema == null) {
-				defaultSchema = schema;
-			}
+	public void addSchema(SitemapSchema schema) {
+		schemas.put(schema.getName(), schema);
+		if (defaultSchema == null) {
+			defaultSchema = schema;
 		}
 	}
 
 	public SitemapSchema getDefaultSchema() {
 		return defaultSchema;
+	}
+	
+	public String getDefaultSchemaName() {
+		return defaultSchema != null ? defaultSchema.getName() : null;
 	}
 	
 	public SitemapSchema getSchema(String id) {

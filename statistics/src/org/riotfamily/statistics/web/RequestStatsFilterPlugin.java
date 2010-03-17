@@ -65,7 +65,7 @@ public class RequestStatsFilterPlugin implements FilterPlugin {
 		}
 	}
 	
-	private class StatusResponseWrapper extends HttpServletResponseWrapper {
+	private static class StatusResponseWrapper extends HttpServletResponseWrapper {
 
 		private int status = HttpServletResponse.SC_OK;
 		

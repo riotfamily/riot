@@ -275,8 +275,7 @@ public class TextRenderer implements InitializingBean {
 			paddingLeft *= scale;
 			lineSpacing *= scale;
 			if (maxWidth != null) {
-				maxWidth = new Integer(maxWidth.intValue() * scale 
-						- paddingLeft - paddingRight);
+				maxWidth = maxWidth.intValue() * scale - paddingLeft - paddingRight;
 			}
 		}
 	}

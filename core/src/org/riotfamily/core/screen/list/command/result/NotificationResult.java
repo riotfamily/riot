@@ -122,7 +122,7 @@ public class NotificationResult implements CommandResult {
 		if (messageKey == null) {
 			messageKey = keyPrefix + ".message";
 		}
-		return titleKey;
+		return messageKey;
 	}
 	
 	public NotificationResult setMessage(String message) {

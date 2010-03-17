@@ -29,6 +29,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.WebApplicationContext;
@@ -53,6 +54,7 @@ public class CacheAnnotationTests {
 				wac.registerBeanDefinition("controller1", new RootBeanDefinition(TimeController.class));
 				wac.registerBeanDefinition("controller2", new RootBeanDefinition(CacheKeyController.class));
 				wac.registerBeanDefinition("controller3", new RootBeanDefinition(CustomCacheKeyController.class));
+				wac.registerBeanDefinition("controller4", new RootBeanDefinition(PathVariableController.class));
 				wac.refresh();
 				return wac;
 			}
@@ -114,12 +116,18 @@ public class CacheAnnotationTests {
 		assertTrue(key, key.startsWith("custom-cached"));
 	}
 	
+	@Test
 	public void nullPrefix() throws Exception {
 		String t1 = get("/custom/uncached");
 		assertTrue("Result must start with 'Uncached'", t1.startsWith("Uncached"));
 		Thread.sleep(10);
 		String t2 = get("/custom/uncached");
 		assertTrue("The two uncached results must differ", !t1.equals(t2));
+	}
+	
+	@Test
+	public void pathVariable() throws Exception {
+		assertEquals("bar", get("/path/foo/bar"));
 	}
 	
 	
@@ -210,6 +218,18 @@ public class CacheAnnotationTests {
 			out.write(CacheContext.getCacheKey());
 		}
 		
+	}
+	
+	@Controller
+	@RequestMapping("/path/*")
+	public static class PathVariableController {
+
+		@Cache
+		@RequestMapping("foo/{bar}")
+		public void foo(@PathVariable String bar, Writer out) throws Exception {
+			out.write(bar);
+		}
+				
 	}
 
 }

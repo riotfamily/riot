@@ -45,15 +45,14 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     }
 
     protected String getSelect() {
-    	return "distinct this";
+    	return "this";
     }
 
     protected String getFrom(ListParams params) {
     	StringBuilder from = new StringBuilder();
     	from.append(getEntityClass().getName());
     	from.append(" as this");
-    	HqlUtils.appendJoinsForSearch(from, "this", getSearchableProperties());    	    	
-    	return from.toString() ;
+    	return from.toString();
     }
     
     public void setSearch(String search) {
@@ -185,10 +184,9 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
 	protected void setFilterParameters(Query query, ListParams params) {
     	if (params.getFilter() instanceof Map) {
 			Map<String, ?> filterMap = (Map<String, ?>) params.getFilter();
-			for (String name : filterMap.keySet()) {
-				Object value = filterMap.get(name);
-				HibernateUtils.setParameter(query, 
-						name.replaceAll("\\.", "_dot_"), value);
+			for (Map.Entry<String, ?> entry: filterMap.entrySet()) {
+				String name = entry.getKey();
+				HibernateUtils.setParameter(query, name.replaceAll("\\.", "_dot_"), entry.getValue());
 			}
 		}
 		else {
@@ -201,7 +199,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     }
     
     protected final String getSearchWhereClause(ListParams params) {
-    	return HqlUtils.getSearchWhereClause("this", "search", getSearchableProperties());
+    	return HqlUtils.getSearchWhereClause(getEntityClass().getName(), "this", "search", getSearchableProperties());
     }
     
     protected String getOrderBy(ListParams params) {

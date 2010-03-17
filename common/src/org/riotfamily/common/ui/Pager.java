@@ -201,7 +201,7 @@ public class Pager {
 		return prevPage;
 	}
 	
-	public class PagerItem {
+	public static class PagerItem {
 
 		private int number;
 

@@ -214,7 +214,7 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 	}
 	
 	protected boolean isSupportedArgument(Annotation[] annotations, Class<?> type) {
-		return containsSupportedAnnotation(annotations) || isSupportedType(type);
+		return !containsIgnoredAnnotation(annotations) && (containsSupportedAnnotation(annotations) || isSupportedType(type));
 	}
 	
 	private boolean containsSupportedAnnotation(Annotation[] annotations) {
@@ -226,14 +226,27 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 		return false;
 	}
 	
+	private boolean containsIgnoredAnnotation(Annotation[] annotations) {
+		for (Annotation annotation : annotations) {
+			if (isIgnoredAnnotation(annotation)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private boolean isSupportedAnnotation(Annotation annotation) {
 		if (supportedAnnotations.contains(annotation.annotationType())) {
 			return true;
 		}
-		else if (!ignoredAnnotations.contains(annotation.annotationType())) {
+		else if (!isIgnoredAnnotation(annotation)) {
 			throw new IllegalStateException("Unsupported annotation: " + annotation); 
 		}
 		return false;
+	}
+	
+	private boolean isIgnoredAnnotation(Annotation annotation) {
+		return ignoredAnnotations.contains(annotation.annotationType());
 	}
 	
 	private boolean isSupportedType(Class<?> type) {

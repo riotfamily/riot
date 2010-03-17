@@ -46,6 +46,10 @@ public class FormErrors extends AbstractErrors {
 		this.messageCodesResolver = form.getFormContext().getMessageResolver()
 				.getMessageCodesResolver();
 	}
+	
+	public Form getForm() {
+		return form;
+	}
 
 	/**
 	 * Resolve the given error code into message codes.

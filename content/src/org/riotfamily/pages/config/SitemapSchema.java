@@ -23,8 +23,17 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
-public class SitemapSchema {
+public class SitemapSchema implements ApplicationContextAware, InitializingBean {
 
 	private String name;
 	
@@ -35,7 +44,32 @@ public class SitemapSchema {
 	private Map<String, PageType> typeMap = Generics.newHashMap();
 	
 	private Set<String> virtualParents = Generics.newHashSet();
+
+	private SitemapSchemaRepository repository;
 	
+	private TransactionTemplate transaction;
+	
+	@Autowired
+	public SitemapSchema(PlatformTransactionManager tx) {
+		transaction = new TransactionTemplate(tx);
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		repository = BeanFactoryUtils.beanOfTypeIncludingAncestors(applicationContext, SitemapSchemaRepository.class);
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		repository.addSchema(this);
+		transaction.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				for (Site site : Site.findBySchema(SitemapSchema.this)) {
+					syncSystemPages(site);
+				}
+				Site.loadOrCreateDefaultSite();
+			}
+		});
+	}
 
 	public String getName() {
 		return name;
@@ -132,5 +166,5 @@ public class SitemapSchema {
 	public boolean isValidChild(ContentPage parent, ContentPage child) {
 		return getChildTypes(parent).contains(child.getPageType());
 	}
-	
+
 }

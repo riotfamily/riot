@@ -35,7 +35,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
 	
     private boolean polymorph = true;
 
-    private String select = "distinct this";
+    private String select = "this";
     
     private String where;
 
@@ -121,7 +121,7 @@ public class HqlDao extends AbstractHqlDao implements Swapping {
     		Number maxPosition = (Number) query.uniqueResult();
     		
     		PropertyUtils.setProperty(entity, positionProperty,
-    			new Integer(maxPosition != null? maxPosition.intValue() + 1: 0)); 
+    				Integer.valueOf(maxPosition != null ? maxPosition.intValue() + 1 : 0)); 
     	}
     }
 
