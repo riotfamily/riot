@@ -17,7 +17,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.hibernate.ActiveRecordUtils;
-import org.riotfamily.common.web.cache.tags.CacheTagUtils;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +67,6 @@ public class DbMessageSource extends AbstractMessageSource {
 	
 	@Override
 	protected MessageFormat resolveCode(String code, Locale locale, String defaultMessage) {
-		CacheTagUtils.tag(Message.class);
 		MessageBundleEntry entry = getEntry(code, defaultMessage);
 		Message message = getMessage(entry, locale);
 		if (message != null) {
@@ -79,7 +77,6 @@ public class DbMessageSource extends AbstractMessageSource {
 	
 	@Override
 	protected String resolveCodeWithoutArguments(String code, Locale locale, String defaultMessage) {
-		CacheTagUtils.tag(Message.class);
 		MessageBundleEntry entry = getEntry(code, defaultMessage);
 		Message message = getMessage(entry, locale);
 		if (message != null) {
