@@ -80,8 +80,8 @@ public class ComponentList extends DirtyCheckList<Component>
 		if (o == this) {
 			return true;
 		}
-		ComponentList other = (ComponentList) o;
 		if (o instanceof ComponentList) {
+			ComponentList other = (ComponentList) o;
 			return getCompositeId().equals(other.getCompositeId());
 		}
 		return false;

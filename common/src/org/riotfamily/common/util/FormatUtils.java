@@ -42,8 +42,6 @@ public final class FormatUtils {
 
 	private static NumberFormat numberFormat = new DecimalFormat("0.#");
 
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm");
 	private static ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final String OP_ADDITION = "+";
@@ -195,6 +193,16 @@ public final class FormatUtils {
 		}
 		return propertyToTitleCase(s.replace('_', '-'));
 	}
+	
+	/**
+	 * <pre>
+	 * Foo bar -> fooBar
+	 * foo-bar -> fooBar
+	 * </pre>
+	 */
+	public static String toPropertyName(String s) {
+		return StringUtils.uncapitalize(fileNameToTitleCase(s).replace(" ", ""));
+	}
 
 	/**
 	 * <pre>
@@ -215,6 +223,7 @@ public final class FormatUtils {
 					sb.append('-');
 				}
 				c = Character.toLowerCase(c);
+				lastWasLower = false;
 			}
 			else {
 				lastWasLower = true;
@@ -598,7 +607,7 @@ public final class FormatUtils {
 	}
 	
 	public static String formatIsoDate(Date date) {
-		return dateFormat.format(date);
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date);
 	}
 	
 	/**

@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.riotfamily.cachius.invalidation.ItemIndex;
 
-public class Cache {
+public final class Cache {
 	
 	private Region region;
 	
