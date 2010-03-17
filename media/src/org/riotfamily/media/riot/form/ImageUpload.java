@@ -51,7 +51,7 @@ public class ImageUpload extends FileUpload {
 		
 	}
 	private static final FormResource PREVIEW_RESOURCE = new ScriptResource(
-			"riot-js/image-cropper.js", "Cropper",
+			"riot/image-cropper.js", "Cropper",
 			Resources.SCRIPTACULOUS_SLIDER,
 			new StylesheetResource("style/cropper.css"));
 

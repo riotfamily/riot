@@ -37,13 +37,13 @@ public final class Resources {
 			PROTOTYPE);
 		
 	public static final ScriptResource RIOT_DIALOG = 
-			new ScriptResource("riot-js/window/dialog.js", "riot.window.Dialog", 
+			new ScriptResource("riot/window/dialog.js", "riot.window.Dialog", 
 			PROTOTYPE);
 	
 	public static final ScriptResource RIOT_UTIL = 
-			new ScriptResource("riot-js/util.js", "RElement", PROTOTYPE);
+			new ScriptResource("riot/util.js", "RElement", PROTOTYPE);
 	
 	public static final ScriptResource RIOT_EFFECTS = 
-			new ScriptResource("riot-js/effects.js", "Effect.Remove", 
+			new ScriptResource("riot/effects.js", "Effect.Remove", 
 			SCRIPTACULOUS_EFFECTS);
 }

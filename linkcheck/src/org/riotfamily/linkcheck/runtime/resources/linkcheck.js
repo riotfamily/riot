@@ -3,7 +3,7 @@ var scripts = [
    	{src: riot.path + '/engine.js', test: 'dwr.engine'},
 	{src: riot.path + '/util.js', test: 'dwr.util'},
 	{src: riot.path + '/interface/BrokenLinkService.js', test: 'BrokenLinkService'},
-	{src: 'riot-js/util.js'},
+	{src: 'riot/util.js'},
 	{src: 'brokenlinks.js'}
 ];   					
 riot.Resources.loadScriptSequence(scripts);

@@ -27,7 +27,7 @@ public class ImageRadioButtonGroup extends RadioButtonGroup
 		implements DHTMLElement, ResourceElement {
 
 	protected static final FormResource RESOURCE = new ScriptResource(
-			"riot-js/checkbox.js", "RiotCheckboxGroup", Resources.PROTOTYPE);
+			"riot/checkbox.js", "RiotCheckboxGroup", Resources.PROTOTYPE);
 	
 	private String imageProperty;
 	

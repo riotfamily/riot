@@ -5,13 +5,13 @@
 	<@riot.scripts srcs=[
 		"prototype/prototype.js",
 		"scriptaculous/effects.js",
-		"riot-js/resources.js", 
-		"riot-js/window/dialog.js",
-		"riot-js/notification/notification.js"] 
+		"riot/resources.js", 
+		"riot/window/dialog.js",
+		"riot/notification/notification.js"] 
 	/>
 	<@riot.stylesheets hrefs=[
-		"riot-js/window/dialog.css",
-		"riot-js/notification/notification.css",
+		"riot/window/dialog.css",
+		"riot/notification/notification.css",
 		"style/common.css", "style/logo.css", "style/login.css"]
 	/>
 </head>
