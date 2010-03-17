@@ -12,7 +12,7 @@
  */
 package org.riotfamily.common.collection;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

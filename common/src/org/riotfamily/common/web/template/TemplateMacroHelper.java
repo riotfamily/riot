@@ -96,11 +96,13 @@ public class TemplateMacroHelper {
 			boolean deepest = definitions.isEmpty();
 			definitions.add(new TemplateDefinition(body, env));
 			
+			// Include the template to be extended
 			env.include(file, "UTF-8", true);
 			
 			if (deepest) {
 				// Template was not extended
 				Writer out = new NullWriter();
+				
 				// Go from deepest up to root template
 				Iterator<TemplateDefinition> it = definitions.iterator();
 				while (it.hasNext()) {

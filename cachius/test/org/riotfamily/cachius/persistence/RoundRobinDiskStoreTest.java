@@ -12,11 +12,12 @@
  */
 package org.riotfamily.cachius.persistence;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,10 +49,10 @@ public class RoundRobinDiskStoreTest {
 		LinkedList<String> paths = new LinkedList<String>();
 		for (int i = 0; i < 10; i++) {
 			String path = store.getFile().getPath();
-			Assert.assertTrue(path.startsWith(baseDir.getPath()));
+			assertTrue(path.startsWith(baseDir.getPath()));
 			paths.add(path.substring(baseDir.getPath().length()));
 		}
-		Assert.assertEquals("/000/000/000", paths.getFirst());
-		Assert.assertEquals("/000/002/001", paths.getLast());
+		assertEquals("/000/000/000", paths.getFirst());
+		assertEquals("/000/002/001", paths.getLast());
 	}
 }

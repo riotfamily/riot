@@ -24,10 +24,12 @@ public class MinifyScriptController extends AbstractMinifyController {
 		this.compressor = compressor;
 	}
 	
+	@Override
 	protected Compressor getCompressor() {
 		return compressor;
 	}
 	
+	@Override
 	protected String getContentType() {
 		return "text/javascript";
 	}

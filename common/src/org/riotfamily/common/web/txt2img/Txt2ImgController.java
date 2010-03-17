@@ -86,6 +86,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		this.compressor = compressor;
 	}
 	
+	@Override
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
 		String queryString = request.getQueryString();
 		if (queryString != null) {
@@ -98,6 +99,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		return extension.equals("js");
 	}
 	
+	@Override
 	public long getLastModified(HttpServletRequest request) {
 		return lastModified;
 	}

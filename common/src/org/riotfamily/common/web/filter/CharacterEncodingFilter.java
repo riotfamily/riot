@@ -74,6 +74,7 @@ public class CharacterEncodingFilter extends OncePerRequestFilter {
 		this.forceResponseEncoding = forceEncoding;
 	}
 
+	@Override
 	protected void doFilterInternal(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -93,6 +94,7 @@ public class CharacterEncodingFilter extends OncePerRequestFilter {
 			super(response);
 		}
 
+		@Override
 		public void setCharacterEncoding(String encoding) {
 			if (forceResponseEncoding) {
 				super.setCharacterEncoding(CharacterEncodingFilter.this.encoding);	
@@ -103,6 +105,7 @@ public class CharacterEncodingFilter extends OncePerRequestFilter {
 			encodingSpecified = true;
 		}
 		
+		@Override
 		public void setContentType(String type) {
 			String mimeType = null;
 			String charset = null;
