@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.support.ServletUtils;
-import org.riotfamily.core.security.AccessController;
+import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.config.SystemPageType;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
@@ -100,8 +100,8 @@ public final class PageResolver {
 			page = resolveVirtualChildPage(site, lookupPath);
 		}
 		if (page == null || 
-				(page.getContentContainer().getLiveVersion() == null
-				&& !AccessController.isAuthenticatedUser())) {
+				(!page.getContentContainer().isPublished() && 
+				!EditModeUtils.isPreview(request, null))) {
 			
 			return null;
 		}
