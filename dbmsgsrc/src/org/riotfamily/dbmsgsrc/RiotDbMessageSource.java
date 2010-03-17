@@ -86,7 +86,7 @@ public class RiotDbMessageSource extends DefaultCodeRevealingMessageSource {
 		MessageBundleEntry entry = dbMessageSource.getEntry(code, null);
 		if (entry != null) {
 			return getContextPath() + handlerUrlResolver.getUrlForHandler(
-					"popupFormController", "riotMessageBundleEntry", entry.getId());
+					"editMessageFormController", entry.getId());
 
 		}
 		return null;
