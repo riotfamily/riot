@@ -1,7 +1,4 @@
 dependencies {
-	compile project(':core'), libs(['json_lib'])
-	
+	compile project(':core'), libs(['jackson'])
 	provided libs(['servlet_api'])
-	
-	runtime project(':jslibs:swfobject')
 }

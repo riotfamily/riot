@@ -29,8 +29,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.json.JSONObject;
-
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -45,6 +44,7 @@ public final class FormatUtils {
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm");
+	private static ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final String OP_ADDITION = "+";
 
@@ -914,6 +914,20 @@ public final class FormatUtils {
 	 * Returns the given object as JSON String.
 	 */
 	public static String toJSON(Object obj) {
-		return JSONObject.fromObject(obj).toString();
+		try {
+			return objectMapper .writeValueAsString(obj);
+		}
+		catch (IOException e) {
+			throw ExceptionUtils.wrapThrowable(e);
+		}
+	}
+
+	public static <T> T parseJSON(String s, Class<T> type) {
+		try {
+			return objectMapper.readValue(s, type);
+		}
+		catch (IOException e) {
+			throw ExceptionUtils.wrapThrowable(e);
+		}
 	}
 }

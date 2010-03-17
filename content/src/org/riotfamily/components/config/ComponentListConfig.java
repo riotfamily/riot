@@ -16,8 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 
 public class ComponentListConfig {
@@ -99,7 +98,7 @@ public class ComponentListConfig {
 	}
 	
 	public String toJSON() {
-		return JSONObject.fromObject(this).toString();
+		return FormatUtils.toJSON(this);
 	}
 
 }

@@ -21,8 +21,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.forms.DHTMLElement;
@@ -60,7 +58,7 @@ public class AjaxResponse implements FormListener {
 	
 	private Element focusedElement;
 	
-	private JSONArray json = new JSONArray();
+	private List<Object> json = Generics.newArrayList();
 	
 	public AjaxResponse(HttpServletResponse response) throws IOException {
 		response.setContentType("application/json;charset=UTF-8");

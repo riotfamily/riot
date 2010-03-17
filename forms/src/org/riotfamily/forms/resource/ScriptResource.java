@@ -15,6 +15,7 @@ package org.riotfamily.forms.resource;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -57,10 +58,17 @@ public class ScriptResource implements FormResource {
 		vistor.visitScript(this);
 	}
 	
+	@Override
+	public String toString() {
+		return FormatUtils.toJSON(this);
+	}
+	
+	@Override
 	public int hashCode() {
 		return url.hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;

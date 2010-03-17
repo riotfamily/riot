@@ -14,8 +14,6 @@ package org.riotfamily.components.meta;
 
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteProperty;
 import org.riotfamily.common.util.FormatUtils;
@@ -40,10 +38,7 @@ public class ComponentMetaData {
 			this.name = data.get("name");
 			this.icon = data.get("icon");
 			this.form = data.get("form");
-			JSONObject json = JSONObject.fromObject(data.get("defaults"));
-			if (!json.isNullObject()) {
-				this.defaults = json;
-			}
+			defaults = FormatUtils.parseJSON(data.get("defaults"), Map.class); 
 		}
 		if (this.name == null) {
 			this.name = FormatUtils.xmlToTitleCase(type);

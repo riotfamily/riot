@@ -13,12 +13,11 @@
 package org.riotfamily.forms.element;
 
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import net.sf.json.JSONFunction;
-import net.sf.json.JSONObject;
-
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.DHTMLElement;
@@ -33,7 +32,7 @@ import org.riotfamily.forms.resource.ScriptResource;
 public class TinyMCE extends AbstractTextElement
 		implements ResourceElement, DHTMLElement {
 
-	static Map<String, String> defaults = Generics.newHashMap();
+	static Map<String, Object> defaults = Generics.newHashMap();
 	static {
 		defaults.put("skin", "riot");
 		defaults.put("theme", "advanced");
@@ -46,7 +45,7 @@ public class TinyMCE extends AbstractTextElement
 	
 	private int rows = 10;
 
-	private Map<String, ?> config;
+	private Map<String, Object> config;
 	
 	private String initScript;
 	
@@ -59,10 +58,11 @@ public class TinyMCE extends AbstractTextElement
 		this.rows = rows;
 	}
 	
-	public void setConfig(Map<String, ?> config) {
+	public void setConfig(Map<String, Object> config) throws IOException {
 		this.config = config;
 	}
 	
+	@Override
 	public void renderInternal(PrintWriter writer) {
 		TagWriter tag = new TagWriter(writer);
 		if (isEnabled()) {
@@ -87,20 +87,23 @@ public class TinyMCE extends AbstractTextElement
 	}
 
 	private String getJsonConfig() {
-		JSONObject json = JSONObject.fromObject(defaults);
+		Map<String, Object> merged = Generics.newHashMap();
+		merged.putAll(defaults);
 		if (config != null) {
-			json.putAll(config);
+			merged.putAll(config);
 		}
-		json.element("mode", "exact");
-		json.element("elements", getId());
-		json.element("language", getFormContext().getLocale().getLanguage().toLowerCase());
-		json.element("add_unload_trigger", false);
-		json.element("submit_patch", false);
-		json.element("strict_loading_mode", true);
-		json.element("relative_urls", Boolean.FALSE);
-		json.element("theme_advanced_layout_manager", "RowLayout");
-		json.element("theme_advanced_containers_default_align", "left");
-		json.element("theme_advanced_container_mceeditor", "mceeditor");
+		merged.put("mode", "exact");
+		merged.put("elements", getId());
+		merged.put("language", getFormContext().getLocale().getLanguage().toLowerCase());
+		merged.put("add_unload_trigger", false);
+		merged.put("submit_patch", false);
+		merged.put("strict_loading_mode", true);
+		merged.put("relative_urls", false);
+		merged.put("theme_advanced_layout_manager", "RowLayout");
+		merged.put("theme_advanced_containers_default_align", "left");
+		merged.put("theme_advanced_container_mceeditor", "mceeditor");
+		return FormatUtils.toJSON(merged);
+		/*
 		json.element("setupcontent_callback", 
 				new JSONFunction(new String[] {"id", "body", "doc"},
 				"if (window.registerKeyHandler) registerKeyHandler(doc);"));
@@ -111,6 +114,7 @@ public class TinyMCE extends AbstractTextElement
 				+ ".replace(/&lt;!--(.|\\n)*?\\smso-(.|\\n)*?--&gt;/g, '');"));
 		
 		return json.toString();
+		*/
 	}
 	
 	public String getInitScript() {
