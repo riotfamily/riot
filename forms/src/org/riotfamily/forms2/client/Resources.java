@@ -38,7 +38,8 @@ public final class Resources {
 
 	public static final ScriptResource RIOT_FORMS = 
 			new ScriptResource("forms/form.js", "submitEvent", 
-			PROTOTYPE);
+			PROTOTYPE, 
+			new StylesheetResource("forms/form.css"));
 	
 	public static final ScriptResource RIOT_DIALOG = 
 			new ScriptResource("riot/window/dialog.js", "riot.window.Dialog", 

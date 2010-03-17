@@ -73,7 +73,7 @@ public class PasswordField extends Element {
 		protected void renderInternal(Html html, PasswordField pw) {
 			if (setNew) { 
 				if (alreadySet) {
-					html.button("Keep old password");
+					//html.button("Keep old password");
 				}
 				html.label("Enter new password");
 				html.input("password", password);
@@ -83,7 +83,7 @@ public class PasswordField extends Element {
 				html.input("password", confirmation).addClass("confirm");
 			}
 			else {
-				html.button("Change password");
+				//html.button("Change password");
 			}
 		}
 	}

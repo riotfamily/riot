@@ -40,7 +40,7 @@ public class FileUpload extends Element {
 		@Override
 		protected void renderInternal(Html html, FileUpload element) {
 			html.div("progress");
-			html.elem("iframe").attr("name", getId() + "_target");
+			html.elem("iframe").cssClass("upload").attr("name", getId() + "_target");
 			renderForm(html);
 		}
 		
@@ -67,8 +67,7 @@ public class FileUpload extends Element {
 				Html html = ui.update(this, ".progress");
 				UploadProgress progress = ProgressMonitor.getProgress(uploadId);
 				if (progress != null) {
-					html.div("track").style("border:1px solid black;width:100px")
-						.div("bar").style("background:red;height:16px;width: %s%%", progress.getProgress());
+					html.div("track").div("bar").style("width: %s%%", progress.getProgress());
 				}
 				else {
 					html.messageText("Waiting for data");

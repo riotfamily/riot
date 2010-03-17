@@ -12,6 +12,7 @@
  */
 package org.riotfamily.forms2.element;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms2.base.Element;
 import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.TypedState;
@@ -48,8 +49,9 @@ public class Binding extends Element {
 
 		@Override
 		protected Html wrap(Html html, Binding element) {
-			html.div("label").messageText(element.target);
-			return html;
+			return html.div("labeled")
+				.div("label").messageText(element.target, FormatUtils.propertyToTitleCase(element.target))
+				.up();
 		}
 		
 		@Override

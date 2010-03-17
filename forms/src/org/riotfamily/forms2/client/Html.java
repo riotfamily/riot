@@ -55,8 +55,16 @@ public class Html extends DomBuilder {
 		return text(message(defaultText));
 	}
 	
+	public Html messageText(String labelKey, String defaultText) {
+		return text(message(labelKey, defaultText));
+	}
+	
 	public Html messageAttr(String name, String defaultText) {
 		return attr(name, message(defaultText));
+	}
+	
+	public Html messageAttr(String name, String labelKey, String defaultText) {
+		return attr(name, message(labelKey, defaultText));
 	}
 	
 	public Html div() {
@@ -65,6 +73,30 @@ public class Html extends DomBuilder {
 	
 	public Html div(String cssClass) {
 		return div().cssClass(cssClass);
+	}
+	
+	public Html ul() {
+		return elem("ul");
+	}
+	
+	public Html li() {
+		return elem("li");
+	}
+	
+	public Html table() {
+		return elem("table");
+	}
+	
+	public Html tr() {
+		return elem("tr");
+	}
+	
+	public Html td() {
+		return elem("td");
+	}
+	
+	public Html td(String className) {
+		return td().cssClass(className);
 	}
 	
 	public Html label(String defaultText) {
@@ -100,8 +132,12 @@ public class Html extends DomBuilder {
 			.attr("value", value);
 	}
 	
-	public Html button(String defaultText) {
-		return input("button", message(defaultText));
+	public Html button(String handler) {
+		return button(handler, null);
+	}
+	
+	public Html button(String handler, String exp) {
+		return elem("button").cssClass(handler).propagate("click", handler, exp);
 	}
 	
 	public Html submit(String defaultText) {

@@ -30,6 +30,8 @@ public class ListEditor extends Element {
 
 	private Element itemEditor;
 	
+	private boolean sortable = true;
+	
 	public ListEditor() {
 	}
 	
@@ -71,13 +73,16 @@ public class ListEditor extends Element {
 			for (ElementState itemState : itemStates) {
 				renderItem(items, list, itemState);
 			}
-			html.button("Add").propagate("click", "add");
+			html.button("add");
 		}
 		
 		private void renderItem(Html html, ListEditor list, ElementState itemState) {
-			Html li = html.elem("li");
-			itemState.render(li, list.itemEditor);
-			li.button("Remove").propagate("click", "remove", "Element.up(this).previousSiblings().length");
+			Html tr = html.li().table().tr();
+			if (list.sortable) {
+				tr.td("handle").div();
+			}
+			itemState.render(tr.td("itemElement"), list.itemEditor);
+			tr.td("removeButton").button("remove", "Element.up(this, 'li').previousSiblings().length");
 		}
 		
 		public void add(UserInterface ui, ListEditor list, String value) {

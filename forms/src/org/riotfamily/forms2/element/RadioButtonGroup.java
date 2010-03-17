@@ -22,6 +22,7 @@ public class RadioButtonGroup extends SingleSelectElement {
 
 	@Override
 	protected void buildOptionsDom(List<Option> options, Html html) {
+		html = html.elem("fieldset");
 		for (Option option : options) {
 			html.input("radio", option.getValue())
 				.attr("name", getId())

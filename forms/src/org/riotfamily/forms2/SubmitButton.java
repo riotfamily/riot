@@ -46,7 +46,7 @@ public class SubmitButton extends Element {
 	protected static class State extends TypedState<SubmitButton> {
 		@Override
 		public void renderInternal(Html html, SubmitButton button) {
-			html.button(button.label).propagate("click", "click");
+			html.button("click").messageText(button.label);
 		}
 		
 		public void click(UserInterface ui, SubmitButton button, String value) {
