@@ -10,11 +10,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.core.resource;
+package org.riotfamily.common.i18n;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.i18n.CodeRevealingMessageSource;
 import org.riotfamily.common.web.cache.CacheKeyAugmentor;
 
 /**

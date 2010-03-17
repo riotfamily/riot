@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.core.resource;
+package org.riotfamily.common.web.resource;
 
 import java.io.FilterReader;
 import java.io.Reader;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * Interface that allows to filter resources that are served by a 
  * ResourceController.
  * 
- * @see org.riotfamily.core.resource.ResourceController#setFilters
+ * @see org.riotfamily.common.web.resource.ResourceController#setFilters
  */
 public interface ResourceFilter {
 

@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.core.resource;
+package org.riotfamily.common.web.resource;
 
 import java.io.IOException;
 import java.io.Reader;

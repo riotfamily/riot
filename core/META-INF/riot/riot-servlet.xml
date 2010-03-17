@@ -129,7 +129,7 @@
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/core/runtime/view/error.ftl" />
 	</bean>
 
-    <bean id="cacheKeyAugmentor" class="org.riotfamily.core.resource.CodeRevelationCacheKeyAugmentor">
+    <bean id="cacheKeyAugmentor" class="org.riotfamily.common.i18n.CodeRevelationCacheKeyAugmentor">
 		<constructor-arg ref="messageSource" />
 	</bean>
 	
@@ -384,7 +384,7 @@
 	<!--  Resources -->
 	
 	<util:list id="resourceFilters">
-		<bean class="org.riotfamily.core.resource.PropertyResourceFilter">
+		<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
 			<property name="match" value="/**/*.css" />
 			<property name="properties" ref="cssProperties" />
 		</bean>
@@ -396,33 +396,33 @@
 	
 	<util:list id="resourceMappings">
 		<!-- Allow styles to be overwritten in WEB-INF/style -->
-		<bean class="org.riotfamily.core.resource.ResourceMapping">
+		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
 			<property name="path" value="/style/" />
 			<property name="location" value="/WEB-INF/riot-config/style/" />
 		</bean>
 		<!-- Allow any resource to be overwritten in WEB-INF/resources -->
-		<bean class="org.riotfamily.core.resource.ResourceMapping">
+		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="/WEB-INF/riot-config/resources/" />
 		</bean>
 		<!-- Riot core resources -->
-		<bean class="org.riotfamily.core.resource.ResourceMapping">
+		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/core/runtime/resources/" />
 		</bean>
 		<!-- Resources from the jslib jars -->
-		<bean class="org.riotfamily.core.resource.ResourceMapping">
+		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/resources/" />
 		</bean>
 		<!-- Form resources -->
-		<bean class="org.riotfamily.core.resource.ResourceMapping">
+		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
 			<property name="path" value="/form/" />
 			<property name="location" value="classpath:/org/riotfamily/forms/runtime/resources/" />
 		</bean>
 	</util:list>
 	
-	<bean id="resourceController" name="/resources/{version}/**" class="org.riotfamily.core.resource.ResourceController">
+	<bean id="resourceController" name="/resources/{version}/**" class="org.riotfamily.common.web.resource.ResourceController">
 		<property name="fileTypeMap" ref="fileTypeMap" />
 		<property name="filters" ref="resourceFilters" />
 		<property name="mappings" ref="resourceMappings" />
