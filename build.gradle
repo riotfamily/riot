@@ -156,6 +156,7 @@ gradle.taskGraph.whenReady {taskGraph ->
 				project.configurations.compile.addDependency(it)
 			}
 		}
+		eclipseProject.natureNames << 'org.springframework.ide.eclipse.core.springnature'
 	}
 	if (!taskGraph.hasTask(':release')) {
 		allprojects {
