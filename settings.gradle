@@ -1,4 +1,2 @@
 include 'cachius', 'revolt', 'common', 'forms', 'core', 'media', 'content',
-		'dbmsgsrc', 'crawler', 'search', 'linkcheck',
-		'jslibs:prototype', 'jslibs:scriptaculous', 'jslibs:riot', 
-		'jslibs:jscalendar', 'jslibs:tiny_mce', 'jslibs:swfobject'
+		'dbmsgsrc', 'crawler', 'search', 'linkcheck', 'jslibs'

@@ -57,77 +57,78 @@ allprojects {
 
 subprojects {
 	
-	if (!isMetaProject(project)) {
-		apply id: 'java'
-		apply id: 'maven'
-		
-		release.dependsOn(uploadArchives)
-		
-		sourceCompatibility = 1.5
-		targetCompatibility = 1.5
-		
-		configurations.compile.transitive = true
-		configurations.testCompile.transitive = true
-				
-		// Add a 'provided' configuration
-		configurations {
-			provided {
-				description = 'Dependencies provided by the JDK or a container'
-				transitive = false
-			}
+	apply id: 'java'
+	apply id: 'maven'
+	
+	release.dependsOn(uploadArchives)
+	
+	sourceCompatibility = 1.5
+	targetCompatibility = 1.5
+	
+	configurations.compile.transitive = true
+	configurations.testCompile.transitive = true
+			
+	// Add a 'provided' configuration
+	configurations {
+		provided {
+			description = 'Dependencies provided by the JDK or a container'
+			transitive = false
 		}
-		
-		// Include 'provided' dependencies when compiling tests
-		configurations.testCompile.extendsFrom(configurations.provided)
-		
-		sourceSets {
-			main {
-				// No separate 'resources' dir - we keep everything under src 
-				resources.srcDirs = java.srcDirs = ['src']
-				
-				// Add the 'provided' configuration to the classpath
-				compileClasspath = compileClasspath + configurations.provided
-			}
-			test {
-				resources.srcDirs = java.srcDirs = ['test']
-			}
+	}
+	
+	// Include 'provided' dependencies when compiling tests
+	configurations.testCompile.extendsFrom(configurations.provided)
+	
+	sourceSets {
+		main {
+			// No separate 'resources' dir - we keep everything under src 
+			resources.srcDirs = java.srcDirs = ['src']
+			
+			// Add the 'provided' configuration to the classpath
+			compileClasspath = compileClasspath + configurations.provided
 		}
-		
-		// Add META-INF directory
-        metaInf << fileTree('META-INF')
+		test {
+			// If the module contains web-tests, there is an extra 'src' 
+			// and a 'webapp' dir under /test. Otherwise the sources are 
+			// located directly under /test.
+			resources.srcDirs = java.srcDirs = [file('test/src').exists() ? 'test/src' : 'test']
+		}
+	}
+	
+	// Add META-INF directory
+    metaInf << fileTree('META-INF')
 
-        // Add project-name and version to the manifest 
-        manifest.mainAttributes(
-        		'Implementation-Title': project.name, 
-				'Implementation-Version': project.version,
-				'Implementation-Vendor': 'riotfamily.org'
-		)
+    // Add project-name and version to the manifest 
+    manifest.mainAttributes(
+    		'Implementation-Title': project.name, 
+			'Implementation-Version': project.version,
+			'Implementation-Vendor': 'riotfamily.org'
+	)
 
-		// Create source artifacts for Java projects
-		if (isJavaProject(project)) {
-			dependencies {
-				testCompile libs(['junit', 'spring_test'])
-			}
-			task sourceJar(type: Jar) {
-				from sourceSets.main.allSource 
-				classifier = 'sources'
-			}
-			artifacts {
-				archives sourceJar
-			}
+	// Create source artifacts for Java projects
+	if (isJavaProject(project)) {
+		dependencies {
+			testCompile libs(['junit', 'spring_test'])
 		}
-		
-		if (rootProject.hasProperty('artifactoryUser') && rootProject.hasProperty('artifactoryPass')) {
-	        uploadArchives {
-				repositories {
-					mavenDeployer {
-						//repository(url: "file://$System.env.HOME/.m2/repository")
-						repository(url: "http://repository.riotfamily.org/releases") {
-							authentication(userName: artifactoryUser, password: artifactoryPass)
-						}
-						snapshotRepository(url: "http://repository.riotfamily.org/snapshots") {
-							authentication(userName: artifactoryUser, password: artifactoryPass)
-						}
+		task sourceJar(type: Jar) {
+			from sourceSets.main.allSource 
+			classifier = 'sources'
+		}
+		artifacts {
+			archives sourceJar
+		}
+	}
+	
+	if (rootProject.hasProperty('artifactoryUser') && rootProject.hasProperty('artifactoryPass')) {
+        uploadArchives {
+			repositories {
+				mavenDeployer {
+					//repository(url: "file://$System.env.HOME/.m2/repository")
+					repository(url: "http://repository.riotfamily.org/releases") {
+						authentication(userName: artifactoryUser, password: artifactoryPass)
+					}
+					snapshotRepository(url: "http://repository.riotfamily.org/snapshots") {
+						authentication(userName: artifactoryUser, password: artifactoryPass)
 					}
 				}
 			}
@@ -145,7 +146,7 @@ jar.enabled = false
 
 gradle.taskGraph.whenReady {taskGraph ->
 	if (taskGraph.hasTask(':eclipse')) {
-		javaProjects().each{
+		subprojects.each{
 			// Collect source folders
 			project.sourceSets.main.java.srcDirs(it.sourceSets*.java.srcDirs.flatten())
 			
@@ -175,22 +176,9 @@ task wrapper(type: Wrapper) {
 // Utility methods
 //----------------------------------------------------------------------------
 
-def isMetaProject(Project project) {
-	project?.name == 'jslibs'
-}
-
-def isJavaScriptProject(Project project) {
-	isMetaProject(project.parent)
-}
-
 def isJavaProject(Project project) {
-	!isMetaProject(project) && !isJavaScriptProject(project)
+	project?.name != 'jslibs'
 }
-
-def javaProjects() {
-	subprojects.findAll{ isJavaProject(it) }
-}
-
 
 def modules(String key, String pattern, String... names) {
 	libs = [:]

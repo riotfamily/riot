@@ -1,7 +1,0 @@
-processResources {
-	subPackage = 'riot-js'
-}
-
-dependencies {
-	runtime project(':jslibs:scriptaculous') 
-}
