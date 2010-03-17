@@ -210,6 +210,8 @@
 	<bean id="templateMacroHelper" class="org.riotfamily.common.web.template.TemplateMacroHelperFactory" />
 	
 	<bean class="org.riotfamily.common.web.mvc.scope.FlashModelExposer" />
+	
+	<bean class="org.riotfamily.core.view.ScreenContextExposer" />
 		
 	<!-- Security -->
 
