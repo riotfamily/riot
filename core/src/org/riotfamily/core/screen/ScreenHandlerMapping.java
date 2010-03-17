@@ -13,12 +13,15 @@
 package org.riotfamily.core.screen;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.mvc.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.core.security.AccessController;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class ScreenHandlerMapping extends AbstractHandlerMapping
 		implements ReverseHandlerMapping {
@@ -61,8 +64,10 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 					screen, request, objectId, parentId, parentIsNode);
 			
 			AccessController.assertIsGranted("viewScreen", screen, context);
-			ScreenContext.Binding.expose(context);
-			return screen;
+			
+			HandlerExecutionChain chain = new HandlerExecutionChain(screen);
+			chain.addInterceptor(new ScreenContextInterceptor(context));
+			return chain;
 		}
 		
 		return null;
@@ -96,5 +101,27 @@ public class ScreenHandlerMapping extends AbstractHandlerMapping
 
 	public String getUrlForHandler(Class<?> handlerClass, Object... vars) {
 		throw new UnsupportedOperationException();
+	}
+	
+	private static class ScreenContextInterceptor extends HandlerInterceptorAdapter {
+		
+		private ScreenContext context;
+		
+		ScreenContextInterceptor(ScreenContext context) {
+			this.context = context;
+		}
+
+		@Override
+		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+			ScreenContextHolder.set(context);
+			return true;
+		}
+		
+		@Override
+		public void afterCompletion(HttpServletRequest request, 
+				HttpServletResponse response, Object handler, Exception ex) {
+			
+			ScreenContextHolder.remove();
+		}
 	}
 }

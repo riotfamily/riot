@@ -14,7 +14,7 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.List;
 
-import org.riotfamily.core.screen.form.FormScreen;
+import org.riotfamily.core.screen.ScreenContextHolder;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.TextField;
@@ -47,21 +47,17 @@ public class PageFormInitializer implements FormInitializer {
 		SelectBox sb = null;
 		if (form.isNew())  {
 			ContentPage parentPage = null;
-			Object parent = FormScreen.getScreenContext(form).getParent();
-			Site site;
+			Object parent = ScreenContextHolder.get().getParent();
 			if (parent instanceof ContentPage) {
 				parentPage = (ContentPage) parent;
-				site = parentPage.getSite();
+				Site site = parentPage.getSite();
 				form.setAttribute("pageId", parentPage.getId());
 				form.setAttribute("siteId", site.getId());
 				addPathComponentField(form);
 			}
 			else if (parent instanceof Site) {
-				site = (Site) parent;
+				Site site = (Site) parent;
 				form.setAttribute("siteId", site.getId());
-			}
-			else {
-				site = Site.loadDefaultSite();
 			}
 			List<? extends PageType> pageTypes = parentPage.getPageType().getChildTypes();
 			Assert.notEmpty(pageTypes, "Sitemap schema does not allow the creation of pages here");

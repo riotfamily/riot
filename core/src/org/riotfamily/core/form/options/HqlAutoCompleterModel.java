@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.ScreenContextHolder;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
 import org.riotfamily.forms.element.suggest.AutocompleterModel;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -43,7 +43,7 @@ public class HqlAutoCompleterModel extends HibernateDaoSupport
 		Query query = getSession().createQuery(hql);
 		query.setParameter("search", "%" + search  + "%");
 		if (hql.indexOf(":parent") != -1) {
-			query.setParameter("parent", ScreenContext.Binding.get(request).getParent());	
+			query.setParameter("parent", ScreenContextHolder.get().getParent());	
 		}
 		return query.list();
 	}

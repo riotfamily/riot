@@ -32,6 +32,7 @@ import org.riotfamily.core.screen.GroupScreen;
 import org.riotfamily.core.screen.ItemScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.ScreenContextHolder;
 import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.ScreenUtils;
 import org.riotfamily.core.screen.Screenlet;
@@ -134,18 +135,12 @@ public class FormScreen extends AjaxFormController
 	protected Form createForm(HttpServletRequest request) {
 		Form form = formRepository.createForm(getFormId());
 		form.addButton("save");
-		ScreenContext context = ScreenContext.Binding.get(request);
-		form.setAttribute("screenContext", context);
 		return form;
-	}
-
-	public static ScreenContext getScreenContext(Form form) {
-		return form.getAttribute("screenContext");
 	}
 	
 	@Override
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		return ScreenContext.Binding.get(request).getObject();
+		return ScreenContextHolder.get().getObject();
 	}
 	
 	@Override
@@ -157,7 +152,7 @@ public class FormScreen extends AjaxFormController
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject("form", sw.toString());
 		
-		ScreenContext context = ScreenContext.Binding.get(request);
+		ScreenContext context = ScreenContextHolder.get();
 		if (context.getObject() != null) {
 			if (childScreens != null) {
 				List<ScreenLink> childLinks = Generics.newArrayList();
@@ -176,7 +171,7 @@ public class FormScreen extends AjaxFormController
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
-		ScreenContext context = ScreenContext.Binding.get(request);
+		ScreenContext context = ScreenContextHolder.get();
 		try {
 			return handleFormSubmissionInternal(form, request, response, context);
 		}

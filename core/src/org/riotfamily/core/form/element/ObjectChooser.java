@@ -18,9 +18,9 @@ import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.screen.DefaultScreenContext;
 import org.riotfamily.core.screen.ListScreen;
+import org.riotfamily.core.screen.ScreenContextHolder;
 import org.riotfamily.core.screen.ScreenRepository;
 import org.riotfamily.core.screen.ScreenUtils;
-import org.riotfamily.core.screen.form.FormScreen;
 import org.riotfamily.core.screen.list.ChooserSettings;
 import org.riotfamily.forms.element.select.AbstractChooser;
 import org.springframework.context.ApplicationContext;
@@ -87,7 +87,7 @@ public class ObjectChooser extends AbstractChooser
 				id = String.valueOf(getForm().getAttribute(rootIdAttribute));
 			}
 			else {
-				Object root = FormScreen.getScreenContext(getForm()).getParent();
+				Object root = ScreenContextHolder.get().getParent();
 				if (rootProperty != null) {
 					root = PropertyUtils.getProperty(root, rootProperty);
 				}

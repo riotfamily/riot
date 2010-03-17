@@ -55,7 +55,7 @@ public class GroupScreen extends AbstractRiotScreen implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		ScreenContext context = ScreenContext.Binding.get(request);
+		ScreenContext context = ScreenContextHolder.get();
 		ModelAndView mv = new ModelAndView(viewName);
 		List<ScreenLink> links = Generics.newArrayList();
 		for (RiotScreen screen : childScreens) {

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.ScreenContextHolder;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
 import org.riotfamily.forms.element.suggest.AutocompleterModel;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -70,7 +70,7 @@ public class DistinctAutoCompleterModel extends HibernateDaoSupport
 				.setParameter("search", "%" + search  + "%");
 		
 		if (parentProperty != null) {
-			query.setParameter("parentId", ScreenContext.Binding.get(request).getParentId());	
+			query.setParameter("parentId", ScreenContextHolder.get().getParentId());	
 		}
 		return query.list();
 	}

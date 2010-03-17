@@ -35,6 +35,7 @@ import org.riotfamily.core.screen.AbstractRiotScreen;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
+import org.riotfamily.core.screen.ScreenContextHolder;
 import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.ScreenUtils;
 import org.riotfamily.core.screen.list.command.Command;
@@ -295,7 +296,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 			HttpServletResponse response) throws Exception {
 
 		
-		ScreenContext screenContext = ScreenContext.Binding.get(request);
+		ScreenContext screenContext = ScreenContextHolder.get();
 		ChooserSettings chooserSettings = new ChooserSettings(request);
 		ModelAndView mv = new ModelAndView(viewName);
 		

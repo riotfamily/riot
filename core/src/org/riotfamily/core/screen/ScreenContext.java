@@ -17,20 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.core.dao.RiotDao;
 
 public interface ScreenContext {
-
-	public class Binding {
-		
-		private static final String REQUEST_ATTR = "context";
-		
-		public static void expose(ScreenContext context) {
-			context.getRequest().setAttribute(REQUEST_ATTR, context);
-		}
-		
-		public static ScreenContext get(HttpServletRequest request) {
-			return (ScreenContext) request.getAttribute(REQUEST_ATTR);
-		}
-		
-	}
 	
 	public String getObjectId();
 
