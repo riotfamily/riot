@@ -9,20 +9,34 @@ It consists of different *screens* that are organized in a hierarchical way.
 Riot comes with three built-in screen types: groups, lists and forms. Of course
 you are free to create your own screen types if needed.
 
+
 Lists
 =====
 
 List screens allow you to browse or search your data and can be used to add
 new content.
 
-Data Access
------------
+.. highlight:: xml
 
-Columns
--------
+Let's start with an example::
 
-Commands
---------
+    <s:list id="blogPosts" icon="newspaper">
+        <s:dao>
+            <bean class="org.riotfamily.core.dao.hibernate.HqlDao" autowire="constructor"
+                p:entityClass="eg.example.BlogPost" 
+                p:search="title" />
+        </s:dao>
+        <s:columns>
+            <s:column property="title" />
+            <s:column property="author.name" />
+        </s:columns>
+    </s:list>
+    
+The declaration above does several things: First, it assigns an ID that can be
+used to reference the screen from somewhere else. It also assigns an icon that
+will be displayed in the breadcrumb navigation. Next, it defines a DAO that is
+used to retrieve the list items. And finally it defines what columns should be
+displayed.
 
 Forms
 =====
