@@ -18,7 +18,10 @@ var RiotList = Class.create({
 		}
 		
 		Event.observe(window, 'resize', this.resizeColumns.bind(this));
-		Event.observe(document, 'click', this.clearSelection.bind(this));
+		document.observe('click', function() {
+			this.clearSelection();
+			this.updateCommandStates();
+		}.bind(this));
 
 		if (commandTarget && $(commandTarget)) {
 			this.commandTarget = new Element('div');
@@ -223,7 +226,6 @@ var RiotList = Class.create({
 			if (tr.hasClassName('highlight')) {
 				tr.addClassName('highlight-selected');	
 			}
-			this.updateCommandStates();
 		}
 	},
 	
@@ -234,16 +236,14 @@ var RiotList = Class.create({
 			});
 			tr.removeClassName('selected');
 			tr.removeClassName('highlight-selected');
-			this.updateCommandStates();
 		}
 	},
 	
 	clearSelection: function() {
 		this.selection = [];
 		this.tbody.select('tr.selected').invoke('removeClassName', 'selected');
-		this.updateCommandStates();
 	},
-	
+		
 	updateCommandStates: function() {
 		if (this.commandButtons) {
 			ListService.getEnabledCommands(this.key, this.selection, 
@@ -316,7 +316,7 @@ var RiotList = Class.create({
 		},
 		
 		notification: function(list, result) {
-			riot.notification.show(result);;
+			riot.notification.show(result);
 		},
 		
 		reload: function(list, result) {
@@ -458,6 +458,7 @@ var ListRow = {
 				this.list.clearSelection();
 			}
 			this.list.toggleSelection(this);
+			this.list.updateCommandStates();
 			ev.stop();
 		},
 		
@@ -573,6 +574,7 @@ var ListRow = {
 			if (this.expanded) {
 				this.setExpanded(false);
 				this.childRows.each(this.list.unselectRow.bind(this.list));
+				this.list.updateCommandStates();
 				this.removeChildren();
 			}
 		}
@@ -652,11 +654,3 @@ dwr.engine.setWarningHandler(function(err, ex) {
 		console.log(err);
 	}
 });
-
-dwr.engine.setPreHook(function() {
-	if (top.setLoading) top.setLoading(true);
-});
-
-dwr.engine.setPostHook(function() {
-   if (top.setLoading) top.setLoading(false);
-}); 
