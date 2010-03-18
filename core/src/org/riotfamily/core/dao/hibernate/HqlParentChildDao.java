@@ -68,13 +68,7 @@ public class HqlParentChildDao extends HqlDao implements Hierarchy,
 		PropertyUtils.setProperty(entity, parentProperty, parent);
 		super.save(entity, parent);
 	}
-	
-	@Override
-	public void delete(Object entity, Object parent) {
-		PropertyUtils.setProperty(entity, parentProperty, null);
-		super.delete(entity, parent);
-	}
-	
+		
     @Override
 	protected String getWhereClause(Object parent, ListParams params) {
         StringBuilder sb = new StringBuilder();
