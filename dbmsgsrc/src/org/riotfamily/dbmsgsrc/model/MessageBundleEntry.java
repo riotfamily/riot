@@ -70,6 +70,7 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 	}
 
 	@NaturalId
+	@Column(nullable=false)
 	public String getCode() {
 		return code;
 	}
