@@ -74,8 +74,9 @@ public class RiotDbMessageSource extends DefaultCodeRevealingMessageSource {
 			if (message != null) {
 				sb.append(message);
 			}
-			sb.append("<span class=\"messageCode\" onclick=\"window.open('")
-				.append(url).append("','dbmsgsrc','width=650,height=400');return false\"></span>");
+			sb.append("<span class=\"messageCode\" onclick=\"")
+				.append("new riot.window.Dialog({url: '").append(url).append("', ")
+				.append("title: '").append(codes[0]).append("', closeButton: true, minHeight: 150});return false\"></span>");
 			
 			return sb.toString();
 		}
