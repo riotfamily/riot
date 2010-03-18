@@ -152,6 +152,17 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 		}
 		return messages.size() > 1;
 	}
+	
+	@Transient
+	public String getText(Locale locale) {
+		if (messages != null) {
+			Message message = messages.get(locale);
+			if (message != null) {
+				return message.getText();
+			}
+		}
+		return null;
+	}
 
 	// ------------------------------------------------------------------------
 	// Active record methods

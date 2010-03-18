@@ -51,9 +51,7 @@ public class EditMessageFormController implements Controller {
 		ModelAndView mav = new ModelAndView(formView);
 		mav.addObject("code", entry.getCode());
 		Locale locale = RequestContextUtils.getLocale(request);
-		if (entry.getMessages() != null && entry.getMessages().get(locale) != null) {
-			mav.addObject("message", entry.getMessages().get(locale));
-		}
+		mav.addObject("message", entry.getText(locale));
 		return mav;
 	}
 	
