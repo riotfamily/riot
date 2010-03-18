@@ -8,7 +8,7 @@
 		</div>
 	</#list>
 	<div class="buttons">
-		<span><input type="submit" value="Apply" /></span>
-		<span><input type="button" onclick="list.reset(); return false" value="Reset" /></span>
+		<span><input type="submit" value="${messageResolver.getMessage('label.list.filter.apply', 'Apply')}" /></span>
+		<span><input type="button" onclick="list.reset(); return false" value="${messageResolver.getMessage('label.list.filter.reset', 'Reset')}" /></span>
 	</div>
 </form>
