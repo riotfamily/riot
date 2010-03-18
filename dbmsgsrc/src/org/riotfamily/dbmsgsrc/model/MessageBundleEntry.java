@@ -166,5 +166,9 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 				.set("code", code))
 				.uniqueResult();
 	}
+	
+	public static MessageBundleEntry load(Long id) {
+		return load(MessageBundleEntry.class, id);
+	}
 
 }
