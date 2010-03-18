@@ -268,7 +268,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 						filterForm.setBeanClass(HashMap.class);
 					}
 					searchField = new TextField();
-					searchField.setLabel("Search");
+					searchField.setLabel(applicationContext.getMessage("label.list.filter.search", null, "Search", locale));
 					filterForm.addElement(searchField);
 				}
 			}
