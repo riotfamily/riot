@@ -13,6 +13,7 @@
 package org.riotfamily.forms2.base;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.riotfamily.forms2.client.FormResource;
 import org.riotfamily.forms2.value.Value;
@@ -103,6 +104,11 @@ public abstract class Element {
 	 * resources like CSS or JavaScript files.
 	 */
 	public Collection<FormResource> getResources() {
+		FormResource res = getResource();
+		return res != null ? Collections.singleton(res) : null;
+	}
+
+	protected FormResource getResource() {
 		return null;
 	}
 	

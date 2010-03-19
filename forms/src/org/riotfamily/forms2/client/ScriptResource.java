@@ -30,7 +30,11 @@ public class ScriptResource implements FormResource {
 	private Collection<FormResource> dependencies;
 	
 	public ScriptResource(String url) {
-		this(url, null);
+		this.url = url;
+	}
+	
+	public ScriptResource(String url, FormResource... dependencies) {
+		this(url, null, dependencies);
 	}
 	
 	public ScriptResource(String url, String test, FormResource... dependencies) {

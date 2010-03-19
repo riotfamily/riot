@@ -8,10 +8,18 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-   <context:component-scan base-package="org.riotfamily.forms2" />
+    <context:component-scan base-package="org.riotfamily.forms2" />
        
-   <util:map id="backingObject" />
+    <util:map id="backingObject">
+        <entry key="list">
+            <util:list>
+		        <value>AAA</value>
+		        <value>BBB</value>
+		        <value>CCC</value>
+            </util:list>
+        </entry>
+    </util:map>
    
-   <bean id="shutdown" class="java.lang.Object" />
+    <bean id="shutdown" class="java.lang.Object" />
    
 </beans>

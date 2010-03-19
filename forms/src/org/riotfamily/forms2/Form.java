@@ -26,11 +26,16 @@ import org.riotfamily.forms2.client.Action;
 import org.riotfamily.forms2.client.ClientEvent;
 import org.riotfamily.forms2.value.Value;
 import org.riotfamily.forms2.value.ValueFactory;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.ConversionServiceFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 public class Form {
 
 	private FormElement formElement = new FormElement();
+	
+	private ConversionService conversionService = ConversionServiceFactory.createDefaultConversionService();
 	
 	public Form add(Element element) {
 		formElement.add(element);
@@ -72,27 +77,35 @@ public class Form {
 		return ui.getActions();
 	}
 	
-	private static void invoke(Object obj, String name, Object... params) {
-		for (Method method : obj.getClass().getMethods()) {
-			if (name.equals(method.getName()) && typesAreCompatible(params, method.getParameterTypes())) {
-				ReflectionUtils.invokeMethod(method, obj, params);
-				return;
+	private void invoke(Object obj, String name, Object... params) {
+		Method method = getMethod(obj.getClass(), name);
+		checkAndConvertTypes(params, method.getParameterTypes());				
+		ReflectionUtils.invokeMethod(method, obj, params);
+	}
+	
+	private static Method getMethod(Class<?> clazz, String name) {
+		Method result = null;
+		for (Method method : clazz.getMethods()) {
+			if (name.equals(method.getName())) {
+				Assert.isNull(result, "Class" + clazz + " must not define more than one method named " + name);
+				result = method;
 			}
 		}
-		throw new IllegalArgumentException("No such method '" + name + "' in " + obj.getClass());
+		Assert.notNull(result, "No such method '" + name + "' in " + clazz);
+		return result;
 	}
 
-	private static boolean typesAreCompatible(Object[] params, Class<?>[] types) {
-		if (params.length != types.length) {
-			return false;
-		}
+	private void checkAndConvertTypes(Object[] params, Class<?>[] types) {
+		Assert.isTrue(params.length == types.length, "Wrong number of parameters");
 		for (int i = 0; i < params.length; i++) {
 			Object param = params[i];
 			if (param != null && !types[i].isInstance(param)) {
-				return false;
+				Assert.isTrue(conversionService.canConvert(param.getClass(), types[i]), 
+						"Cant convert " + param.getClass() + " into " + types[i]);
+				
+				params[i] = conversionService.convert(param, types[i]);
 			}
 		}
-		return true;
 	}
 	
 }

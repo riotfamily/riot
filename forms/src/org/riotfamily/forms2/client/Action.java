@@ -12,6 +12,10 @@
  */
 package org.riotfamily.forms2.client;
 
+import java.util.Map;
+
+import org.riotfamily.common.util.Generics;
+
 public class Action {
 	
 	private String id;
@@ -20,12 +24,19 @@ public class Action {
 	
 	private String command;
 	
+	private Map<String, Object> data = Generics.newHashMap();
+	
 	public Action(String id, String selector, String command) {
 		this.id = id;
 		this.selector = selector;
 		this.command = command;
 	}
-
+	
+	public Action set(String name, Object value) {
+		data.put(name, value);
+		return this;
+	}
+			
 	public String getId() {
 		return id;
 	}
@@ -38,4 +49,7 @@ public class Action {
 		return command;
 	}
 	
+	public Map<String, Object> getData() {
+		return data;
+	}
 }

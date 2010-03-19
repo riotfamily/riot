@@ -1,24 +1,28 @@
 if (!window.riot) var riot = {}; // riot namespace
 
-riot.form = (function () {
+riot.form = (function() {
 
 	var handlers = {
-		insert: function (el, action) {
-			el.insert(action.html);
+		invoke: function(el, data) {
+			el[data.method].apply(el, data.args);
 		},
-		remove: function (el, action) {
-			el.remove();
+		each: function(el, data) {
+			el.select(data.selector).each(function(e) {
+				e[data.method].apply(e, data.args);	
+			});
 		},
-		replace: function (el, action) {
-			el.replace(action.html);
+		moveUp: function(el) {
+			var prev = el.previous();
+	        if (prev) prev.insert({before: el.remove()});
 		},
-		update: function (el, action) {
-			el.update(action.html);
+		moveDown: function(el) {
+			var next = el.next();
+	        if (next) next.insert({after: el.remove()});
 		},
-		schedule: function (el, action) {
+		schedule: function(el, data) {
 			setTimeout(function() {
-				riot.form.submitEvent(el, action.handler, action.value);
-			}, action.millis);
+				riot.form.submitEvent(el, data.handler, data.value);
+			}, data.millis);
 		}
 	}
 	
@@ -28,7 +32,7 @@ riot.form = (function () {
 			if (a.selector) {
 				el = el.down(a.selector);
 			}
-			handlers[a.command](el, a);
+			handlers[a.command](el, a.data);
 		}
 	}
 	
@@ -46,11 +50,15 @@ riot.form = (function () {
 	
 	return {
 		
+		loadStyleSheet: function(url) {
+			$$('head')[0].insert(new Element('link', {rel: 'stylesheet', type: 'text/css', href: url}));
+		},
+		
 		processActions: function(actions) {
 			$A(actions).each(processAction);
 		},
-	
-		submitEvent: function (el, handler, value) {
+			
+		submitEvent: function(el, handler, value) {
 			el = $(el);
 			new Ajax.Request(window.location.href, {
 				onSuccess: function(transport) {

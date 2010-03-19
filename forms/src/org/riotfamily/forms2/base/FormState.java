@@ -52,6 +52,7 @@ public class FormState extends ContainerElement.State {
 		return type;
 	}
 		
+	@Override
 	public Html newHtml() {
 		return new Html(idGenerator);
 	}
@@ -101,10 +102,9 @@ public class FormState extends ContainerElement.State {
 	
 	public String render(FormElement formElement) {
 		Html html = new Html(idGenerator);
-		String resourceLoader = contextPath + resourcePath + "riot/resources.js";
-		html.script("if (!(window.riot && riot.Resources)) document.write('<script src=\"%s\"></scr'+'ipt>');", resourceLoader);
-		html.script("riot.Resources.setBasePath('%s')", contextPath + resourcePath);
-		html.script(LoadingCodeGenerator.generate(formElement.getResources()));
+		LoadingCodeGenerator loader = new LoadingCodeGenerator(formElement.getResources(), contextPath + resourcePath);
+		html.script(loader.scripts());
+		html.script(loader.stylesheets());
 		Html div = html.div("form").id(getId());
 		render(div, formElement);
 		return html.toString();

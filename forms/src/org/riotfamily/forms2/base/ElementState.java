@@ -71,6 +71,10 @@ public abstract class ElementState implements Serializable {
 		return enabled && (parent == null || parent.isEnabled());
 	}
 	
+	protected Html newHtml() {
+		return formState.newHtml();
+	}
+	
 	public abstract void render(Html html, Element element);
 	
 	public abstract void populate(Value value, Element element);

@@ -52,7 +52,7 @@ public class PasswordField extends Element {
 		public void updatePassword(UserInterface ui, String value) {
 			password = value;
 			//calculate strength
-			buildStrength(ui.replace(this, ".strength"));
+			//buildStrength(ui.replace(this, ".strength"));
 		}
 		
 		public void updateConfirmation(UserInterface ui, String value) {

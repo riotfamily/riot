@@ -44,6 +44,12 @@ public class FileUpload extends Element {
 			renderForm(html);
 		}
 		
+		private Html renderForm() {
+			Html html = newHtml();
+			renderForm(html);
+			return html;
+		}
+		
 		private void renderForm(Html html) {
 			html.multipartForm("?uploadId=" + uploadId)
 				.attr("target", getId() + "_target")
@@ -64,7 +70,7 @@ public class FileUpload extends Element {
 		 */
 		public void updateProgress(UserInterface ui, FileUpload element, String uploadId) {
 			if (uploadId.equals(this.uploadId)) {
-				Html html = ui.update(this, ".progress");
+				Html html = newHtml();
 				UploadProgress progress = ProgressMonitor.getProgress(uploadId);
 				if (progress != null) {
 					html.div("track").div("bar").style("width: %s%%", progress.getProgress());
@@ -72,6 +78,7 @@ public class FileUpload extends Element {
 				else {
 					html.messageText("Waiting for data");
 				}
+				ui.update(this, ".progress", html);
 				ui.schedule(this, "updateProgress", uploadId, 500);
 			}
 		}
@@ -84,8 +91,8 @@ public class FileUpload extends Element {
 			contentType = file.getContentType();
 			originalFilename = file.getOriginalFilename();
 			uploadId = ProgressMonitor.nextUploadId();
-			ui.update(this, ".progress");
-			renderForm(ui.replace(this, "form"));
+			ui.update(this, ".progress", null);
+			ui.replace(this, "form", renderForm());
 		}
 		
 		@Override

@@ -14,6 +14,7 @@ package org.riotfamily.forms2.client;
 
 import java.util.Locale;
 
+import org.codehaus.jackson.annotate.JsonValue;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.context.MessageSource;
 import org.w3c.dom.Element;
@@ -159,6 +160,10 @@ public class Html extends DomBuilder {
 		return attr("on" + event, String.format("riot.form.submitEvent(this, '%s', %s)", handler, exp));
 	}
 	
+	public Html script(CharSequence script) {
+		return elem("script").text(script.toString());
+	}
+	
 	public Html script(String script, Object... args) {
 		return elem("script").text(String.format(script, args));
 	}
@@ -185,6 +190,12 @@ public class Html extends DomBuilder {
 	
 	public Html style(String format, Object... args) {
 		return style(String.format(format, args));
+	}
+	
+	@Override
+	@JsonValue
+	public String toString() {
+		return super.toString();
 	}
 	
 	// -----------------------------------------------------------------------

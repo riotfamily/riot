@@ -13,7 +13,6 @@
 package org.riotfamily.forms2.client;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 /**
@@ -25,16 +24,14 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 	
 	private LinkedHashSet<StylesheetResource> stylesheets = new LinkedHashSet<StylesheetResource>();
 
-	private LoadingCodeGenerator() {
-	}
+	private String resourcePath;
 	
-	public static String generate(Collection<FormResource> resources) {
-		StringBuilder sb = new StringBuilder();
-		new LoadingCodeGenerator().render(resources, sb);
-		return sb.toString();
+	public LoadingCodeGenerator(Collection<FormResource> resources, String resourcePath) {
+		this.resourcePath = resourcePath;
+		process(resources);
 	}
-	
-	private void loadResources(Collection<FormResource> resources) {
+		
+	private void process(Collection<FormResource> resources) {
 		if (resources == null) {
 			return;
 		}
@@ -47,7 +44,7 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 	
 	public void visitScript(ScriptResource script) {
 		if (!scripts.contains(script)) {
-			loadResources(script.getDependencies());
+			process(script.getDependencies());
 			scripts.add(script);
 		}
 	}
@@ -58,34 +55,44 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 		}
 	}
 
-	private void render(Collection<FormResource> resources, StringBuilder sb) {
-		loadResources(resources);
+	public String scripts() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(function(){");
+		sb.append("var base='").append(resourcePath).append("';");
+		sb.append("function isPresent(exp) {"
+			  +     "var s = exp.split('.');"
+			  +     "exp = '';"
+			  +     "for (var i = 0; i < s.length; i++) {"
+			  +       "exp += s[i];"
+			  +       "if (eval('typeof ' + exp) == 'undefined') return false;"
+			  +       "exp += '.';"
+			  +     "}"
+			  +     "return true;"
+			  +   "}"
+			  +   "function load(src, test) {"
+			  +     "if (!test || !isPresent(test)) document.write('<script src=\"' + base + src + '\"><\\/script>');"
+			  +   "}");
+			
+		for (ScriptResource script : scripts) {
+			sb.append("load('").append(script.getUrl()).append("'");
+			if (script.getTest() != null) {
+				sb.append(", '").append(script.getTest()).append("'");	
+			}
+			sb.append(");");
+		}
+		sb.append("})();");
+		return sb.toString();
+	}
+	
+	public String stylesheets() {
+		StringBuilder sb = new StringBuilder();
 		for (StylesheetResource stylesheet : stylesheets) {
-			sb.append("riot.Resources.loadStyleSheet('");
+			sb.append("riot.form.loadStyleSheet('");
+			sb.append(resourcePath);
 			sb.append(stylesheet.getUrl());
 			sb.append("');");
 		}
-		
-		if (!scripts.isEmpty()) {
-			sb.append("riot.Resources.loadScriptSequence([");
-			Iterator<ScriptResource> it = scripts.iterator();
-			while (it.hasNext()) {
-				ScriptResource script = it.next();
-				sb.append("{src:'");
-				sb.append(script.getUrl());
-				sb.append('\'');
-				if (script.getTest() != null) {
-					sb.append(", test:'");
-					sb.append(script.getTest());
-					sb.append('\'');
-				}
-				sb.append("}");
-				if (it.hasNext()) {
-					sb.append(',');
-				}
-			}
-			sb.append("]);");
-		}
+		return sb.toString();
 	}
 	
 }
