@@ -21,7 +21,7 @@
 		<constructor-arg ref="resourcePath" />
 	</bean>
 	
-    <bean id="editMessageFormController" name="/edit-i18n/@{bundleId}" class="org.riotfamily.dbmsgsrc.controller.EditMessageFormController">
+    <bean id="editMessageFormController" name="/edit-i18n/{bundleId}" class="org.riotfamily.dbmsgsrc.controller.EditMessageFormController">
     	<constructor-arg name="formView" value="classpath:/org/riotfamily/dbmsgsrc/controller/edit-message-form.ftl" />
     	<constructor-arg name="successView" value="classpath:/org/riotfamily/dbmsgsrc/controller/edit-message-success.ftl" />
     </bean>	

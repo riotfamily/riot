@@ -295,7 +295,7 @@ public class FormScreen extends AjaxFormController
 	
 	public String getTitle(ScreenContext context) {
 		Locale locale = RequestContextUtils.getLocale(context.getRequest());
-		if (parentScreen instanceof GroupScreen) {
+		if (parentScreen instanceof GroupScreen || parentScreen instanceof ItemScreen) {
 			String code = "screen." + getId();
 			String defaultTitle = FormatUtils.xmlToTitleCase(getId());
 			return getMessageSource().getMessage(code, null, defaultTitle, locale);

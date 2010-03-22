@@ -42,17 +42,24 @@ public class Notification {
 	}
 
 	public String getTitle() {
-		if (title == null && messageResolver != null) {
-			title = messageResolver.getMessage(getTitleKey(), args, defaultTitle);
+		if (title == null) {
+			title = resolve(getTitleKey(), defaultTitle);
 		}
 		return title;
 	}
 	
 	public String getMessage() {
-		if (message == null && messageResolver != null) {
-			message = messageResolver.getMessage(getMessageKey(), args, defaultMessage);
+		if (message == null) {
+			message = resolve(getMessageKey(), defaultMessage);
 		}
 		return message;
+	}
+	
+	protected String resolve(String key, String defaultText) {
+		if (messageResolver != null && key != null) {
+			return messageResolver.getMessage(key, args, defaultText);
+		}
+		return null;
 	}
 	
 	public String getIcon() {
@@ -103,7 +110,7 @@ public class Notification {
 		if (messageKey == null && keyPrefix != null) {
 			messageKey = keyPrefix + ".message";
 		}
-		return titleKey;
+		return messageKey;
 	}
 	
 	public Notification setMessage(String message) {

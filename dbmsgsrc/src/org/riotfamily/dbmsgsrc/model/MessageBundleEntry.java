@@ -70,6 +70,7 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 	}
 
 	@NaturalId
+	@Column(nullable=false)
 	public String getCode() {
 		return code;
 	}
@@ -151,6 +152,17 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 			return false;
 		}
 		return messages.size() > 1;
+	}
+	
+	@Transient
+	public String getText(Locale locale) {
+		if (messages != null) {
+			Message message = messages.get(locale);
+			if (message != null) {
+				return message.getText();
+			}
+		}
+		return null;
 	}
 
 	// ------------------------------------------------------------------------

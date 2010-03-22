@@ -114,32 +114,26 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	
 	public void publish() {
 		if (isDirty()) {
+			unpublish();
 			Content preview = getPreviewVersion();
-			Content oldLiveVersion = liveVersion;
 			liveVersion = new Content(preview);
+			liveVersion.save();
 			preview.setDirty(false);
-			if (oldLiveVersion != null) {
-				oldLiveVersion.delete();
-			}
 		}
 	}
 	
 	public void unpublish() {
 		if (liveVersion != null) {
-			liveVersion.setContainer(null);
 			liveVersion.delete();
 			liveVersion = null;
 		}
 	}
 	
 	public void discard() {		
-		Content live = getLiveVersion();
-		if (live != null) {
-			Content oldPreviewVersion = previewVersion;
-			previewVersion = new Content(live);
-			if (oldPreviewVersion != null) {
-				oldPreviewVersion.delete();
-			}
+		if (liveVersion != null) {
+			previewVersion.delete();
+			previewVersion = new Content(liveVersion);
+			previewVersion.save();
 		}
 	}
 	

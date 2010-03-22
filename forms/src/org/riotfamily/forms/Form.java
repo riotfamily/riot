@@ -497,11 +497,12 @@ public class Form implements BeanEditor {
 
 	public void setFormContext(FormContext formContext) {
 		this.formContext = formContext;
-		this.errors = new FormErrors(this);
-		this.editorBinder.registerPropertyEditors(
-				formContext.getPropertyEditorRegistrars());
 		
-		this.elements.setComponentPadding(formContext.getSizing().getLabelSize());
+		errors = new FormErrors(this);
+		editorBinder.registerPropertyEditors(formContext.getPropertyEditorRegistrars());
+		renderModel.put("messageResolver", formContext.getMessageResolver());
+		elements.setComponentPadding(formContext.getSizing().getLabelSize());
+		
 		Iterator<Element> it = getRegisteredElements().iterator();
 		while (it.hasNext()) {
 			Element element = it.next();

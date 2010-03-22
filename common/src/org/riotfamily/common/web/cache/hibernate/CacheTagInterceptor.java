@@ -29,6 +29,7 @@ import org.hibernate.type.Type;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.hibernate.HibernateUtils;
 import org.riotfamily.common.hibernate.SessionFactoryAwareInterceptor;
+import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.cache.TagCacheItems;
 import org.riotfamily.common.web.cache.tags.CacheTagUtils;
@@ -120,14 +121,16 @@ public class CacheTagInterceptor extends EmptyInterceptor
 		List<Field> fields = getInverseMappingFields(entity.getClass());
 		if (fields != null) {
 			for (Field field : fields) {
+				Object owner = null;
 				try {
-					Object owner = field.get(entity);
+					owner = field.get(entity);
+				}
+				catch (Exception e) {
+					throw ExceptionUtils.wrapReflectionException(e);
+				}
+				if (owner != null) {
 					Serializable id = HibernateUtils.getId(sessionFactory, owner);
 					CacheTagUtils.invalidate(cacheService, field.getType(), id);
-				}
-				catch (IllegalArgumentException e) {
-				}
-				catch (IllegalAccessException e) {
 				}
 			}
 		}
