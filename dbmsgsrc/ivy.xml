@@ -12,6 +12,6 @@
     </publications>
     <dependencies>
         <dependency org="riotfamily" name="riot-pages" rev="${dep.riot.revision}" conf="*->@" />
-        <dependency org="apache" name="poi" rev="3.1" conf="build,runtime->default" />
+        <dependency org="apache" name="poi" rev="3.5" conf="build,runtime->default" />
     </dependencies>
 </ivy-module>
