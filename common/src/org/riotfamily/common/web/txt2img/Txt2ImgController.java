@@ -91,6 +91,8 @@ public class Txt2ImgController extends AbstractCacheableController
 		if (queryString != null) {
 			key.append('?').append(queryString);
 		}
+		ServletUtils.appendParameter(key, "validReferer", 
+				new Boolean(validReferer(request)).toString());		
 	}
 
 	public boolean gzipResponse(HttpServletRequest request) {
@@ -114,11 +116,8 @@ public class Txt2ImgController extends AbstractCacheableController
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		if (refererPattern != null) {
-			String referer = request.getHeader("Referer");
-			if (referer != null && !refererPattern.matcher(referer).matches()) {
-				response.sendError(HttpServletResponse.SC_FORBIDDEN);
-			}
+		if (!validReferer(request)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 		
 		String extension = FormatUtils.getExtension(request.getRequestURI());
@@ -137,6 +136,14 @@ public class Txt2ImgController extends AbstractCacheableController
 		}
 		return null;
 	}
+	
+	private boolean validReferer(HttpServletRequest request) {
+		if (refererPattern == null) {
+			return true;
+		}
+		String referer = request.getHeader("Referer");
+		return referer == null || refererPattern.matcher(referer).matches();
+	}	
 
 	/**
 	 * Returns the locale for the given request. The method first checks for
