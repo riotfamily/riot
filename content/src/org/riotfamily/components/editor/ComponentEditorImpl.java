@@ -13,6 +13,7 @@
 package org.riotfamily.components.editor;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -256,7 +257,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	@RemoteMethod
 	public void publish(Long[] containerIds) {
 		if (containerIds != null) {
-			for (Long id : containerIds) {
+			for (Long id : Generics.newHashSet(Arrays.asList(containerIds))) {
 				if (id != null) {
 					ContentContainer container = ContentContainer.load(id);
 					assertIsPublishGranted(container);
@@ -270,7 +271,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 	@RemoteMethod
 	public void discard(Long[] containerIds) {
 		if (containerIds != null) {
-			for (Long id : containerIds) {
+			for (Long id : Generics.newHashSet(Arrays.asList(containerIds))) {
 				if (id != null) {
 					ContentContainer container = ContentContainer.load(id);
 					assertIsEditGranted(container);
