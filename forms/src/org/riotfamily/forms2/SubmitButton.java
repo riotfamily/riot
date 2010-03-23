@@ -13,7 +13,6 @@
 package org.riotfamily.forms2;
 
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.FormState;
 import org.riotfamily.forms2.base.TypedState;
 import org.riotfamily.forms2.base.UserInterface;
@@ -37,24 +36,20 @@ public class SubmitButton extends Element {
 		formState.getElementState(this).render(html, this);
 		return html.toString();
 	}
-	
-	@Override
-	protected ElementState createState(Value value) {
-		return new State();
-	}
+			
+	public static class State<T extends SubmitButton> extends TypedState<T> {
 		
-	protected static class State extends TypedState<SubmitButton> {
 		@Override
-		public void renderInternal(Html html, SubmitButton button) {
+		public void renderInternal(Html html, T button) {
 			html.button("click").messageText(button.label);
 		}
 		
-		public void click(UserInterface ui, SubmitButton button, String value) {
+		public void click(UserInterface ui, T button, String value) {
 			button.submissionHandler.onSubmit(getFormState());
 		}
 		
 		@Override
-		public void populateInternal(Value value, SubmitButton button) {
+		public void populateInternal(Value value, T button) {
 		}
 	}
 

@@ -35,12 +35,7 @@ public abstract class MultiSelectElement extends SelectElement {
 		return ((Set<?>) value).contains(option);
 	}
 	
-	@Override
-	protected SelectionState createEmptyState() {
-		return new State();
-	}
-
-	protected static class State extends SelectionState {
+	public static class State extends SelectionState {
 
 		public void select(List<String> values) {
 			for (Option option : options) {
@@ -60,7 +55,7 @@ public abstract class MultiSelectElement extends SelectElement {
 		
 		@Override
 		public void populateInternal(Value value, SelectElement element) {
-			Set<Object> set = value.getOrCreate(LinkedHashSet.class);
+			Set<Object> set = value.require(Set.class, LinkedHashSet.class).getOrCreate();
 			set.clear();
 			for (Option option : options) {
 				if (option.isSelected()) {

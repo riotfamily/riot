@@ -14,7 +14,6 @@ package org.riotfamily.forms2.base;
 
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
-import org.springframework.util.ClassUtils;
 
 public abstract class TypedState<E extends Element> extends ElementState {
 
@@ -29,17 +28,10 @@ public abstract class TypedState<E extends Element> extends ElementState {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void render(Html html, Element element) {
-		Html wrapper = wrap(html, (E) element);
-		renderInternal(wrapper, (E) element);
+	protected final void renderElement(Html html, Element element) {
+		renderInternal(html, (E) element);
 	}
 	
-	protected Html wrap(Html html, E element) {
-		return html.div("state")
-				.id(getId())
-				.addClass(ClassUtils.getShortName(element.getClass()));
-	}
-
 	protected abstract void renderInternal(Html html, E element);
 	
 	@Override

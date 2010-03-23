@@ -28,7 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class DomBuilder {
+public abstract class DomBuilder<T extends DomBuilder<T>> {
 
 	private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	
@@ -38,7 +38,7 @@ public class DomBuilder {
 	
 	private Node node;
 	
-	private DomBuilder parent;
+	private T parent;
 	
 	public DomBuilder() {
 	    this(newDocument().createDocumentFragment());
@@ -48,7 +48,7 @@ public class DomBuilder {
     	this(newDocument().createElement(element));
     }
     
-    protected DomBuilder(Node node, DomBuilder parent) {
+    protected DomBuilder(Node node, T parent) {
 		this.node = node;
 		this.parent = parent;
 		this.document = node.getOwnerDocument();
@@ -62,39 +62,39 @@ public class DomBuilder {
 		return (Element) node;	
 	}
 	
-	public DomBuilder attr(String name, String value) {
+	public T attr(String name, String value) {
 		if (value != null) {
 			element().setAttribute(name, value);
 		}
-        return this;
+        return getThis();
     }
 	
-	public DomBuilder elem(String name) {
+	protected abstract T getThis();
+
+	public T elem(String name) {
 		Element child = document.createElement(name);
 		node.appendChild(child);
         return createNested(child);        
     }
 	
-	protected DomBuilder createNested(Element child) {
-		return new DomBuilder(child, this);
-	}
+	protected abstract T createNested(Element child);
 	
-	public DomBuilder text(String value) {
+	public T text(String value) {
 		node.appendChild(document.createTextNode(value));
-        return this;        
+        return getThis();        
     }
 	
-	public DomBuilder cdata(String value) {
+	public T cdata(String value) {
 		node.appendChild(document.createCDATASection(value));
-        return this;        
+        return getThis();        
     }
 	
-	public DomBuilder up() {
+	public T up() {
 		return up(1);
 	}
 	
-	public DomBuilder up(int n) {
-		DomBuilder ancestor = this;
+	public T up(int n) {
+		T ancestor = getThis();
 		for (int i = 0; i < n; i++) {
 			ancestor = ancestor.parent;
 		}

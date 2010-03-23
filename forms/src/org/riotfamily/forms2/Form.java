@@ -52,7 +52,7 @@ public class Form {
 			type = object.getClass();
 		}
 		Value value = ValueFactory.createValue(object, type);
-		return formElement.createState(value);
+		return formElement.createAndInitState(null, value);
 	}
 	
 	public Object populate(Object object, FormState formState) {

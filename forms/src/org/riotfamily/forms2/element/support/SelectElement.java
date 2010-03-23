@@ -17,12 +17,10 @@ import java.util.List;
 
 import org.riotfamily.common.ui.ObjectRenderer;
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.option.IdentityReferenceAdapter;
 import org.riotfamily.forms2.option.OptionReferenceAdapter;
 import org.riotfamily.forms2.option.OptionsModel;
-import org.riotfamily.forms2.value.Value;
 
 public abstract class SelectElement extends Element {
 
@@ -44,16 +42,7 @@ public abstract class SelectElement extends Element {
 		return referenceAdapter.resolve(reference);
 	}
 		
-	@Override
-	protected final ElementState createState(Value value) {
-		value.require(getRequiredType());
-		SelectionState state = createEmptyState();
-		return state;
-	}
-
 	protected abstract Class<?> getRequiredType();
-	
-	protected abstract SelectionState createEmptyState();
 	
 	final void createOptions(SelectionState state, Object value) {
 		Iterable<?> items = optionsModel.getOptions(state.getFormState());

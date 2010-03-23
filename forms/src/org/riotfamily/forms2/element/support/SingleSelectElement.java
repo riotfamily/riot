@@ -29,13 +29,8 @@ public abstract class SingleSelectElement extends SelectElement {
 	protected boolean isSelected(Object option, Object value) {
 		return ObjectUtils.nullSafeEquals(option, value);
 	}
-	
-	@Override
-	protected SelectionState createEmptyState() {
-		return new State();
-	}
-	
-	protected static class State extends SelectionState {
+		
+	public static class State extends SelectionState {
 
 		public void select(UserInterface ui, SingleSelectElement element, String value) {
 			select(value);

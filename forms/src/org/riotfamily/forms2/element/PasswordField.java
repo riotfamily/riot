@@ -13,7 +13,6 @@
 package org.riotfamily.forms2.element;
 
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.TypedState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
@@ -21,12 +20,7 @@ import org.riotfamily.forms2.value.Value;
 
 public class PasswordField extends Element {
 
-	@Override
-	protected ElementState createState(Value value) {
-		return new State(value.get() != null);
-	}
-		
-	protected static class State extends TypedState<PasswordField> {
+	public static class State extends TypedState<PasswordField> {
 
 		private String password;
 		
@@ -38,8 +32,9 @@ public class PasswordField extends Element {
 		
 		private String strength;
 		
-		public State(boolean alreadySet) {
-			this.alreadySet = alreadySet;
+		@Override
+		protected void initInternal(PasswordField element, Value value) {
+			this.alreadySet = value.get() != null;
 		}
 		
 		@Override

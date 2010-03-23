@@ -12,6 +12,7 @@
  */
 package org.riotfamily.forms2.client;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.codehaus.jackson.annotate.JsonValue;
@@ -20,7 +21,7 @@ import org.springframework.context.MessageSource;
 import org.w3c.dom.Element;
 
 
-public class Html extends DomBuilder {
+public class Html extends DomBuilder<Html> {
 
 	private MessageSource messageSource;
 
@@ -35,6 +36,11 @@ public class Html extends DomBuilder {
 	protected Html(Element child, Html parent) {
 		super(child, parent);
 		this.idGenerator = parent.idGenerator;
+	}
+	
+	@Override
+	protected Html getThis() {
+		return this;
 	}
 	
 	public void setMessageKeyPrefix(String prefix) {
@@ -160,6 +166,11 @@ public class Html extends DomBuilder {
 		return attr("on" + event, String.format("riot.form.submitEvent(this, '%s', %s)", handler, exp));
 	}
 	
+	public Html process(List<Action> actions) {
+		script("riot.form.processActions(%s)", FormatUtils.toJSON(actions));
+		return this;
+	}
+	
 	public Html script(CharSequence script) {
 		return elem("script").text(script.toString());
 	}
@@ -198,44 +209,9 @@ public class Html extends DomBuilder {
 		return super.toString();
 	}
 	
-	// -----------------------------------------------------------------------
-	// Polymorphic returns
-	// -----------------------------------------------------------------------
-	
 	@Override
 	protected Html createNested(Element child) {
 		return new Html(child, this);
-	}
-	
-	@Override
-	public Html attr(String name, String value) {
-		super.attr(name, value);
-		return this;
-	}
-
-	@Override
-	public Html elem(String name) {
-		return (Html) super.elem(name);
-	}
-	
-	@Override
-	public Html text(String value) {
-		return (Html) super.text(value);
-	}
-	
-	@Override
-	public Html cdata(String value) {
-		return (Html) super.cdata(value);
-	}
-
-	@Override
-	public Html up() {
-		return (Html) super.up();
-	}
-
-	@Override
-	public Html up(int n) {
-		return (Html) super.up(n);
 	}
 
 }

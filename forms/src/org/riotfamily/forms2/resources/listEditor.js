@@ -1,9 +1,6 @@
-if (!window.riot) var riot = {};
-
-riot.ListEditor = {
-	init: function(id) {
-		var ul = $(id).down('ul');
-		Sortable.create(ul, {
+Element.addMethods('ul', {
+	makeSortable: function(el) {
+		Sortable.create(el, {
 			handle: 'handle',
 			format: /item-(.*)/,
 			onUpdate: function(element) {
@@ -11,4 +8,4 @@ riot.ListEditor = {
 			}
 		});
 	}
-}
+});

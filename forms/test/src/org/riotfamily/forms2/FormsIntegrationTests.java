@@ -28,6 +28,7 @@ import org.jitr.annotation.JitrConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -56,13 +57,15 @@ public class FormsIntegrationTests {
 	
 	@Before
 	public void request() throws Exception {
-		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-		page = webClient.getPage(baseUri + "form");
+		if (!interactive) {
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			page = webClient.getPage(baseUri + "form");
+		}
 	}
 	
 	@Test
 	public void textField() throws Exception {
-		select("//input[@type='text']").type("Hello world");
+		select("//div[@id='s1']/input[@type='text']").type("Hello world");
 		assertAfterSave("text", is("Hello world"));
 	}
 	
@@ -76,13 +79,13 @@ public class FormsIntegrationTests {
 	
 	@Test
 	public void listEditor() throws Exception {
-		select("//input[@value='Add']").click();
+		select("//button[@class='add']").click();
 		assertAfterSave("list", notNullValue());
 		
-		select("//li/div/input[@type='text']").type("aaa");
+		select("//li//input[@type='text']").type("aaa");
 		assertAfterSave("list", hasItem("aaa"));
 		
-		select("//input[@value='Remove']").click();
+		select("//button[@class='remove']").click();
 		assertAfterSave("list", not(hasItem("aaa")));
 	}
 	
@@ -110,12 +113,12 @@ public class FormsIntegrationTests {
 	}
 	
 	private void save() throws Exception {
-		select("//input[@type='button'][@value='Save']").click();
+		select("//div[contains(@class,'SubmitButton')]/button").click();
 	}
 
 	public static void main(String[] args) {
 		interactive = true;
-		JUnitCore.main(FormsIntegrationTests.class.getName());
+		new JUnitCore().run(Request.method(FormsIntegrationTests.class, "interactive").getRunner());
 	}
 
 }

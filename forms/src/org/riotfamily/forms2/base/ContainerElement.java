@@ -13,7 +13,6 @@
 package org.riotfamily.forms2.base;
 
 import java.util.List;
-import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.client.Html;
@@ -31,29 +30,21 @@ public class ContainerElement extends Element {
 	protected List<Element> getElements() {
 		return elements;
 	}
-	
-	@Override
-	protected ElementState createState(Value value) {
-		return new State();
-	}
-	
+		
 	protected static class State extends ElementState {
 
 		private List<ElementState> states = Generics.newArrayList();
 		
-		private Map<ElementState, String> elementIds = Generics.newHashMap();
-		
 		@Override
-		protected void onInit(Element container, Value value) {
+		protected final void onInit(Element container, Value value) {
 			for (Element element : ((ContainerElement) container).elements) {
 				ElementState state = element.createState(this, value);
 				states.add(state);
-				elementIds.put(state, element.getId());
 			}
 		}
 		
 		@Override
-		public void render(Html html, Element container) {
+		protected void renderElement(Html html, Element container) {
 			for (ElementState state : states) {
 				state.render(html, getElement(state, container));
 			}
@@ -67,7 +58,7 @@ public class ContainerElement extends Element {
 		}
 		
 		private Element getElement(ElementState state, Element container) {
-			return container.getRoot().getElement(elementIds.get(state));
+			return container.getRoot().getElement(state.getElementId());
 		}
 
 	}

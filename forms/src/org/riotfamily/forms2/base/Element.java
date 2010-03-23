@@ -87,17 +87,20 @@ public abstract class Element {
 	 * calling {@link #createState(Value)}, the init() method is invoked,
 	 * passing the specified parent.
 	 */
-	public final ElementState createState(ElementState parent, Value value) {
-		ElementState state = createState(value);
-		state.init(this, parent, parent.getFormState(), value);
+	ElementState createAndInitState(ElementState parent, Value value) {
+		FormState formState = parent != null ? parent.getFormState() : null;
+		ElementState state = createState();
+		state.init(this, parent, formState, value);
 		return state;
 	}
 	
-	/**
-	 * Subclasses must implement this method and return a state for the given
-	 * value.
-	 */
-	protected abstract ElementState createState(Value value);
+	public final ElementState createState(ElementState parent, Value value) {
+		return createAndInitState(parent, value);
+	}
+	
+	protected ElementState createState() {
+		return ElementState.create(getClass());
+	}
 	
 	/**
 	 * Subclasses may overwrite this method if the element depends on external

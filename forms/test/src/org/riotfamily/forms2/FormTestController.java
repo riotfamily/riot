@@ -22,10 +22,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.riotfamily.forms2.base.Binding;
 import org.riotfamily.forms2.base.FormState;
 import org.riotfamily.forms2.client.Action;
 import org.riotfamily.forms2.client.ClientEvent;
-import org.riotfamily.forms2.element.Binding;
 import org.riotfamily.forms2.element.FileUpload;
 import org.riotfamily.forms2.element.ListEditor;
 import org.riotfamily.forms2.element.RadioButtonGroup;

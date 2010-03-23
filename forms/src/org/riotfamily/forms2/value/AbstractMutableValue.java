@@ -23,6 +23,8 @@ public abstract class AbstractMutableValue implements Value {
 
 	private TypeDescriptor typeDescriptor;
 	
+	private Class<?> defaultType;
+	
 	public AbstractMutableValue(TypeDescriptor typeDescriptor) {
 		this.typeDescriptor = typeDescriptor;
 	}
@@ -31,16 +33,21 @@ public abstract class AbstractMutableValue implements Value {
 		return typeDescriptor;
 	}
 
-	public void require(Class<?> requiredType) {
+	public <T, D extends T> Value require(Class<T> requiredType, Class<D> defaultType) {
 		Assert.isAssignable(requiredType, typeDescriptor.getType());
+		this.defaultType = defaultType;
+		return this;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> T getOrCreate(Class<?> defaultType) {
+	public <T> T getOrCreate() {
 		if (get() == null) {
+			Object object;
 			Class<?> type = getTypeDescriptor().getType();
-			Object object = instanciate(type);
-			if (object == null) {
+			if (canInstanciate(type)) {
+				object = instanciate(type);
+			}
+			else {
 				object = instanciate(defaultType);
 			}
 			set(object);
@@ -49,15 +56,12 @@ public abstract class AbstractMutableValue implements Value {
 	}
 	
 	protected Object instanciate(Class<?> type) {
-		if (canInstanciate(type)) {
-			try {
-				return type.newInstance();
-			}
-			catch (Exception e) {
-				throw ExceptionUtils.wrapReflectionException(e);
-			}
+		try {
+			return type.newInstance();
 		}
-		return null;
+		catch (Exception e) {
+			throw ExceptionUtils.wrapReflectionException(e);
+		}
 	}
 	
 	private boolean canInstanciate(Class<?> type) {

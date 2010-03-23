@@ -10,12 +10,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms2.element;
+package org.riotfamily.forms2.base;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
-import org.riotfamily.forms2.base.TypedState;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
 
@@ -32,35 +29,30 @@ public class Binding extends Element {
 		element.setParent(this);
 	}
 
-	@Override
-	protected ElementState createState(Value value) {
-		return new State();
-	}
-	
-	protected static class State extends TypedState<Binding> {
+	public static class State<T extends Binding> extends TypedState<T> {
 
 		ElementState nestedState;
-				
+
 		@Override
-		protected void initInternal(Binding binding, Value value) {
+		protected Html wrap(Html html, Element element) {
+			return html;
+		}
+		
+		@Override
+		protected void initInternal(T binding, Value value) {
 			Value nestedValue = value.getNested(binding.target);
 			nestedState = binding.element.createState(this, nestedValue);
 		}
 
 		@Override
-		protected Html wrap(Html html, Binding element) {
-			return html.div("labeled")
-				.div("label").messageText(element.target, FormatUtils.propertyToTitleCase(element.target))
-				.up();
-		}
-		
-		@Override
-		public void renderInternal(Html html, Binding binding) {
-			nestedState.render(html, binding.element);
+		public void renderInternal(Html html, T binding) {
+			Html div = html.div("labeled");
+			div.div("label").messageText(binding.target, FormatUtils.propertyToTitleCase(binding.target));
+			nestedState.render(div, binding.element);
 		}
 
 		@Override
-		public void populateInternal(Value value, Binding binding) {
+		public void populateInternal(Value value, T binding) {
 			Value nestedValue = value.getNested(binding.target);
 			nestedState.populate(nestedValue, binding.element);
 			value.setNested(binding.target, nestedValue.get());

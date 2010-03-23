@@ -44,10 +44,10 @@ public class FormState extends ContainerElement.State {
 	private IdGenerator idGenerator = new IdGenerator();
 	
 	FormState(Value value) {
-		setId(UUID.randomUUID().toString());
 		this.type = value.getTypeDescriptor().getType();
+		setId(UUID.randomUUID().toString());
 	}
-
+	
 	public Class<?> getType() {
 		return type;
 	}

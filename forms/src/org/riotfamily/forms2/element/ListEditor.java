@@ -15,6 +15,7 @@ package org.riotfamily.forms2.element;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.riotfamily.common.util.Generics;
@@ -51,28 +52,23 @@ public class ListEditor extends Element {
 	}
 		
 	@Override
-	protected ElementState createState(Value value) {
-		value.require(List.class);
-		return new State(value.getTypeDescriptor().getElementTypeDescriptor());
+	public FormResource getResource() {
+		if (dragAndDrop) {
+			return new ScriptResource("forms/listEditor.js", Resources.SCRIPTACULOUS_DRAG_DROP);
+		}
+		return null;
 	}
 		
-	@Override
-	public FormResource getResource() {
-		return new ScriptResource("forms/listEditor.js", Resources.SCRIPTACULOUS_DRAG_DROP);
-	}
-	
-	protected static class State extends TypedState<ListEditor> {
+	public static class State<T extends ListEditor> extends TypedState<T> {
 
 		private List<ElementState> itemStates = Generics.newArrayList();
 		
 		private TypeDescriptor itemTypeDescriptor;
 		
-		public State(TypeDescriptor itemTypeDescriptor) {
-			this.itemTypeDescriptor = itemTypeDescriptor;
-		}
-		
 		@Override
-		protected void initInternal(ListEditor list, Value value) {
+		protected void initInternal(T list, Value value) {
+			value.require(List.class, ArrayList.class);
+			itemTypeDescriptor = value.getTypeDescriptor().getElementTypeDescriptor();
 			if (value.get() != null) {
 				Collection<?> c = value.get();
 				for (Object item : c) {
@@ -90,30 +86,39 @@ public class ListEditor extends Element {
 		}
 		
 		@Override
-		protected void renderInternal(Html html, ListEditor list) {
+		protected void populateInternal(Value value, T list) {
+			value.require(List.class, ArrayList.class);
+			List<Object> c = value.getOrCreate();
+			c.clear();
+			for (ElementState itemState : itemStates) {
+				Value itemValue = ValueFactory.createValue(itemTypeDescriptor);
+				itemState.populate(itemValue, list.itemEditor);
+				c.add(itemValue.get());
+			}
+		}
+		
+		/**
+		 * Renders all list-items, an add-button and a script to initialize
+		 * drag-and-drop (if enabled).
+		 */
+		@Override
+		protected void renderInternal(Html html, T list) {
 			Html ul = html.ul().cssClass("items");
 			for (ElementState itemState : itemStates) {
-				appendItem(ul, list, itemState);
+				renderItem(ul, list, itemState);
 			}
 			html.button("add");
-			html.script("riot.ListEditor.init('%s')", getId());
+			if (list.dragAndDrop) {
+				UserInterface ui = new UserInterface();
+				ui.invoke(this, "ul", "makeSortable");
+				html.process(ui.getActions());
+			}
 		}
 		
-		private Html renderItem(ListEditor list, ElementState itemState) {
-			Html html = newHtml();
-			appendItem(html, list, itemState);
-			return html;
-		}
-		
-		private static String selector(int i) {
-			return String.format("li:nth-child(%s)", i + 1);
-		}
-				
-		private static String index() {
-			return "Element.up(this, 'li').previousSiblings().length";
-		}
-		
-		private void appendItem(Html html, ListEditor list, ElementState itemState) {
+		/**
+		 * Renders a single list-item, as well as buttons to move or delete it.
+		 */
+		private void renderItem(Html html, T list, ElementState itemState) {
 			Html tr = html.li().id("item-" + itemState.getId()).table().tr();
 			if (list.dragAndDrop) {
 				tr.td("handle");
@@ -128,56 +133,104 @@ public class ListEditor extends Element {
 			tr.td("removeButton").button("remove", index());
 		}
 		
-		public void add(UserInterface ui, ListEditor list, String value) {
+		/**
+		 * Adds a new item to the end of the list. The method is invoked when
+		 * the user clicks the add button.
+		 */
+		public void add(UserInterface ui, T list, String value) {
 			ElementState itemState = addItem(list.itemEditor, null);
-			ui.insert(this, ".items", renderItem(list, itemState));
+			Html html = newHtml();
+			renderItem(html, list, itemState);
+			ui.insert(this, ".items", html);
+			ui.invoke(this, "ul", "makeSortable");
 			updateClasses(ui);
 		}
 		
-		private void updateClasses(UserInterface ui) {
+		/**
+		 * Updates the CSS class-names of the move-up/down buttons. It first
+		 * removes the <code>disabled</code> class from all buttons and then
+		 * adds it back to the first up and last down button.
+		 */
+		protected void updateClasses(UserInterface ui) {
 			ui.removeClassName(this, "button", "disabled");
 			ui.addClassName(this, "li:first-child .up", "disabled");
 			ui.addClassName(this, "li:last-child .down", "disabled");
 		} 
-				
-		public void remove(UserInterface ui, ListEditor list, int i) {
-			itemStates.remove(i);
-			ui.remove(this, selector(i));
+		
+		private static String selector(int i) {
+			return String.format("li:nth-child(%s)", i + 1);
+		}
+		
+		/**
+		 * Removes an element from the list. The method is invoked when a user
+		 * clicks the remove button of an item. The index is determined by 
+		 * evaluating the {@link #index()} JavaScript expression.
+		 */
+		public void remove(UserInterface ui, T list, int index) {
+			itemStates.remove(index);
+			ui.remove(this, selector(index));
 			updateClasses(ui);
 		}
 		
-		public void up(UserInterface ui, ListEditor list, int i) {
-			if (i > 0) {
-				Collections.swap(itemStates, i, i - 1);
-				ui.moveUp(this, selector(i));
+		/**
+		 * Moves an element upwards in the list and updates the UI. The method 
+		 * is invoked when the user clicks the move-up button of an item.
+		 */
+		public void up(UserInterface ui, T list, int index) {
+			if (index > 0) {
+				Collections.swap(itemStates, index, index - 1);
+				ui.moveUp(this, selector(index));
 				updateClasses(ui);
 			}
 		}
 		
-		public void down(UserInterface ui, ListEditor list, int i) {
-			if (i < itemStates.size() - 1) {
-				Collections.swap(itemStates, i, i + 1);
-				ui.moveDown(this, selector(i));
+		/**
+		 * Moves an element down in the list and updates the UI. The method is 
+		 * invoked when the user clicks the move-down button of an item.
+		 */
+		public void down(UserInterface ui, T list, int index) {
+			if (index < itemStates.size() - 1) {
+				Collections.swap(itemStates, index, index + 1);
+				ui.moveDown(this, selector(index));
 				updateClasses(ui);
 			}
 		}
 		
-		public void sort(UserInterface ui, ListEditor list, List<String> order) {
-			order.size();
+		/**
+		 * Returns a JavaScript expression that counts the number of siblings
+		 * preceding the enclosing &lt;li&gt;.
+		 */
+		protected static String index() {
+			return "riot.form.indexOf(this, 'li')";
 		}
 		
-		@Override
-		protected void populateInternal(Value value, ListEditor list) {
-			value.require(List.class);
-			List<Object> c = value.getOrCreate(ArrayList.class);
-			c.clear();
-			for (ElementState itemState : itemStates) {
-				Value itemValue = ValueFactory.createValue(itemTypeDescriptor);
-				itemState.populate(itemValue, list.itemEditor);
-				c.add(itemValue.get());
-			}
+		/**
+		 * Sorts the list according to the specified order, where order is a 
+		 * list of {@link ElementState#getId() stateIds}. The method is invoked
+		 * when the list is re-ordered via drag-and-drop.
+		 */
+		public void sort(UserInterface ui, T list, List<String> order) {
+			Collections.sort(itemStates, new SortOrderComparator(order));
+		}
+		
+	}
+	
+	/**
+	 * Comparator implementation used by the {@link #sort} method.
+	 */
+	private static class SortOrderComparator implements Comparator<ElementState> {
+
+		private final List<String> order;
+
+		public SortOrderComparator(List<String> order) {
+			this.order = order;
 		}
 
+		public int compare(ElementState o1, ElementState o2) {
+			Integer i1 = order.indexOf(o1.getId());
+			Integer i2 = order.indexOf(o2.getId());
+			return i1.compareTo(i2);
+		}
 	}
 
 }

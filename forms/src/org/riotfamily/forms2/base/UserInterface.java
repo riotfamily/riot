@@ -35,15 +35,15 @@ public class UserInterface {
 		return action;
 	}
 	
-	Action invoke(ElementState state, String selector, String method, Object... args) {
-		return action(state, selector, "invoke").set("method", method).set("args", args);
-	}
-	
 	Action each(ElementState state, String selector, String method, Object... args) {
 		return action(state, null, "each").set("selector", selector)
 				.set("method", method).set("args", args);
 	}
-		
+
+	public void invoke(ElementState state, String selector, String method, Object... args) {
+		action(state, selector, "invoke").set("method", method).set("args", args);
+	}
+	
 	public void update(ElementState state, String selector, Html html) {
 		invoke(state, selector, "update", html);
 	}
@@ -82,5 +82,5 @@ public class UserInterface {
 			.set("value", value)
 			.set("millis", millis);
 	}
-
+	
 }

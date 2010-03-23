@@ -13,49 +13,47 @@
 package org.riotfamily.forms2.element;
 
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.TypedState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.ConversionServiceFactory;
 
 public class TextField extends Element {
 
-	@Override
-	protected ElementState createState(Value value) {
-		return new State(getText(value));
-	}
-
-	private String getText(Value value) {
-		//return getForm().getConversionService().convert(value.get(), String.class);
-		Object obj = value.get();
-		return obj != null ? obj.toString() : null;
-	}
+	private ConversionService conversionService = ConversionServiceFactory.createDefaultConversionService();
 	
-	private Object getObject(String text) {
-		return text;
-	}
-
-	protected static class State extends TypedState<TextField> {
+	public static class State<T extends TextField> extends TypedState<T> {
 
 		private String text;
 		
-		public State(String text) {
-			this.text = text;
+		@Override
+		protected void initInternal(T element, Value value) {
+			Object obj = value.get();
+			if (obj != null) {
+				text = element.conversionService.convert(obj, String.class);
+			}
+		}
+		
+		protected String getText() {
+			return text;
 		}
 
 		@Override
-		protected void renderInternal(Html html, TextField element) {
+		protected void renderInternal(Html html, T element) {
 			html.input("text", text).propagate("change", "update");
 		}
 		
-		public void update(UserInterface ui, TextField element, String text) {
+		public void update(UserInterface ui, T element, String text) {
 			this.text = text;
 		}
 
 		@Override
-		protected void populateInternal(Value value, TextField element) {
-			value.set(element.getObject(text));
+		protected void populateInternal(Value value, T element) {
+			Class<?> type = value.require(Object.class, String.class).getTypeDescriptor().getType();
+			Object obj = element.conversionService.convert(text, type);
+			value.set(obj);
 		}
 		
 	}

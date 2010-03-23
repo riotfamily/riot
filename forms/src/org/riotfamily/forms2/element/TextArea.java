@@ -10,24 +10,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms2.value;
+package org.riotfamily.forms2.element;
 
-import org.springframework.core.convert.TypeDescriptor;
+import org.riotfamily.forms2.client.Html;
 
-public interface Value {
+public class TextArea extends TextField {
 
-	public <T, D extends T> Value require(Class<T> requiredType, Class<D> defaultType);
-	
-	public TypeDescriptor getTypeDescriptor();
+	public static class State<T extends TextArea> extends TextField.State<T> {
 
-	public void set(Object object);
-	
-	public <T> T get();
-	
-	public <T> T getOrCreate();
-
-	public Value getNested(String name);
-	
-	public void setNested(String name, Object object);
-	
+		@Override
+		protected void renderInternal(Html html, T element) {
+			html.elem("textarea")
+				.propagate("change", "update")
+				.text(getText());
+		}
+		
+	}
 }

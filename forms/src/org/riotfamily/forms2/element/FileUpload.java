@@ -15,7 +15,6 @@ package org.riotfamily.forms2.element;
 import org.riotfamily.common.web.mvc.multipart.ProgressMonitor;
 import org.riotfamily.common.web.mvc.multipart.UploadProgress;
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.TypedState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
@@ -23,13 +22,8 @@ import org.riotfamily.forms2.value.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileUpload extends Element {
-
-	@Override
-	protected ElementState createState(Value value) {
-		return new State();
-	}
 	
-	protected static class State extends TypedState<FileUpload> {
+	public static class State extends TypedState<FileUpload> {
 
 		private String uploadId = ProgressMonitor.nextUploadId();
 		

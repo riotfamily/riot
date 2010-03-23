@@ -78,7 +78,7 @@ public class FormElement extends ContainerElement {
 	}
 	
 	@Override
-	public FormState createState(Value value) {
+	public FormState createAndInitState(ElementState parent, Value value) {
 		FormState state = new FormState(value);
 		state.init(this, null, state, value);
 		for (Element element : externalElements) {

@@ -14,8 +14,10 @@ package org.riotfamily.forms2.base;
 
 import java.io.Serializable;
 
+import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
+import org.springframework.util.ClassUtils;
 
 
 public abstract class ElementState implements Serializable {
@@ -30,6 +32,25 @@ public abstract class ElementState implements Serializable {
 	
 	private FormState formState;
 	
+	static ElementState create(final Class<?> elementClass) {
+		try {
+			for(Class<?> c = elementClass; c != null; c = c.getSuperclass()) {
+				for (Class<?> innerClass : c.getDeclaredClasses()) {
+					if (ElementState.class.isAssignableFrom(innerClass)) {
+						return innerClass.asSubclass(ElementState.class).newInstance();
+					}
+				}
+			}
+			throw new IllegalStateException(elementClass + " does not declare a State class");
+		}
+		catch (Exception e) {
+			throw ExceptionUtils.wrapReflectionException(e);
+		}
+	}
+	
+	/**
+	 * Called by {@link Element#createAndInitState}.
+	 */
 	final void init(Element element, ElementState parent, FormState formState, Value value) {
 		this.elementId = element.getId();
 		this.parent = parent;
@@ -40,7 +61,7 @@ public abstract class ElementState implements Serializable {
 		onInit(element, value);
 	}
 	
-	final void setId(String id) {
+	protected final void setId(String id) {
 		this.id = id;
 	}
 	
@@ -75,7 +96,16 @@ public abstract class ElementState implements Serializable {
 		return formState.newHtml();
 	}
 	
-	public abstract void render(Html html, Element element);
+	public final void render(Html html, Element element) {
+		renderElement(wrap(html, element), element);
+	}
+	
+	Html wrap(Html html, Element element) {
+		return html.div("state").id(getId())
+				.addClass(ClassUtils.getShortName(element.getClass()));
+	}
+
+	protected abstract void renderElement(Html html, Element element);
 	
 	public abstract void populate(Value value, Element element);
 

@@ -26,17 +26,19 @@ public class UnknownValue implements Value {
 		return delegate;
 	}
 	
-	public void require(Class<?> requiredType) {
+	public <T, D extends T> Value require(Class<T> requiredType, Class<D> defaultType) {
 		if (delegate == null) {
 			TypeDescriptor typeDescriptor = TypeDescriptor.valueOf(requiredType);
 			Assert.notNull(typeDescriptor.getType());
 			delegate = ValueFactory.createValue(typeDescriptor, false);
 		}
+		delegate.require(requiredType, defaultType);
+		return this;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> T getOrCreate(Class<?> defaultType) {
-		return (T) getDelegate().getOrCreate(defaultType);
+	public <T> T getOrCreate() {
+		return (T) getDelegate().getOrCreate();
 	}
 	
 	public void set(Object object) {
