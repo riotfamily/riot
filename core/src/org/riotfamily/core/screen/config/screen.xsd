@@ -93,6 +93,7 @@
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
+		<xsd:attribute name="lookup-level" type="xsd:positiveInteger" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="formType">
