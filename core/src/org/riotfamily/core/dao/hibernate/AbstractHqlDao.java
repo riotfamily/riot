@@ -129,7 +129,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
      */
     protected final String buildCountHql(Object parent, ListParams params) {
     	StringBuilder hql = new StringBuilder();
-    	hql.append("select count(").append(getSelect()).append(')');
+    	hql.append("select count(*)");
     	appendFromClause(hql, params);
     	HqlUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	log.debug(hql.toString());
