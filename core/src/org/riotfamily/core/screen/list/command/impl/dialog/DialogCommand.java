@@ -76,13 +76,13 @@ public abstract class DialogCommand extends AbstractCommand
 	}
 	
 	protected void addButton(Form form, String name) {
-		Button ok = new Button();
-		ok.setParamName(name);
-		ok.setLabelKey("button." + name);
-		ok.setDefaultLabel(FormatUtils.camelToTitleCase(name));
-		ok.addClickListener(this);
-		ok.setPartitialSubmit(form.getId());
-		form.addButton(ok);
+		Button button = new Button();
+		button.setParamName(name);
+		button.setLabelKey("button." + name);
+		button.setDefaultLabel(FormatUtils.camelToTitleCase(name));
+		button.addClickListener(this);
+		button.setPartitialSubmit(form.getId());
+		form.addButton(button);
 	}
 	
 }
