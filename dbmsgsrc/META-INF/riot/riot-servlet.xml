@@ -66,5 +66,24 @@
 			<s:form id="messageBundleEntry" />
 		</s:list>
 	</override:add>
+	
+	<s:list id="localMessageEntries" icon="database_key" filter-form="dbMessageFilter">
+		<s:dao>
+			<bean class="org.riotfamily.dbmsgsrc.riot.LocalMessageDao">
+				<constructor-arg ref="sessionFactory" />
+				<property name="search" value="entry.code,entry.defaultMessage.text,text" />
+			</bean>
+		</s:dao>
+		<s:columns>
+			<s:column property="entry.code" lookup-level="2" />
+			<s:column property="entry.defaultMessage.text" lookup-level="2" />
+			<s:column sortable="false">
+				<ref bean="localMessageRenderer" />
+			</s:column>
+		</s:columns>
+		<s:commands>
+			<bean class="org.riotfamily.dbmsgsrc.riot.EditMessageCommand" />
+		</s:commands>
+	</s:list>	
   	
 </beans>
