@@ -56,10 +56,13 @@ public class LocalMessageDao extends AbstractHqlDao {
 	protected String getWhere() {
 		return "e.bundle = :bundle";
 	}
+
 	
 	@Override
-	protected String getWhereClause(Object parent, ListParams params) {
-		return mapAliases(super.getWhereClause(parent, params));
+	protected String getSearchWhereClause(ListParams params) {
+		return "((lower(e.code) like :search) or " +
+				"(dm is not null and lower(dm.text) like :search) or " +
+				"(lower(lm.text) like :search))";
 	}
 	
 	@Override
@@ -80,22 +83,13 @@ public class LocalMessageDao extends AbstractHqlDao {
 	}
 	
 	@Override
-	protected void setFilterParameters(Query query, ListParams params) {
-		
+	protected String getOrderBy(ListParams params) {
+		return "e.code";
 	}
 	
 	@Override
-	protected String getOrderBy(ListParams params) {
-		return mapAliases(super.getOrderBy(params));
-	}
-	
-	private String mapAliases(String hql) {
-		if (hql == null) {
-			return null;
-		}
-		return hql.replace("this.entry", "e")
-				.replace("e.defaultMessage", "dm")		
-				.replace("this.text", "lm.text");
+	protected void setFilterParameters(Query query, ListParams params) {
+		
 	}
 	
 	@Override

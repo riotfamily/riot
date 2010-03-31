@@ -198,7 +198,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
 				params.getFilter());
     }
     
-    protected final String getSearchWhereClause(ListParams params) {
+    protected String getSearchWhereClause(ListParams params) {
     	return HqlUtils.getSearchWhereClause(getEntityClass().getName(), "this", "search", getSearchableProperties());
     }
     
