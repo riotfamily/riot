@@ -238,6 +238,7 @@ div.checkbox-element label,
 
 .checkbox-wrapper {
 	position: absolute;
+	top: 0;
 }
 input.checkbox {
 	margin: 0;
