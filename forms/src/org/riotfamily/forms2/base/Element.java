@@ -13,19 +13,16 @@
 package org.riotfamily.forms2.base;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.forms2.client.FormResource;
 import org.riotfamily.forms2.value.Value;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * Base class for all form elements. Elements themselves are stateless and must
- * implement the {@link #createState(Value)} method. 
+ * (by convention) declare an inner class that extends {@link ElementState}.
  */
 public abstract class Element implements Serializable {
 	
@@ -47,14 +44,9 @@ public abstract class Element implements Serializable {
 	
 	/**
 	 * Creates an empty ElementState. The default implementation creates a new
-	 * state via reflection, using the following convention:
-	 * <p>
-	 * It goes up the class hierarchy until it finds a class that defines 
-	 * an inner class which is a subclass of {@link ElementState}.
-	 * <p>
-	 * The inner class must have a <b>public default constructor</b> and must
-	 * be declared as <b>static class</b>, so that it doesn't have a reference
-	 * to the enclosing non-serializable element.
+	 * state via reflection. It goes up the class hierarchy until it finds a 
+	 * class that defines an inner class which is a subclass of 
+	 * {@link ElementState}.
 	 */
 	protected ElementState createState() {
 		try {
@@ -66,27 +58,6 @@ public abstract class Element implements Serializable {
 				}
 			}
 			throw new IllegalStateException(getClass() + " does not declare a State class");
-		}
-		catch (Exception e) {
-			throw ExceptionUtils.wrapReflectionException(e);
-		}
-	}
-	
-	
-	void init(Element original) {
-		try {
-			for (Class<?> c = getClass(); c != null; c = c.getSuperclass()) {
-				for (Field field : c.getDeclaredFields()) {
-					if (Modifier.isTransient(field.getModifiers())) {
-						ReflectionUtils.makeAccessible(field);
-						Object thisValue = field.get(this);
-						if (thisValue == null) {
-							Object originalValue = field.get(original);
-							field.set(this, originalValue);
-						}
-					}
-				}
-			}
 		}
 		catch (Exception e) {
 			throw ExceptionUtils.wrapReflectionException(e);

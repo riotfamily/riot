@@ -99,7 +99,7 @@ public abstract class ElementState implements Serializable {
 	 */
 	Html wrap(Html html) {
 		return html.div("state").id(id())
-				.addClass(ClassUtils.getShortName(getClass().getDeclaringClass())); //TODO Allow top-level classes?
+				.addClass(ClassUtils.getShortName(getClass().getDeclaringClass()));
 	}
 	
 	/**

@@ -13,6 +13,8 @@
 package org.riotfamily.forms2.base;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
+import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.client.FormResource;
 import org.riotfamily.forms2.client.Html;
@@ -31,6 +34,7 @@ import org.riotfamily.forms2.client.Resources;
 import org.riotfamily.forms2.value.Value;
 import org.riotfamily.forms2.value.ValueFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
 
 public class FormElement extends ContainerElement {
 
@@ -38,13 +42,39 @@ public class FormElement extends ContainerElement {
 	
 	private transient ValueFactory valueFactory;
 
-	private void initElements(FormElement original) {
-		if (original != this) {
-			Iterator<Element> transientElements = getAllElements().iterator();
-			Iterator<Element> originalElements = original.getAllElements().iterator();
-			while (transientElements.hasNext()) {
-				transientElements.next().init(originalElements.next());
+	/**
+	 * Initializes all transient fields with the values from the given element.
+	 */
+	private void restoreTransientFields(FormElement source) {
+		if (source != this) {
+			Iterator<Element> it = source.getAllElements().iterator();
+			Iterator<Element> dest = getAllElements().iterator();
+			while (it.hasNext()) {
+				copyTransientFields(it.next(), dest.next());
 			}
+		}
+	}
+	
+	/**
+	 * Copies the values of all transient fields from source to dest.
+	 */
+	private static void copyTransientFields(Element source, Element dest) {
+		try {
+			for (Class<?> c = dest.getClass(); c != null; c = c.getSuperclass()) {
+				for (Field field : c.getDeclaredFields()) {
+					if (Modifier.isTransient(field.getModifiers())) {
+						ReflectionUtils.makeAccessible(field);
+						Object value = field.get(dest);
+						if (value == null) {
+							Object originalValue = field.get(source);
+							field.set(dest, originalValue);
+						}
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			throw ExceptionUtils.wrapReflectionException(e);
 		}
 	}
 		
@@ -185,8 +215,8 @@ public class FormElement extends ContainerElement {
 			session.removeAttribute(getAttributeName(id()));
 		}
 
-		void init(FormElement formElement) {
-			initElements(formElement);
+		private FormElement getFormElement() {
+			return FormElement.this;
 		}
 	}
 
@@ -196,7 +226,7 @@ public class FormElement extends ContainerElement {
 	
 	public FormState getState(HttpSession session, String id) {
 		State state = (State) session.getAttribute(getAttributeName(id));
-		state.init(this);
+		state.getFormElement().restoreTransientFields(this);
 		return state;
 	}
 }
