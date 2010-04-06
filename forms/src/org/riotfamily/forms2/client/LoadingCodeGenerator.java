@@ -13,6 +13,7 @@
 package org.riotfamily.forms2.client;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 /**
@@ -59,6 +60,15 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 		StringBuilder sb = new StringBuilder();
 		sb.append("(function(){");
 		sb.append("var base='").append(resourcePath).append("';");
+		sb.append("var scripts=[");
+		Iterator<ScriptResource> it = scripts.iterator();
+		while (it.hasNext()) {
+			sb.append(it.next());
+			if (it.hasNext()) {
+				sb.append(",");
+			}
+		}
+		sb.append("];");
 		sb.append("function isPresent(exp) {"
 			  +     "var s = exp.split('.');"
 			  +     "exp = '';"
@@ -69,29 +79,37 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 			  +     "}"
 			  +     "return true;"
 			  +   "}"
-			  +   "function load(src, test) {"
-			  +     "if (!test || !isPresent(test)) document.write('<script src=\"' + base + src + '\"><\\/script>');"
-			  +   "}");
-			
-		for (ScriptResource script : scripts) {
-			sb.append("load('").append(script.getUrl()).append("'");
-			if (script.getTest() != null) {
-				sb.append(", '").append(script.getTest()).append("'");	
-			}
-			sb.append(");");
-		}
+			  +   "var useAjax = window.jQuery;"
+			  +   "function loadScripts() {"
+			  +     "if (scripts.length > 0) {"
+			  +       "var s = scripts.shift();"
+			  +       "if (!s.test || !isPresent(s.test)) {"
+			  +         "if (useAjax) {"
+			  +           "$.getScript(base + s.url, loadScripts);"
+			  +           "return;"
+			  +         "}"
+			  +         "document.write('<script src=\"' + base + s.url + '\"><\\/script>');"
+			  +       "}"
+			  +       "loadScripts();"
+			  +     "}"
+			  +   "}"	
+			  +   "loadScripts();");
+
 		sb.append("})();");
 		return sb.toString();
 	}
 	
 	public String stylesheets() {
 		StringBuilder sb = new StringBuilder();
-		for (StylesheetResource stylesheet : stylesheets) {
-			sb.append("riot.form.loadStyleSheet('");
-			sb.append(resourcePath);
-			sb.append(stylesheet.getUrl());
-			sb.append("');");
+		sb.append("$.each([");
+		Iterator<StylesheetResource> it = stylesheets.iterator();
+		while (it.hasNext()) {
+			sb.append("'").append(resourcePath).append(it.next().getUrl()).append("'");
+			if (it.hasNext()) {
+				sb.append(",");
+			}
 		}
+		sb.append("], function() { $('<link>', {rel:  \"stylesheet\", type: \"text/css\", href: this}).appendTo('head');});");
 		return sb.toString();
 	}
 	

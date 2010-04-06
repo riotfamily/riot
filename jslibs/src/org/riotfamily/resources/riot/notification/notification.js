@@ -1,14 +1,10 @@
-if (!window.riot) var riot = {}; // riot namespace
+if (!window.riot) riot = {};
 
-riot.notification = (function() {
-
-	// ------------------------------------------------------------------------
-	// Private fields and functions
-	// ------------------------------------------------------------------------
-
-	var ie6 = Prototype.Browser.IE && typeof document.documentElement.style.maxHeight == 'undefined';
+(function($) {
+	
+	var ie6 = $.browser.msie && parseInt($.browser.version) < 7;
 		
-	var template = new Template('<table cellspacing="0" cellpadding="0">\
+	var template = '<table cellspacing="0" cellpadding="0">\
 		  <tbody>\
 			<tr class="t">\
 			  <td class="l"></td>\
@@ -21,10 +17,10 @@ riot.notification = (function() {
 				<table>\
 					<tbody>\
 						<tr>\
-							<td#{icon}></td>\
+							<td$icon></td>\
 							<td class="text">\
-								<div class="title">#{title}</div>\
-								<div class="message">#{message}</div>\
+								<div class="title">$title</div>\
+								<div class="message">$message</div>\
 							</td>\
 						</tr>\
 					</tbody>\
@@ -38,122 +34,85 @@ riot.notification = (function() {
 			  <td class="r"></td>\
 			</tr>\
 		  </tbody>\
-		</table>');
+		</table>';
 
 	var visible = 0; 
 	var container;
 	
 	function initContainer() {
 		if (!container) {
-			container = new Element('div');
-			Element.insert(document.body, container.wrap(
-					new Element('div', {id: 'riot-notifications'})));
+			container = $('<div id="riot-notifications"><div></div></div>').appendTo(document.body);
 		}
 	}
 	
-	function fixPNGs(el) {
-		if (ie6) {
-			el.select('td').each(function(td) {
-				if (td.style.filter) {
-					td.style.backgroundImage = '';
-				}
-				var bg = td.getStyle('background-image');
-				if (bg && bg != 'none') {
-					bg = bg.replace(/url\(['"]?(.*?)['"]?\)/, '$1');
-					td.style.backgroundImage = 'none';
-					var repeat = td.getStyle('background-repeat') != 'no-repeat';
-					var method = (repeat ? "scale" : "image")
-					td.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + bg + "', sizingMethod='" + method +"')";
-				}
-			});
-		}
+	function evalTemplate(data) {
+		return template.replace(/\$(\w+)/g, function(str, p1) { return data[p1] || '' });
 	}
-	
-	var Notification = Class.create({
-		initialize: function(o) {
-			o = Object.extend({
-				autoHide: true,
-				duration: 4
-			}, o);
-			
-			var data = {
-				title: o.title,
-				icon: o.icon ? ' class="icon" style="background-image:url('+o.icon+')"' : '',
-				message: o.message
-			};
-			this.el = new Element('div').addClassName('notification').setStyle({visibility: 'hidden'})
-				.insert(template.evaluate(data))
-				.observe('mouseover', this.mouseover.bind(this))
-				.observe('mouseout', this.mouseout.bind(this));
-			
-			this.el.down('.t .l').observe('click', this.close.bind(this));
+
+	riot.showNotification = function(options) {
+		var o = $.extend({
+			autoHide: true,
+			duration: 4
+		}, options);
 		
-			if (o.autoHide) {
-				setTimeout(this.scheduledClose.bind(this), o.duration * 1000);
-			}
-			
-			container.insert({top: this.el});
-			if (container.getHeight() > document.viewport.getHeight()) {
-				container.childElements().without(this.el).invoke('remove');
-			}
-			fixPNGs(this.el);
-			this.el.hide().setStyle({visibility: 'visible'});
-			if (Prototype.Browser.IE) {
-				this.el.show();
-			}
-			else {
-				Effect.Appear(this.el, {duration: 0.8});
-			}
-			visible++
-		},
+		var $el, hover, closeOnOut, closed;
+
+		initContainer();
 		
-		close: function() {
-			if (!this.closed) {
-				this.el.setStyle({visibility: 'hidden'});
-				this.closed = true;
+		function close() {
+			if (!closed) {
+				$el.css('visibility', 'hidden');
+				closed = true;
 				if (--visible == 0) {
-					container.update();
+					container.empty();
 				}
 			}
-		},
+		}
 		
-		scheduledClose: function() {
-			if (!this.hover) {
-				this.close();
+		function scheduledClose() {
+			if (!hover) {
+				close();
 			}
 			else {
-				this.closeOnOut = true;
+				closeOnOut = true;
 			}
-		},
+		}
 		
-		mouseover: function() {
-			this.hover = true;
-			this.el.down().addClassName('hi');
-			fixPNGs(this.el);
-		},
+		function mouseover() {
+			hover = true;
+			$el.find(':first-child').addClass('hi');
+			$el.find('td').fixpngs();
+		}
 		
-		mouseout: function() {
-			this.hover = false;
-			if (this.closeOnOut) {
-				setTimeout(this.scheduledClose.bind(this), 1000);
+		function mouseout() {
+			hover = false;
+			if (closeOnOut) {
+				setTimeout(scheduledClose, 1000);
 			}
 			else {
-				this.el.down().removeClassName('hi');
-				fixPNGs(this.el);
+				$el.find(':first-child').removeClass('hi');
+				$el.find('td').fixpngs();
 			}
 		}
-	});
-	
-	// ------------------------------------------------------------------------
-	// Public API
-	// ------------------------------------------------------------------------
-
-	return {
 		
-		show: function(settings) {
-			initContainer();
-			new Notification(settings);
+		if (o.icon) {
+			o.icon = ' class="icon" style="background-image:url('+o.icon+')"'; 
 		}
+		$el = $('<div>').addClass('notification').css('visibility', 'hidden')
+			.html(evalTemplate(o))
+			.mouseover(mouseover)
+			.mouseout(mouseout)
+			.prependTo(container);
+		
+		$el.find('.t .l').click(close);
+		
+		if (o.autoHide) {
+			setTimeout(scheduledClose, o.duration * 1000);
+		}
+		
+		$el.find('td').fixpngs();
+		$el.hide().css('visibility', 'visible')[ie6 ? 'show' : 'fadeIn']();
+		visible++;
 	};
-
-})();
+	
+})(jQuery);

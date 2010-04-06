@@ -17,7 +17,11 @@ import java.util.List;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.client.Action;
 import org.riotfamily.forms2.client.Html;
+import org.springframework.util.StringUtils;
 
+/**
+ * Class that allows event handlers to incrementally update the UI.
+ */
 public class UserInterface {
 
 	private List<Action> actions = Generics.newArrayList();
@@ -29,58 +33,91 @@ public class UserInterface {
 		return actions;
 	}
 	
-	Action action(ElementState state, String selector, String command) {
-		Action action = new Action(state.getId(), selector, command);
-		actions.add(action);
-		return action;
-	}
-	
-	Action each(ElementState state, String selector, String method, Object... args) {
-		return action(state, null, "each").set("selector", selector)
-				.set("method", method).set("args", args);
-	}
-
-	public void invoke(ElementState state, String selector, String method, Object... args) {
-		action(state, selector, "invoke").set("method", method).set("args", args);
-	}
-	
+	/**
+	 * Updates an element by replacing its content.
+	 */
 	public void update(ElementState state, String selector, Html html) {
-		invoke(state, selector, "update", html);
+		invoke(state, selector, "html", html);
+		eval(html.getScripts());
 	}
 	
+	/**
+	 * Replaces an element.
+	 */
 	public void replace(ElementState state, String selector, Html html) {
-		invoke(state, selector, "replace", html);
+		invoke(state, selector, "replaceWith", html);
+		eval(html.getScripts());
 	}
 
+	/**
+	 * Appends content to an element.
+	 */
 	public void insert(ElementState state, String selector, Html html) {
-		invoke(state, selector, "insert", html);
+		invoke(state, selector, "append", html);
+		eval(html.getScripts());
 	}
 	
+	/**
+	 * Removes an element.
+	 */
 	public void remove(ElementState state, String selector) {
 		invoke(state, selector, "remove");
 	}
 	
+	/**
+	 * Moves an element before its previous sibling.
+	 */
 	public void moveUp(ElementState state, String selector) {
-		action(state, selector, "moveUp");
+		invoke(state, selector, "moveUp");
 	}
 	
+	/**
+	 * Moves an element after its next sibling.
+	 */
 	public void moveDown(ElementState state, String selector) {
-		action(state, selector, "moveDown");
+		invoke(state, selector, "moveDown");
 	}
 	
+	/**
+	 * Adds a CSS class to all matching elements.
+	 */
 	public void addClassName(ElementState state, String selector, String className) {
-		each(state, selector, "addClassName", className);
+		invoke(state, selector, "addClass", className);
 	}
 	
+	/**
+	 * Removes a CSS class from all matching elements.
+	 */
 	public void removeClassName(ElementState state, String selector, String className) {
-		each(state, selector, "removeClassName", className);
+		invoke(state, selector, "removeClass", className);
 	}
 	
+	/**
+	 */
+	public void invoke(ElementState state, String selector, String method, Object... args) {
+		action(state.id(), selector, "invoke").set("method", method).set("args", args);
+	}
+	
+	/**
+	 * Schedules the submission of a synthetic event.
+	 */
 	public void schedule(ElementState state, String handler, String value, long millis) {
-		action(state, null, "schedule")
+		action(state.id(), null, "schedule")
 			.set("handler", handler)
 			.set("value", value)
 			.set("millis", millis);
+	}
+	
+	private void eval(String script) {
+		if (StringUtils.hasText(script)) {
+			action(null, null, "eval").set("script", script);
+		}
+	}
+	
+	Action action(String id, String selector, String command) {
+		Action action = new Action(id, selector, command);
+		actions.add(action);
+		return action;
 	}
 	
 }

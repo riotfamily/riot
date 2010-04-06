@@ -12,7 +12,6 @@
 		<@riot.script src="/engine.js" />
 		<@riot.script src="/util.js" />
 		<@riot.script src="/interface/ListService.js" />
-		<@riot.script src="riot/pager.js" />
 		<@riot.script src="list.js" />
 		<#if chooser??>
 			<@template.set bodyClass="chooser" />
@@ -40,8 +39,12 @@
 		</#if>
 				
 		<script type="text/javascript" language="JavaScript">
-			var list = new RiotList('${listState.key}');
-			list.render('list', 'commands', <#if context.objectId??>'${context.objectId}'<#else>null</#if><#if listState.filterForm??>, 'filterForm'</#if>);
+			riot.list.render({
+			     key: '${listState.key}',
+			     target: '#list', 
+			     commandTarget: '#commands', 
+			     expandedId: <#if context.objectId??>'${context.objectId}'<#else>null</#if>
+			});
 		</script>
 	</@template.block>
 

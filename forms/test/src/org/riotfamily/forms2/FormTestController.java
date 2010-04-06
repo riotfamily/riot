@@ -12,7 +12,11 @@
  */
 package org.riotfamily.forms2;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +76,7 @@ public class FormTestController implements FormSubmissionHandler {
 		FormState formState = form.createState(backingObject, HashMap.class);
 		formState.put(session); //REVISIT Move to Form.java
 		out.write("<html><body>");
+		//out.write("<script src=\"/resources/jquery/jquery.js\" />");
 		out.write(form.render(formState));
 		//out.write(button.render(formState));
 		out.write("<a href=\"shutdown\">Shutdown</a>");
@@ -80,11 +85,18 @@ public class FormTestController implements FormSubmissionHandler {
 		//model.put("button1", button1.render(formState));
 	}
 		
-	@RequestMapping(method=RequestMethod.POST, headers="X-Requested-With=XMLHttpRequest")
-	public @ResponseBody List<Action> handleEvent(HttpSession session, ClientEvent event) {
+	@RequestMapping(method=RequestMethod.GET, headers="X-Requested-With=XMLHttpRequest")
+	public @ResponseBody List<Action> handleEvent(HttpSession session, ClientEvent event) throws Exception {
+		
+		FormState formState = form.getState(session, event);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		new ObjectOutputStream(out).writeObject(formState);
+		formState = (FormState) new ObjectInputStream(new ByteArrayInputStream(out.toByteArray())).readObject();
+		formState.put(session);
+		
 		return form.dispatchEvent(session, event);
 	}
-	
+		
 	@RequestMapping(method=RequestMethod.POST)
 	public void handleUpload(HttpSession session, ClientEvent event, Writer out) throws IOException {
 		String json = new ObjectMapper().writeValueAsString(form.dispatchEvent(session, event));

@@ -18,34 +18,15 @@ public final class Resources {
 	private Resources() {
 	}
 	
-	public static final ScriptResource PROTOTYPE = 
-			new ScriptResource("prototype/prototype.js", "Prototype");
+	public static final ScriptResource JQUERY = 
+			new ScriptResource("jquery/jquery.js", "jQuery");
 	
-	public static final ScriptResource SCRIPTACULOUS_EFFECTS = 
-			new ScriptResource("scriptaculous/effects.js", "Effect", PROTOTYPE);
+	public static final ScriptResource JQUERY_UI = 
+			new ScriptResource("jquery/ui/jquery-ui.js", "jQuery.ui", JQUERY,
+			new StylesheetResource("jquery/ui/jquery-ui.css"));
 	
-	public static final ScriptResource SCRIPTACULOUS_DRAG_DROP = 
-			new ScriptResource("scriptaculous/dragdrop.js", "Droppables",
-			SCRIPTACULOUS_EFFECTS);
-	
-	public static final ScriptResource SCRIPTACULOUS_CONTROLS = 
-			new ScriptResource("scriptaculous/controls.js", "Autocompleter", 
-			SCRIPTACULOUS_EFFECTS);
-	
-	public static final ScriptResource SCRIPTACULOUS_SLIDER = 
-			new ScriptResource("scriptaculous/slider.js", "Control.Slider", 
-			PROTOTYPE);
-
 	public static final ScriptResource RIOT_FORMS = 
-			new ScriptResource("forms/form.js", "submitEvent", 
-			PROTOTYPE, 
+			new ScriptResource("forms/form.js", "riot.form", JQUERY_UI, 
 			new StylesheetResource("forms/form.css"));
 	
-	public static final ScriptResource RIOT_DIALOG = 
-			new ScriptResource("riot/window/dialog.js", "riot.window.Dialog", 
-			PROTOTYPE);
-		
-	public static final ScriptResource RIOT_EFFECTS = 
-			new ScriptResource("riot/effects.js", "Effect.Remove", 
-			SCRIPTACULOUS_EFFECTS);
 }

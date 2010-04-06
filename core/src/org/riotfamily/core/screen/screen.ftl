@@ -4,23 +4,17 @@
 <head>
 	<title>Riot | ${FormatUtils.stripTagsAndSpaces(context.title)}</title>
 	<@riot.scripts srcs=[
-		"prototype/prototype.js",
-		"scriptaculous/effects.js",
-		"riot/util.js", 
-		"riot/resources.js", 
-		"riot/window/dialog.js",
+		"jquery/jquery.js",
+		"jquery/ui/jquery-ui.js",
+		"jquery/jquery.fixpngs.js",
 		"riot/notification/notification.js"] 
 	/>
 	<@riot.stylesheets hrefs=[
-		"riot/window/dialog.css",
+		"jquery/ui/jquery-ui.css",
 		"riot/notification/notification.css",
 		"style/common.css"
 		] + (customStyleSheets![]) + (template.vars.stylesheets![])
 	/>
-	
-	<script language="JavaScript" type="text/javascript">
-		riot.Resources.setBasePath('${c.url(runtime.resourcePath)}');
-	</script>
 	
 </head>
 <body class="${template.vars.bodyClass!"screen"}">
@@ -50,13 +44,15 @@
 		</div>
 	</div>
 	<script>
+	   /*
 		new PeriodicalExecuter(function() {
 			new Ajax.Request('${c.resolve(riot.resource("/ping"))}');
 		}, 180);
+		*/
 	</script>
 	<#if notification??>
 		<script language="JavaScript" type="text/javascript">
-			riot.notification.show(${FormatUtils.toJSON(notification)});
+			riot.showNotification(${FormatUtils.toJSON(notification)});
 		</script>
 	</#if>
 </body>

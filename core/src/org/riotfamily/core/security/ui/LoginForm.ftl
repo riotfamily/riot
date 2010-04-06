@@ -3,55 +3,59 @@
 <head>
 	<title>Riot Login</title>
 	<@riot.scripts srcs=[
-		"prototype/prototype.js",
-		"scriptaculous/effects.js",
-		"riot/resources.js", 
-		"riot/window/dialog.js",
-		"riot/notification/notification.js"] 
-	/>
+        "jquery/jquery.js",
+        "jquery/ui/jquery-ui.js",
+        "jquery/jquery.fixpngs.js",
+        "riot/notification/notification.js"]
+    />
 	<@riot.stylesheets hrefs=[
 		"riot/window/dialog.css",
 		"riot/notification/notification.css",
-		"style/common.css", "style/logo.css", "style/login.css"]
+		"style/common.css", "style/login.css"]
 	/>
+	<script>
+	   $(function() {
+	       $(':text:visible:first').focus();
+	   });
+	</script>
 </head>
 <body class="login">
 	<div id="wrapper">
 		<@center>
-			<@box>
-				<#if username?exists>
-					<div class="error">
-						<@c.message "error.login.invalidCredentials">Invalid username or password</@c.message>
-					</div>
-				</#if>
-				<form method="post" action="${request.getRequestURI()}">
-					<table>
-						<tr class="username">
-							<td class="label">
-								<label for="username"><@c.message "label.login.username">Username</@c.message></label>
-							</td>
-							<td class="input">
-								<input id="username" type="text" name="riot-username" value="${username!?html}" />
-							</td>
-						</tr>
-						<tr class="password">
-							<td class="label">
-								<label for="password"><@c.message "label.login.password">Password</@c.message></label>
-							</td>
-							<td class="input">
-								<input id="password" type="password" name="riot-password" />
-							</td>
-						</tr>
-						<tr class="button">
-							<td class="label">
-							</td>
-							<td class="input">
-								<span><input id="submit" type="submit" class="button-login" value="${c.getMessageWithDefault("label.login.submit", "Login")?html}" /></span>							
-							</td>
-						</tr>
-					</table>
-				</form>
-			</@box>
+            <div class="box">
+                <form method="post" action="${request.getRequestURI()}">
+                    <#if username?exists>
+                    <div class="error">
+                    	<@c.message "error.login.invalidCredentials">Invalid username or password</@c.message>
+                    </div>
+                    </#if>
+                    <table>
+                    	<tr class="username">
+                    		<td class="label">
+                    			<label for="username"><@c.message "label.login.username">Username</@c.message></label>
+                    		</td>
+                    		<td class="input">
+                    			<input id="username" type="text" name="riot-username" value="${username!?html}" />
+                    		</td>
+                    	</tr>
+                    	<tr class="password">
+                    		<td class="label">
+                    			<label for="password"><@c.message "label.login.password">Password</@c.message></label>
+                    		</td>
+                    		<td class="input">
+                    			<input id="password" type="password" name="riot-password" />
+                    		</td>
+                    	</tr>
+                    	<tr class="button">
+                    		<td class="label">
+                    		</td>
+                    		<td class="input">
+                    			<span><input id="submit" type="submit" class="button-login" value="${c.getMessageWithDefault("label.login.submit", "Login")?html}" /></span>							
+                    		</td>
+                    	</tr>
+                    </table>
+                </form>
+            </div>
 		</@center>
 	</div>
 </body>
@@ -62,28 +66,6 @@
 		<tbody>
 			<tr>
 				<td class="center"><#nested  /></td>
-			</tr>
-		</tbody>
-	</table>
-</#macro>
-
-<#macro box>
-	<table class="box">
-		<tbody>
-			<tr class="t">
-				<td class="l"></td>
-				<td class="c"></td>
-				<td class="r"></td>
-			</tr>
-			<tr class="m">
-				<td class="l"></td>
-				<td class="c"><#nested /></td>
-				<td class="r"></td>
-			</tr>
-			<tr class="b">
-				<td class="l"></td>
-				<td class="c"></td>
-				<td class="r"></td>
 			</tr>
 		</tbody>
 	</table>

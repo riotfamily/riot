@@ -1,3 +1,6 @@
+.ui-selecting { background: #FECA40; }
+.ui-selected { background: #F39814; color: white; }
+
 #filter label {
 	display:block;
 }
@@ -63,6 +66,12 @@ div#list {
 	font-size: 15px;
 	font-weight: bold;
 	text-align: left;
+}
+#list th.col-1 {
+    padding-left :32px;
+}
+#list td.col-1 {
+    padding-left :8px;
 }
 #list td {
 	height: 32px;

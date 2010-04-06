@@ -1,280 +1,235 @@
-var RiotList = Class.create({
+if (!window.riot) var riot = {};
 
-	initialize: function(key) {
-		this.key = key;
-		this.selection = [];
-	},
-
-	render: function(target, commandTarget, expandedId, filterForm) {
-		target = $(target);
-		this.table = new Element('table')
-			.insert(new Element('thead').insert(this.headRow = new Element('tr')))
-			.insert(this.tbody = new Element('tbody'));
+riot.list = (function($) {
+	
+	var options;
+	var model, columns, headings;
+	var $table, $focusedRow, lastClickedIndex;
+	
+	function renderTable(m) {
+		columns = [];
+		headings = {};
+		model = m;
+		$table.addClass(m.cssClass);
+		$.each(m.columns, addColumnHeading);
+		$.each(model.columns, updateSortIndicator);
 		
-		target.insert(this.table);
-		this.pager = new Pager(target, this.gotoPage.bind(this));
-		if (filterForm) {
-			this.filterForm = $(filterForm);
-		}
-		
-		Event.observe(window, 'resize', this.resizeColumns.bind(this));
-		Event.observe(document, 'click', this.clearSelection.bind(this));
-
-		if (commandTarget && $(commandTarget)) {
-			this.commandTarget = new Element('div');
-			$(commandTarget).appendChild(this.commandTarget);
-		}
-		ListService.getModel(this.key, expandedId, this.renderTable.bind(this));
-	},
-
-	renderFormCommands: function(item, target) {
-		this.selection = [item];
-		ListService.getFormCommands(this.key, item, 
-				this.renderCommands.bind(this, $(target), this.execCommand.bind(this)));
-	},
-
-	renderTable: function(model) {
-		this.columns = [];
-		this.headings = {};
-		this.model = model;
-		this.table.addClassName(model.cssClass);
-		model.columns.each(this.addColumnHeading.bind(this));
-		this.columns.last().addClassName('col-last');
 		if (!model.instantAction) {
-			this.renderListCommands(model.commandButtons);
+			$.each(model.commandButtons, function() {
+				createButton(this).appendTo(options.commandTarget);
+			})
+			$('a.action span.icon').fixpngs();
 		}
+		/*
 		if (model.commandButtons.length > 0) {
-			this.defaultCommand = model.commandButtons[0].id;
+			defaultCommand = model.commandButtons[0].id;
 		}
-		this.updateFilter(model);
-	},
-
-	addColumnHeading: function(col) {
-		var label;
-		var className = 'col-' + (this.columns.length + 1) + ' ' + col.cssClass;
-		var label = new Element('span').insert(col.heading || '');
-		var th = new Element('th', {className: className}).insert(label);
-		
-		th.property = col.property;
-		this.columns.push(th);
-		this.headings[col.property] = label;
+		*/
+		renderItems(m.items);
+		focusRow($table.find('tbody tr:first'));
+	}
+	
+	function addColumnHeading(i, col) {
+		var className = 'col-' + (i + 1) + ' ' + col.cssClass;
+		var $label = $('<span>').html(col.heading || '');
+		var $th = $('<th>').addClass(className).append($label);
 		if (col.sortable) {
-			th.addClassName('sortable');
-			Event.observe(th, 'click', this.sort.bindAsEventListener(this));
-			this.updateSortIndicator(col);
-		}
-		this.headRow.appendChild(th);
-	},
-	
-	renderListCommands: function(commands) {
-		var handler = this.execCommand.bind(this);
-		this.commandButtons = this.renderCommands(this.commandTarget, handler, commands);
-	},
-	
-	renderCommands: function(el, handler, commands) {
-		var buttons;
-		if (el && commands) {
-			el.update();
-			var list = this;
-			buttons = commands.collect(function(command) {
-				var button = new CommandButton(list, command, handler);
-				el.appendChild(button.element);
-				return button;
+			$th.addClass('sortable').click(function() {
+				ListService.sort(options.key, col.property, function(model) {
+					renderItems(model.items);
+					$.each(model.columns, updateSortIndicator);
+				});
 			});
-			if (buttons.length > 0) {
-				el.up('.box').style.display = 'block';
-			}
-			var p = el.ancestors().find(function(el) { return el.getStyle('position') == 'fixed'});
-			if (p && p.offsetTop + p.offsetHeight > document.viewport.getHeight()) {
-				p.style.position = 'absolute';
-			}
 		}
-		return buttons;
-	},
+		$table.find('thead > tr').append($th).find('th:last').addClass('col-last');
+	}
 	
-	updateColsAndRows: function(model) {
-		model.columns.each(this.updateSortIndicator.bind(this));
-		this.updateRows(model);
-	},
-
-	updateRowsAndPager: function(model) {
-		this.updateRows(model);
-		this.pager.update(model.currentPage, model.pages);
-	},
-
-	updateSortIndicator: function(col) {
-		var e = this.headings[col.property];
+	function updateSortIndicator(i, col) {
+		$table.find('th span').removeClass('sorted-asc sorted-desc');
 		if (col.sorted) {
-			e.toggleClassName('sorted-asc', col.ascending);
-			e.toggleClassName('sorted-desc', !col.ascending);
+			$table.find('th span').eq(i)
+				.toggleClass('sorted-asc', col.ascending)
+				.toggleClass('sorted-desc', !col.ascending);
+		}
+	}
+
+	
+	function renderItems(items) {
+		var rows = createRows(items, 0);
+		rows.appendTo($table.find('tbody').empty());
+	}
+	
+	function createRows(items, level) {
+		return $().add($.map(items, function(item) {
+			var lightweightItem = {
+					objectId: item.objectId,
+					parentNodeId: item.parentNodeId 
+			};
+			var $tr = $('<tr>').addClass('level-' + level)
+				.addClass(item.expandable ? 'expandable' : 'leaf')
+				.data({item: lightweightItem, level: level})
+				.click(toggleSelection);
+			
+			$.each(item.columns, function(i, data) {
+				var className = $table.find('thead th').get(i).className;
+				var $td = $('<td>').addClass(className).html(data).appendTo($tr);
+				if (i == 0) {
+					if (model.tree) {
+						$td.prepend($('<span>').addClass('expand')
+							.css({marginLeft: ((level || 0) * 22) + 'px'})
+							.click(toggleChildren));
+					}
+					$td.prepend($('<input type="checkbox">')
+							.click(toggleSelection)
+							.focus(function() { focusRow($tr) }));
+				}
+			});
+			return $tr;
+		}));
+	}
+	
+	function toggleSelection(event) {
+		event.stopPropagation();
+		var $tr = $(this).closest('tr');
+		var $rows = $tr.parent().children();
+		var i = $tr.index();
+		var checked = !$tr.is('.selected');
+		
+		function setState($row, selected) {
+			$row.toggleClass('selected', selected).find(':checkbox:first').attr('checked', selected);
+		}
+
+		if ((this.tagName == 'TR' && !event.metaKey && !event.altKey && !event.ctrlKey) || event.shiftKey) {
+			$rows.each(function() { setState($(this), false) });
+		}
+		
+		if (event.shiftKey && lastClickedIndex !== undefined) {
+			var start = Math.min(i, lastClickedIndex);
+			var end = Math.max(i, lastClickedIndex) + 1;
+			$rows.slice(start, end).each(function() {
+				setState($(this), true);
+			});
 		}
 		else {
-			e.removeClassName('sorted-asc');
-			e.removeClassName('sorted-desc');
+			setState($tr, checked);
+			lastClickedIndex = i;
 		}
-	},
-
-	sort: function(event) {
-		var property = Event.findElement(event, 'th').property;
-		ListService.sort(this.key, property, this.updateColsAndRows.bind(this));
-	},
-
-	filter: function(filter) {
-		ListService.filter(this.key, filter, this.updateRowsAndPager.bind(this));
-	},
-
-	reset: function() {
-		ListService.filter(this.key, null, this.updateFilter.bind(this));
-	},
-
-	updateFilter: function(model) {
-		this.updateRowsAndPager(model);
-		if (this.filterForm) {
-			this.filterForm.update(model.filterFormHtml);
-		}
-	},
-
-	resizeColumns: function() {
-		if (this.columnsSized) {
-			this.columns.each(function(th) {
-				th.style.width = 'auto';
-			});
-			this.columnsSized = false;
-		}
-	},
-
-	gotoPage: function(page) {
-		if (!this.columnsSized) {
-			this.columns.each(function(th) {
-				var colWidth = th.offsetWidth - parseInt(th.getStyle('padding-left'))
-					- parseInt(th.getStyle('padding-right'));
-
-				th.style.width = colWidth + 'px';
-			});
-			this.columnsSized = true;
-		}
-		ListService.gotoPage(this.key, page, this.updateRowsAndPager.bind(this));
-	},
-
-	updateRows: function(model) {
-		this.tbody.update();
-		for (var i = 0; i < model.items.length; i++) {
-			ListRow.create(this, null, model.items[i]); 
-		}
-		this.updateCommandStates();
-	},
+		focusRow($tr);
+		updateCommandStates();
+	}
 	
-	execCommand: function(commandId) {
-		if (this.setBusy()) {
-			ListService.execCommand(this.key, commandId, this.selection,
-					this.processCommandResult.bind(this));
+	function toggleChildren(event) {
+		var $tr = $(this).closest('tr');
+		if ($tr.is('.expanded')) {
+			collapse($tr);
 		}
-	},
-		
-	refreshList: function(objectId, refreshAll) {
-		if (refreshAll) {
-			ListService.getModel(this.key, objectId, this.updateRowsAndPager.bind(this));
+		else if ($tr.is('.expandable')) {
+			expand($tr);
 		}
-		else {
-			var tr = $('item-' + objectId);
-			if (tr) {
-				ListService.getChildren(this.key, tr.item.objectId, function(items) {
-					tr.removeChildren();
-					tr.addChildren(items);
-					this.updateCommandStates();				
-				}.bind(this));
-				return;
+	}
+	
+	function focusRow($tr) {
+		if ($tr.length > 0) {
+			if ($focusedRow) {
+				$focusedRow.removeClass('highlight highlight-selected');
 			}
+			$tr.addClass('highlight');
+			if ($tr.is('.selected')) {
+				$tr.addClass('highlight-selected');
+			}
+			$tr.find(':checkbox:first').get(0).focus();
+			$focusedRow = $tr;
+			return true;
 		}
-		var screenlets = $('screenlets');
-		if (screenlets) {
-			ListService.renderScreenlets(this.key, function(html) {
-				screenlets.update(html);
+		return false;
+	}
+	
+	function expand($tr) {
+		if ($tr.is('.expandable') && !$tr.is('.expanding') && !$tr.is('.expanded')) {
+			$tr.addClass('expanding')
+			ListService.getChildren(options.key, $tr.data().item.objectId, function(items) { 
+				$tr.removeClass('expanding');
+				if (items.length == 0) {
+					$tr.removeClass('expandable');
+					$tr.addClass('leaf');
+				}
+				else {
+					var level = $tr.data().level || 0;
+					createRows(items, level + 1).insertAfter($tr);
+					$tr.addClass('expanded');
+				}
+			});
+			return true;
+		}
+		return false;
+	}
+	
+	function collapse($tr) {
+		if ($tr.is('.expanded')) {
+			$tr.removeClass('expanded').nextUntil('.level-' + $tr.data().level).remove();
+			return true;
+		}
+		return false;
+	}
+	
+	function handleKeyEvent(event) {
+		switch (event.keyCode) {
+		case 37: 
+			if (!collapse($focusedRow)) {
+				var prev = $focusedRow.prevAll('.level-' + ($focusedRow.data().level - 1) + ':first');
+				focusRow(prev);
+			}
+			break;
+				
+		case 38:
+			if (focusRow($focusedRow.prev())) {
+				event.preventDefault();
+			}
+			break;
+				
+		case 39:
+			expand($focusedRow);
+			break;
+			
+		case 40:
+			if (focusRow($focusedRow.next())) {
+				event.preventDefault();
+			}
+			break;
+		}
+	}
+	
+	//
+	
+	function updateCommandStates() {
+		if (model.commandButtons) {
+			var selection = $('tr.selected').map(function() { return $(this).data().item }).get();
+			ListService.getEnabledCommands(options.key, selection, function(enabled) {
+				$('a.action').each(function() {
+					var on = $.inArray(this.id, enabled) != -1;
+					$(this).toggleClass('enabled', on).toggleClass('disabled', !on);
+				});
 			});
 		}
-	},
+	}
+	
+	var handlers = {
 		
-	getSelectionIndex: function(item) {
-		for (var i = 0; i < this.selection.length; i++) {
-			if (this.selection[i].objectId == item.objectId) {
-				return i;
-			}
-		}
-		return -1;
-	},
-	
-	isSelected: function(item) {
-		return getSelectionIndex(item) != -1;
-	},
-	
-	toggleSelection: function(tr) {
-		if (tr.hasClassName('selected')) {
-			this.unselectRow(tr);
-		}
-		else {
-			this.selectRow(tr);
-		}
-	},
-	
-	selectRow: function(tr) {
-		if (!tr.hasClassName('selected')) {
-			this.selection.push(tr.item);
-			tr.addClassName('selected');
-			if (tr.hasClassName('highlight')) {
-				tr.addClassName('highlight-selected');	
-			}
-			this.updateCommandStates();
-		}
-	},
-	
-	unselectRow: function(tr) {
-		if (tr.hasClassName('selected')) {
-			this.selection = this.selection.reject(function(i) {
-				return i.objectId == tr.item.objectId;
-			});
-			tr.removeClassName('selected');
-			tr.removeClassName('highlight-selected');
-			this.updateCommandStates();
-		}
-	},
-	
-	clearSelection: function() {
-		this.selection = [];
-		this.tbody.select('tr.selected').invoke('removeClassName', 'selected');
-		this.updateCommandStates();
-	},
-	
-	updateCommandStates: function() {
-		if (this.commandButtons) {
-			ListService.getEnabledCommands(this.key, this.selection, 
-					this.enableButtons.bind(this));
-		}
-	},
-	
-	enableButtons: function(enabled) {
-		for (var i = 0; i < this.commandButtons.length; i++) {
-			var button = this.commandButtons[i];
-			button.setEnabled(enabled.include(button.command.id));
-		}
-	},
-	
-	handlers: {
-		
-		batch: function(list, result) {
+		batch: function(result) {
 			dwr.engine.beginBatch();
-			result.batch.each(list.processCommandResult.bind(list));
+			$.each(result.batch, processCommandResult);
 			dwr.engine.endBatch();
 		},
 		
-		refreshList: function(list, result) {
-			list.refreshList(result.objectId, result.refreshAll);
+		refreshList: function(result) {
+			refreshList(result.objectId, result.refreshAll);
 		},
 		
-		updateCommands: function(list, result) {
-			list.updateCommandStates();
+		updateCommands: function(result) {
+			updateCommandStates();
 		},
 		
-		gotoUrl: function(list, result) {
+		gotoUrl: function(result) {
 			var win = eval(result.target);
 			if (result.replace) {
 				win.location.replace(result.url);
@@ -311,352 +266,74 @@ var RiotList = Class.create({
 			}
 		},
 		
-		dialog: function(list, result) {
-			new riot.window.Dialog(result);
+		dialog: function(result) {
+			var $dlg;
+			if (result.url) {
+				$dlg = $('<iframe>', {src: result.url}).load(function() { $dlg.dialog('open') });
+			}
+			else {
+				$dlg = $('<div>').append(result.content);
+			}
+			$dlg.dialog({title: result.title, autoOpen: !result.url, close: function(event, ui) { $dlg.remove() }}).appendTo('body');
 		},
 		
-		notification: function(list, result) {
-			riot.notification.show(result);;
+		notification: function(result) {
+			riot.showNotification(result);
 		},
 		
-		reload: function(list, result) {
+		reload: function(result) {
 			window.location.reload();
 		},
 		
-		eval: function(list, result) {
+		eval: function(result) {
 			eval(result.script);
 		},
 		
-		download: function(list, result) {
+		download: function(result) {
 			dwr.engine.openInDownload(result.file);
 		}
-	},
+	}
 	
-	processCommandResult: function(result) {
-		this.setIdle();
+	function processResult(result) {
 		if (result) {
-			var handler = this.handlers[result.action];
+			var handler = handlers[result.action];
 			if (handler) {
-				handler(this, result);
-			}
-		}
-	},
-	
-	handleInput: function(formKey) {
-		ListService.handleInput(this.key, formKey, this.selection,
-				this.processCommandResult.bind(this));	
-	},
-	
-	setBusy: function() {
-		if (this.busy) {
-			return false;
-		}
-		this.busy = true;
-		Element.addClassName(document.body, 'busy');
-		return true;
-	},
-	
-	setIdle: function() {
-		if (!this.busy) {
-			return false;
-		}
-		this.busy = false;
-		Element.removeClassName(document.body, 'busy');
-		return true;
-	}
-
-});
-
-var ListRow = {
-	create: function(list, parentRow, item) {
-		
-	// Create TR element
-		var tr = Object.extend(new Element('tr'), {
-			list: list, 
-			item: item, 
-			id: 'item-' + item.objectId,
-			parentRow: parentRow,
-			level: parentRow ? parentRow.level + 1 : 0
-		});
-		if (item.cssClass) {
-			tr.addClassName(item.cssClass);
-		}
-		
-		// Add methods
-		Object.extend(tr, ListRow.Methods);
-		
-		tr.setExpandable(item.expandable);
-		
-		// Create the TD elements
-		for (var i = 0; i < item.columns.length; i++) {
-			var td = new Element('td', {className: list.columns[i].className}).insert(item.columns[i]);
-			tr.appendChild(td);
-			if (list.model.tree && i == 0) {
-				td.insert({top: 
-					new Element('span', {className: 'expand'})
-					.setStyle({marginLeft: (tr.level * 22) + 'px'})
-					.observe('click', tr.toggleChildren.bindAsEventListener(tr))
-				});
-			}
-		}
-		
-		// Select row if part of current selection
-		var i = list.getSelectionIndex(item); 
-		if (i != -1) {
-			tr.addClassName('selected');
-			list.selection[i] = item;
-		}
-
-		//Prevent text selection in unselected items
-		if (Prototype.Browser.IE) {
-			tr.onmousedown = function() {
-				this.selectedOnMouseDown = this.hasClassName('selected') && !event.ctrlKey; 
-			};
-			tr.onselectstart = function() {
-				return this.selectedOnMouseDown; 
-			};
-		}
-		
-		// Register event listeners
-		if (list.model.instantAction) {
-			tr.observe('click', tr.execDefaultCommand.bindAsEventListener(tr));
-		}
-		else {
-			tr.observe('click', tr.toggle.bindAsEventListener(tr));
-			tr.observe('dblclick', tr.execDefaultCommand.bindAsEventListener(tr));
-		}
-		
-		// Add to DOM
-		if (parentRow) {
-			parentRow.insert({after: tr});
-			parentRow.childRows.push(tr);
-		}
-		else {
-			list.tbody.appendChild(tr);
-		}
-		
-		// Add children (if present in model) 
-		if (item.children) {
-			tr.expanded = true;
-			tr.addClassName('expanded');
-			tr.addChildren(item.children);
-		}
-		
-		// Convert item to lightweight object
-		delete item.columns;
-		delete item.children;
-		delete item.expandable;
-	},
-		
-	Methods: {
-	
-		/**
-		 * Click listener that toggles the selection state.
-		 */
-		toggle: function(ev) {
-			if (!ev.ctrlKey && !ev.metaKey) {
-				this.list.clearSelection();
-			}
-			this.list.toggleSelection(this);
-			ev.stop();
-		},
-		
-		/**
-		 * Click listener to expand/collapse tree items.
-		 */
-		toggleChildren: function(ev) {
-			ev.stop();
-			if (this.expandable) {
-				if (this.expanded) {
-					this.collapse();
-				}
-				else {
-					this.expand();
-				}
-			}
-		},
-		
-		/**
-		 * DoubleClick listener (or click listener in instantAction mode).
-		 */
-		execDefaultCommand: function() {
-			if (this.list.commandButtons) {
-				if (this.list.selection.length == 0) {
-					this.list.selection = [this.item];
-				}
-				this.list.updateCommandStates();
-				this.list.commandButtons[0].onclick();
-			}
-		},
-		
-		/**
-		 * Adds support :hover style in IE6.
-		 */
-		onmouseover: function() {
-			this.addClassName('highlight');
-			if (this.hasClassName('selected')) {
-				this.addClassName('highlight-selected');
-			}
-		},
-		
-		/**
-		 * Adds support :hover style in IE6.
-		 */
-		onmouseout: function() {
-			this.removeClassName('highlight').removeClassName('highlight-selected');
-		},
-		
-		/**
-		 * Overwrites Prototype's Element.remove() method to also remove 
-		 * the childRows. 
-		 */
-		remove: function() {
-			this.removeChildren();
-			this.parentNode.removeChild(this);
-		},
-		
-		/**
-		 * Invokes the the remove() method on all childRows. 
-		 */
-		removeChildren: function() {
-			if (this.childRows) {
-				this.childRows.invoke('remove');
-				this.childRows = null;
-			}
-		},
-			
-		/**
-		 * Callback method to create childRows.
-		 */
-		addChildren: function(items) {
-			this.removeClassName('expanding');
-			this.childRows = [];
-			this.setExpandable(items.length > 0);
-			this.setExpanded(items.length > 0);
-			for (var i = items.length - 1; i >= 0; i--) {
-				ListRow.create(this.list, this, items[i]);
-			}
-		},
-		
-		setExpandable: function(expandable) {
-			this.expandable = expandable;
-			if (expandable) {
-				this.removeClassName('leaf');
-				this.addClassName('expandable');
-				
-			}
-			else {
-				this.addClassName('leaf');
-				this.removeClassName('expandable');
-			}
-		},
-		
-		setExpanded: function(expanded) {
-			this.expanded = expanded;
-			if (expanded) {
-				this.addClassName('expanded');
-			}
-			else {
-				this.removeClassName('expanded');
-			}
-		},
-		
-		expand: function() {
-			if (!this.expanded) {
-				this.setExpanded(true);
-				this.addClassName('expanding');
-				ListService.getChildren(this.list.key, this.item.objectId, this.addChildren.bind(this));
-			}
-		},
-		
-		collapse: function() {
-			if (this.expanded) {
-				this.setExpanded(false);
-				this.childRows.each(this.list.unselectRow.bind(this.list));
-				this.removeChildren();
+				handler(result);
 			}
 		}
 	}
-}
-
-var CommandButton = Class.create({
-	initialize: function(list, command, handler) {
-		this.list = list;
-		this.command = command;
-		this.handler = handler;
-		var style = 'background-image:url(' + command.icon 
-			+ ');_background-image:none;_filter:progid:'
-			+ 'DXImageTransform.Microsoft.AlphaImageLoader(src=\''
-			+ command.icon + '\', sizingMethod=\'crop\')';
-		
-		this.element = new Element('a', {href: '#'}).addClassName('action')
-			.insert(new Element('span').addClassName('icon-and-label')
-				.insert(new Element('span', {style: style}).addClassName('icon'))
-				.insert(new Element('span').addClassName('label').insert(command.label))
-			).observe('click', this.onclick.bindAsEventListener(this));
-		
-		this.setEnabled(command.enabled);
-	},
 	
-	setEnabled: function(enabled) {
-		this.enabled = enabled;
-		if (enabled) {
-			this.element.addClassName('enabled');
-			this.element.removeClassName('disabled');
-		}
-		else {
-			this.element.removeClassName('enabled');
-			this.element.addClassName('disabled');	
-		}
-	},
+	function execCommand(commandId) {
+		var selection = $('tr.selected').map(function() { return $(this).data().item }).get();
+		ListService.execCommand(options.key, commandId, selection, processResult);
+	}
 	
-	onclick: function(event) {
-		if (this.enabled) {
-			this.handler(this.command.id);
-		}
-		if (event) {
-			event.stop();
+	function createButton(command) {
+		return $('<a>', {href: '#'}).addClass('action').attr('id', command.id)
+			.toggleClass('enabled', command.enabled)
+			.append($('<span>').addClass('icon-and-label')
+					.append($('<span>').addClass('icon').css('background-image', 'url(' + command.icon + ')'))
+					.append($('<span>').addClass('label').html(command.label))
+			).click(function() {
+				if (!$(this).is('disabled')) {
+					execCommand(command.id);
+				}
+			});
+	}
+	
+	return {
+		
+		render: function (o) {
+			options = o;
+			$table = $('<table><thead><tr></tr></thead><tbody></tbody></table>').appendTo(options.target);
+			$table.keydown(handleKeyEvent);
+			ListService.getModel(o.key, o.expandedId, renderTable);
 		}
 	}
-});
 
-dwr.engine.setTextHtmlHandler(function() {
-	location.reload();
-});
+	
+})(jQuery);
 
 dwr.engine.setErrorHandler(function(err, ex) {
-	if (ex.javaClassName) {
-		if (ex.javaClassName == 'org.riotfamily.core.security.PermissionDeniedException'
-				&& ex.permissionRequestUrl) {
-		
-			location.href = top.contextPath + ex.permissionRequestUrl;
-		}
-		else {
-			list.setIdle();
-			if (ex.message) {
-				alert(ex.message);
-			}
-			else {
-				alert(ex.javaClassName);
-			}
-		}
-	}
-	else {
-		list.setIdle();
-		throw ex;
-	}
+	throw ex;
 });
-
-dwr.engine.setWarningHandler(function(err, ex) {
-	if (window.console && console.log) {
-		console.log(err);
-	}
-});
-
-dwr.engine.setPreHook(function() {
-	if (top.setLoading) top.setLoading(true);
-});
-
-dwr.engine.setPostHook(function() {
-   if (top.setLoading) top.setLoading(false);
-}); 
