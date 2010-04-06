@@ -1,7 +1,0 @@
-dependencies {
-	compile project(':content'), 
-			libs(['commons_httpclient', 'htmlparser', 'quartz'])
-	
-	provided lib('servlet_api')
-}
-
