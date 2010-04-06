@@ -65,6 +65,9 @@ public class NotificationResult implements CommandResult {
 		if (title == null && messageResolver != null) {
 			title = messageResolver.getMessage(getTitleKey(), args, defaultTitle);
 		}
+		if (title == null) {
+			title = "";
+		}
 		return title;
 	}
 	

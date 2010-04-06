@@ -48,6 +48,10 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware,
 		this.messageSource = messageSource;
 	}
 	
+	protected MessageSource getMessageSource() {
+		return messageSource;
+	}
+	
 	public String getId() {
 		return id;
 	}

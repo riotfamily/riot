@@ -32,7 +32,7 @@ import org.springframework.web.context.ServletContextAware;
  * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class WebApplicationContextBeanImporter implements ServletContextAware, 
-		BeanNameAware, FactoryBean, InitializingBean {
+		BeanNameAware, FactoryBean<Object>, InitializingBean {
 
 	private String servletName;
 	

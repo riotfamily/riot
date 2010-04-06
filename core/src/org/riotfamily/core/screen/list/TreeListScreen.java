@@ -150,7 +150,7 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 		if (commands != null) {
 			for (Object command : commands) {
 				if (command instanceof Command) {
-					String id = ObjectUtils.getIdentityHexString(command);
+					String id = "cmd" + ObjectUtils.getIdentityHexString(command);
 					this.commandMap.put(id, (Command) command);
 				}
 				else if (command instanceof Collection<?>) {

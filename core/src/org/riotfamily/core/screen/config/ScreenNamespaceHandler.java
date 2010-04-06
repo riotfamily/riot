@@ -36,21 +36,21 @@ public class ScreenNamespaceHandler extends GenericNamespaceHandlerSupport {
 				.setDefault(new ListItemDecorator("childScreens")));
 		
 		register("form", FormScreen.class)
-				.addTranslation("id", "beanName")
 				.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR)
 				.setDecorator(new ChildDecorator()
-				.register("screenlets", new ListDecorator())
-				.setDefault(new ListItemDecorator("childScreens")));
+					.register("elements", new PropertyDecorator())
+					.register("screenlets", new ListDecorator())
+					.setDefault(new ListItemDecorator("childScreens")));
 		
 		register("list", TreeListScreen.class)
 				.addTranslation("filter-form", "filterFormId")
 				.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR)
 				.setDecorator(new ChildDecorator()
-				.register("dao", new PropertyDecorator())
-				.register("columns", new ListDecorator())
-				.register("commands", new ListDecorator())
-				.register("screenlets", new ListDecorator())
-				.setDefault(new PropertyValueDecorator("itemScreen")));
+					.register("dao", new PropertyDecorator())
+					.register("columns", new ListDecorator())
+					.register("commands", new ListDecorator())
+					.register("screenlets", new ListDecorator())
+					.setDefault(new PropertyValueDecorator("itemScreen")));
 		
 		register("column", ColumnConfig.class).setDecorator(
 				new PropertyDecorator("renderer"));

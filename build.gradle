@@ -24,6 +24,7 @@ libraries = [
 	yuicompressor: 'com.yahoo.platform.yui:yuicompressor:2.4.2',
 	texhyphj: 'net.davidashen:texhyphj:1.1.0',
 	htmlparser: 'org.htmlparser:htmlparser:1.6',
+	hsqldb: 'org.hsqldb:hsqldb:1.8.0.10',
 	apache_poi: 'org.apache.poi:poi:3.5-FINAL'
 ] + modules('lucene', 'org.apache.lucene:lucene-$name:2.4.1', 
 		  'core', 'highlighter', 'analyzers', 'snowball') + 

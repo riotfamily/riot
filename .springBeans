@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.2.6.200908051215-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.3.0.200912062113-CI-R3542-B563]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
-		<config>media/META-INF/riot/application-context.xml</config>
-		<config>media/META-INF/riot/riot-servlet.xml</config>
-		<config>statistics/META-INF/riot/riot-servlet.xml</config>
-		<config>core/META-INF/riot/riot-servlet.xml</config>
-		<config>core/META-INF/riot/website-servlet.xml</config>
-		<config>core/META-INF/riot/application-context.xml</config>
-		<config>dbmsgsrc/META-INF/riot/riot-servlet.xml</config>
-		<config>dbmsgsrc/META-INF/riot/website-servlet.xml</config>
-		<config>common/META-INF/riot/application-context.xml</config>
-		<config>common/META-INF/riot/website-servlet.xml</config>
-		<config>content/META-INF/riot/application-context.xml</config>
-		<config>content/META-INF/riot/riot-servlet.xml</config>
-		<config>content/META-INF/riot/website-servlet.xml</config>
-		<config>linkcheck/META-INF/riot/application-context.xml</config>
-		<config>linkcheck/META-INF/riot/riot-servlet.xml</config>
-		<config>linkcheck/META-INF/riot/website-servlet.xml</config>
-		<config>crawler/META-INF/riot/application-context.xml</config>
-		<config>crawler/META-INF/riot/riot-servlet.xml</config>
-		<config>search/META-INF/riot/application-context.xml</config>
-		<config>search/META-INF/riot/riot-servlet.xml</config>
-		<config>search/META-INF/riot/website-servlet.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -35,21 +14,6 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>media/META-INF/riot/application-context.xml</config>
-				<config>media/META-INF/riot/riot-servlet.xml</config>
-				<config>core/META-INF/riot/riot-servlet.xml</config>
-				<config>core/META-INF/riot/application-context.xml</config>
-				<config>dbmsgsrc/META-INF/riot/riot-servlet.xml</config>
-				<config>common/META-INF/riot/application-context.xml</config>
-				<config>content/META-INF/riot/application-context.xml</config>
-				<config>content/META-INF/riot/riot-servlet.xml</config>
-				<config>linkcheck/META-INF/riot/riot-servlet.xml</config>
-				<config>crawler/META-INF/riot/application-context.xml</config>
-				<config>crawler/META-INF/riot/riot-servlet.xml</config>
-				<config>linkcheck/META-INF/riot/application-context.xml</config>
-				<config>statistics/META-INF/riot/riot-servlet.xml</config>
-				<config>search/META-INF/riot/application-context.xml</config>
-				<config>search/META-INF/riot/riot-servlet.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
@@ -57,18 +21,6 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>media/META-INF/riot/application-context.xml</config>
-				<config>core/META-INF/riot/website-servlet.xml</config>
-				<config>core/META-INF/riot/application-context.xml</config>
-				<config>dbmsgsrc/META-INF/riot/website-servlet.xml</config>
-				<config>common/META-INF/riot/application-context.xml</config>
-				<config>common/META-INF/riot/website-servlet.xml</config>
-				<config>content/META-INF/riot/application-context.xml</config>
-				<config>content/META-INF/riot/website-servlet.xml</config>
-				<config>linkcheck/META-INF/riot/website-servlet.xml</config>
-				<config>linkcheck/META-INF/riot/application-context.xml</config>
-				<config>search/META-INF/riot/application-context.xml</config>
-				<config>search/META-INF/riot/website-servlet.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

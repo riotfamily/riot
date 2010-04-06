@@ -7,4 +7,6 @@ dependencies {
 	provided libs(['servlet_api'])
 	
 	runtime project(':common'), project(':revolt')
+	
+	testRuntime libs(['hsqldb'])
 }

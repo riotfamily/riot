@@ -99,10 +99,17 @@
 		<xsd:complexContent>
 			<xsd:extension base="screenType">
 				<xsd:sequence>
+				    <xsd:element name="elements">
+				        <xsd:complexType>
+                            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                                <xsd:element ref="beans:bean" />
+                                <xsd:element ref="beans:ref" />
+                            </xsd:choice>
+                        </xsd:complexType>
+				    </xsd:element>
 					<xsd:group ref="screenElements" minOccurs="0" maxOccurs="unbounded" />
 					<xsd:element name="screenlets" type="screenletsType" minOccurs="0" />
 				</xsd:sequence>
-				<xsd:attribute name="form-id" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

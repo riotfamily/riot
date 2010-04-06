@@ -20,6 +20,8 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -33,6 +35,10 @@ import org.springframework.web.servlet.DispatcherServlet;
 public final class SpringUtils {
 
 	private SpringUtils() {
+	}
+
+	private static Logger log() {
+		return LoggerFactory.getLogger(SpringUtils.class);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -76,7 +82,7 @@ public final class SpringUtils {
 	public static<T> T getBean(BeanFactory beanFactory, String name, 
 			Class<T> requiredType) {
 		
-		return (T) beanFactory.getBean(name, requiredType);
+		return beanFactory.getBean(name, requiredType);
 	}
 	
 	public static<T> T getBeanIfExists(BeanFactory beanFactory, String name, 
@@ -89,7 +95,7 @@ public final class SpringUtils {
 	}
 	
 	public static<T> T beanOfType(ListableBeanFactory lbf, Class<T> type) {
-		return (T) BeanFactoryUtils.beanOfType(lbf, type);
+		return BeanFactoryUtils.beanOfType(lbf, type);
 	}
 	
 	public static<T> T beanOfType(BeanFactory beanFactory, Class<T> type) {
@@ -98,7 +104,7 @@ public final class SpringUtils {
 	}
 	
 	public static<T> T beanOfTypeIncludingAncestors(ListableBeanFactory lbf, Class<T> type) {
-		return (T) BeanFactoryUtils.beanOfTypeIncludingAncestors(lbf, type);
+		return BeanFactoryUtils.beanOfTypeIncludingAncestors(lbf, type);
 	}
 	
 	public static<T> Map<String, T> beansOfType(
@@ -155,11 +161,12 @@ public final class SpringUtils {
 		WebApplicationContext ctx = (WebApplicationContext) 
 				servletContext.getAttribute(contextAttribute);
 		
-		Assert.state(ctx != null, "No WebApplicationContext found in the " +
+		if (ctx == null) {
+			log().warn("No WebApplicationContext found in the " +
 				"ServletContext under the key '" + contextAttribute + "'. " +
 				"Make sure your DispatcherServlet is called '" + 
 				servletName + "' and publishContext is set to true.");
-		
+		}
 		return ctx;
 	}
 	
@@ -167,14 +174,17 @@ public final class SpringUtils {
 	public static<T> T getBean(ServletContext servletContext, 
 			String servletName, String beanName) {
 		
-		return (T) getWebsiteApplicationContext(servletContext, servletName)
-				.getBean(beanName);
+		WebApplicationContext ctx = getWebsiteApplicationContext(servletContext, servletName);
+		if (ctx == null) {
+			return null;
+		}
+		return (T) ctx.getBean(beanName);
 	}
 	
 	public static<T> T getBean(ServletContext servletContext, 
 			String servletName, String beanName, Class<T> requiredType) {
 		
-		return (T) getWebsiteApplicationContext(servletContext, servletName)
+		return getWebsiteApplicationContext(servletContext, servletName)
 				.getBean(beanName, requiredType);
 	}
 

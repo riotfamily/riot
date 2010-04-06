@@ -12,22 +12,21 @@
  */
 package org.riotfamily.core.screen.form;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.riotfamily.common.util.FormatUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.mvc.view.FlashScopeView;
-import org.riotfamily.core.dao.InvalidPropertyValueException;
-import org.riotfamily.core.dao.RiotDao;
-import org.riotfamily.core.dao.RiotDaoException;
+import org.riotfamily.core.runtime.RiotRuntime;
+import org.riotfamily.core.screen.AbstractRiotScreen;
 import org.riotfamily.core.screen.GroupScreen;
 import org.riotfamily.core.screen.ItemScreen;
 import org.riotfamily.core.screen.RiotScreen;
@@ -35,71 +34,52 @@ import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenContextHolder;
 import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.ScreenUtils;
-import org.riotfamily.core.screen.Screenlet;
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.controller.AjaxFormController;
-import org.riotfamily.forms.controller.FormContextFactory;
-import org.riotfamily.forms.factory.FormRepository;
+import org.riotfamily.forms2.Form;
+import org.riotfamily.forms2.FormSubmissionHandler;
+import org.riotfamily.forms2.SubmitButton;
+import org.riotfamily.forms2.base.Element;
+import org.riotfamily.forms2.base.FormState;
+import org.riotfamily.forms2.client.Action;
+import org.riotfamily.forms2.client.ClientEvent;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-public class FormScreen extends AjaxFormController
-		implements ItemScreen, BeanNameAware {
+public class FormScreen extends AbstractRiotScreen implements ItemScreen, BeanNameAware, FormSubmissionHandler {
 
 	private static final DefaultTransactionDefinition TX_DEF =
 			new DefaultTransactionDefinition(
 			TransactionDefinition.PROPAGATION_REQUIRED);
 	
+	@Autowired
 	private PlatformTransactionManager transactionManager;
 
-	private FormRepository formRepository;
+	@Autowired
+	private RiotRuntime riotRuntime;
 	
-	private String viewName = ResourceUtils.getPath(
-			FormScreen.class, "form.ftl");
-
-	private String id;
-	
-	private String formId;
-
-	private String icon;
-	
-	private RiotScreen parentScreen;
+	private Form form = new Form();
 	
 	private Collection<RiotScreen> childScreens;
 	
-	private Collection<Screenlet> screenlets;
+	private String viewName = ResourceUtils.getPath(FormScreen.class, "form.ftl");
 
-	public FormScreen(FormContextFactory formContextFactory,
-			FormRepository formRepository,
-			PlatformTransactionManager transactionManager) {
-		
-		super(formContextFactory);
-		this.formRepository = formRepository;
-		this.transactionManager = transactionManager;
-	}
-
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
-	}
-
-	public String getFormId() {
-		if (formId == null) {
-			return getId();
+	public void setElements(List<Element> elements) {
+		for (Element element : elements) {
+			form.add(element);
 		}
-		return formId;
-	}
-
-	public void setFormId(String formId) {
-		this.formId = formId;
+		form.add(new SubmitButton("Save", this));
 	}
 	
-	public void setIcon(String icon) {
-		this.icon = icon;
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
 	}
 	
 	public void setChildScreens(Collection<RiotScreen> childScreens) {
@@ -110,48 +90,21 @@ public class FormScreen extends AjaxFormController
 			}
 		}
 	}
-
-	public void setScreenlets(Collection<Screenlet> screenlets) {
-		this.screenlets = screenlets;
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public String renderForm(HttpServletRequest request, ModelMap model) throws IOException {
+		ScreenContext context = ScreenContextHolder.get();
+		FormState formState = form.createState(context.getObject(), context.getDao().getEntityClass());
+		formState.setContextPath(request.getContextPath());
+		formState.setResourcePath(riotRuntime.getResourcePath());
+		formState.put(request.getSession()); //REVISIT Move to Form.java
+		model.put("form", form.render(formState));
+		//model.put("button", button.render(formState));
+		exposeChildLinks(model);
+		return viewName;
 	}
 	
-	public void setBeanName(String beanName) {
-		if (id == null) {
-			id = beanName;
-		}
-	}
-	
-	/**
-	 * Returns the name of the attribute under which the {@link Form} is
-	 * stored in the HTTP session. This implementation returns the
-	 * requestURI with the controller's class name as prefix. 
-	 */
-	@Override
-	protected String getSessionAttribute(HttpServletRequest request) {
-		return getClass().getName() + ":" + request.getRequestURI();
-	}
-		
-	@Override
-	protected Form createForm(HttpServletRequest request) {
-		Form form = formRepository.createForm(getFormId());
-		form.addButton("save");
-		return form;
-	}
-	
-	@Override
-	protected Object getFormBackingObject(HttpServletRequest request) {
-		return ScreenContextHolder.get().getObject();
-	}
-	
-	@Override
-	protected ModelAndView showForm(Form form, HttpServletRequest request,
-			HttpServletResponse response) {
-
-		StringWriter sw = new StringWriter();
-		renderForm(form, new PrintWriter(sw));
-		ModelAndView mv = new ModelAndView(viewName);
-		mv.addObject("form", sw.toString());
-		
+	private void exposeChildLinks(ModelMap model) {
 		ScreenContext context = ScreenContextHolder.get();
 		if (context.getObject() != null) {
 			if (childScreens != null) {
@@ -159,155 +112,56 @@ public class FormScreen extends AjaxFormController
 				for (RiotScreen screen : childScreens) {
 					childLinks.add(context.createChildContext(screen).getLink());
 				}
-				mv.addObject("childLinks", childLinks);
+				model.put("childLinks", childLinks);
 			}
 		}
-		mv.addObject("listStateKey", ScreenUtils.getListScreen(this).getId());
-		return mv;
+		model.put("listStateKey", ScreenUtils.getListScreen(this).getId());
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, headers="X-Requested-With=XMLHttpRequest")
+	public @ResponseBody List<Action> handleEvent(HttpSession session, ClientEvent event) {
+		return form.dispatchEvent(session, event);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public void handleUpload(HttpSession session, ClientEvent event, Writer out) throws IOException {
+		String json = new ObjectMapper().writeValueAsString(form.dispatchEvent(session, event));
+		out.write("<html><body><script>parent.riot.form.processActions(");
+		out.write(json);
+		out.write(");</script></body></html>");
 	}
 
-	@Override
-	public final ModelAndView handleFormSubmission(Form form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-
+	public void onSubmit(FormState state) {
 		ScreenContext context = ScreenContextHolder.get();
-		try {
-			return handleFormSubmissionInternal(form, request, response, context);
-		}
-		catch (InvalidPropertyValueException e) {
-			form.getErrors().rejectValue(e.getField(), e.getCode(),
-					e.getArguments(), e.getMessage());
-
-			return showForm(form, request, response);
-		}
-		catch (RiotDaoException e) {
-			form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
-			return showForm(form, request, response);
-		}
-	}
-
-	protected ModelAndView handleFormSubmissionInternal(Form form, 
-			HttpServletRequest request, HttpServletResponse response,
-			ScreenContext context) throws Exception {
-		
-		boolean save = form.isNew();
-		saveOrUpdate(form, context);
-		removeFormFromSession(request);
-		return afterSaveOrUpdate(form, request, context, save);
-	}
-		
-	protected void saveOrUpdate(Form form, ScreenContext context) 
-			throws Exception {
-		
 		TransactionStatus status = transactionManager.getTransaction(TX_DEF);
-		RiotDao dao = context.getDao();
 		try {
-			if (form.isNew()) {
-				log.debug("Saving entity ...");
-				Object parent = context.getParent();
-				Object bean = form.populateBackingObject();				
-				dao.save(bean, parent);
-			}
-			else {
-				log.debug("Updating entity ...");
-				Object bean = form.populateBackingObject();
-				dao.update(bean);
-			}
+			Object backingObject = context.getObject();
+			Object entity = form.populate(backingObject, state);
+			context.getDao().save(entity, context.getParent());
+			//log.info("New value: {}", backingObject);
 		}
-		catch (Exception e) {
+		catch (Throwable t) {
 			transactionManager.rollback(status);
-			throw e;
+			throw ExceptionUtils.wrapThrowable(t);
 		}
 		transactionManager.commit(status);
 	}
 
-	private boolean hasChildScreens() {
-		return getChildScreens() != null && !getChildScreens().isEmpty();
-	}
-	
-	protected ModelAndView afterSaveOrUpdate(
-			Form form, HttpServletRequest request,
-			ScreenContext context, boolean save) {
-		
-		ModelAndView mv;
-		String focus = request.getParameter("focus");
-		
-		// Recreate context to make sure it includes the objectId (in case of newly created objects)
-		context = context.createParentContext().createItemContext(form.getBackingObject());
-		
-		if (focus != null || (save && hasChildScreens())) {
-			mv = reloadForm(form, context, focus);
-		}
-		else {
-			mv = showParentList(context);
-		}
-		
-		mv.addObject("notification", new FormNotification(form)
-				.setIcon("save")
-				.setMessageKey("label.form.saved")
-				.setDefaultMessage("Your changes have been saved."));
-		
-		return mv;
-	}
-
-	protected ModelAndView showParentList(ScreenContext context) {
-		
-		String listUrl = context.createParentContext().getLink().getUrl();
-		return new ModelAndView(new FlashScopeView(listUrl, true));
-	}
-
-	protected ModelAndView reloadForm(Form form, ScreenContext context, String focus) {
-		return new ModelAndView(new FlashScopeView(context.getLink().getUrl(), true))
-				.addObject("focus", focus);
-	}
-
-	// -----------------------------------------------------------------------
-	// Implementation of the RiotScreen interface
-	// -----------------------------------------------------------------------
-	
+	@Override
 	public Collection<RiotScreen> getChildScreens() {
 		return childScreens;
 	}
-
-	public String getIcon() {
-		return icon;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public RiotScreen getParentScreen() {
-		return parentScreen;
-	}
-
-	public void setParentScreen(RiotScreen parentScreen) {
-		if (this.parentScreen == null) {
-			this.parentScreen = parentScreen;
-		}
-	}
 	
+	@Override
 	public String getTitle(ScreenContext context) {
-		Locale locale = RequestContextUtils.getLocale(context.getRequest());
-		if (parentScreen instanceof GroupScreen) {
-			String code = "screen." + getId();
-			String defaultTitle = FormatUtils.xmlToTitleCase(getId());
-			return getMessageSource().getMessage(code, null, defaultTitle, locale);
+		if (getParentScreen() instanceof GroupScreen) {
+			return super.getTitle(context);
 		}
 		if (context.getObject() != null) {
 			return ScreenUtils.getLabel(context.getObject(), this);
 		}
+		Locale locale = RequestContextUtils.getLocale(context.getRequest());
 		return getMessageSource().getMessage("label.form.new", null, "New", locale);
-	}
-
-	public Collection<Screenlet> getScreenlets() {
-		return screenlets;
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("FormScreen[id=%s]", id);
 	}
 
 }
