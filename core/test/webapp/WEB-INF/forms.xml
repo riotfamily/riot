@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form-config
+	xmlns="http://www.riotfamily.org/schema/forms/form-config"
+	xmlns:riot="http://www.riotfamily.org/schema/core/form-elements"
+	xmlns:media="http://www.riotfamily.org/schema/media/form-elements"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.riotfamily.org/schema/forms/form-config
+		http://www.riotfamily.org/schema/forms/form-config-9.0.xsd
+		http://www.riotfamily.org/schema/core/form-elements
+		http://www.riotfamily.org/schema/core/form-elements-9.0.xsd
+		http://www.riotfamily.org/schema/media/form-elements
+		http://www.riotfamily.org/schema/media/form-elements-9.0.xsd">
+		
+		<form id="speciesForm" bean-class="org.riotfamily.core.integration.Species">
+            <textfield bind="name" />
+        </form>
+        
+		<form id="pet" bean-class="org.riotfamily.core.integration.Pet">
+			<textfield bind="name" />
+			<media:image-upload bind="image" />
+			<riot:chooser bind="species" target-id="species" />
+		</form>
+		
+</form-config>

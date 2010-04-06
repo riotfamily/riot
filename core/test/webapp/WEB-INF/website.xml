@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:txt2img="http://www.riotfamily.org/schema/common/txt2img"
+	xmlns:p="http://www.riotfamily.org/schema/content/page"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-9.0.xsd
+		http://www.riotfamily.org/schema/common/txt2img
+		http://www.riotfamily.org/schema/common/txt2img-9.0.xsd
+		http://www.riotfamily.org/schema/content/page
+        http://www.riotfamily.org/schema/content/page-9.0.xsd">
+
+    <bean id="defaultPageController" class="org.riotfamily.common.web.controller.CacheableViewController">
+        <property name="viewName" value="pages/default.ftl" />
+    </bean>
+    
+    <p:schema name="default">
+        <p:root-page>
+            <p:handler>
+                <bean class="org.riotfamily.pages.controller.FolderController" />
+            </p:handler>
+            
+            <p:system-page name="home" handler="defaultPageController">
+                <p:system-page name="foo" handler="defaultPageController" />
+                <p:system-page name="bar" handler="defaultPageController" />
+            </p:system-page>
+            
+            <p:type name="default" handler="defaultPageController">
+                <p:type-ref name="default" />
+            </p:type>
+
+        </p:root-page>
+    </p:schema>
+    
+	<!-- Use the locale defined by the Site being viewed -->
+	<bean id="localeResolver" class="org.riotfamily.pages.SiteLocaleResolver">
+		<!-- You can also set a fallback resolver if the main resolver can't resolve the locale -->
+		<!--
+		<property name="fallbackResolver">
+			<bean class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" />
+		</property>
+		-->
+	</bean>
+	
+	<!-- First: Look for handlers mapped via @RequestMapping annotations -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="order" value="1" />	
+	</bean>
+	
+	<!-- Second: Look bean names starting with a slash -->
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+		<property name="order" value="2" />	
+	</bean>
+	
+	<!-- Third: Look for a matching page -->
+	<override:properties ref="pageHandlerMapping">
+		<property name="order" value="3" />
+	</override:properties>
+	
+	<!-- Fourth: Look for static resources shadowed by the servlet mapping -->
+	<bean class="org.riotfamily.common.web.mvc.mapping.ResourceHandlerMapping">
+		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="order" value="4" />
+	</bean>
+
+</beans>

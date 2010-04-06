@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:s="http://www.riotfamily.org/schema/core/screen"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-9.0.xsd
+		http://www.riotfamily.org/schema/core/screen
+		http://www.riotfamily.org/schema/core/screen-9.0.xsd">
+	 
+	<util:list id="defaultCommands">
+		<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
+		<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
+		<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
+	</util:list>
+	
+	<override:add ref="rootScreens">
+		<ref bean="sitemaps" />
+	   <s:list id="species">
+            <s:dao>
+                <bean class="org.riotfamily.core.dao.hibernate.HqlDao" autowire="constructor">
+                    <property name="entityClass" value="org.riotfamily.core.integration.Species" />
+                </bean>
+            </s:dao>
+            <s:columns>
+                <s:column property="name" />
+            </s:columns>
+            <s:form id="speciesForm">
+                <s:elements>
+                    <bean class="org.riotfamily.forms2.base.Binding">
+                        <property name="target" value="name" />
+                        <property name="element">
+                            <bean class="org.riotfamily.forms2.element.TextField" />
+                        </property>
+                    </bean>
+                </s:elements>
+                <s:list id="pets">
+                    <s:dao>
+                        <bean class="org.riotfamily.core.dao.hibernate.HqlParentChildDao" autowire="constructor">
+                            <property name="entityClass" value="org.riotfamily.core.integration.Pet" />
+                            <property name="parentProperty" value="species" />
+                        </bean>
+                    </s:dao>
+                    <s:columns>
+                        <s:column property="id" />
+                        <s:column property="name" />
+                        <s:column property="published" />
+                    </s:columns>
+                    <s:commands>
+                        <ref bean="defaultCommands" />
+                        <bean class="org.riotfamily.components.riot.command.PublishCommand" />
+                        <bean class="org.riotfamily.components.riot.command.UnpublishCommand" />
+                    </s:commands>
+                    <s:form id="pet">
+	                    <s:elements>
+	                       <!-- TODO -->
+	                    </s:elements>
+                    </s:form>
+                </s:list>
+            </s:form>
+            <s:screenlets>
+                <bean class="org.riotfamily.core.status.HqlStatusMonitor">
+                    <constructor-arg ref="sessionFactory" />
+                    <property name="icon" value="brick" />
+                    <property name="linkedScreen" value="pets" />
+                    <property name="hql" value="select count(*) from Pet" />
+                    <property name="defaultMessage" value="There are currently {0} pets in the clinic." />
+                </bean>
+            </s:screenlets>
+        </s:list>
+    </override:add>
+	 
+</beans>
