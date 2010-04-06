@@ -29,13 +29,17 @@ public class Html extends DomBuilder<Html> {
 	
 	private IdGenerator idGenerator;
 	
+	private StringBuilder scripts;
+	
 	public Html(IdGenerator idGenerator) {
 		this.idGenerator = idGenerator;
+		this.scripts = new StringBuilder();
 	}
 	
 	protected Html(Element child, Html parent) {
 		super(child, parent);
 		this.idGenerator = parent.idGenerator;
+		this.scripts = parent.scripts;
 	}
 	
 	@Override
@@ -159,11 +163,15 @@ public class Html extends DomBuilder<Html> {
 	}
 	
 	public Html propagate(String event, String handler) {
-		return propagate(event, handler, "$F(this)");
+		return propagate(event, handler, "$(this).val()");
 	}
 	
 	public Html propagate(String event, String handler, String exp) {
-		return attr("on" + event, String.format("riot.form.submitEvent(this, '%s', %s)", handler, exp));
+		return attr("on" + event, String.format("$(this).submitEvent('%s', %s)", handler, exp));
+	}
+	
+	public Html invoke(String id, String selector, String method, Object... args) {
+		return script("riot.form.invoke('%s', '%s', '%s', %s)", id, selector, method, FormatUtils.toJSON(args));
 	}
 	
 	public Html process(List<Action> actions) {
@@ -171,12 +179,21 @@ public class Html extends DomBuilder<Html> {
 		return this;
 	}
 	
-	public Html script(CharSequence script) {
-		return elem("script").text(script.toString());
+	public Html script(String script, Object... args) {
+		scripts.append(String.format(script, args));
+		return this;
 	}
 	
-	public Html script(String script, Object... args) {
-		return elem("script").text(String.format(script, args));
+	public String getScripts() {
+		return scripts.toString();
+	}
+	
+	public Html inlineScripts() {
+		if (scripts.length() > 0) {
+			elem("script").text(scripts.toString());
+			scripts.setLength(0);
+		}
+		return this;
 	}
 	
 	public Html id(String value) {

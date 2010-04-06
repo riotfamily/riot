@@ -12,13 +12,21 @@
  */
 package org.riotfamily.forms2.base;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+
+import javax.servlet.http.HttpSession;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.client.FormResource;
+import org.riotfamily.forms2.client.Html;
+import org.riotfamily.forms2.client.IdGenerator;
+import org.riotfamily.forms2.client.LoadingCodeGenerator;
 import org.riotfamily.forms2.client.Resources;
 import org.riotfamily.forms2.value.Value;
 import org.riotfamily.forms2.value.ValueFactory;
@@ -26,65 +34,169 @@ import org.springframework.util.Assert;
 
 public class FormElement extends ContainerElement {
 
-	private int nextId = 0;
-	
-	private Map<String, Element> elementsById = Generics.newHashMap();
-	
 	private List<Element> externalElements = Generics.newArrayList();
 	
-	private Set<FormResource> resources = Generics.newHashSet();
-	
-	private ValueFactory valueFactory;
+	private transient ValueFactory valueFactory;
 
-	public FormElement() {
-		resources.add(Resources.RIOT_FORMS);
+	private void initElements(FormElement original) {
+		if (original != this) {
+			Iterator<Element> transientElements = getAllElements().iterator();
+			Iterator<Element> originalElements = original.getAllElements().iterator();
+			while (transientElements.hasNext()) {
+				transientElements.next().init(originalElements.next());
+			}
+		}
+	}
+		
+	public void addExternal(Element element) {
+		externalElements.add(element);
 	}
 	
-	@Override
-	public void register(Element element) {
-		String id = "e" + nextId++;
-		elementsById.put(id, element);
-		element.setId(id);
-		element.setRoot(this);
-		Collection<FormResource> res = element.getResources();
-		if (res != null) {
-			resources.addAll(res);
+	private Collection<Element> getAllElements() {
+		List<Element> result = Generics.newArrayList();
+		result.add(this);
+		collectElements(externalElements, result);
+		collectElements(getChildElements(), result);
+		return result;
+	}
+	
+	private void collectElements(Collection<Element> childElements, List<Element> collection) {
+		if (childElements != null) {
+			collection.addAll(childElements);
+			for (Element element : childElements) {
+				collectElements(element.getChildElements(), collection);
+			}
 		}
 	}
 	
-	public void addExternal(Element element) {
-		externalElements.add(element);
-		element.setParent(this);
+	@Override
+	protected FormResource getResource() {
+		return Resources.RIOT_FORMS;
 	}
 	
-	@Override
-	public Collection<FormResource> getResources() {
+	private Collection<FormResource> getAllResources() {
+		Set<FormResource> resources = Generics.newHashSet();
+		for (Element element : getAllElements()) {
+			Collection<FormResource> res = element.getResources();
+			if (res != null) {
+				resources.addAll(res);				
+			}
+		}
 		return resources;
 	}
-	
-	public Element getElement(String id) {
-		Element el = elementsById.get(id);
-		Assert.notNull(el, "No such element: '" + id + "'");
-		return el;
-	}
-	
+		
 	public ValueFactory getValueFactory() {
 		return valueFactory;
 	}
-	
+		
 	@Override
-	public FormElement getRoot() {
-		return this;
-	}
-	
-	@Override
-	public FormState createAndInitState(ElementState parent, Value value) {
-		FormState state = new FormState(value);
-		state.init(this, null, state, value);
+	public State createAndInitState(ElementState parent, Value value) {
+		State state = new State(value);
+		state.init(null, state, value);
 		for (Element element : externalElements) {
 			state.register(element.createState(state, value));
 		}
 		return state;
 	}
 	
+	public final class State extends ContainerElement.State implements FormState {
+
+		private Class<?> type;
+		
+		private Serializable target;
+		
+		private Map<String, ElementState> statesById = Generics.newHashMap();
+		
+		private int elementCount = 0;
+
+		private String contextPath = "";
+
+		private String resourcePath = "/resources/";
+		
+		private IdGenerator idGenerator = new IdGenerator();
+		
+		State(Value value) {
+			super(UUID.randomUUID().toString());
+		}
+		
+		@Override
+		protected void onInitContainer(Value value) {
+			this.type = value.getTypeDescriptor().getType();
+		}
+		
+		public Class<?> getType() {
+			return type;
+		}
+			
+		@Override
+		public Html newHtml() {
+			return new Html(idGenerator);
+		}
+		
+		@Override
+		String register(ElementState state) {
+			String id = "s" + elementCount++;
+			statesById.put(id, state);
+			return id;
+		}
+					
+		public void setTarget(Serializable target) {
+			this.target = target;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public <T extends Serializable> T getTarget() {
+			return (T) target;
+		}
+		
+		public void setContextPath(String contextPath) {
+			this.contextPath = contextPath;
+		}
+		
+		public void setResourcePath(String resourcePath) {
+			this.resourcePath = resourcePath;
+		}
+		
+		public ElementState getElementState(String id) {
+			ElementState state = statesById.get(id);
+			Assert.notNull(state, "No such state: '" + id + "'");
+			return state;
+		}
+		
+		@Override
+		FormState getFormStateInternal() {
+			return this;
+		}
+		
+		public String render() {
+			Html html = new Html(idGenerator);
+			LoadingCodeGenerator loader = new LoadingCodeGenerator(getAllResources(), contextPath + resourcePath);
+			html.script(loader.scripts());
+			html.script(loader.stylesheets());
+			render(html);
+			return html.inlineScripts().toString();
+		}
+				
+		public void put(HttpSession session) {
+			session.setAttribute(getAttributeName(id()), this);
+		}
+		
+		public void remove(HttpSession session) {
+			session.removeAttribute(getAttributeName(id()));
+		}
+
+		void init(FormElement formElement) {
+			initElements(formElement);
+		}
+	}
+
+	private static String getAttributeName(String id) {
+		return FormState.class.getName() + '#' + id;
+	}
+	
+	public FormState getState(HttpSession session, String id) {
+		State state = (State) session.getAttribute(getAttributeName(id));
+		state.init(this);
+		return state;
+	}
 }

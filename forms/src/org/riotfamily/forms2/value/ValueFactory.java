@@ -23,7 +23,11 @@ public final class ValueFactory {
 	}
 	
 	public static Value createValue(Object object, Class<?> type) {
-		Value value = createValue(TypeDescriptor.valueOf(type), true);
+		return createValue(object, type, true);
+	}
+	
+	public static Value createValue(Object object, Class<?> type, boolean deferUnknown) {
+		Value value = createValue(TypeDescriptor.valueOf(type), deferUnknown);
 		if (object != null) {
 			value.set(object);
 		}

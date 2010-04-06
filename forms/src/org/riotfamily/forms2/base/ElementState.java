@@ -14,7 +14,6 @@ package org.riotfamily.forms2.base;
 
 import java.io.Serializable;
 
-import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
 import org.springframework.util.ClassUtils;
@@ -24,89 +23,144 @@ public abstract class ElementState implements Serializable {
 
 	private String id;
 	
-	private String elementId;
-	
 	private boolean enabled = true;
 		
 	private ElementState parent;
 	
 	private FormState formState;
 	
-	static ElementState create(final Class<?> elementClass) {
-		try {
-			for(Class<?> c = elementClass; c != null; c = c.getSuperclass()) {
-				for (Class<?> innerClass : c.getDeclaredClasses()) {
-					if (ElementState.class.isAssignableFrom(innerClass)) {
-						return innerClass.asSubclass(ElementState.class).newInstance();
-					}
-				}
-			}
-			throw new IllegalStateException(elementClass + " does not declare a State class");
-		}
-		catch (Exception e) {
-			throw ExceptionUtils.wrapReflectionException(e);
-		}
+	/**
+	 * Empty default constructor. 
+	 */
+	public ElementState() {
 	}
 	
 	/**
-	 * Called by {@link Element#createAndInitState}.
+	 * Constructor that allows the FormState subclass to assign an id to itself.
 	 */
-	final void init(Element element, ElementState parent, FormState formState, Value value) {
-		this.elementId = element.getId();
-		this.parent = parent;
-		this.formState = formState;
-		if (parent != null) {
-			setId(parent.register(this));
-		}
-		onInit(element, value);
-	}
-	
-	protected final void setId(String id) {
+	ElementState(String id) {
 		this.id = id;
 	}
 	
-	public final String getId() {
-		return id;
-	}
-	
-	protected void onInit(Element element, Value value) {
+	/**
+	 * Returns the FormState that was set via the {@link #init} method.
+	 */
+	public final FormState getFormState() {
+		return getFormStateInternal();
 	}
 
-	public ElementState getParent() {
+	/**
+	 * Returns the parent state that was set via the {@link #init} method.
+	 */
+	public final ElementState getParent() {
 		return parent;
 	}
 	
-	public FormState getFormState() {
-		return formState;
+	/**
+	 * Returns the state's unique id. The id is assigned during {@link #init} by
+	 * calling <code>parent.register(this)</code>.
+	 */
+	public final String id() {
+		return id;
 	}
-	
-	public String register(ElementState state) {
-		return parent.register(state);
-	}
-	
-	public String getElementId() {
-		return elementId;
-	}
-	
-	public boolean isEnabled() {
+
+	/**
+	 * Returns whether the element is enabled, i.e. accepts user input.
+	 */
+	public final boolean isEnabled() {
 		return enabled && (parent == null || parent.isEnabled());
 	}
 	
+	/**
+	 * Enables or disables the element. Disabling an element also implicitly 
+	 * disables its decendants, as {@link #isEnabled()} takes the parent state
+	 * into account. 
+	 */
+	public final void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	/**
+	 * Renders the element by calling {@link #renderElement(Html, Element)} and
+	 * wraps the result into a DIV that identifies this state.
+	 */
+	public final void render(Html html) {
+		renderElement(wrap(html));
+	}
+		
+	/**
+	 * Creates a DIV that is used to wrap the actual element. The DIV has this
+	 * state's {@link #id() id} and a CSS class called <code>state</code>, 
+	 * which is used by the JavaScript to obtain the <code<stateId</code> of 
+	 * nested DOM elements.
+	 * <p>
+	 * Additionally the {@link ClassUtils#getShortName(Class) short name} of 
+	 * the element's Java class is assigned as CSS class.
+	 */
+	Html wrap(Html html) {
+		return html.div("state").id(id())
+				.addClass(ClassUtils.getShortName(getClass().getDeclaringClass())); //TODO Allow top-level classes?
+	}
+	
+	/**
+	 * Convenience method for subclasses that can be used as shortcut for
+	 * <code>getFormState().newHtml()</code>.
+	 */
 	protected Html newHtml() {
 		return formState.newHtml();
 	}
-	
-	public final void render(Html html, Element element) {
-		renderElement(wrap(html, element), element);
+
+	/**
+	 * Callback method that can be overwritten by subclasses to perform 
+	 * initialization tasks.
+	 * <p>
+	 * At this point it is guaranteed that the {@link #id() id}, 
+	 * the {@link #getParent() parent}, the {@link #getElementId() elementId}
+	 * and the {@link #getFormState() formState} have been set.
+	 * <p>
+	 * <b>Important:</b> Implementations that need to created nested states 
+	 * must do this in this method, not inside their constructor.
+	 */
+	protected void onInit(Value value) {
 	}
 	
-	Html wrap(Html html, Element element) {
-		return html.div("state").id(getId())
-				.addClass(ClassUtils.getShortName(element.getClass()));
+	protected void renderElement(Html html) {
+	}
+		
+	public abstract void populate(Value value);
+	
+	/**
+	 * Called by {@link Element#createAndInitState} to set the elementId, 
+	 * parent, formState and to assign a unique id. Invokes 
+	 * {@link #onInit(Element, Value)} to allow subclasses to perform 
+	 * additional initialization tasks.
+	 */
+	final void init(ElementState parent, FormState formState, Value value) {
+		this.parent = parent;
+		this.formState = formState;
+		if (parent != null) {
+			id = parent.register(this);
+		}
+		onInit(value);
+	}
+	
+	/**
+	 * Returns a newly created unique id by delegating the call to the parent 
+	 * state.
+	 * 
+	 * @see #init(Element, ElementState, FormState, Value)
+	 * @see FormState#register(ElementState)
+	 */
+	String register(ElementState state) {
+		return parent.register(state);
 	}
 
-	protected abstract void renderElement(Html html, Element element);
-	
-	public abstract void populate(Value value, Element element);
-
+	/**
+	 * Invoked internally by the final {@link #getFormState()} method. The 
+	 * method has package-visibility to allow {@link FormState#getFormState()} 
+	 * to return a reference to itself.
+	 */
+	FormState getFormStateInternal() {
+		return formState;
+	}
 }

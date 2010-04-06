@@ -12,6 +12,9 @@
  */
 package org.riotfamily.forms2.base;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
@@ -23,39 +26,54 @@ public class Binding extends Element {
 
 	private Element element;
 	
+	public Binding() {
+	}
+			
 	public Binding(String target, Element element) {
 		this.target = target;
 		this.element = element;
-		element.setParent(this);
+	}
+	
+	public void setTarget(String target) {
+		this.target = target;
 	}
 
-	public static class State<T extends Binding> extends TypedState<T> {
+	public void setElement(Element element) {
+		this.element = element;
+	}
+
+	@Override
+	public Collection<Element> getChildElements() {
+		return Collections.singleton(element);
+	}
+
+	public class State extends ElementState {
 
 		ElementState nestedState;
-
+		
 		@Override
-		protected Html wrap(Html html, Element element) {
+		protected Html wrap(Html html) {
 			return html;
 		}
 		
 		@Override
-		protected void initInternal(T binding, Value value) {
-			Value nestedValue = value.getNested(binding.target);
-			nestedState = binding.element.createState(this, nestedValue);
+		protected void onInit(Value value) {
+			Value nestedValue = value.getNested(target);
+			nestedState = element.createState(this, nestedValue);
 		}
 
 		@Override
-		public void renderInternal(Html html, T binding) {
+		public void renderElement(Html html) {
 			Html div = html.div("labeled");
-			div.div("label").messageText(binding.target, FormatUtils.propertyToTitleCase(binding.target));
-			nestedState.render(div, binding.element);
+			div.div("label").messageText(target, FormatUtils.propertyToTitleCase(target));
+			nestedState.render(div);
 		}
 
 		@Override
-		public void populateInternal(Value value, T binding) {
-			Value nestedValue = value.getNested(binding.target);
-			nestedState.populate(nestedValue, binding.element);
-			value.setNested(binding.target, nestedValue.get());
+		public void populate(Value value) {
+			Value nestedValue = value.getNested(target);
+			nestedState.populate(nestedValue);
+			value.setNested(target, nestedValue.get());
 		}
 		
 	}

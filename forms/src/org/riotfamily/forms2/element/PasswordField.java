@@ -13,14 +13,14 @@
 package org.riotfamily.forms2.element;
 
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.TypedState;
+import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
 
 public class PasswordField extends Element {
 
-	public static class State extends TypedState<PasswordField> {
+	public class State extends ElementState {
 
 		private String password;
 		
@@ -33,12 +33,12 @@ public class PasswordField extends Element {
 		private String strength;
 		
 		@Override
-		protected void initInternal(PasswordField element, Value value) {
+		protected void onInit(Value value) {
 			this.alreadySet = value.get() != null;
 		}
 		
 		@Override
-		protected void populateInternal(Value value, PasswordField pw) {
+		public void populate(Value value) {
 			if (setNew) {
 				value.set(password);
 			}
@@ -65,7 +65,7 @@ public class PasswordField extends Element {
 		}
 		
 		@Override
-		protected void renderInternal(Html html, PasswordField pw) {
+		protected void renderElement(Html html) {
 			if (setNew) { 
 				if (alreadySet) {
 					//html.button("Keep old password");

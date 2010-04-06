@@ -51,29 +51,32 @@ public class Form {
 		if (object != null) {
 			type = object.getClass();
 		}
-		Value value = ValueFactory.createValue(object, type);
+		Value value = ValueFactory.createValue(object, type, false);
 		return formElement.createAndInitState(null, value);
 	}
 	
 	public Object populate(Object object, FormState formState) {
-		Value value = ValueFactory.createValue(object, formState.getType());
-		formState.populate(value, formElement);
+		Value value = ValueFactory.createValue(object, formState.getType(), false);
+		formState.populate(value);
 		return value.get();
 	}
 	
 	public String render(FormState formState) {
-		return formState.render(formElement);
+		return formState.render();
+	}
+	
+	public FormState getState(HttpSession session, ClientEvent event) {
+		return formElement.getState(session, event.getFormId());
 	}
 	
 	public List<Action> dispatchEvent(HttpSession session, ClientEvent event) {
-		return dispatchEvent(FormState.get(session, event.getFormId()), event);	
+		return dispatchEvent(getState(session, event), event);	
 	}
 	
 	public List<Action> dispatchEvent(FormState formState, ClientEvent event) {
 		ElementState elementState = formState.getElementState(event.getStateId());
-		Element element = formElement.getElement(elementState.getElementId());
 		UserInterface ui = new UserInterface();
-		invoke(elementState, event.getHandler(), ui, element, event.getFileOrValue());
+		invoke(elementState, event.getHandler(), ui, event.getFileOrValue());
 		return ui.getActions();
 	}
 	

@@ -25,7 +25,7 @@ public class RadioButtonGroup extends SingleSelectElement {
 		html = html.elem("fieldset");
 		for (Option option : options) {
 			html.input("radio", option.getValue())
-				.attr("name", getId())
+				//.attr("name", getId())
 				.propagate("click", "select");
 			
 			html.labelPrev(option.getLabel());

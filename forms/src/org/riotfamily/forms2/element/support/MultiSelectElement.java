@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.value.Value;
 
 public abstract class MultiSelectElement extends SelectElement {
@@ -35,9 +36,9 @@ public abstract class MultiSelectElement extends SelectElement {
 		return ((Set<?>) value).contains(option);
 	}
 	
-	public static class State extends SelectionState {
+	public class State extends SelectElement.State {
 
-		public void select(List<String> values) {
+		public void select(UserInterface ui, List<String> values) {
 			for (Option option : options) {
 				option.setSelected(values.contains(option.getValue()));
 			}
@@ -54,12 +55,12 @@ public abstract class MultiSelectElement extends SelectElement {
 		}
 		
 		@Override
-		public void populateInternal(Value value, SelectElement element) {
+		public void populate(Value value) {
 			Set<Object> set = value.require(Set.class, LinkedHashSet.class).getOrCreate();
 			set.clear();
 			for (Option option : options) {
 				if (option.isSelected()) {
-					set.add(element.resolve(option.getReference()));
+					set.add(resolve(option.getReference()));
 				}
 			}
 		}

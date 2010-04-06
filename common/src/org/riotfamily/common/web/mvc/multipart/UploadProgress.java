@@ -33,7 +33,7 @@ public class UploadProgress {
 		return bytesRead >= bytesTotal;
 	}
 	
-	public int getProgress() {
+	public int getPercentage() {
 		return (int) ((float) bytesRead / bytesTotal * 100);
 	}
 	

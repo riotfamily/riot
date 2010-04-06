@@ -13,7 +13,7 @@
 package org.riotfamily.forms2.element;
 
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.TypedState;
+import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
@@ -22,17 +22,17 @@ import org.springframework.core.convert.support.ConversionServiceFactory;
 
 public class TextField extends Element {
 
-	private ConversionService conversionService = ConversionServiceFactory.createDefaultConversionService();
+	private transient ConversionService conversionService = ConversionServiceFactory.createDefaultConversionService();
 	
-	public static class State<T extends TextField> extends TypedState<T> {
+	public class State extends ElementState {
 
 		private String text;
 		
 		@Override
-		protected void initInternal(T element, Value value) {
+		protected void onInit(Value value) {
 			Object obj = value.get();
 			if (obj != null) {
-				text = element.conversionService.convert(obj, String.class);
+				text = conversionService.convert(obj, String.class);
 			}
 		}
 		
@@ -41,18 +41,18 @@ public class TextField extends Element {
 		}
 
 		@Override
-		protected void renderInternal(Html html, T element) {
+		protected void renderElement(Html html) {
 			html.input("text", text).propagate("change", "update");
 		}
 		
-		public void update(UserInterface ui, T element, String text) {
+		public void update(UserInterface ui, String text) {
 			this.text = text;
 		}
 
 		@Override
-		protected void populateInternal(Value value, T element) {
+		public void populate(Value value) {
 			Class<?> type = value.require(Object.class, String.class).getTypeDescriptor().getType();
-			Object obj = element.conversionService.convert(text, type);
+			Object obj = conversionService.convert(text, type);
 			value.set(obj);
 		}
 		

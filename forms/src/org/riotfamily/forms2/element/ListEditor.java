@@ -21,15 +21,12 @@ import java.util.List;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.base.Element;
 import org.riotfamily.forms2.base.ElementState;
-import org.riotfamily.forms2.base.TypedState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.FormResource;
 import org.riotfamily.forms2.client.Html;
-import org.riotfamily.forms2.client.Resources;
 import org.riotfamily.forms2.client.ScriptResource;
 import org.riotfamily.forms2.value.Value;
 import org.riotfamily.forms2.value.ValueFactory;
-import org.springframework.core.convert.TypeDescriptor;
 
 public class ListEditor extends Element {
 
@@ -37,7 +34,7 @@ public class ListEditor extends Element {
 	
 	private boolean sortable = true;
 
-	public boolean dragAndDrop = true;
+	public boolean dragAndDrop = false;
 	
 	public ListEditor() {
 	}
@@ -48,51 +45,51 @@ public class ListEditor extends Element {
 
 	public void setItemEditor(Element itemEditor) {
 		this.itemEditor = itemEditor;
-		itemEditor.setParent(this);
 	}
 		
 	@Override
+	public Collection<Element> getChildElements() {
+		return Collections.singleton(itemEditor);
+	}
+	
+	@Override
 	public FormResource getResource() {
-		if (dragAndDrop) {
-			return new ScriptResource("forms/listEditor.js", Resources.SCRIPTACULOUS_DRAG_DROP);
-		}
-		return null;
+		return new ScriptResource("forms/listEditor.js");
 	}
 		
-	public static class State<T extends ListEditor> extends TypedState<T> {
+	public class State extends ElementState {
 
 		private List<ElementState> itemStates = Generics.newArrayList();
 		
-		private TypeDescriptor itemTypeDescriptor;
+		private Class<?> itemType;
 		
 		@Override
-		protected void initInternal(T list, Value value) {
+		protected void onInit(Value value) {
 			value.require(List.class, ArrayList.class);
-			itemTypeDescriptor = value.getTypeDescriptor().getElementTypeDescriptor();
+			itemType = value.getTypeDescriptor().getElementTypeDescriptor().getType();
 			if (value.get() != null) {
 				Collection<?> c = value.get();
 				for (Object item : c) {
-					addItem(list.itemEditor, item);
+					addItem(item);
 				}
 			}
 		}
 		
-		private ElementState addItem(Element itemElement, Object object) {
-			Value value = ValueFactory.createValue(itemTypeDescriptor);
-			value.set(object);
-			ElementState state = itemElement.createState(this, value);
+		private ElementState addItem(Object object) {
+			Value value = ValueFactory.createValue(object, itemType);
+			ElementState state = itemEditor.createState(this, value);
 			itemStates.add(state);
 			return state;
 		}
 		
 		@Override
-		protected void populateInternal(Value value, T list) {
+		public void populate(Value value) {
 			value.require(List.class, ArrayList.class);
 			List<Object> c = value.getOrCreate();
 			c.clear();
 			for (ElementState itemState : itemStates) {
-				Value itemValue = ValueFactory.createValue(itemTypeDescriptor);
-				itemState.populate(itemValue, list.itemEditor);
+				Value itemValue = ValueFactory.createValue(null, itemType);
+				itemState.populate(itemValue);
 				c.add(itemValue.get());
 			}
 		}
@@ -102,34 +99,32 @@ public class ListEditor extends Element {
 		 * drag-and-drop (if enabled).
 		 */
 		@Override
-		protected void renderInternal(Html html, T list) {
+		protected void renderElement(Html html) {
 			Html ul = html.ul().cssClass("items");
 			for (ElementState itemState : itemStates) {
-				renderItem(ul, list, itemState);
+				renderItem(ul, itemState);
 			}
 			html.button("add");
-			if (list.dragAndDrop) {
-				UserInterface ui = new UserInterface();
-				ui.invoke(this, "ul", "makeSortable");
-				html.process(ui.getActions());
+			if (dragAndDrop) {
+				html.invoke(id(), "ul:first", "listEditor");
 			}
 		}
 		
 		/**
 		 * Renders a single list-item, as well as buttons to move or delete it.
 		 */
-		private void renderItem(Html html, T list, ElementState itemState) {
-			Html tr = html.li().id("item-" + itemState.getId()).table().tr();
-			if (list.dragAndDrop) {
+		private void renderItem(Html html, ElementState itemState) {
+			Html tr = html.li().id(id() + "_" + itemState.id()).table().tr();
+			if (dragAndDrop) {
 				tr.td("handle");
 			}
-			else if (list.sortable) {
+			else if (sortable) {
 				tr.td("moveButtons")
 					.button("up", index()).up()
 					.button("down", index());
 			}
 			
-			itemState.render(tr.td("itemElement"), list.itemEditor);
+			itemState.render(tr.td("itemElement"));
 			tr.td("removeButton").button("remove", index());
 		}
 		
@@ -137,12 +132,11 @@ public class ListEditor extends Element {
 		 * Adds a new item to the end of the list. The method is invoked when
 		 * the user clicks the add button.
 		 */
-		public void add(UserInterface ui, T list, String value) {
-			ElementState itemState = addItem(list.itemEditor, null);
+		public void add(UserInterface ui, String value) {
+			ElementState itemState = addItem(null);
 			Html html = newHtml();
-			renderItem(html, list, itemState);
-			ui.insert(this, ".items", html);
-			ui.invoke(this, "ul", "makeSortable");
+			renderItem(html, itemState);
+			ui.insert(this, "ul:first", html);
 			updateClasses(ui);
 		}
 		
@@ -153,12 +147,12 @@ public class ListEditor extends Element {
 		 */
 		protected void updateClasses(UserInterface ui) {
 			ui.removeClassName(this, "button", "disabled");
-			ui.addClassName(this, "li:first-child .up", "disabled");
-			ui.addClassName(this, "li:last-child .down", "disabled");
+			ui.addClassName(this, "ul:first > li:first-child .up", "disabled");
+			ui.addClassName(this, "ul:first > li:last-child .down", "disabled");
 		} 
 		
-		private static String selector(int i) {
-			return String.format("li:nth-child(%s)", i + 1);
+		private String selector(int i) {
+			return String.format("ul:first > li:nth-child(%s)", i + 1);
 		}
 		
 		/**
@@ -166,7 +160,7 @@ public class ListEditor extends Element {
 		 * clicks the remove button of an item. The index is determined by 
 		 * evaluating the {@link #index()} JavaScript expression.
 		 */
-		public void remove(UserInterface ui, T list, int index) {
+		public void remove(UserInterface ui, int index) {
 			itemStates.remove(index);
 			ui.remove(this, selector(index));
 			updateClasses(ui);
@@ -176,7 +170,7 @@ public class ListEditor extends Element {
 		 * Moves an element upwards in the list and updates the UI. The method 
 		 * is invoked when the user clicks the move-up button of an item.
 		 */
-		public void up(UserInterface ui, T list, int index) {
+		public void up(UserInterface ui, int index) {
 			if (index > 0) {
 				Collections.swap(itemStates, index, index - 1);
 				ui.moveUp(this, selector(index));
@@ -188,7 +182,7 @@ public class ListEditor extends Element {
 		 * Moves an element down in the list and updates the UI. The method is 
 		 * invoked when the user clicks the move-down button of an item.
 		 */
-		public void down(UserInterface ui, T list, int index) {
+		public void down(UserInterface ui, int index) {
 			if (index < itemStates.size() - 1) {
 				Collections.swap(itemStates, index, index + 1);
 				ui.moveDown(this, selector(index));
@@ -200,16 +194,16 @@ public class ListEditor extends Element {
 		 * Returns a JavaScript expression that counts the number of siblings
 		 * preceding the enclosing &lt;li&gt;.
 		 */
-		protected static String index() {
-			return "riot.form.indexOf(this, 'li')";
+		protected String index() {
+			return "$(this).closest('li').index()";
 		}
 		
 		/**
 		 * Sorts the list according to the specified order, where order is a 
-		 * list of {@link ElementState#getId() stateIds}. The method is invoked
+		 * list of {@link ElementState#id() stateIds}. The method is invoked
 		 * when the list is re-ordered via drag-and-drop.
 		 */
-		public void sort(UserInterface ui, T list, List<String> order) {
+		public void sort(UserInterface ui, List<String> order) {
 			Collections.sort(itemStates, new SortOrderComparator(order));
 		}
 		
@@ -227,8 +221,8 @@ public class ListEditor extends Element {
 		}
 
 		public int compare(ElementState o1, ElementState o2) {
-			Integer i1 = order.indexOf(o1.getId());
-			Integer i2 = order.indexOf(o2.getId());
+			Integer i1 = order.indexOf(o1.id());
+			Integer i2 = order.indexOf(o2.id());
 			return i1.compareTo(i2);
 		}
 	}

@@ -35,23 +35,23 @@ public class TinyMCE extends TextArea {
 	
 	private Map<String, Object> config;
 		
-	public static class State<T extends TinyMCE> extends TextArea.State<T> {
+	public class State extends TextArea.State {
 		
 		@Override
-		protected void renderInternal(Html html, T mce) {
-			super.renderInternal(html, mce);
+		protected void renderElement(Html html) {
+			super.renderElement(html);
 			Locale locale = LocaleContextHolder.getLocale();
-			html.script("tinyMCE.init(%s)", getJsonConfig(mce, locale));
+			html.script("tinyMCE.init(%s)", getJsonConfig(locale));
 		}
 		
-		protected String getJsonConfig(T mce, Locale locale) {
+		protected String getJsonConfig(Locale locale) {
 			Map<String, Object> merged = Generics.newHashMap();
 			merged.putAll(defaults);
-			if (mce.config != null) {
-				merged.putAll(mce.config);
+			if (config != null) {
+				merged.putAll(config);
 			}
 			merged.put("mode", "exact");
-			merged.put("elements", getId());
+			merged.put("elements", id());
 			merged.put("language", locale.getLanguage().toLowerCase());
 			merged.put("add_unload_trigger", false);
 			merged.put("submit_patch", false);

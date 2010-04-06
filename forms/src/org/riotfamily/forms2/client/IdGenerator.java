@@ -12,7 +12,9 @@
  */
 package org.riotfamily.forms2.client;
 
-public class IdGenerator {
+import java.io.Serializable;
+
+public class IdGenerator implements Serializable {
 	
 	private int index;
 	

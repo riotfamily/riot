@@ -16,19 +16,22 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.riotfamily.common.ui.ObjectRenderer;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.base.Element;
+import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.option.IdentityReferenceAdapter;
 import org.riotfamily.forms2.option.OptionReferenceAdapter;
 import org.riotfamily.forms2.option.OptionsModel;
+import org.riotfamily.forms2.value.Value;
 
 public abstract class SelectElement extends Element {
 
-	private OptionsModel optionsModel;
+	private transient OptionsModel optionsModel;
 	
-	private ObjectRenderer labelRenderer;
+	private transient ObjectRenderer labelRenderer;
 	
-	private OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO
+	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO
 	
 	public OptionReferenceAdapter getReferenceAdapter() {
 		return referenceAdapter;
@@ -44,7 +47,7 @@ public abstract class SelectElement extends Element {
 		
 	protected abstract Class<?> getRequiredType();
 	
-	final void createOptions(SelectionState state, Object value) {
+	final void createOptions(State state, Object value) {
 		Iterable<?> items = optionsModel.getOptions(state.getFormState());
 		if (items != null) {
 			for (Object item : items) {
@@ -59,5 +62,26 @@ public abstract class SelectElement extends Element {
 	protected abstract boolean isSelected(Object option, Object value);
 	
 	protected abstract void buildOptionsDom(List<Option> options, Html html);
+	
+	abstract class State extends ElementState {
+
+		protected List<Option> options = Generics.newArrayList();
+			
+		@Override
+		protected void onInit(Value value) {
+			createOptions(this, value.get());
+		}
+		
+		public void addOption(Serializable reference, String label, boolean selected) {
+			String value = String.valueOf(options.size());
+			options.add(new Option(reference, value, label, selected));
+		}
+		
+		@Override
+		protected void renderElement(Html html) {
+			buildOptionsDom(options, html);
+		}
+		
+	}
 	
 }

@@ -15,7 +15,7 @@ package org.riotfamily.forms2.element;
 import org.riotfamily.common.web.mvc.multipart.ProgressMonitor;
 import org.riotfamily.common.web.mvc.multipart.UploadProgress;
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.TypedState;
+import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
@@ -23,18 +23,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class FileUpload extends Element {
 	
-	public static class State extends TypedState<FileUpload> {
+	public class State extends ElementState {
 
 		private String uploadId = ProgressMonitor.nextUploadId();
-		
+
 		private String contentType;
 		
 		private String originalFilename;
 		
 		@Override
-		protected void renderInternal(Html html, FileUpload element) {
-			html.div("progress");
-			html.elem("iframe").cssClass("upload").attr("name", getId() + "_target");
+		protected void renderElement(Html html) {
+			html.div("progress").div("bar").up().div("status");
+			html.invoke(id(), ".bar", "progressbar");
+			html.elem("iframe").cssClass("upload").attr("name", "%s_target", id());
 			renderForm(html);
 		}
 		
@@ -46,10 +47,10 @@ public class FileUpload extends Element {
 		
 		private void renderForm(Html html) {
 			html.multipartForm("?uploadId=" + uploadId)
-				.attr("target", getId() + "_target")
+				.attr("target", "%s_target", id())
 				.propagate("submit", "updateProgress", String.format("'%s'", uploadId))
-				.hiddenInput("formId", getFormState().getId()).up()
-				.hiddenInput("stateId", getId()).up()
+				.hiddenInput("formId", getFormState().id()).up()
+				.hiddenInput("stateId", id()).up()
 				.hiddenInput("handler", "onFinish").up()
 				.input("file", "file", null).up()
 				.submit("Upload");
@@ -64,15 +65,16 @@ public class FileUpload extends Element {
 		 */
 		public void updateProgress(UserInterface ui, FileUpload element, String uploadId) {
 			if (uploadId.equals(this.uploadId)) {
-				Html html = newHtml();
+				Html status = newHtml();
 				UploadProgress progress = ProgressMonitor.getProgress(uploadId);
 				if (progress != null) {
-					html.div("track").div("bar").style("width: %s%%", progress.getProgress());
+					status.text(progress.getDataTransfered());
+					ui.invoke(this, ".bar", "progressbar", "value", progress.getPercentage());
 				}
 				else {
-					html.messageText("Waiting for data");
+					status.messageText("Waiting for data");
 				}
-				ui.update(this, ".progress", html);
+				ui.update(this, ".status", status);
 				ui.schedule(this, "updateProgress", uploadId, 500);
 			}
 		}
@@ -85,12 +87,11 @@ public class FileUpload extends Element {
 			contentType = file.getContentType();
 			originalFilename = file.getOriginalFilename();
 			uploadId = ProgressMonitor.nextUploadId();
-			ui.update(this, ".progress", null);
 			ui.replace(this, "form", renderForm());
 		}
 		
 		@Override
-		protected void populateInternal(Value value, FileUpload element) {
+		public void populate(Value value) {
 		}
 		
 	}

@@ -57,19 +57,15 @@ iframe.upload {
     height: 1px;
     visibility: hidden;
 }
-.progress .track {
-    border: 1px solid #e0e0e0;
-    width: 200px;
-}
-.progress .bar {
-    height: 16px;
-    background: #ddd;
-}
 
 .ListEditor table {
     border-collapse: collapse;
 }
 
+.ListEditor td.moveButtons {
+    position: relative;
+    width: 32px;
+}
 .ListEditor button.add {
     margin-left: 17px;
 }
@@ -87,6 +83,7 @@ iframe.upload {
     overflow: hidden;   
 }
 .ListEditor button.up {
+	top: 0;
     border-bottom: 1px solid #fff;
     background-image: url(images/list_up.gif);
 }

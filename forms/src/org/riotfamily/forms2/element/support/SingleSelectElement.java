@@ -30,9 +30,9 @@ public abstract class SingleSelectElement extends SelectElement {
 		return ObjectUtils.nullSafeEquals(option, value);
 	}
 		
-	public static class State extends SelectionState {
+	public class State extends SelectElement.State {
 
-		public void select(UserInterface ui, SingleSelectElement element, String value) {
+		public void select(UserInterface ui, String value) {
 			select(value);
 		}
 		
@@ -52,8 +52,8 @@ public abstract class SingleSelectElement extends SelectElement {
 		}
 
 		@Override
-		protected void populateInternal(Value value, SelectElement element) {
-			value.set(element.resolve(getSelectedReference()));
+		public void populate(Value value) {
+			value.set(resolve(getSelectedReference()));
 		}
 		
 	}

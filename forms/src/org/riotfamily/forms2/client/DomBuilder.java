@@ -69,6 +69,10 @@ public abstract class DomBuilder<T extends DomBuilder<T>> {
         return getThis();
     }
 	
+	public T attr(String name, String format, Object... args) {
+		return attr(name, String.format(format, args));
+	}
+	
 	protected abstract T getThis();
 
 	public T elem(String name) {

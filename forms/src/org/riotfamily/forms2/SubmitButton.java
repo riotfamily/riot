@@ -13,43 +13,36 @@
 package org.riotfamily.forms2;
 
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.FormState;
-import org.riotfamily.forms2.base.TypedState;
+import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
 
 public class SubmitButton extends Element {
 	
-	private String label;
+	private transient String label;
 	
-	private FormSubmissionHandler submissionHandler;
+	private transient FormSubmissionHandler submissionHandler;
 
 	public SubmitButton(String label, FormSubmissionHandler submissionHandler) {
 		this.label = label;
 		this.submissionHandler = submissionHandler;
 		//form.addStatusListener(this);
 	}
-	
-	public String render(FormState formState) {
-		Html html = formState.newHtml();
-		formState.getElementState(this).render(html, this);
-		return html.toString();
-	}
 			
-	public static class State<T extends SubmitButton> extends TypedState<T> {
+	public class State extends ElementState {
 		
 		@Override
-		public void renderInternal(Html html, T button) {
-			html.button("click").messageText(button.label);
+		protected void renderElement(Html html) {
+			html.button("click").messageText(label);
 		}
 		
-		public void click(UserInterface ui, T button, String value) {
-			button.submissionHandler.onSubmit(getFormState());
+		public void click(UserInterface ui, String value) {
+			submissionHandler.onSubmit(getFormState());
 		}
 		
 		@Override
-		public void populateInternal(Value value, T button) {
+		public void populate(Value value) {
 		}
 	}
 

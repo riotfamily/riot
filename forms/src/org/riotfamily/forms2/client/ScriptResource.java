@@ -15,6 +15,7 @@ package org.riotfamily.forms2.client;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.util.Assert;
 
@@ -54,6 +55,7 @@ public class ScriptResource implements FormResource {
 		return this.test;
 	}
 
+	@JsonIgnore
 	public Collection<FormResource> getDependencies() {
 		return this.dependencies;
 	}

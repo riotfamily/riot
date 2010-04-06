@@ -16,10 +16,10 @@ import org.riotfamily.forms2.client.Html;
 
 public class TextArea extends TextField {
 
-	public static class State<T extends TextArea> extends TextField.State<T> {
+	public class State extends TextField.State {
 
 		@Override
-		protected void renderInternal(Html html, T element) {
+		protected void renderElement(Html html) {
 			html.elem("textarea")
 				.propagate("change", "update")
 				.text(getText());
