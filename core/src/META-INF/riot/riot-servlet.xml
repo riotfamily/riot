@@ -5,14 +5,10 @@
 	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util-3.0.xsd
-		http://www.springframework.org/schema/tx
-		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-		http://www.directwebremoting.org/schema/spring-dwr
-    	http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
 
 	<description>
 		Riot servlet (Riot Core)
@@ -69,7 +65,7 @@
 	</bean>
 
 	<!-- Spring Web-MVC Setup -->
-	
+	        
 	<dwr:controller id="dwrController" debug="true">
 		<dwr:config-param name="activeReverseAjaxEnabled" value="true" />
 	</dwr:controller>
@@ -158,6 +154,11 @@
 			<list>
 				<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeArgumentResolver" />
 			</list>
+		</property>
+		<property name="messageConverters">
+		  <list>
+		      <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+		  </list>
 		</property>
 	</bean>	
 
@@ -333,7 +334,7 @@
 		<property name="priorityConfigLocations">
 			<list>
 				<value>classpath:/org/riotfamily/core/runtime/forms.xml</value>
-				<value>/WEB-INF/riot-config/forms.xml</value>
+				<value>/WEB-INF/forms.xml</value>
 			</list>
 		</property>
 		<property name="mimetypesMap" ref="fileTypeMap" />
@@ -419,8 +420,8 @@
 		</bean>
 		<!-- Form resources -->
 		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-			<property name="path" value="/form/" />
-			<property name="location" value="classpath:/org/riotfamily/forms/runtime/resources/" />
+			<property name="path" value="/forms/" />
+			<property name="location" value="classpath:/org/riotfamily/forms2/resources/" />
 		</bean>
 	</util:list>
 	

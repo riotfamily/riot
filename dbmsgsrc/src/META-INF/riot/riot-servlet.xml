@@ -58,7 +58,11 @@
 				<bean class="org.riotfamily.dbmsgsrc.riot.MessageEntryExportCommand" />
 				<bean class="org.riotfamily.dbmsgsrc.riot.ImportMessageEntriesCommand" />
 			</s:commands>
-			<s:form id="messageBundleEntry" />
+			<s:form id="messageBundleEntry">
+                <s:elements>
+                    <!--  TODO -->
+			    </s:elements>
+			</s:form>
 		</s:list>
 	</override:add>
   	

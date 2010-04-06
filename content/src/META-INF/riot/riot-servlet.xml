@@ -214,7 +214,11 @@
 			<bean class="org.riotfamily.components.riot.command.UnpublishCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
 		</s:commands>
-		<s:form id="page" icon="page" />
+		<s:form id="page" icon="page">
+		    <s:elements>
+	            <!--  TODO -->
+	        </s:elements>
+		</s:form>
 	</s:list>
 	
 	<override:add ref="systemScreens">
@@ -234,7 +238,11 @@
 				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
 			</s:commands>
-			<s:form id="site" />
+			<s:form id="site">
+			    <s:elements>
+			        <!--  TODO -->
+			    </s:elements>
+			</s:form>
 		</s:list>
 	</override:add>
 
