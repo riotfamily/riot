@@ -12,6 +12,11 @@
  */
 package org.riotfamily.core.runtime;
 
+import java.util.Date;
+import java.util.Locale;
+
+import org.riotfamily.common.util.FormatUtils;
+
 public final class RiotVersion {
 
 	private static String versionString;
@@ -26,6 +31,9 @@ public final class RiotVersion {
 	public static String getVersionString() {
 		if (versionString == null) {
 			versionString = RiotRuntime.class.getPackage().getImplementationVersion();
+			if (versionString == null) {
+				versionString = "SNAPSHOT-" + FormatUtils.formatDate(new Date(), "yyyyMMddHHmm", Locale.ENGLISH);
+			}
 		}
 		return versionString;
 	}
