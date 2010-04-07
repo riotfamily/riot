@@ -59,10 +59,19 @@ public final class PluginFilter extends OncePerRequestFilter {
 	public void setExclude(String[] exclude) {
 		this.exclude = exclude;
 	}
-	
+
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void initFilterBean() throws ServletException {
-		getServletContext().setAttribute(ATTRIBUTE_PREFIX + getFilterName(), this);
+		List<FilterPlugin> plugins = (List<FilterPlugin>) getServletContext()
+				.getAttribute(ATTRIBUTE_PREFIX + getFilterName() + ".plugins");
+		
+		if (plugins != null) {
+			setPlugins(plugins);
+		}
+		else {
+			getServletContext().setAttribute(ATTRIBUTE_PREFIX + getFilterName(), this);
+		}
 	}
 	
 	public void setPlugins(List<FilterPlugin> plugins) {
@@ -97,12 +106,13 @@ public final class PluginFilter extends OncePerRequestFilter {
 		
 		new PluginChain(filterChain, plugins).doFilter(request, response);
 	}
-	
-	static PluginFilter getInstance(ServletContext servletContext, 
-			String filterName) {
 		
-		return (PluginFilter) servletContext.getAttribute(
-				ATTRIBUTE_PREFIX + filterName);
+	static void setPlugins(ServletContext servletContext, String filterName, List<FilterPlugin> plugins) {
+		servletContext.setAttribute(ATTRIBUTE_PREFIX + filterName + ".plugins", plugins);
+	}
+	
+	static PluginFilter getInstance(ServletContext servletContext, String filterName) {
+		return (PluginFilter) servletContext.getAttribute(ATTRIBUTE_PREFIX + filterName);
 	}
 	
 }
