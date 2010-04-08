@@ -1,8 +1,11 @@
- /**
- * $Id: editor_plugin_src.js 42 2006-08-08 14:32:24Z spocke $
+/**
+ * element_common.js
  *
- * @author Moxiecode - based on work by Andrew Tetlaw
- * @copyright Copyright © 2004-2008, Moxiecode Systems AB, All rights reserved.
+ * Copyright 2009, Moxiecode Systems AB
+ * Released under LGPL License.
+ *
+ * License: http://tinymce.moxiecode.com/license
+ * Contributing: http://tinymce.moxiecode.com/contributing
  */
 
 tinyMCEPopup.requireLangPack();
@@ -157,19 +160,19 @@ SXE.insertElement = function(element_name) {
 		if(s.length > 0) {
 			tagName = element_name;
 
-			if (tinymce.isIE && element_name.indexOf('html:') == 0)
-				element_name = element_name.substring(5).toLowerCase();
-
 			insertInlineElement(element_name);
 			var elementArray = tinymce.grep(SXE.inst.dom.select(element_name));
 			for (var i=0; i<elementArray.length; i++) {
 				var elm = elementArray[i];
 
-				elm.id = '';
-				elm.setAttribute('id', '');
-				elm.removeAttribute('id');
+				if (SXE.inst.dom.getAttrib(elm, '_mce_new')) {
+					elm.id = '';
+					elm.setAttribute('id', '');
+					elm.removeAttribute('id');
+					elm.removeAttribute('_mce_new');
 
-				setAllCommonAttribs(elm);
+					setAllCommonAttribs(elm);
+				}
 			}
 		}
 	} else {
@@ -191,7 +194,7 @@ SXE.removeElement = function(element_name){
 }
 
 SXE.showRemoveButton = function() {
-		document.getElementById("remove").style.display = 'block';
+		document.getElementById("remove").style.display = '';
 }
 
 SXE.containsClass = function(elm,cl) {
@@ -221,8 +224,8 @@ function insertInlineElement(en) {
 	var ed = tinyMCEPopup.editor, dom = ed.dom;
 
 	ed.getDoc().execCommand('FontName', false, 'mceinline');
-	tinymce.each(dom.select(tinymce.isWebKit ? 'span' : 'font'), function(n) {
+	tinymce.each(dom.select('span,font'), function(n) {
 		if (n.style.fontFamily == 'mceinline' || n.face == 'mceinline')
-			dom.replace(dom.create(en), n, 1);
+			dom.replace(dom.create(en, {_mce_new : 1}), n, 1);
 	});
 }

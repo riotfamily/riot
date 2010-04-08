@@ -1,8 +1,11 @@
 /**
- * $Id: editor_plugin_src.js 917 2008-09-03 19:08:38Z spocke $
+ * editor_plugin_src.js
  *
- * @author Moxiecode
- * @copyright Copyright © 2004-2008, Moxiecode Systems AB, All rights reserved.
+ * Copyright 2009, Moxiecode Systems AB
+ * Released under LGPL License.
+ *
+ * License: http://tinymce.moxiecode.com/license
+ * Contributing: http://tinymce.moxiecode.com/contributing
  */
 
 (function() {
@@ -50,7 +53,7 @@
 
 			// Only store selection if the type is a normal window
 			if (!f.type)
-				t.bookmark = ed.selection.getBookmark('simple');
+				t.bookmark = ed.selection.getBookmark(1);
 
 			id = DOM.uniqueId();
 			vp = DOM.getViewPort();
@@ -265,8 +268,8 @@
 			} else
 				DOM.setStyle('mceModalBlocker', 'z-index', t.zIndex - 1);
 
-			if (tinymce.isIE6 || (tinymce.isIE && !DOM.boxModel))
-				DOM.setStyles('mceModalBlocker', {position : 'absolute', width : vp.w - 2, height : vp.h - 2});
+			if (tinymce.isIE6 || /Firefox\/2\./.test(navigator.userAgent) || (tinymce.isIE && !DOM.boxModel))
+				DOM.setStyles('mceModalBlocker', {position : 'absolute', left : vp.x, top : vp.y, width : vp.w - 2, height : vp.h - 2});
 
 			t.focus(id);
 			t._fixIELayout(id, 1);
@@ -358,7 +361,7 @@
 				});
 
 				if (tinymce.isIE6 || (tinymce.isIE && !DOM.boxModel))
-					DOM.setStyles('mceEventBlocker', {position : 'absolute', width : vp.w - 2, height : vp.h - 2});
+					DOM.setStyles('mceEventBlocker', {position : 'absolute', left : vp.x, top : vp.y, width : vp.w - 2, height : vp.h - 2});
 
 				eb = new Element('mceEventBlocker');
 				eb.update();
