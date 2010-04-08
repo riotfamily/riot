@@ -12,34 +12,38 @@
  */
 package org.riotfamily.forms2.value;
 
-import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.convert.TypeDescriptor;
 
 public class BeanValue extends AbstractContainerValue {
 
 	private Object bean;
 	
-	private BeanWrapperImpl beanWrapper;
+	private BeanWrapper beanWrapper;
 
 	public BeanValue(TypeDescriptor typeDescriptor) {
 		super(typeDescriptor);
-		beanWrapper = new BeanWrapperImpl(typeDescriptor.getType());
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T get() {
-		return (T) beanWrapper.getWrappedInstance();
+		return (T) bean;
 	}
 	
 	public void set(Object object) {
 		bean = object;
-		beanWrapper.setWrappedInstance(object);
-		//beanWrapper = bean != null ? PropertyAccessorFactory.forBeanPropertyAccess(bean) : null;	
+		beanWrapper = bean != null ? PropertyAccessorFactory.forBeanPropertyAccess(bean) : null;	
 	}
-		
+	
 	@Override
 	protected Object getNestedObject(String name) {
 		return bean != null ? beanWrapper.getPropertyValue(name) : null;
+	}
+	
+	@Override
+	public <T, D extends T> Value require(Class<T> requiredType, Class<D> defaultType) {
+		return super.require(requiredType, defaultType);
 	}
 	
 	@Override
@@ -49,6 +53,7 @@ public class BeanValue extends AbstractContainerValue {
 
 	@Override
 	public void setNestedObject(String name, Object object) {
+		getOrCreate();
 		beanWrapper.setPropertyValue(name, object);
 	}
 
