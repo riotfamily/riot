@@ -33,8 +33,11 @@ public class FileUpload extends Element {
 		
 		@Override
 		protected void renderElement(Html html) {
-			html.div("progress").div("bar").up().div("status");
-			html.invoke(id(), ".bar", "progressbar");
+			html.div("progress")
+				.div("ui-progressbar ui-widget ui-widget-content ui-corner-all")
+				.div("ui-progressbar-value ui-widget-header ui-corner-left").style("width:0")
+				.up(2).div("status");
+
 			html.elem("iframe").cssClass("upload").attr("name", "%s_target", id());
 			renderForm(html);
 		}
@@ -63,13 +66,13 @@ public class FileUpload extends Element {
 		 * If meanwhile a new <code>uploadId</code> has been assigned, i.e.
 		 * {@link #onFinish} has been invoked, the method does nothing.
 		 */
-		public void updateProgress(UserInterface ui, FileUpload element, String uploadId) {
+		public void updateProgress(UserInterface ui, String uploadId) {
 			if (uploadId.equals(this.uploadId)) {
 				Html status = newHtml();
 				UploadProgress progress = ProgressMonitor.getProgress(uploadId);
 				if (progress != null) {
 					status.text(progress.getDataTransfered());
-					ui.invoke(this, ".bar", "progressbar", "value", progress.getPercentage());
+					ui.invoke(this, ".ui-progressbar-value", "css", "width", progress.getPercentage() + "%");
 				}
 				else {
 					status.messageText("Waiting for data");
@@ -83,7 +86,7 @@ public class FileUpload extends Element {
 		 * Handler method that is invoked when the upload has finished.
 		 * It assigns a new <code>uploadId</code> and re-renders the form.
 		 */
-		public void onFinish(UserInterface ui, FileUpload element, MultipartFile file) {
+		public void onFinish(UserInterface ui, MultipartFile file) {
 			contentType = file.getContentType();
 			originalFilename = file.getOriginalFilename();
 			uploadId = ProgressMonitor.nextUploadId();
