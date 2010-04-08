@@ -12,6 +12,7 @@
  */
 package org.riotfamily.common.web.resource;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -24,6 +25,7 @@ import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.web.cache.AbstractCacheableController;
 import org.riotfamily.common.web.cache.controller.Compressible;
@@ -48,7 +50,7 @@ public abstract class AbstractResourceController extends AbstractCacheableContro
 	
 	private FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 	
-    private List<ResourceMapping> mappings;
+    private List<Resource> locations;
     
     private List<ResourceFilter> filters;
     
@@ -57,8 +59,8 @@ public abstract class AbstractResourceController extends AbstractCacheableContro
 		this.fileTypeMap = fileTypeMap;
 	}
 
-	public void setMappings(List<ResourceMapping> resourceMappings) {
-		this.mappings = resourceMappings;
+	public void setLocations(List<Resource> locations) {
+		this.locations = locations;
 	}
 
 	public void setFilters(List<ResourceFilter> filters) {
@@ -66,15 +68,30 @@ public abstract class AbstractResourceController extends AbstractCacheableContro
 	}
 	
 	protected Resource lookupResource(String path) throws IOException {
-		Iterator<ResourceMapping> it = mappings.iterator();
-    	while (it.hasNext()) {
-    		ResourceMapping mapping = it.next();
-			Resource res = mapping.getResource(path);
+		for (Resource base : locations) {
+			Resource res = lookupResource(base, path);
 			if (res != null) {
 				return res;
 			}
     	}
     	return null;
+	}
+	
+	private Resource lookupResource(Resource base, String path) throws IOException {
+		Resource res = base.createRelative(path);
+		log.debug("Looking for resource: " + res);
+		try {
+			File f = res.getFile();
+			if (f != null) {
+				CacheContext.addFile(f);
+			}
+		}
+		catch (IOException ex) {
+		}
+		if (res.exists()) {
+			return res;
+		}
+		return null;
 	}
 	
 	protected String getContentType(Resource resource) {

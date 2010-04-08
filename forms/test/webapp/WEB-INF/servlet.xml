@@ -10,6 +10,10 @@
 
     <context:component-scan base-package="org.riotfamily.forms2" />
     
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+        <property name="defaultLocale"><value>en_US</value></property>
+    </bean>
+    
     <mvc:annotation-driven />
         
     <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
@@ -30,16 +34,10 @@
 		        </property>
 		    </bean>
         </property>
-        <property name="mappings">
+        <property name="locations">
             <list>
-	            <bean class="org.riotfamily.common.web.resource.ResourceMapping">
-		            <property name="path" value="/" />
-		            <property name="location" value="classpath:/org/riotfamily/resources/" />
-		        </bean>
-	            <bean class="org.riotfamily.common.web.resource.ResourceMapping">
-		            <property name="path" value="/forms" />
-		            <property name="location" value="classpath:/org/riotfamily/forms2/resources/" />
-		        </bean>
+	            <value>classpath:/org/riotfamily/resources/</value>
+	            <value>classpath:/org/riotfamily/forms2/resources/</value>
             </list>
         </property>
     </bean>

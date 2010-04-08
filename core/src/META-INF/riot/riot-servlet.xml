@@ -397,38 +397,17 @@
 		<entry key="resourcePath" value-ref="resourcePath" />
 	</util:map>
 	
-	<util:list id="resourceMappings">
-		<!-- Allow styles to be overwritten in WEB-INF/style -->
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-			<property name="path" value="/style/" />
-			<property name="location" value="/WEB-INF/riot-config/style/" />
-		</bean>
-		<!-- Allow any resource to be overwritten in WEB-INF/resources -->
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-			<property name="path" value="/" />
-			<property name="location" value="/WEB-INF/riot-config/resources/" />
-		</bean>
-		<!-- Riot core resources -->
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-			<property name="path" value="/" />
-			<property name="location" value="classpath:/org/riotfamily/core/runtime/resources/" />
-		</bean>
-		<!-- Resources from the jslib jars -->
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-			<property name="path" value="/" />
-			<property name="location" value="classpath:/org/riotfamily/resources/" />
-		</bean>
-		<!-- Form resources -->
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-			<property name="path" value="/forms/" />
-			<property name="location" value="classpath:/org/riotfamily/forms2/resources/" />
-		</bean>
+	<util:list id="resourceLocations">
+		<value>/WEB-INF/riot-config/resources/</value>
+		<value>classpath:/org/riotfamily/core/runtime/resources/</value>
+		<value>classpath:/org/riotfamily/resources/</value>
+		<value>classpath:/org/riotfamily/forms2/resources/</value>
 	</util:list>
 	
 	<bean id="resourceController" name="/resources/{version}/**" class="org.riotfamily.common.web.resource.ResourceController">
 		<property name="fileTypeMap" ref="fileTypeMap" />
 		<property name="filters" ref="resourceFilters" />
-		<property name="mappings" ref="resourceMappings" />
+		<property name="locations" ref="resourceLocations" />
 		<property name="compressors">
 			<map>
 				<entry key="text/css">

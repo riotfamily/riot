@@ -23,11 +23,8 @@
     <!-- Module resources                                                   -->
     <!-- ================================================================== -->
         
-    <override:add ref="resourceMappings" append="true">         
-        <bean class="org.riotfamily.common.web.resource.ResourceMapping">
-            <property name="path" value="/" />
-            <property name="location" value="classpath:/org/riotfamily/statistics/runtime/resources/" />
-        </bean>
+    <override:add ref="resourceLocations" append="true">         
+        <value>classpath:/org/riotfamily/statistics/runtime/resources/</value>
     </override:add>    
         
     <override:add ref="messageBasenames" append="true">

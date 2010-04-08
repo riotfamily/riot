@@ -116,17 +116,10 @@
 		</bean>
 	</override:add>
 	
-	<override:add ref="resourceMappings" append="true">
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-			<property name="path" value="/" />
-			<property name="location" value="classpath:/org/riotfamily/components/runtime/resources/" />
-		</bean>
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-			<property name="path" value="/" />
-			<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
-		</bean>
+	<override:add ref="resourceLocations" append="true">
+		<value>classpath:/org/riotfamily/components/runtime/resources/</value>
+		<value>classpath:/org/riotfamily/pages/runtime/resources/</value>
 	</override:add>
-	
 	
 	<override:add ref="customStyleSheets">
 		<value>style/riot-pages.css</value>
