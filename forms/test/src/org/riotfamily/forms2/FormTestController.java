@@ -34,6 +34,7 @@ import org.riotfamily.forms2.element.FileUpload;
 import org.riotfamily.forms2.element.ListEditor;
 import org.riotfamily.forms2.element.RadioButtonGroup;
 import org.riotfamily.forms2.element.TextField;
+import org.riotfamily.forms2.element.TinyMCE;
 import org.riotfamily.forms2.option.StaticOptionsModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,7 @@ public class FormTestController implements FormSubmissionHandler {
 		form.add(new Binding("radio", radioGroup));
 		
 		form.add(new Binding("file", new FileUpload()));
+		form.add(new Binding("tinymce", new TinyMCE()));
 		
 		button = new SubmitButton("Save", this);
 		form.add(button);

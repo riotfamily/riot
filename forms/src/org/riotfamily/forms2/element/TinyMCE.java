@@ -15,9 +15,10 @@ package org.riotfamily.forms2.element;
 import java.util.Locale;
 import java.util.Map;
 
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.forms2.client.FormResource;
 import org.riotfamily.forms2.client.Html;
+import org.riotfamily.forms2.client.ScriptResource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 public class TinyMCE extends TextArea {
@@ -34,17 +35,22 @@ public class TinyMCE extends TextArea {
 	}
 	
 	private Map<String, Object> config;
-		
+	
+	@Override
+	protected FormResource getResource() {
+		return new ScriptResource("tinymce/jquery.tinymce.js", "jquery.tinymce");
+	}
+	
 	public class State extends TextArea.State {
 		
 		@Override
 		protected void renderElement(Html html) {
 			super.renderElement(html);
 			Locale locale = LocaleContextHolder.getLocale();
-			html.script("tinyMCE.init(%s)", getJsonConfig(locale));
+			html.invoke(id(), "textarea", "tinymce", getMergedConfig(locale));
 		}
 		
-		protected String getJsonConfig(Locale locale) {
+		protected Map<String, Object> getMergedConfig(Locale locale) {
 			Map<String, Object> merged = Generics.newHashMap();
 			merged.putAll(defaults);
 			if (config != null) {
@@ -55,12 +61,12 @@ public class TinyMCE extends TextArea {
 			merged.put("language", locale.getLanguage().toLowerCase());
 			merged.put("add_unload_trigger", false);
 			merged.put("submit_patch", false);
-			merged.put("strict_loading_mode", true);
 			merged.put("relative_urls", false);
+			merged.put("script_url", getFormState().resolveResource("tinymce/tiny_mce_src.js"));
 			merged.put("theme_advanced_layout_manager", "RowLayout");
 			merged.put("theme_advanced_containers_default_align", "left");
 			merged.put("theme_advanced_container_mceeditor", "mceeditor");
-			return FormatUtils.toJSON(merged);
+			return merged;
 		}
 	}
 	
