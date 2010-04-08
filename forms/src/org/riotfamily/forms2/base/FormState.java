@@ -36,4 +36,6 @@ public interface FormState {
 	void setContextPath(String contextPath);
 	
 	void setResourcePath(String resourcePath);
+
+	String resolveResource(String string);
 }

@@ -12,6 +12,7 @@
  */
 package org.riotfamily.forms2.client;
 
+import org.codehaus.jackson.annotate.JsonValue;
 import org.springframework.util.Assert;
 
 /**
@@ -26,6 +27,7 @@ public class StylesheetResource implements FormResource {
 		this.url = url;
 	}
 	
+	@JsonValue
 	public String getUrl() {
 		return this.url;
 	}

@@ -18,11 +18,8 @@ public final class Resources {
 	private Resources() {
 	}
 	
-	public static final ScriptResource JQUERY = 
-			new ScriptResource("jquery/jquery.js", "jQuery");
-	
 	public static final ScriptResource JQUERY_UI = 
-			new ScriptResource("jquery/ui/jquery-ui.js", "jQuery.ui", JQUERY,
+			new ScriptResource("jquery/ui/jquery-ui.js", "jQuery.ui",
 			new StylesheetResource("jquery/ui/jquery-ui.css"));
 	
 	public static final ScriptResource RIOT_FORMS = 

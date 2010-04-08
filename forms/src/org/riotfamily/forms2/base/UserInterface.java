@@ -38,7 +38,7 @@ public class UserInterface {
 	 */
 	public void update(ElementState state, String selector, Html html) {
 		invoke(state, selector, "html", html);
-		eval(html.getScripts());
+		eval(html.extractScripts());
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class UserInterface {
 	 */
 	public void replace(ElementState state, String selector, Html html) {
 		invoke(state, selector, "replaceWith", html);
-		eval(html.getScripts());
+		eval(html.extractScripts());
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class UserInterface {
 	 */
 	public void insert(ElementState state, String selector, Html html) {
 		invoke(state, selector, "append", html);
-		eval(html.getScripts());
+		eval(html.extractScripts());
 	}
 	
 	/**

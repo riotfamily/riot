@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import org.riotfamily.common.util.FormatUtils;
+
 /**
  * ResourceVisitor that generates JavaScript to load required resources.
  */
@@ -27,11 +29,15 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 
 	private String resourcePath;
 	
-	public LoadingCodeGenerator(Collection<FormResource> resources, String resourcePath) {
+	public static void addLoadingCode(Collection<FormResource> resources, String resourcePath, Html html) {
+		new LoadingCodeGenerator(resources, resourcePath).addLoadingCode(html);
+	}
+	
+	private LoadingCodeGenerator(Collection<FormResource> resources, String resourcePath) {
 		this.resourcePath = resourcePath;
 		process(resources);
 	}
-		
+	
 	private void process(Collection<FormResource> resources) {
 		if (resources == null) {
 			return;
@@ -56,19 +62,33 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 		}
 	}
 
-	public String scripts() {
+	private void addLoadingCode(Html html) {
+		String initializationCode = html.extractScripts();
+		html.script(jQuery()).inlineScripts()
+			.script(loadResources(initializationCode)).inlineScripts();
+	}
+	
+	private String jQuery() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("(function(){");
+		sb.append("if (!window.jQuery) {"); 
+		sb.append("document.write('<script src=\"").append(resourcePath).append("jquery/jquery.js").append("\"><\\/script>');");
+		sb.append("}");
+		return sb.toString();
+	}
+	
+	private String loadResources(String initCode) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(function($) {");
+		
+		// The base path for all resources
 		sb.append("var base='").append(resourcePath).append("';");
-		sb.append("var scripts=[");
-		Iterator<ScriptResource> it = scripts.iterator();
-		while (it.hasNext()) {
-			sb.append(it.next());
-			if (it.hasNext()) {
-				sb.append(",");
-			}
-		}
-		sb.append("];");
+		
+		// Load style sheets
+		sb.append("$.each(");
+		sb.append(FormatUtils.toJSON(stylesheets));
+		sb.append(", function() { $('<link>', {rel:  \"stylesheet\", type: \"text/css\", href: base + this}).appendTo('head');});");
+		
+		// Utility function to check whether an object-path expression is defined
 		sb.append("function isPresent(exp) {"
 			  +     "var s = exp.split('.');"
 			  +     "exp = '';"
@@ -79,37 +99,34 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 			  +     "}"
 			  +     "return true;"
 			  +   "}"
-			  +   "var useAjax = window.jQuery;"
-			  +   "function loadScripts() {"
+			  );
+		
+		// Array containing all scripts to load
+		sb.append("var scripts=").append(FormatUtils.toJSON(scripts)).append(";");	  
+			  
+		sb.append("function loadScripts() {"
 			  +     "if (scripts.length > 0) {"
 			  +       "var s = scripts.shift();"
 			  +       "if (!s.test || !isPresent(s.test)) {"
-			  +         "if (useAjax) {"
 			  +           "$.getScript(base + s.url, loadScripts);"
 			  +           "return;"
-			  +         "}"
-			  +         "document.write('<script src=\"' + base + s.url + '\"><\\/script>');"
 			  +       "}"
 			  +       "loadScripts();"
 			  +     "}"
+			  +     "else {"
+			  +       "initForm()"
+			  +     "}"
 			  +   "}"	
-			  +   "loadScripts();");
-
-		sb.append("})();");
-		return sb.toString();
-	}
-	
-	public String stylesheets() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("$.each([");
-		Iterator<StylesheetResource> it = stylesheets.iterator();
-		while (it.hasNext()) {
-			sb.append("'").append(resourcePath).append(it.next().getUrl()).append("'");
-			if (it.hasNext()) {
-				sb.append(",");
-			}
-		}
-		sb.append("], function() { $('<link>', {rel:  \"stylesheet\", type: \"text/css\", href: this}).appendTo('head');});");
+			  +   "loadScripts();"
+			  );
+		
+		// Callback function that is invoked after all resources have been loaded
+		sb.append("function initForm() {");
+		sb.append(initCode);
+		sb.append("}");
+		
+		sb.append("})(jQuery);");
+		
 		return sb.toString();
 	}
 	

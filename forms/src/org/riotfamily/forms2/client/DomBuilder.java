@@ -84,12 +84,16 @@ public abstract class DomBuilder<T extends DomBuilder<T>> {
 	protected abstract T createNested(Element child);
 	
 	public T text(String value) {
-		node.appendChild(document.createTextNode(value));
+		if (value != null) {
+			node.appendChild(document.createTextNode(value));
+		}
         return getThis();        
     }
 	
 	public T cdata(String value) {
-		node.appendChild(document.createCDATASection(value));
+		if (value != null) {
+			node.appendChild(document.createCDATASection(value));
+		}
         return getThis();        
     }
 	

@@ -187,6 +187,10 @@ public class FormElement extends ContainerElement {
 			this.resourcePath = resourcePath;
 		}
 		
+		public String resolveResource(String res) {
+			return contextPath + resourcePath + res;
+		}
+		
 		public ElementState getElementState(String id) {
 			ElementState state = statesById.get(id);
 			Assert.notNull(state, "No such state: '" + id + "'");
@@ -200,10 +204,8 @@ public class FormElement extends ContainerElement {
 		
 		public String render() {
 			Html html = new Html(idGenerator);
-			LoadingCodeGenerator loader = new LoadingCodeGenerator(getAllResources(), contextPath + resourcePath);
-			html.script(loader.scripts());
-			html.script(loader.stylesheets());
 			render(html);
+			LoadingCodeGenerator.addLoadingCode(getAllResources(), contextPath + resourcePath, html);
 			return html.inlineScripts().toString();
 		}
 				

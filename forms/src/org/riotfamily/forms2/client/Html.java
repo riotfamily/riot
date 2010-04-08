@@ -171,7 +171,7 @@ public class Html extends DomBuilder<Html> {
 	}
 	
 	public Html invoke(String id, String selector, String method, Object... args) {
-		return script("riot.form.invoke('%s', '%s', '%s', %s)", id, selector, method, FormatUtils.toJSON(args));
+		return script("riot.form.invoke('%s', '%s', '%s', %s);", id, selector, method, FormatUtils.toJSON(args));
 	}
 	
 	public Html process(List<Action> actions) {
@@ -180,18 +180,21 @@ public class Html extends DomBuilder<Html> {
 	}
 	
 	public Html script(String script, Object... args) {
-		scripts.append(String.format(script, args));
+		if (script != null) {
+			scripts.append(String.format(script, args));
+		}
 		return this;
 	}
 	
-	public String getScripts() {
-		return scripts.toString();
+	public String extractScripts() {
+		String s = scripts.toString();
+		scripts.setLength(0);
+		return s;
 	}
 	
 	public Html inlineScripts() {
 		if (scripts.length() > 0) {
-			elem("script").text(scripts.toString());
-			scripts.setLength(0);
+			elem("script").text(extractScripts());
 		}
 		return this;
 	}
