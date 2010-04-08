@@ -70,6 +70,23 @@ riot.form = (function($) {
 		 */
 		processActions: function(actions) {
 			$.each(actions, processAction);
+		},
+		
+		/**
+		 * Setup-callback for TinyMCE instances that registers an onchange and
+		 * onblur listener to submit the content to the server.
+		 */
+		tinymceSetup: function(e) {
+			function save() {
+				if (e.isDirty()) {
+					e.save();
+					e.getElement().onchange();
+				}
+			}
+			e.onChange.add(save);
+			e.onInit.add(function() {
+				e.getWin().onblur = save;
+			})
 		}
 	}
 	

@@ -63,6 +63,7 @@ public class TinyMCE extends TextArea {
 			merged.put("submit_patch", false);
 			merged.put("relative_urls", false);
 			merged.put("script_url", getFormState().resolveResource("tinymce/tiny_mce_src.js"));
+			merged.put("setup", "riot.form.tinymceSetup");
 			merged.put("theme_advanced_layout_manager", "RowLayout");
 			merged.put("theme_advanced_containers_default_align", "left");
 			merged.put("theme_advanced_container_mceeditor", "mceeditor");
