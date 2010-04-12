@@ -12,12 +12,11 @@
  */
 package org.riotfamily.common.web.filter;
 
+import java.util.List;
+
 import javax.servlet.ServletContext;
 
 import org.riotfamily.common.util.SpringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -28,17 +27,11 @@ import org.springframework.web.context.ServletContextAware;
 public class PluginFilterInitializer implements ServletContextAware, 
 		ApplicationContextAware, InitializingBean, DisposableBean {
 
-	private Logger log = LoggerFactory.getLogger(PluginFilterInitializer.class);
-	
 	private ServletContext servletContext;
 	
 	private String filterName;
 	
-	private boolean ignoreFilterNotPresent;
-
 	private ApplicationContext applicationContext;
-	
-	private PluginFilter filter;
 	
 	/**
 	 * Sets the name of the filter where the plugins should be registered.
@@ -50,8 +43,8 @@ public class PluginFilterInitializer implements ServletContextAware,
 	/**
 	 * Sets whether errors caused by a missing filter should be ignored.
 	 */
+	@Deprecated
 	public void setIgnoreFilterNotPresent(boolean ignoreFilterNotPresent) {
-		this.ignoreFilterNotPresent = ignoreFilterNotPresent;
 	}
 	
 	public final void setServletContext(ServletContext servletContext) {
@@ -64,28 +57,26 @@ public class PluginFilterInitializer implements ServletContextAware,
 	
 	/**
 	 * Retrieves the {@link PluginFilter} with the specified name from the
-	 * ServletContext and registers the plugin.
+	 * ServletContext and registers the plugins. If no filter is found 
+	 * (probably because it has not yet been initialized), the plugins are
+	 * stored in the ServletContext. 
 	 */
 	public final void afterPropertiesSet() throws Exception {
 		Assert.notNull(filterName, "A filterName must be set.");
-		filter = PluginFilter.getInstance(servletContext, filterName);
-		if (filter == null) {
-			if (ignoreFilterNotPresent) {
-				log.warn("Failed to register FilterPlugin because no filter "
-						+ "named " + filterName + " is defined in web.xml");
-				
-				return;
-			}
-			else {
-				throw new FatalBeanException(
-						"No such filter defined in web.xml: " + filterName);
-			}
+		List<FilterPlugin> plugins = SpringUtils.orderedBeans(applicationContext, FilterPlugin.class);
+		PluginFilter filter = PluginFilter.getInstance(servletContext, filterName);
+		if (filter != null) {
+			filter.setPlugins(plugins);	
 		}
-		;
-		filter.setPlugins(SpringUtils.orderedBeans(applicationContext, FilterPlugin.class));
+		else {
+			PluginFilter.setPlugins(servletContext, filterName, plugins);
+		}
 	}
 	
 	public final void destroy() throws Exception {
-		filter.setPlugins(null);
+		PluginFilter filter = PluginFilter.getInstance(servletContext, filterName);
+		if (filter != null) {
+			filter.setPlugins(null);
+		}
 	}
 }
