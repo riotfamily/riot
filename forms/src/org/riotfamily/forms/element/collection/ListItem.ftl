@@ -3,7 +3,7 @@
 		<tbody>
 			<#if item.list.sortable && !item.list.dragAndDrop>
 				<tr>
-					<td class="button up disabled"></td>
+					<td class="button up"><div class="disabled"></div></td>
 					<td class="itemElement" rowspan="3">
 						${editor.render()}
 						${item.form.errors.renderErrors(editor)}
@@ -16,7 +16,7 @@
 					<td class="blind"></td>
 				</tr>
 				<tr>
-					<td class="button down disabled"></td>
+					<td class="button down"><div class="disabled"></div></td>
 				</tr>
 			<#else>
 				<tr<#if item.list.sortable> class="draggable"</#if>>
