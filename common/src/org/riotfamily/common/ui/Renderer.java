@@ -10,12 +10,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.core.screen.list;
+package org.riotfamily.common.ui;
 
-import org.riotfamily.common.ui.RenderContext;
+import org.springframework.core.convert.TypeDescriptor;
 
-public interface ListRenderContext extends RenderContext {
+public interface Renderer {
 
-	public Object getParent();
-
+	public boolean supports(TypeDescriptor typeDescriptor);
+	
+	public String render(Object object, TypeDescriptor typeDescriptor);
 }

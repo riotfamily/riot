@@ -55,8 +55,6 @@
 		    </bean>
 		</property>
 	</bean>
-
-	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
 	
 	<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeRequestInterceptor" />
 
@@ -109,13 +107,10 @@
 		</property>
 	</bean>
 	
-	<bean id="multipartResolver" class="org.riotfamily.forms.fileupload.FormsMultipartResolver">
+	<bean id="multipartResolver" class="org.riotfamily.common.web.mvc.multipart.ProgressMonitoringMultipartResolver">
 		<description>
 			MultipartResolver that provides information about the file upload progress.
 		</description>
-		<constructor-arg>
-			<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
-		</constructor-arg>
 	</bean>
 
 	<bean id="exceptionResolver" class="org.riotfamily.common.web.mvc.mapping.AdvancedMappingExceptionResolver">
@@ -318,35 +313,17 @@
 		<property name="rootScreen" ref="home" />
 	</bean>
 	
-	<bean id="listService" class="org.riotfamily.core.screen.list.service.ListService">
-		<constructor-arg ref="transactionManager" />
-		<constructor-arg ref="screenRepository" />
-		<constructor-arg ref="formContextFactory" />
-		<constructor-arg ref="handlerUrlResolver" />
-		<constructor-arg ref="resourcePath" />
-	</bean>
-	
+	<bean id="listService" class="org.riotfamily.core.screen.list.service.ListService" />
+
+    <bean class="org.riotfamily.common.ui.RenderingService" />
+    <bean class="org.riotfamily.common.ui.LocaleRenderer" />
+    <bean class="org.riotfamily.common.ui.SpringConversionRenderer" />
+    <bean class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
+        	
 	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.core.screen.list" />
 	
 	<!-- Form screens -->
-	
-	<bean id="formRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository" primary="true">
-		<property name="priorityConfigLocations">
-			<list>
-				<value>classpath:/org/riotfamily/core/runtime/forms.xml</value>
-				<value>/WEB-INF/forms.xml</value>
-			</list>
-		</property>
-		<property name="mimetypesMap" ref="fileTypeMap" />
-		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
-		<property name="customElements" ref="customFormElements" />
-	</bean>
-	
-	<bean id="formContextFactory" class="org.riotfamily.forms.controller.FormContextFactory">
-		<property name="messageCodesResolver" ref="messageCodesResolver" />
-		<property name="resourcePath" ref="resourcePath" />
-	</bean>
-	
+			
 	<bean id="imageCropper" class="org.riotfamily.media.processing.ImageMagickCropper">
 		<constructor-arg ref="imageMagick" />
 	</bean>
@@ -377,13 +354,6 @@
 				value="org.riotfamily.core.form.element.RestrictedElement" />
 	</util:map>
 	
-	<!-- Dialog commands -->
-	
-	<bean id="commandDialogController" name="/dialog/{formKey}" 
-			class="org.riotfamily.core.screen.list.command.impl.dialog.DialogFormController">
-		<constructor-arg ref="formContextFactory" />
-	</bean>
-		
 	<!--  Resources -->
 	
 	<util:list id="resourceFilters">
@@ -444,8 +414,6 @@
 		<value>style/command.css</value>
 		<value>style/command-custom.css</value>
 	</util:list>
-	
-	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.core.form.options.RiotDaoOptionsModelAdapter" />
 		
 	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />
   

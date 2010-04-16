@@ -12,12 +12,23 @@
  */
 package org.riotfamily.common.ui;
 
-import org.riotfamily.common.i18n.MessageResolver;
+import static org.junit.Assert.*;
 
-public interface RenderContext {
+import java.util.Locale;
 
-	public MessageResolver getMessageResolver();
-	
-	public String getContextPath();
-	
+import org.junit.Test;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+public class RendererTests {
+
+	@Test
+	public void locale() {
+		LocaleRenderer renderer = new LocaleRenderer();
+		
+		LocaleContextHolder.setLocale(Locale.ENGLISH);
+		assertEquals("German (Germany)", renderer.render(Locale.GERMANY));
+		
+		LocaleContextHolder.setLocale(Locale.GERMAN);
+		assertEquals("Deutsch (Deutschland)", renderer.render(Locale.GERMANY));
+	}
 }

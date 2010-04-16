@@ -30,6 +30,7 @@ import org.riotfamily.forms2.base.Binding;
 import org.riotfamily.forms2.base.FormState;
 import org.riotfamily.forms2.client.Action;
 import org.riotfamily.forms2.client.ClientEvent;
+import org.riotfamily.forms2.element.Datepicker;
 import org.riotfamily.forms2.element.FileUpload;
 import org.riotfamily.forms2.element.ListEditor;
 import org.riotfamily.forms2.element.RadioButtonGroup;
@@ -60,6 +61,7 @@ public class FormTestController implements FormSubmissionHandler {
 	public FormTestController() {
 		form = new Form();
 		form.add(new Binding("text", new TextField()));
+		form.add(new Binding("date", new Datepicker()));
 		form.add(new Binding("list", new ListEditor(new TextField())));
 
 		RadioButtonGroup radioGroup = new RadioButtonGroup();

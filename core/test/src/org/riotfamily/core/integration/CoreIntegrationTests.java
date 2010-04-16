@@ -38,7 +38,7 @@ public class CoreIntegrationTests {
 	@Test
 	public void interactive() throws Exception {
 		if (interactive) {
-			Runtime.getRuntime().exec("open " + baseUri + "form");
+			Runtime.getRuntime().exec("open " + baseUri + "riot");
 			synchronized (shutdown) {
 				shutdown.wait();
 			}

@@ -30,7 +30,7 @@ td {
 }
 
 #page {
-	background-color: #fff;
+	background: #fff;
 	min-height: 100%;
 	_height: 100%;
 }
@@ -95,6 +95,12 @@ td {
 	margin-bottom: 50px;
 	width: 240px;
 	overflow: hidden;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+    box-shadow:0 10px 20px -17px #aaa;
+    -moz-box-shadow:0 10px 20px -17px #aaa;
+    -webkit-box-shadow: 0px 2px 2px rgba(170,170,170,0.15)
 }
 .extra .box-title {
 	display: none;
@@ -137,6 +143,7 @@ span.messageCode {
 #path a,
 #path b {
 	display: block;
+	font-size: 12px;
 	line-height: 31px;
 	background-repeat: no-repeat;
 	padding: 0;

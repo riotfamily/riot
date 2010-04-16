@@ -13,14 +13,14 @@
 package org.riotfamily.common.hibernate;
 
 import org.hibernate.Session;
-import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.GenericClassTypeResolver;
 
 public abstract class TypedEntityListener<T> implements EntityListener {
 
 	private Class<?> type;
 	
 	public TypedEntityListener() {
-		type = Generics.getTypeArguments(TypedEntityListener.class, getClass()).get(0);
+		type = GenericClassTypeResolver.resolveTypeArgument(getClass(), TypedEntityListener.class);
 	}
 
 	public boolean supports(Class<?> entityClass) {

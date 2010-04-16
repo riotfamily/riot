@@ -12,31 +12,28 @@
  */
 package org.riotfamily.core.screen.list.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.SingleRoot;
 import org.riotfamily.core.dao.Tree;
 import org.riotfamily.core.screen.list.ColumnConfig;
-import org.riotfamily.core.screen.list.ListRenderContext;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.core.security.AccessController;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
+import org.springframework.core.convert.TypeDescriptor;
 
 /**
  * List service handler that handles the loading of list items. 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-class ListItemLoader extends ChooserCommandHandler implements ListRenderContext {
+class ListItemLoader extends ChooserCommandHandler {
 	
 	protected Tree tree;
 	
@@ -125,7 +122,9 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 		for (ColumnConfig col : screen.getColumns()) {
 			String propertyName = col.getProperty();
 			Object value = null;
+			TypeDescriptor typeDescriptor;
 			if (propertyName != null) {
+				typeDescriptor = wrapper.getPropertyTypeDescriptor(propertyName);
 				try {
 					value = wrapper.getPropertyValue(propertyName);
 				}
@@ -134,10 +133,9 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 			}
 			else {
 				value = object;
+				typeDescriptor = TypeDescriptor.forObject(object);
 			}
-			StringWriter writer = new StringWriter();
-			service.getRenderer(col).render(value, this, new PrintWriter(writer));
-			result.add(writer.toString());
+			result.add(service.render(col, value, typeDescriptor));
 		}
 		return result;
 	}
@@ -147,19 +145,6 @@ class ListItemLoader extends ChooserCommandHandler implements ListRenderContext 
 			return ((Tree) dao).hasChildren(node, getParent(), state.getParams());
 		}
 		return false;
-	}
-	
-	// ------------------------------------------------------------------------
-	// Implementation of the RenderContext interface
-	// ------------------------------------------------------------------------
-	
-	public String getContextPath() {
-		return request.getContextPath();
-	}
-	
-	@Override
-	public MessageResolver getMessageResolver() {
-		return messageResolver;
 	}
 
 }

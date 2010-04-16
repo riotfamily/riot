@@ -14,16 +14,16 @@ package org.riotfamily.core.screen.list.command.result;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteProperty;
-import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandInfo;
 import org.riotfamily.core.screen.list.command.CommandResult;
+import org.springframework.context.support.MessageSourceAccessor;
 
 @DataTransferObject
 public class NotificationResult implements CommandResult {
 	
-	private MessageResolver messageResolver;
+	private MessageSourceAccessor messageSourceAccessor;
 	
 	private String keyPrefix;
 	
@@ -44,12 +44,12 @@ public class NotificationResult implements CommandResult {
 	private String message;
 	
 	public NotificationResult(CommandContext context) {
-		this.messageResolver = context.getMessageResolver();
+		this.messageSourceAccessor = context.getMessageSourceAccessor();
 	}
 	
 	public NotificationResult(CommandContext context, Command command) {
 		CommandInfo info = command.getInfo(context);
-		this.messageResolver = context.getMessageResolver();
+		this.messageSourceAccessor = context.getMessageSourceAccessor();
 		this.keyPrefix = "command." + info.getName() + ".notification";
 		this.defaultTitle = info.getLabel();
 		this.icon = info.getIcon();
@@ -62,8 +62,8 @@ public class NotificationResult implements CommandResult {
 	
 	@RemoteProperty
 	public String getTitle() {
-		if (title == null && messageResolver != null) {
-			title = messageResolver.getMessage(getTitleKey(), args, defaultTitle);
+		if (title == null && messageSourceAccessor != null) {
+			title = messageSourceAccessor.getMessage(getTitleKey(), args, defaultTitle);
 		}
 		if (title == null) {
 			title = "";
@@ -78,8 +78,8 @@ public class NotificationResult implements CommandResult {
 	
 	@RemoteProperty
 	public String getMessage() {
-		if (message == null && messageResolver != null) {
-			message = messageResolver.getMessage(getMessageKey(), args, defaultMessage);
+		if (message == null && messageSourceAccessor != null) {
+			message = messageSourceAccessor.getMessage(getMessageKey(), args, defaultMessage);
 		}
 		return message;
 	}

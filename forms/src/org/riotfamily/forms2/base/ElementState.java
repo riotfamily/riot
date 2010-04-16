@@ -124,8 +124,7 @@ public abstract class ElementState implements Serializable {
 	protected void onInit(Value value) {
 	}
 	
-	protected void renderElement(Html html) {
-	}
+	protected abstract void renderElement(Html html);
 		
 	public abstract void populate(Value value);
 	

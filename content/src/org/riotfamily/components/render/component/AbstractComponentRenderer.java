@@ -14,12 +14,10 @@ package org.riotfamily.components.render.component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.components.model.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,17 +47,11 @@ public abstract class AbstractComponentRenderer implements ComponentRenderer {
 		}
 		catch (Exception e) {
 			log.error("Error rendering component", e);
-
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			StringWriter strace = new StringWriter();
-			e.printStackTrace(new PrintWriter(strace));
-
-			TagWriter pre = new TagWriter(response.getWriter());
-			pre.start("pre")
-					.attribute("class", "riot-stacktrace")
-					.body(strace.toString());
-
-			pre.end();
+			PrintWriter out = response.getWriter();
+			out.print("<pre class=\"riot-stacktrace\">");
+			e.printStackTrace(out);
+			out.print("</pre>");
 		}
 	}
 

@@ -12,28 +12,16 @@
  */
 package org.riotfamily.common.ui;
 
-import java.io.PrintWriter;
 import java.util.Locale;
 
-import org.springframework.util.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 
-public class LocaleRenderer implements ObjectRenderer {
+public class LocaleRenderer extends TypedRenderer<Locale> {
 
-	public void render(Object obj, RenderContext context, PrintWriter writer) {
-		if (obj != null) {
-			Locale inLocale = context.getMessageResolver().getLocale();
-			if (obj instanceof Locale) {
-				Locale locale = (Locale) obj;
-				writer.print(locale.getDisplayName(inLocale));
-			}
-			else {
-				String s = obj.toString();
-				Locale locale = StringUtils.parseLocaleString(s);
-				if (locale != null) {
-					writer.print(locale.getDisplayName(inLocale));
-				}
-			}
-		}
+	@Override
+	protected String render(Locale locale) {
+		Locale inLocale = LocaleContextHolder.getLocale();
+		return locale.getDisplayName(inLocale);
 	}
 
 }

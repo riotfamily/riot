@@ -48,6 +48,7 @@ public class BeanValue extends AbstractContainerValue {
 	
 	@Override
 	protected TypeDescriptor getNestedTypeDescriptor(String name) {
+		getOrCreate();
 		return beanWrapper.getPropertyTypeDescriptor(name);
 	}
 

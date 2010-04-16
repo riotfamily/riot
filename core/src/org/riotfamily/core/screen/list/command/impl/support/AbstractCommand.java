@@ -65,7 +65,7 @@ public abstract class AbstractCommand implements Command {
 	}
 	
 	protected String getLabel(CommandContext context, String name) {
-		return context.getMessageResolver().getMessage(
+		return context.getMessageSourceAccessor().getMessage(
 				"command." + name + ".label", 
 				FormatUtils.xmlToTitleCase(name));
 	}

@@ -13,20 +13,26 @@
 package org.riotfamily.core.ui;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Locale;
 
-import org.riotfamily.common.ui.ObjectRenderer;
-import org.riotfamily.common.ui.RenderContext;
+import javax.servlet.ServletContext;
+
+import org.riotfamily.common.ui.TypedRenderer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class CountryFlagRenderer implements ObjectRenderer {
+public class CountryFlagRenderer extends TypedRenderer<Locale> {
 
 	private String resourcePath;
 	
 	private String internationalFlag = "int";
+	
+	@Autowired
+	private ServletContext context;
 	
 	public CountryFlagRenderer(String resourcePath) {
 		this.resourcePath = resourcePath;
@@ -46,9 +52,7 @@ public class CountryFlagRenderer implements ObjectRenderer {
 				+ flag.toLowerCase() + ".gif") != null;
 	}
 	
-	protected void renderFlag(String flag, String title, 
-			RenderContext context, PrintWriter writer) {
-		
+	protected void renderFlag(String flag, String title, PrintWriter writer) {
 		writer.print("<img class=\"flag\" src=\"");
 		writer.print(context.getContextPath());
 		writer.print(resourcePath);
@@ -63,23 +67,18 @@ public class CountryFlagRenderer implements ObjectRenderer {
 		writer.print(" />");
 	}
 	
-	public void render(Object obj, RenderContext context, PrintWriter writer) {
-		if (obj != null) {
-			String flag = null;
-			String title = null;
-			if (obj instanceof Locale) {
-				Locale locale = (Locale) obj;
-				flag = locale.getCountry();
-				title = locale.getDisplayName();
-			}
-			else {
-				flag = obj.toString();
-			}
-			if (!flagExists(flag)) {
-				flag = internationalFlag;
-			}
-			renderFlag(flag, title, context, writer);
+	@Override
+	protected String render(Locale locale) {
+		StringWriter sw = new StringWriter();
+		String flag = null;
+		String title = null;
+		flag = locale.getCountry();
+		title = locale.getDisplayName();
+		if (!flagExists(flag)) {
+			flag = internationalFlag;
 		}
+		renderFlag(flag, title, new PrintWriter(sw));
+		return sw.toString();
 	}
 
 }

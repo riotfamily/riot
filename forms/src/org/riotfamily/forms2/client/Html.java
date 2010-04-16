@@ -15,6 +15,13 @@ package org.riotfamily.forms2.client;
 import java.util.List;
 import java.util.Locale;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+
 import org.codehaus.jackson.annotate.JsonValue;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.context.MessageSource;
@@ -23,6 +30,17 @@ import org.w3c.dom.Element;
 
 public class Html extends DomBuilder<Html> {
 
+	private static Templates templates;
+	static {
+		try {
+		templates = TransformerFactory.newInstance().newTemplates(
+			new StreamSource(DomBuilder.class.getResourceAsStream("html.xsl")));
+		}
+		catch (TransformerException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	private MessageSource messageSource;
 
 	private Locale locale;
@@ -44,6 +62,18 @@ public class Html extends DomBuilder<Html> {
 	
 	@Override
 	protected Html getThis() {
+		return this;
+	}
+	
+	@Override
+	protected Transformer newTransformer() throws TransformerException {
+		Transformer t = templates.newTransformer();
+		t.setOutputProperty(OutputKeys.METHOD, "html");
+		return t;
+	}
+	
+	public Html innerHTML(String html) {
+		elem("raw").text(html);
 		return this;
 	}
 	

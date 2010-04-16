@@ -211,16 +211,6 @@
 </#function>
 
 <#---
-  - Partitions a collection by inspecting the specified property
-  - of the contained items. If the property value is different than the 
-  - previous one, a new group is created and added to the returned sequence. 
-  - Each group consists of a hash with a 'title' and an 'items' property.    
-  -->
-<#function partition collection property>
-	<#return commonMacroHelper.partition(collection, property) />
-</#function>
-
-<#---
   - Shuffles the given collection.
 -->
 <#function shuffle collection>

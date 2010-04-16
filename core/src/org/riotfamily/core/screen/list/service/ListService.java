@@ -13,28 +13,25 @@
 package org.riotfamily.core.screen.list.service;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
-import org.riotfamily.common.i18n.MessageResolver;
-import org.riotfamily.common.ui.ObjectRenderer;
-import org.riotfamily.common.ui.StringRenderer;
+import org.riotfamily.common.ui.RenderingService;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver;
+import org.riotfamily.core.runtime.RiotRuntime;
 import org.riotfamily.core.screen.ScreenRepository;
 import org.riotfamily.core.screen.list.ColumnConfig;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.dto.CommandButton;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.core.screen.list.dto.ListModel;
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.controller.FormContextFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Service to interact with lists and trees via JavaScript. In order to reduce
@@ -46,40 +43,29 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 @RemoteProxy
 public class ListService {
 
+	@Autowired
 	private PlatformTransactionManager transactionManager;
 	
+	@Autowired
 	private ScreenRepository screenRepository;
 		
-	private FormContextFactory formContextFactory;
-	
+	@Autowired
 	private HandlerUrlResolver handlerUrlResolver;
 	
-	private String resourcePath;
+	@Autowired
+	private RiotRuntime riotRuntime;
 	
-	private ObjectRenderer defaultObjectRenderer;
+	@Autowired
+	private MessageSource messageSource;
 
-	public ListService(PlatformTransactionManager transactionManager,
-			ScreenRepository screenRepository,
-			FormContextFactory formContextFactory,
-			HandlerUrlResolver handlerUrlResolver, 
-			String resourcePath) {
-		
-		this.transactionManager = transactionManager;
-		this.screenRepository = screenRepository;
-		this.formContextFactory = formContextFactory;
-		this.handlerUrlResolver = handlerUrlResolver;
-		this.resourcePath = resourcePath;
-		this.defaultObjectRenderer = new StringRenderer();
-	}
+	@Autowired
+	private RenderingService renderingService;
+
 		
 	public PlatformTransactionManager getTransactionManager() {
 		return transactionManager;
 	}
-	
-	public FormContextFactory getFormContextFactory() {
-		return formContextFactory;
-	}
-	
+
 	public HandlerUrlResolver getHandlerUrlResolver() {
 		return handlerUrlResolver;
 	}
@@ -87,22 +73,9 @@ public class ListService {
 	public ScreenRepository getScreenRepository() {
 		return screenRepository;
 	}
-	
-	public MessageResolver getMessageResolver(HttpServletRequest request) {
-		Locale locale = RequestContextUtils.getLocale(request);
-		return formContextFactory.getMessageResolver(locale);
-	}
-	
-	public ObjectRenderer getRenderer(ColumnConfig column) {
-		ObjectRenderer renderer = column.getRenderer();
-		if (renderer == null) {
-			renderer = defaultObjectRenderer;
-		}
-		return renderer;
-	}
-	
+			
 	public String getResourcePath() {
-		return resourcePath;
+		return riotRuntime.getResourcePath();
 	}
 
 	@RemoteMethod
@@ -134,15 +107,7 @@ public class ListService {
 		return new ListModelBuilder(this, key, request)
 				.sort(property).buildModel();
 	}
-	
-	@RemoteMethod
-	public ListModel filter(String key, Map<String, String> filter, 
-			HttpServletRequest request) {
 		
-		return new ListModelBuilder(this, key, request)
-				.filter(filter).buildModel();
-	}
-	
 	@RemoteMethod
 	public List<CommandButton> getFormCommands(String key, ListItem item, 
 			HttpServletRequest request) {
@@ -167,22 +132,25 @@ public class ListService {
 		return new ChooserCommandHandler(this, key, request)
 				.execCommand(commandId, items);
 	}
-	
-	@RemoteMethod
-	public CommandResult handleInput(String key, 
-			String formKey, List<ListItem> items,
-			HttpServletRequest request,	HttpServletResponse response) {
 		
-		Form form = (Form) request.getSession().getAttribute(formKey);
-		return new CommandContextHandler(this, key, request)
-				.handleDialogInput(form);
-	}
-	
 	@RemoteMethod
 	public String renderScreenlets(String key,
 			HttpServletRequest request,	HttpServletResponse response) {
 		
 		return new ScreenletRenderer(this, key, request).renderAll();
+	}
+
+	MessageSource getMessageSource() {
+		return messageSource;
+	}
+
+	public String render(ColumnConfig col, Object value,
+			TypeDescriptor typeDescriptor) {
+		
+		if (col.getRenderer() != null) {
+			return col.getRenderer().render(value, typeDescriptor);
+		}
+		return renderingService.render(value, typeDescriptor);
 	}
 
 }

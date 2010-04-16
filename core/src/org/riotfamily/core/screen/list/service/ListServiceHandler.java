@@ -14,7 +14,6 @@ package org.riotfamily.core.screen.list.service;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.screen.DefaultScreenContext;
 import org.riotfamily.core.screen.ListScreen;
@@ -51,8 +50,6 @@ abstract class ListServiceHandler {
 	
 	protected HttpServletRequest request;
 	
-	protected MessageResolver messageResolver;
-	
 	protected ScreenContext screenContext;
 	
 	protected ListScreen chooserTarget;
@@ -69,7 +66,6 @@ abstract class ListServiceHandler {
 		
 		this.dao = screen.getDao();
 		this.request = request;
-		this.messageResolver = service.getMessageResolver(request);
 		this.transactionManager = service.getTransactionManager();
 		this.screenContext = new DefaultScreenContext(screen, request, 
 				null, state.getParentId(), false);

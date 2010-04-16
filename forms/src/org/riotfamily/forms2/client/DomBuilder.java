@@ -17,7 +17,6 @@ import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -112,17 +111,16 @@ public abstract class DomBuilder<T extends DomBuilder<T>> {
 	public void writeTo(Writer writer) {
 		try {
 			DOMSource source = new DOMSource(node);
-			Transformer t = transformerFactory.newTransformer();
-			
-			t.setOutputProperty(OutputKeys.METHOD, "html");
-			//t.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "-//W3C//DTD XHTML 1.0 Transitional//EN");
-			//t.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
-			//t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			Transformer t = newTransformer();
 			t.transform(source, new StreamResult(writer));
 		}
 		catch (TransformerException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	protected Transformer newTransformer() throws TransformerException {
+		return transformerFactory.newTransformer();
 	}
 	 
 	@Override

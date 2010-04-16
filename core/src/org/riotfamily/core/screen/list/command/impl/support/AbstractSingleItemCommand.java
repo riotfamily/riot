@@ -12,7 +12,7 @@
  */
 package org.riotfamily.core.screen.list.command.impl.support;
 
-import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.GenericClassTypeResolver;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
@@ -24,8 +24,7 @@ public abstract class AbstractSingleItemCommand<T> extends AbstractCommand {
 	@SuppressWarnings("unchecked")
 	private Class<T> getRequiredType() {
 		if (requiredType == null) { 
-			requiredType = (Class<T>) Generics.getTypeArguments(
-					AbstractSingleItemCommand.class, getClass()).get(0);
+			requiredType = (Class<T>) GenericClassTypeResolver.resolveTypeArgument(getClass(), AbstractSingleItemCommand.class);
 		}
 		return requiredType; 
 	}

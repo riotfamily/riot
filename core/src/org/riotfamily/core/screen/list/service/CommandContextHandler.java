@@ -19,7 +19,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.screen.ListScreen;
@@ -30,12 +29,10 @@ import org.riotfamily.core.screen.list.command.CommandInfo;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.SelectionItem;
-import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
 import org.riotfamily.core.screen.list.dto.CommandButton;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.FormContext;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.transaction.TransactionStatus;
 
 /**
@@ -48,11 +45,14 @@ class CommandContextHandler extends ListServiceHandler
 	private String commandId;
 	
 	private int itemsTotal = -1;
+
+	private MessageSourceAccessor messageSourceAccessor;
 	
 	CommandContextHandler(ListService service, String key,
 			HttpServletRequest request) {
 		
 		super(service, key, request);
+		messageSourceAccessor = new MessageSourceAccessor(service.getMessageSource());
 	}
 	
 	public List<CommandButton> createButtons() {
@@ -151,30 +151,7 @@ class CommandContextHandler extends ListServiceHandler
 		commit(status);
 		return result; 
 	}
-	
-	public CommandResult handleDialogInput(Form form) {
-		CommandResult result = null;
-		TransactionStatus status = beginTransaction();
-		try {
-			Object input = form.populateBackingObject();
-			Selection selection = form.getAttribute("selection");
-			if (selection != null) {
-				selection.resetObjects();
-			}
-			commandId = form.getAttribute("commandId");
-			DialogCommand command = (DialogCommand) getCommands().get(commandId);
-			result = command.handleInput(this, selection, input, 
-					form.getClickedButton());
-		}
-		catch (Exception e) {
-			rollback(status);
-			throw new RuntimeException(e); //REVISIT Throw a more specialized exception?
-		}
-		commit(status);
-		return result;
-	}
-	
-	
+		
 	// -----------------------------------------------------------------------
 	// Implementation of the CommandContext interface
 	// -----------------------------------------------------------------------
@@ -190,12 +167,7 @@ class CommandContextHandler extends ListServiceHandler
 	public Object getParent() {
 		return screenContext.getParent();
 	}
-	
-	public FormContext createFormContext(String formUrl) {
-		return service.getFormContextFactory().createFormContext(
-				messageResolver, request.getContextPath(), formUrl);
-	}
-		
+			
 	public String getListKey() {
 		return state.getKey();
 	}
@@ -222,12 +194,12 @@ class CommandContextHandler extends ListServiceHandler
 		return screen;
 	}
 	
-	public MessageResolver getMessageResolver() {
-		return messageResolver;
-	}
-	
 	public String getResourcePath() {
 		return request.getContextPath() + service.getResourcePath();
+	}
+
+	public MessageSourceAccessor getMessageSourceAccessor() {
+		return messageSourceAccessor;
 	}
 	
 }

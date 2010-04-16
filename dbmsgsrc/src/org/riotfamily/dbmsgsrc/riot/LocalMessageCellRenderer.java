@@ -12,20 +12,19 @@
  */
 package org.riotfamily.dbmsgsrc.riot;
 
-import java.io.PrintWriter;
-
-import org.riotfamily.common.ui.RenderContext;
-import org.riotfamily.common.ui.StringRenderer;
+import org.riotfamily.common.ui.TypedRenderer;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 
-public class LocalMessageCellRenderer extends StringRenderer {
+public class LocalMessageCellRenderer extends TypedRenderer<Message> {
 	
-	public void render(Object obj, RenderContext context, PrintWriter writer) {
-		Message message = (Message) obj;
+	@Override
+	protected String render(Message message) {
 		if (!MessageBundleEntry.C_LOCALE.equals(message.getLocale())) {
-			super.render(message.getText(), context, writer);			
-		}		
+			return FormatUtils.xmlEscape(message.getText());			
+		}
+		return "";
 	}
 
 }

@@ -12,21 +12,21 @@
  */
 package org.riotfamily.media.riot.ui;
 
-import java.io.PrintWriter;
+import javax.servlet.ServletContext;
 
-import org.riotfamily.common.ui.ObjectRenderer;
-import org.riotfamily.common.ui.RenderContext;
+import org.riotfamily.common.ui.TypedRenderer;
 import org.riotfamily.media.model.RiotImage;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class RiotImageRenderer implements ObjectRenderer {
+public class RiotImageRenderer extends TypedRenderer<RiotImage> {
 
-	public void render(Object obj, RenderContext context, PrintWriter writer) {
-		RiotImage image = (RiotImage) obj;
-		if (image != null) {
-			writer.format("<img src=\"%s\" width=\"%s\" height=\"%s\" />",
-					context.getContextPath() + image.getUri(), 
-					image.getWidth(), image.getHeight());
-		}
+	@Autowired
+	private ServletContext context;
+	
+	protected String render(RiotImage image) {
+		return String.format("<img src=\"%s%s\" width=\"%s\" height=\"%s\" />",
+				context.getContextPath(), image.getUri(), 
+				image.getWidth(), image.getHeight());
 	}
 
 }

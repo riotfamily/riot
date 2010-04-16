@@ -7,6 +7,26 @@
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
+		<config>common/src/META-INF/riot/application-context.xml</config>
+		<config>content/src/META-INF/riot/application-context.xml</config>
+		<config>core/src/META-INF/riot/application-context.xml</config>
+		<config>media/src/META-INF/riot/application-context.xml</config>
+		<config>statistics/src/META-INF/riot/application-context.xml</config>
+		<config>core/test/webapp/WEB-INF/application.xml</config>
+		<config>forms/test/webapp/WEB-INF/application.xml</config>
+		<config>content/src/META-INF/riot/riot-servlet.xml</config>
+		<config>core/src/META-INF/riot/riot-servlet.xml</config>
+		<config>dbmsgsrc/src/META-INF/riot/riot-servlet.xml</config>
+		<config>media/src/META-INF/riot/riot-servlet.xml</config>
+		<config>statistics/src/META-INF/riot/riot-servlet.xml</config>
+		<config>core/test/webapp/WEB-INF/riot.xml</config>
+		<config>forms/test/webapp/WEB-INF/servlet.xml</config>
+		<config>common/src/META-INF/riot/website-servlet.xml</config>
+		<config>content/src/META-INF/riot/website-servlet.xml</config>
+		<config>core/src/META-INF/riot/website-servlet.xml</config>
+		<config>dbmsgsrc/src/META-INF/riot/website-servlet.xml</config>
+		<config>statistics/src/META-INF/riot/website-servlet.xml</config>
+		<config>core/test/webapp/WEB-INF/website.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -14,6 +34,19 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
+				<config>common/src/META-INF/riot/application-context.xml</config>
+				<config>content/src/META-INF/riot/application-context.xml</config>
+				<config>content/src/META-INF/riot/riot-servlet.xml</config>
+				<config>core/src/META-INF/riot/application-context.xml</config>
+				<config>core/src/META-INF/riot/riot-servlet.xml</config>
+				<config>core/test/webapp/WEB-INF/application.xml</config>
+				<config>core/test/webapp/WEB-INF/riot.xml</config>
+				<config>dbmsgsrc/src/META-INF/riot/riot-servlet.xml</config>
+				<config>forms/test/webapp/WEB-INF/application.xml</config>
+				<config>media/src/META-INF/riot/application-context.xml</config>
+				<config>media/src/META-INF/riot/riot-servlet.xml</config>
+				<config>statistics/src/META-INF/riot/application-context.xml</config>
+				<config>statistics/src/META-INF/riot/riot-servlet.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
@@ -21,6 +54,19 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
+				<config>common/src/META-INF/riot/application-context.xml</config>
+				<config>common/src/META-INF/riot/website-servlet.xml</config>
+				<config>content/src/META-INF/riot/application-context.xml</config>
+				<config>content/src/META-INF/riot/website-servlet.xml</config>
+				<config>core/src/META-INF/riot/application-context.xml</config>
+				<config>core/src/META-INF/riot/website-servlet.xml</config>
+				<config>core/test/webapp/WEB-INF/application.xml</config>
+				<config>core/test/webapp/WEB-INF/website.xml</config>
+				<config>dbmsgsrc/src/META-INF/riot/website-servlet.xml</config>
+				<config>forms/test/webapp/WEB-INF/application.xml</config>
+				<config>media/src/META-INF/riot/application-context.xml</config>
+				<config>statistics/src/META-INF/riot/application-context.xml</config>
+				<config>statistics/src/META-INF/riot/website-servlet.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

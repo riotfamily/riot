@@ -34,10 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.CacheContext;
-import org.riotfamily.common.beans.property.PropertyUtils;
-import org.riotfamily.common.ui.ObjectGroup;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.RiotHyphenator;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.performance.ResourceStamper;
@@ -294,30 +291,6 @@ public class CommonMacroHelper {
 	
 	public String addCurrentTimestamp(String s) {
 		return stamper.stamp(s, true);
-	}
-
-	/**
-     * Partitions the given collection by inspecting the specified property
-     * of the contained items.
-     *
-     * @param c The collection to partition
-     * @param titleProperty The property to use for grouping
-     * @return A list of {@link ObjectGroup ObjectGroups}
-     */
-    public<T> List<ObjectGroup<?, T>> partition(Collection<T> c, String titleProperty) {
-		ArrayList<ObjectGroup<?, T>> groups = Generics.newArrayList();
-		ObjectGroup<Object, T> group = null;
-		for (T item : c) {
-			Object title = PropertyUtils.getProperty(item, titleProperty);
-			if (group == null || (title != null && !title.equals(group.getTitle()))) {
-				group = ObjectGroup.newInstance(title, item, false);
-				groups.add(group);
-			}
-			else {
-				group.add(item);
-			}
-		}
-		return groups;
 	}
     
     public String toDelimitedString(Collection<?> c, String delim) {

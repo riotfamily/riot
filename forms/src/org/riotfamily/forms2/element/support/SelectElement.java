@@ -15,7 +15,6 @@ package org.riotfamily.forms2.element.support;
 import java.io.Serializable;
 import java.util.List;
 
-import org.riotfamily.common.ui.ObjectRenderer;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.base.Element;
 import org.riotfamily.forms2.base.ElementState;
@@ -24,12 +23,13 @@ import org.riotfamily.forms2.option.IdentityReferenceAdapter;
 import org.riotfamily.forms2.option.OptionReferenceAdapter;
 import org.riotfamily.forms2.option.OptionsModel;
 import org.riotfamily.forms2.value.Value;
+import org.springframework.format.Printer;
 
 public abstract class SelectElement extends Element {
 
 	private transient OptionsModel optionsModel;
 	
-	private transient ObjectRenderer labelRenderer;
+	private transient Printer<Object> labelRenderer;
 	
 	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO
 	

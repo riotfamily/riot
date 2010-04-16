@@ -12,27 +12,18 @@
  */
 package org.riotfamily.components.riot.ui;
 
-import java.io.PrintWriter;
-
-import org.riotfamily.common.ui.ObjectRenderer;
-import org.riotfamily.common.ui.RenderContext;
+import org.riotfamily.common.ui.TypedRenderer;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentContainerOwner;
-import org.riotfamily.core.screen.list.ListRenderContext;
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
- */
-public class PublishStatusRenderer implements ObjectRenderer {
+public class PublishStatusRenderer extends TypedRenderer<ContentContainerOwner> {
 
-	public void render(Object obj, RenderContext context, PrintWriter writer) {
-		writer.print("<div class=\"publish-status publish-status-");
-		writer.print(getStyleClass((ContentContainerOwner) obj, (ListRenderContext) context));
-		writer.print("\"></div>");
+	@Override
+	protected String render(ContentContainerOwner owner) {
+		return String.format("<div class=\"publish-status publish-status-%s\"></div>",  getStyleClass(owner));
 	}
 	
-	protected String getStyleClass(ContentContainerOwner owner, ListRenderContext context) {
+	protected String getStyleClass(ContentContainerOwner owner) {
 		ContentContainer container = owner.getContentContainer();
 		if (container.getLiveVersion() == null) {
 			return "new";
