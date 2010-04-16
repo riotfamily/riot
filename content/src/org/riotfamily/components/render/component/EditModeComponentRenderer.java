@@ -12,13 +12,15 @@
  */
 package org.riotfamily.components.render.component;
 
+import java.io.PrintWriter;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
-import org.riotfamily.forms.factory.FormRepository;
+import org.riotfamily.forms2.Form;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,7 @@ public class EditModeComponentRenderer implements ComponentRenderer {
 
 	private Logger log = LoggerFactory.getLogger(EditModeComponentRenderer.class);
 	
-	private FormRepository formRepository;
+	private Map<String, Form> forms;
 	
 	private ComponentRenderer renderer;
 	
@@ -34,11 +36,11 @@ public class EditModeComponentRenderer implements ComponentRenderer {
 	
 	public EditModeComponentRenderer(ComponentRenderer renderer, 
 			ComponentMetaDataProvider metaDataProvider,
-			FormRepository formRepository) {
+			Map<String, Form> forms) {
 		
 		this.renderer = renderer;
 		this.metaDataProvider = metaDataProvider;
-		this.formRepository = formRepository;
+		this.forms = forms;
 	}
 
 	public void render(Component component, HttpServletRequest request,
@@ -51,12 +53,12 @@ public class EditModeComponentRenderer implements ComponentRenderer {
 		
 		String formId = metaDataProvider.getMetaData(type).getForm();
 		if (formId != null) {
-			if (!formRepository.containsForm(formId)) {
+			if (!forms.containsKey(formId)) {
 				log.error("The configured component form [{}] does not exist", formId);
 				formId = null;
 			}
 		}
-		else if (formRepository.containsForm(type)) {
+		else if (forms.containsKey(type)) {
 			formId = type;
 		}
 		
@@ -64,16 +66,12 @@ public class EditModeComponentRenderer implements ComponentRenderer {
 			className += " riot-form";
 		}
 		
-		TagWriter wrapper = new TagWriter(response.getWriter());
-		wrapper.start("div")
-				.attribute("class", className)
-				.attribute("riot:contentId", component.getCompositeId())
-				.attribute("riot:componentType", type)
-				.attribute("riot:form", formId)
-				.body();
+		PrintWriter out = response.getWriter();
+		out.printf("<div class=\"%s\" riot:contentId=\"%s\" riot:componentType=\"%s\" riot:form=\"%s\">", 
+				className, component.getCompositeId(), type, formId);
 
 		renderer.render(component, request, response);
 		
-		wrapper.end();
+		out.print("</div>");
 	}
 }

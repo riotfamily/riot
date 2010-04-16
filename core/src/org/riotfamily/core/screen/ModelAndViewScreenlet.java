@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mvc.view.ViewResolverHelper;
 import org.riotfamily.common.web.support.DummyHttpServletResponse;
-import org.riotfamily.forms.TemplateUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,7 +45,11 @@ public class ModelAndViewScreenlet implements Screenlet, ApplicationContextAware
 	}
 
 	protected String getViewName() {
-		return TemplateUtils.getTemplatePath(getTemplateClass());
+		StringBuffer sb = new StringBuffer();
+		sb.append("classpath:");
+		sb.append(getTemplateClass().getName().replace('.', '/'));
+		sb.append(".ftl");
+		return sb.toString();
 	}
 	
 	protected Class<?> getTemplateClass() {

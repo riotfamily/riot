@@ -13,13 +13,12 @@
 package org.riotfamily.pages.config;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.forms.Element;
-import org.riotfamily.forms.options.OptionsModel;
 
-public class SitemapSchemaRepository implements OptionsModel {
+public class SitemapSchemaRepository implements Iterable<SitemapSchema> {
 
 	private Map<String, SitemapSchema> schemas = Generics.newHashMap();
 
@@ -51,8 +50,8 @@ public class SitemapSchemaRepository implements OptionsModel {
 		return schemas.values();
 	}
 
-	public Collection<?> getOptionValues(Element element) {
-		return schemas.values();
+	public Iterator<SitemapSchema> iterator() {
+		return schemas.values().iterator();
 	}
 
 }

@@ -14,7 +14,6 @@ package org.riotfamily.core.screen.list;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,7 +28,6 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.core.dao.RiotDao;
-import org.riotfamily.core.dao.Searchable;
 import org.riotfamily.core.dao.Sortable;
 import org.riotfamily.core.screen.AbstractRiotScreen;
 import org.riotfamily.core.screen.ListScreen;
@@ -40,9 +38,6 @@ import org.riotfamily.core.screen.ScreenLink;
 import org.riotfamily.core.screen.ScreenUtils;
 import org.riotfamily.core.screen.list.command.Command;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.element.TextField;
-import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -63,10 +58,6 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 	
 	private int pageSize = 25;
 	
-	private FormRepository filterFormRepository;
-	
-	private String filterFormId;
-	
 	private List<ColumnConfig> columns;
 	
 	private String labelProperty;
@@ -77,10 +68,6 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 
 	private ApplicationContext applicationContext;
 
-
-	public TreeListScreen(FormRepository filterFormRepository) {
-		this.filterFormRepository = filterFormRepository;
-	}
 
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
@@ -99,13 +86,6 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 		this.pageSize = pageSize;
 	}
 	
-	public void setFilterFormId(String filterFormId) {
-		this.filterFormId = filterFormId;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.riotfamily.core.screen.list.ListScreen#getDao()
-	 */
 	public RiotDao getDao() {
 		return dao;
 	}
@@ -256,26 +236,8 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 		if (state == null) {
 			Locale locale = RequestContextUtils.getLocale(request);
 			
-			Form filterForm = null;
-			TextField searchField = null;
-			if (filterFormId != null) {
-				filterForm = filterFormRepository.createForm(filterFormId);
-			}
-			if (dao instanceof Searchable) {
-				String[] search = ((Searchable) dao).getSearchableProperties();
-				if (search != null && search.length > 0) {
-					if (filterForm == null) {
-						filterForm = new Form();
-						filterForm.setBeanClass(HashMap.class);
-					}
-					searchField = new TextField();
-					searchField.setLabel("Search");
-					filterForm.addElement(searchField);
-				}
-			}
 			state = new ListState(key, getId(), locale, 
-					screenContext.getParentId(), filterForm, 
-					searchField, pageSize, chooserSettings);
+					screenContext.getParentId(), pageSize, chooserSettings);
 			
 			if (dao instanceof Sortable) {
 				Sortable sortable = (Sortable) dao;

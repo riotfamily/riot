@@ -71,11 +71,24 @@ public class FormScreen extends AbstractRiotScreen implements ItemScreen, BeanNa
 	
 	private String viewName = ResourceUtils.getPath(FormScreen.class, "form.ftl");
 
-	public void setElements(List<Element> elements) {
-		for (Element element : elements) {
-			form.add(element);
-		}
+	public void setElements(List<Object> elements) {
+		addElements(elements);
 		form.add(new SubmitButton("Save", this));
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addElements(Collection<Object> elements) {
+		for (Object element : elements) {
+			if (element instanceof Element) {
+				form.add((Element) element);
+			}
+			else if (element instanceof Collection) {
+				addElements((Collection) element);
+			}
+			else {
+				throw new IllegalArgumentException("Expected either an Element or a Collection: " + element);
+			}
+		}
 	}
 	
 	public void setViewName(String viewName) {

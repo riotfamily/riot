@@ -20,7 +20,7 @@
 	<bean id="editModeRenderStrategy" class="org.riotfamily.components.render.list.EditModeRenderStrategy">
 		<constructor-arg ref="viewComponentRenderer" />
 		<constructor-arg ref="componentMetaDataProvider" />
-		<constructor-arg ref="contentFormRepository" />
+		<constructor-arg ref="contentForms" />
 		<constructor-arg ref="componentListRenderer" />
 	</bean>
 			
@@ -30,36 +30,27 @@
 	<bean id="componentEditor" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="viewComponentRenderer" />
 		<constructor-arg ref="componentMetaDataProvider" />
-		<constructor-arg ref="contentFormRepository" />
+		<constructor-arg ref="contentForms" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 	
 	<dwr:annotation-scan scanRemoteProxy="false" base-package="org.riotfamily.components" />
 	
-	<!--
-	  - FormRepository providing component property forms.
-	  -->
-	<bean id="contentFormRepository" class="org.riotfamily.components.config.ContentFormRepository">
-		<property name="configLocations">
-		    <list>
-		        <value>/WEB-INF/riot-config/content-forms.xml</value>
-		    </list>
-		</property>
-		<property name="customElements" ref="customFormElements" />
-		<property name="mimetypesMap" ref="fileTypeMap" />
-		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
-	</bean>
+	<util:map id="contentForms">
+	</util:map>
 
 	<!--
 	  - Controller that renders forms to edit component properties.
 	  -->
+	<!-- 
 	<bean id="componentFormController"
 		name="/components/form/{contentId}/**"
 		class="org.riotfamily.components.riot.form.ContentFormController">
 		<constructor-arg ref="formContextFactory" />
-		<constructor-arg ref="contentFormRepository" />
+		<constructor-arg ref="contentForms" />
 		<constructor-arg ref="transactionManager" />
 	</bean>
+	-->
 	
 	<bean name="/components/publish"
 		class="org.springframework.web.servlet.mvc.ParameterizableViewController">
@@ -124,24 +115,9 @@
 	<override:add ref="customStyleSheets">
 		<value>style/riot-pages.css</value>
 	</override:add>
-	
-	<override:add ref="formRepository" property="configLocations" append="true">
-		<value>classpath:/org/riotfamily/pages/runtime/forms.xml</value>
-	</override:add>
 	 	 	
-	
-	
 	<!--  Pages -->
-	
-	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
-		<constructor-arg ref="contentFormRepository" />
-	</bean>
-
-	<bean id="siteFormInitializer" class="org.riotfamily.pages.riot.form.SiteFormInitializer">
-		<constructor-arg ref="contentFormRepository" />
-	</bean>
-
-	
+		
 	<override:properties ref="riotUserDao">
 		<property name="entityClass" value="org.riotfamily.pages.riot.security.SiteUser" />
 	</override:properties>
@@ -152,8 +128,6 @@
 
  	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao" />
 	
-	<bean id="locales" class="org.riotfamily.pages.riot.form.SiteLocalesOptionsModel" />
-
 	<!-- Policies -->
 	
 	<bean id="siteUserPolicy" class="org.riotfamily.pages.riot.security.SiteUserPolicy" />

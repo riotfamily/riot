@@ -10,17 +10,9 @@
 		http://www.riotfamily.org/schema/common/override-9.0.xsd
 		http://www.riotfamily.org/schema/core/screen
 		http://www.riotfamily.org/schema/core/screen-9.0.xsd">
-
-	<override:add ref="formRepository" property="configLocations">
-		<value>classpath:/org/riotfamily/dbmsgsrc/runtime/forms.xml</value>
-	</override:add>
 	 	
 	<bean id="localMessageRenderer" class="org.riotfamily.dbmsgsrc.riot.LocalMessageCellRenderer" />
-	
-	<bean id="localeRenderer" class="org.riotfamily.core.ui.LocaleRenderer">
-		<constructor-arg ref="resourcePath" />
-	</bean>
-	
+		
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.RiotDbMessageSource">
 		<constructor-arg ref="handlerUrlResolver" />
 		<property name="parentMessageSource">
@@ -55,8 +47,10 @@
 				<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
 				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
+				<!-- 
 				<bean class="org.riotfamily.dbmsgsrc.riot.MessageEntryExportCommand" />
 				<bean class="org.riotfamily.dbmsgsrc.riot.ImportMessageEntriesCommand" />
+				 -->
 			</s:commands>
 			<s:form id="messageBundleEntry">
                 <s:elements>

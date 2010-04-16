@@ -30,7 +30,6 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.support.CapturingResponseWrapper;
-import org.riotfamily.components.config.ContentFormRepository;
 import org.riotfamily.components.meta.ComponentMetaData;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
@@ -45,6 +44,7 @@ import org.riotfamily.components.support.OverrideMethodRequestWrapper;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.session.LoginManager;
+import org.riotfamily.forms2.Form;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -74,9 +74,9 @@ public class ComponentEditorImpl implements ComponentEditor,
 	
 	public ComponentEditorImpl(ComponentRenderer renderer, 
 			ComponentMetaDataProvider metaDataProvider,
-			ContentFormRepository formRepository) {
+			Map<String, Form> forms) {
 		
-		this.renderer = new EditModeComponentRenderer(renderer, metaDataProvider, formRepository);
+		this.renderer = new EditModeComponentRenderer(renderer, metaDataProvider, forms);
 		this.metaDataProvider = metaDataProvider;
 	}
 

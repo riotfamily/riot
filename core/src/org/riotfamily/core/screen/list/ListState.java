@@ -14,16 +14,9 @@ package org.riotfamily.core.screen.list;
 
 import java.io.Serializable;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.forms.Element;
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.FormContext;
-import org.riotfamily.forms.element.TextField;
-import org.riotfamily.forms.request.SimpleFormRequest;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
@@ -38,11 +31,7 @@ public class ListState implements Serializable {
 	
 	private Locale locale;
 	
-	private Form filterForm;
-	
 	private String parentId;
-	
-	private TextField searchField;
 	
 	private ListParamsImpl params;
 	
@@ -68,37 +57,16 @@ public class ListState implements Serializable {
 	}
 	
 	public ListState(String key, String screenId, Locale locale,
-			String parentId, Form filterForm, TextField searchField, 
-			int pageSize, ChooserSettings chooserSettings) {
+			String parentId, int pageSize, ChooserSettings chooserSettings) {
 		
 		this.key = key;
 		this.screenId = screenId;
 		this.locale = locale;
 		this.parentId = parentId;
-		this.filterForm = filterForm;
-		this.searchField = searchField;
 		this.chooserSettings = chooserSettings;
 		this.params = new ListParamsImpl(pageSize);
 	}
 
-	public boolean isInitialized() {
-		return filterForm == null || filterForm.getFormContext() != null;
-	}
-	
-	public void setFormContext(FormContext formContext) {
-		if (filterForm != null) {
-			filterForm.setFormContext(formContext);
-			filterForm.setTemplate(ResourceUtils.getPath(getClass(), "FilterForm.ftl"));
-			for (Element e : filterForm.getRegisteredElements()) {
-				e.setRequired(false);
-			}
-			params.setFilteredProperties(filterForm.getEditorBinder()
-					.getBoundProperties());
-
-			params.setFilter(filterForm.populateBackingObject());
-		}
-	}
-	
 	public String getKey() {
 		return key;
 	}
@@ -115,31 +83,12 @@ public class ListState implements Serializable {
 		return locale;
 	}
 
-	public Form getFilterForm() {
-		return filterForm;
-	}
-
-	public TextField getSearchField() {
-		return searchField;
-	}
-
 	public ListParamsImpl getParams() {
 		return params;
 	}
 	
 	public ChooserSettings getChooserSettings() {
 		return chooserSettings;
-	}
-	
-	public void setFilter(Map<String, String> filter) {
-		if (filterForm != null) {
-			filterForm.processRequest(new SimpleFormRequest(filter));
-			params.setFilter(filterForm.populateBackingObject());
-			if (searchField != null) {
-				params.setSearch(searchField.getText());
-			}
-		}
-		params.setPage(1);
 	}
 
 }

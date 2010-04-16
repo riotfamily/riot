@@ -13,18 +13,19 @@
 package org.riotfamily.components.render.list;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.DocumentWriter;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentRenderer;
-import org.riotfamily.forms.factory.FormRepository;
+import org.riotfamily.forms2.Form;
 
 public class EditModeRenderStrategy extends DefaultRenderStrategy {
 
@@ -32,11 +33,11 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 	
 	public EditModeRenderStrategy(ComponentRenderer renderer,
 			ComponentMetaDataProvider metaDataProvider,
-			FormRepository formRepository, ComponentListRenderer listRenderer) {
+			Map<String, Form> forms, ComponentListRenderer listRenderer) {
 		
 		super(renderer);
 		editModeRenderer = new EditModeComponentRenderer(
-				renderer, metaDataProvider, formRepository);
+				renderer, metaDataProvider, forms);
 		
 		listRenderer.setEditModeRenderStrategy(this);
 	}
@@ -47,25 +48,15 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 	 * Riot toolbar JavaScript.
 	 */
 	@Override
-	public void render(ComponentList list, 
-			ComponentListConfig config,
+	public void render(ComponentList list, ComponentListConfig config,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		DocumentWriter doc = new DocumentWriter(response.getWriter());
-		
-		doc.start("div")
-			.attribute("class", "riot-component-list")
-			.attribute("riot:listId", list.getCompositeId());
-		
-		doc.body();
+		PrintWriter out = response.getWriter();
+		out.printf("<div class=\"riot-component-list\" riot:listId=\"%s\">", list.getCompositeId());
 		super.render(list, config, request, response);
-		doc.end();
-		
-		doc.start("script").body("riotComponentListConfig" + list.getCompositeId() 
-				+ " = " + config.toJSON() + ";", false);
-		
-		doc.end();
+		out.print("</div>");
+		out.printf("<script>riotComponentListConfig%s = %s;</script>", list.getCompositeId(), config.toJSON());
 	}
 
 	/**

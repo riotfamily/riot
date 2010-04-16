@@ -14,18 +14,17 @@ package org.riotfamily.core.screen.list.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.ScreenContext;
-import org.riotfamily.forms.FormContext;
+import org.springframework.context.support.MessageSourceAccessor;
 
 
 public interface CommandContext {
 
 	public HttpServletRequest getRequest();
-	
-	public MessageResolver getMessageResolver();
+
+	public MessageSourceAccessor getMessageSourceAccessor();
 	
 	public String getResourcePath();
 	
@@ -42,7 +41,5 @@ public interface CommandContext {
 	public ListScreen getScreen();
 	
 	public ScreenContext getScreenContext();
-	
-	public FormContext createFormContext(String formUrl);
 	
 }

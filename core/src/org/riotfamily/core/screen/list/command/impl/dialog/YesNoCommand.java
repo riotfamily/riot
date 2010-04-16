@@ -12,43 +12,23 @@
  */
 package org.riotfamily.core.screen.list.command.impl.dialog;
 
-import java.util.HashMap;
-
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.result.NotificationResult;
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.element.StaticText;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 
 public class YesNoCommand extends DialogCommand {
-
-	@Override
-	public Form createForm(CommandContext context, Selection selection) {
-		Form form = new Form(HashMap.class);
-		addButton(form, "yes");
-		addButton(form, "no");
-		addQuestion(form, context, selection);
-		addExtraElements(form, context, selection);
-		return form;
-	}
-	
-	private void addQuestion(Form form, CommandContext context, Selection selection) {
-		String question = getQuestion(context, selection);
-		if (question != null) {
-			form.addElement(new StaticText(question));
-		}
-	}
 	
 	protected String getQuestion(CommandContext context, Selection selection) {
 		String[] codes = getCodes(context, selection);
 		if (codes == null) {
 			return null;
 		}
-		return context.getMessageResolver().getMessage(
+		return context.getMessageSourceAccessor().getMessage(new DefaultMessageSourceResolvable(
 				codes, 
 				getArgs(context, selection), 
-				getDefaultMessage(context, selection));
+				getDefaultMessage(context, selection)));
 	}
 	
 	protected String[] getCodes(CommandContext context, Selection selection) {
@@ -63,9 +43,6 @@ public class YesNoCommand extends DialogCommand {
 		return null;
 	}
 	
-	protected void addExtraElements(Form form, CommandContext context, Selection selection) {
-	}
-
 	@Override
 	public CommandResult handleInput(CommandContext context,
 			Selection selection, Object input, String button) {
