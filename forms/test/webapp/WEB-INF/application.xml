@@ -10,7 +10,9 @@
 
     <context:component-scan base-package="org.riotfamily.forms2" />
        
-    <util:map id="backingObject" />
+    <util:map id="testMap" />
+    
+    <bean id="testBean" class="org.riotfamily.forms2.integration.model.TestBean" />
    
     <bean id="shutdown" class="java.lang.Object" />
    

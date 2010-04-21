@@ -121,7 +121,7 @@ public class FormElement extends ContainerElement {
 		
 	@Override
 	public State createAndInitState(ElementState parent, Value value) {
-		State state = new State(value);
+		State state = new State();
 		state.init(null, state, value);
 		for (Element element : externalElements) {
 			state.register(element.createState(state, value));
@@ -144,8 +144,8 @@ public class FormElement extends ContainerElement {
 		private String resourcePath = "/resources/";
 		
 		private IdGenerator idGenerator = new IdGenerator();
-		
-		State(Value value) {
+
+		State() {
 			super(UUID.randomUUID().toString());
 		}
 		
@@ -196,7 +196,7 @@ public class FormElement extends ContainerElement {
 			Assert.notNull(state, "No such state: '" + id + "'");
 			return state;
 		}
-		
+				
 		@Override
 		FormState getFormStateInternal() {
 			return this;
