@@ -14,7 +14,7 @@ package org.riotfamily.forms2.option;
 
 import java.util.Arrays;
 
-import org.riotfamily.forms2.base.FormState;
+import org.riotfamily.forms2.base.ElementState;
 
 public class StaticOptionsModel implements OptionsModel {
 
@@ -28,7 +28,7 @@ public class StaticOptionsModel implements OptionsModel {
 		this(Arrays.asList(options));
 	}
 
-	public Iterable<?> getOptions(FormState state) {
+	public Iterable<?> getOptions(ElementState state) {
 		return options;
 	}
 

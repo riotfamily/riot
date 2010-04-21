@@ -23,13 +23,10 @@ import org.riotfamily.forms2.option.IdentityReferenceAdapter;
 import org.riotfamily.forms2.option.OptionReferenceAdapter;
 import org.riotfamily.forms2.option.OptionsModel;
 import org.riotfamily.forms2.value.Value;
-import org.springframework.format.Printer;
 
 public abstract class SelectElement extends Element {
 
 	private transient OptionsModel optionsModel;
-	
-	private transient Printer<Object> labelRenderer;
 	
 	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO
 	
@@ -48,7 +45,7 @@ public abstract class SelectElement extends Element {
 	protected abstract Class<?> getRequiredType();
 	
 	final void createOptions(State state, Object value) {
-		Iterable<?> items = optionsModel.getOptions(state.getFormState());
+		Iterable<?> items = optionsModel.getOptions(state);
 		if (items != null) {
 			for (Object item : items) {
 				state.addOption(
@@ -74,7 +71,7 @@ public abstract class SelectElement extends Element {
 		
 		public void addOption(Serializable reference, String label, boolean selected) {
 			String value = String.valueOf(options.size());
-			options.add(new Option(reference, value, label, selected));
+			options.add(new Option(id(), reference, value, label, selected));
 		}
 		
 		@Override
