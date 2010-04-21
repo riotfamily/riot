@@ -49,7 +49,7 @@ public class Binding extends Element {
 
 	public class State extends ElementState {
 
-		ElementState nestedState;
+		private ElementState nestedState;
 		
 		@Override
 		protected Html wrap(Html html) {
