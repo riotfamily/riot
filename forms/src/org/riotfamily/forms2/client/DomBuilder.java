@@ -68,6 +68,13 @@ public abstract class DomBuilder<T extends DomBuilder<T>> {
         return getThis();
     }
 	
+	public T attr(String name, boolean value) {
+		if (value) {
+			attr(name, name);
+		}
+		return getThis();
+	}
+	
 	public T attr(String name, String format, Object... args) {
 		return attr(name, String.format(format, args));
 	}
