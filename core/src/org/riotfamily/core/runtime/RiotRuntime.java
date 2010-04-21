@@ -15,7 +15,10 @@ package org.riotfamily.core.runtime;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
 
@@ -43,6 +46,10 @@ public class RiotRuntime implements ServletContextAware {
 	
 	private String resourcePath;
 	
+	@Autowired
+	private MessageSource messageSource;
+
+	private MessageSourceAccessor messageSourceAccessor;
 	
 	public void setResourceMapping(String resourceMapping) {
 		this.resourceMapping = resourceMapping;
@@ -65,6 +72,18 @@ public class RiotRuntime implements ServletContextAware {
 		return resourcePath;
 	}
     
+	public MessageSource getMessageSource() {
+		return messageSource;
+	}
+	
+	
+	public MessageSourceAccessor getMessageSourceAccessor() {
+		if (messageSourceAccessor == null) {
+			messageSourceAccessor = new MessageSourceAccessor(messageSource);
+		}
+		return messageSourceAccessor;
+	}
+	
 	private String getRiotVersion() {
 		return RiotVersion.getVersionString().replace('.', '-');
 	}	
