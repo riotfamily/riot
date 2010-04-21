@@ -40,12 +40,7 @@ public class BeanValue extends AbstractContainerValue {
 	protected Object getNestedObject(String name) {
 		return bean != null ? beanWrapper.getPropertyValue(name) : null;
 	}
-	
-	@Override
-	public <T, D extends T> Value require(Class<T> requiredType, Class<D> defaultType) {
-		return super.require(requiredType, defaultType);
-	}
-	
+		
 	@Override
 	protected TypeDescriptor getNestedTypeDescriptor(String name) {
 		getOrCreate();
