@@ -10,26 +10,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms2;
+package org.riotfamily.forms2.integration.test;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.*;
 
 import java.util.List;
-import java.util.Map;
 
-import javax.annotation.Resource;
-
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.jitr.Jitr;
 import org.jitr.annotation.BaseUri;
 import org.jitr.annotation.JitrConfiguration;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
+import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runner.RunWith;
+import org.riotfamily.forms2.integration.model.TestBean;
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -38,10 +36,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 @RunWith(Jitr.class)
 @JitrConfiguration(warPath="forms/test/webapp")
-public class FormsIntegrationTests {
+public abstract class AbstractFormIntegrationTests {
 
-	private static boolean interactive = false;
-	
 	private WebClient webClient = new WebClient();
 	
 	@BaseUri
@@ -49,20 +45,14 @@ public class FormsIntegrationTests {
 	
 	private HtmlPage page;
 	
-	@Resource
-	private Map<String, Object> backingObject;
-	
-	@Resource
-	private Object shutdown;
-	
 	@Before
 	public void request() throws Exception {
-		if (!interactive) {
-			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			page = webClient.getPage(baseUri + "form");
-		}
+		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+		page = webClient.getPage(baseUri + getControllerMapping());
 	}
 	
+	protected abstract String getControllerMapping();
+
 	@Test
 	public void textField() throws Exception {
 		select("//div[@id='s1']/input[@type='text']").type("Hello world");
@@ -90,13 +80,17 @@ public class FormsIntegrationTests {
 	}
 	
 	@Test
-	public void interactive() throws Exception {
-		if (interactive) {
-			Runtime.getRuntime().exec("open " + baseUri + "form");
-			synchronized (shutdown) {
-				shutdown.wait();
+	public void nested() throws Exception {
+		select("//div[contains(@class,'NestedForm')]//input[@type='text']").type("Hello nested");
+		assertAfterSave("nested", new TypeSafeMatcher<TestBean>() {
+			public void describeTo(Description d) {
+				d.appendText("Hello nested");
 			}
-		}
+			@Override
+			public boolean matchesSafely(TestBean testBean) {
+				return testBean.getText().equals("Hello nested");
+			}
+		});
 	}
 	
 	private HtmlElement select(String path) {
@@ -109,16 +103,13 @@ public class FormsIntegrationTests {
 	@SuppressWarnings("unchecked")
 	private <T> void assertAfterSave(String field, Matcher<?> matcher) throws Exception {
 		save();
-		assertThat(backingObject.get(field), (Matcher) matcher);
-	}
-	
-	private void save() throws Exception {
-		select("//div[contains(@class,'SubmitButton')]/button").click();
+		assertThat(getFieldValue(field), (Matcher) matcher);
 	}
 
-	public static void main(String[] args) {
-		interactive = true;
-		new JUnitCore().run(Request.method(FormsIntegrationTests.class, "interactive").getRunner());
+	protected abstract Object getFieldValue(String field);
+
+	private void save() throws Exception {
+		select("//div[contains(@class,'SubmitButton')]/button").click();
 	}
 
 }
