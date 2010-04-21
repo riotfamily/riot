@@ -16,6 +16,8 @@ import java.io.Serializable;
 
 public class Option implements Serializable {
 
+	private String groupName;
+	
 	private String value;
 	
 	private String label;
@@ -24,13 +26,18 @@ public class Option implements Serializable {
 	
 	private Serializable reference;
 	
-	public Option(Serializable reference, String value, String label, boolean selected) {
+	public Option(String groupName, Serializable reference, String value, String label, boolean selected) {
+		this.groupName = groupName;
 		this.reference = reference;
 		this.value = value;
 		this.label = label;
 		this.selected = selected;
 	}
 
+	public String getGroupName() {
+		return groupName;
+	}
+	
 	public Serializable getReference() {
 		return reference;
 	}
