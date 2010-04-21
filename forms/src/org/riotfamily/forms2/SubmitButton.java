@@ -38,7 +38,7 @@ public class SubmitButton extends Element {
 		}
 		
 		public void click(UserInterface ui, String value) {
-			submissionHandler.onSubmit(getFormState());
+			ui.eval(submissionHandler.onSubmit(getFormState()));
 		}
 		
 		@Override

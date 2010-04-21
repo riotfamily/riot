@@ -7,6 +7,28 @@
 <@template.extend file="../screen.ftl">
 			
 	<@template.block name="main">
+	    <script>
+	       /**
+	        * Strips the hash sign to convert the URL of newly created objects into their canonical form. 
+	        */
+	       function getFormUrl() {
+	           return window.location.href.replace('#', '');
+	       }
+	       
+	       /**
+	        * Invoked by FormScreen upon save.
+	        */
+	       function setObjectId(id) {
+	           window.location.hash = id;
+	           riot.form.setUrl(getFormUrl());
+	       }
+	       
+	       /**
+	        */
+	       if (window.location.hash.length > 0) {
+               window.location.replace(getFormUrl());
+           }
+	    </script>
 		<@riot.script src="/engine.js" />
 		<@riot.script src="/util.js" />
 		<@riot.script src="/interface/ListService.js" />

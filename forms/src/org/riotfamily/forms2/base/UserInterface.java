@@ -108,7 +108,7 @@ public class UserInterface {
 			.set("millis", millis);
 	}
 	
-	private void eval(String script) {
+	public void eval(String script) {
 		if (StringUtils.hasText(script)) {
 			action(null, null, "eval").set("script", script);
 		}

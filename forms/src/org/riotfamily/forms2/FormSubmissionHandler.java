@@ -16,5 +16,5 @@ import org.riotfamily.forms2.base.FormState;
 
 public interface FormSubmissionHandler {
 
-	public void onSubmit(FormState state);
+	public String onSubmit(FormState state);
 }

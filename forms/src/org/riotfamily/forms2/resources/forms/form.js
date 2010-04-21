@@ -2,15 +2,22 @@ if (!window.riot) var riot = {};
 
 riot.form = (function($) {
 
+	var formUrl;
+	
 	var handlers = {
 		invoke: function(el, data) {
 			el[data.method].apply(el, data.args);
 		},
+		/*
 		each: function(el, data) {
 			el.find(data.selector).each(function() {
 				var el = $(this);
 				el[data.method].apply(el, data.args);
 			})
+		},
+		*/
+		eval: function(el, data) {
+			eval(data.script);
 		},
 		schedule: function(el, data) {
 			setTimeout(function() {
@@ -36,6 +43,7 @@ riot.form = (function($) {
 	
 	$.fn.submitEvent = function(handler, value) {
 		$.ajax({
+			url: formUrl,
 			data: {
 				formId: this.closest('.FormElement').attr('id'),
 				stateId: this.closest('.state').attr('id'),
@@ -61,6 +69,10 @@ riot.form = (function($) {
 		invoke: function(id, selector, method, args) {
 			var el = getElement(id, selector);
 			el[method].apply(el, args);
+		},
+		
+		setUrl: function(url) {
+			formUrl = url;
 		},
 		
 		/**

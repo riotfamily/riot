@@ -29,6 +29,7 @@ import org.riotfamily.core.runtime.RiotRuntime;
 import org.riotfamily.core.screen.AbstractRiotScreen;
 import org.riotfamily.core.screen.GroupScreen;
 import org.riotfamily.core.screen.ItemScreen;
+import org.riotfamily.core.screen.Notification;
 import org.riotfamily.core.screen.RiotScreen;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.ScreenContextHolder;
@@ -43,6 +44,7 @@ import org.riotfamily.forms2.client.Action;
 import org.riotfamily.forms2.client.ClientEvent;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -64,6 +66,9 @@ public class FormScreen extends AbstractRiotScreen implements ItemScreen, BeanNa
 
 	@Autowired
 	private RiotRuntime riotRuntime;
+
+	@Autowired
+	private MessageSource messageSoruce;
 	
 	private Form form = new Form();
 	
@@ -144,20 +149,30 @@ public class FormScreen extends AbstractRiotScreen implements ItemScreen, BeanNa
 		out.write(");</script></body></html>");
 	}
 
-	public void onSubmit(FormState state) {
+	public String onSubmit(FormState state) {
+		String result;
 		ScreenContext context = ScreenContextHolder.get();
 		TransactionStatus status = transactionManager.getTransaction(TX_DEF);
 		try {
 			Object backingObject = context.getObject();
 			Object entity = form.populate(backingObject, state);
 			context.getDao().save(entity, context.getParent());
-			//log.info("New value: {}", backingObject);
+			result = new Notification(messageSoruce, riotRuntime.getResourcePath())
+				.setIcon("save")
+				.setMessageKey("label.form.saved")
+				.setDefaultMessage("Your changes have been saved.")
+				.toScript();
+			
+			if (context.getObjectId() == null) {
+				result += String.format("setObjectId('%s');", context.getDao().getObjectId(entity));
+			}
 		}
 		catch (Throwable t) {
 			transactionManager.rollback(status);
 			throw ExceptionUtils.wrapThrowable(t);
 		}
 		transactionManager.commit(status);
+		return result;
 	}
 
 	@Override
