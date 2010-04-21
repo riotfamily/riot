@@ -53,7 +53,7 @@ public abstract class Element implements Serializable {
 			for(Class<?> c = getClass(); c != null; c = c.getSuperclass()) {
 				for (Class<?> innerClass : c.getDeclaredClasses()) {
 					if (ElementState.class.isAssignableFrom(innerClass)) {
-						return innerClass.asSubclass(ElementState.class).getConstructor(c).newInstance(this);
+						return innerClass.asSubclass(ElementState.class).getDeclaredConstructor(c).newInstance(this);
 					}
 				}
 			}
