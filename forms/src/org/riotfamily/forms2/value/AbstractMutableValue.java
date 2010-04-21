@@ -35,7 +35,7 @@ public abstract class AbstractMutableValue implements Value {
 
 	public <T, D extends T> Value require(Class<T> requiredType, Class<D> defaultType) {
 		Assert.isAssignable(requiredType, typeDescriptor.getType());
-		this.defaultType = defaultType;
+		this.defaultType = defaultType != null ? defaultType : requiredType;
 		return this;
 	}
 	

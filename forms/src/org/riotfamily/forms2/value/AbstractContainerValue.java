@@ -23,7 +23,9 @@ public abstract class AbstractContainerValue extends AbstractMutableValue {
 	@Override
 	public final Value getNested(String name) {
 		Object obj = getNestedObject(name);
-		Value nestedValue = ValueFactory.createValue(getNestedTypeDescriptor(name));
+		TypeDescriptor td = getNestedTypeDescriptor(name);
+		boolean defer = td.getType() == null || td.getType().equals(Object.class);
+		Value nestedValue = ValueFactory.createValue(td, defer);
 		nestedValue.set(obj);
 		return nestedValue;
 	}
