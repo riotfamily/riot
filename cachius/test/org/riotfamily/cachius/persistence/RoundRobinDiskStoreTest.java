@@ -27,20 +27,8 @@ public class RoundRobinDiskStoreTest {
 	@Before
     public void setUp() {
 		baseDir = new File(System.getProperty("java.io.tmpdir"), "test");
-		delete(baseDir);
-		baseDir.mkdirs();
     }
-	
-	private static void delete(File f) {
-        if (f.isDirectory()) {
-            File[] entries = f.listFiles();
-            for (int i = 0; i < entries.length; i++) {
-            	delete(entries[i]);
-            }
-        }
-        f.delete();
-    }
-	
+		
 	@Test
 	public void testDirCreation() throws IOException {
 		RoundRobinDiskStore store = new RoundRobinDiskStore(baseDir, 4);
@@ -48,8 +36,9 @@ public class RoundRobinDiskStoreTest {
 		LinkedList<String> paths = new LinkedList<String>();
 		for (int i = 0; i < 10; i++) {
 			String path = store.getFile().getPath();
-			Assert.assertTrue(path.startsWith(baseDir.getPath()));
-			paths.add(path.substring(baseDir.getPath().length()));
+			String basePath = store.getBaseDir().getPath();
+			Assert.assertTrue(path.startsWith(basePath));
+			paths.add(path.substring(basePath.length()));
 		}
 		Assert.assertEquals("/000/000/000", paths.getFirst());
 		Assert.assertEquals("/000/002/001", paths.getLast());
