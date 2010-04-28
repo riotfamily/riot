@@ -13,7 +13,6 @@
 package org.riotfamily.forms2.client;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.riotfamily.common.util.FormatUtils;
@@ -103,13 +102,13 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 		
 		// Array containing all scripts to load
 		sb.append("var scripts=").append(FormatUtils.toJSON(scripts)).append(";");	  
-			  
+		
 		sb.append("function loadScripts() {"
 			  +     "if (scripts.length > 0) {"
 			  +       "var s = scripts.shift();"
 			  +       "if (!s.test || !isPresent(s.test)) {"
-			  +           "$.getScript(base + s.url, loadScripts);"
-			  +           "return;"
+			  +         "$.getScript(base + s.url, loadScripts);"
+			  +         "return;"
 			  +       "}"
 			  +       "loadScripts();"
 			  +     "}"
@@ -119,6 +118,19 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 			  +   "}"	
 			  +   "loadScripts();"
 			  );
+		
+		/*
+		// Alternative method: Allows debugging but does not work when loaded lazily
+		sb.append("function loadScripts() {"
+			  +     "$.each(scripts, function() {"
+			  +       "if (!this.test || !isPresent(this.test)) {"
+			  +         "document.write('<script src=\"' + base + this.url + '\"><\\/script>');"
+			  +       "}"
+			  +     "});"
+			  +   "}"
+			  +   "loadScripts();"
+			  );
+		*/
 		
 		// Callback function that is invoked after all resources have been loaded
 		sb.append("function initForm() {");

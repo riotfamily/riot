@@ -21,11 +21,11 @@ import org.riotfamily.forms2.base.Element;
 import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.FormElement;
 import org.riotfamily.forms2.base.FormState;
+import org.riotfamily.forms2.base.StateEvent;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Action;
 import org.riotfamily.forms2.client.ClientEvent;
 import org.riotfamily.forms2.value.Value;
-import org.riotfamily.forms2.value.ValueFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.ConversionServiceFactory;
 import org.springframework.util.Assert;
@@ -48,15 +48,11 @@ public class Form {
 	}
 	
 	public FormState createState(Object object, Class<?> type) {
-		if (object != null) {
-			type = object.getClass();
-		}
-		Value value = ValueFactory.createValue(object, type, false);
-		return formElement.createAndInitState(null, value);
+		return formElement.createAndInitState(object, type);
 	}
 	
 	public Object populate(Object object, FormState formState) {
-		Value value = ValueFactory.createValue(object, formState.getType(), false);
+		Value value = new Value(object);
 		formState.populate(value);
 		return value.get();
 	}
@@ -77,6 +73,7 @@ public class Form {
 		ElementState elementState = formState.getElementState(event.getStateId());
 		UserInterface ui = new UserInterface();
 		invoke(elementState, event.getHandler(), ui, event.getFileOrValue());
+		elementState.handleStateEvent(new StateEvent(elementState, event.getHandler(), ui));
 		return ui.getActions();
 	}
 	

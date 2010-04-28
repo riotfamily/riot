@@ -13,8 +13,14 @@
 package org.riotfamily.forms2.base;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.List;
 
+import org.riotfamily.common.util.ExceptionUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.client.Html;
+import org.riotfamily.forms2.value.TypeInfo;
 import org.riotfamily.forms2.value.Value;
 import org.springframework.util.ClassUtils;
 
@@ -28,6 +34,10 @@ public abstract class ElementState implements Serializable {
 	private ElementState parent;
 	
 	private FormState formState;
+
+	private List<StateEventHandler> handlers;
+
+	private Integer hashCode;
 	
 	/**
 	 * Empty default constructor. 
@@ -54,6 +64,10 @@ public abstract class ElementState implements Serializable {
 	 */
 	public final ElementState getParent() {
 		return parent;
+	}
+	
+	public TypeInfo getTypeInfo() {
+		return parent.getTypeInfo();
 	}
 	
 	/**
@@ -111,6 +125,21 @@ public abstract class ElementState implements Serializable {
 	}
 
 	/**
+	 * Called by {@link Element#createAndInitState} to set the elementId, 
+	 * parent, formState and to assign a unique id. Invokes 
+	 * {@link #onInit(Element, TypedValue)} to allow subclasses to perform 
+	 * additional initialization tasks.
+	 */
+	final void init(ElementState parent, FormState formState) {
+		this.parent = parent;
+		this.formState = formState;
+		if (parent != null) {
+			id = parent.register(this);
+		}
+		onInit();
+	}
+
+	/**
 	 * Callback method that can be overwritten by subclasses to perform 
 	 * initialization tasks.
 	 * <p>
@@ -121,33 +150,66 @@ public abstract class ElementState implements Serializable {
 	 * <b>Important:</b> Implementations that need to created nested states 
 	 * must do this in this method, not inside their constructor.
 	 */
-	protected void onInit(Value value) {
+	protected void onInit() {
+	}
+	
+	public abstract void setValue(Object value);
+	
+	public void populate(Value value) {
+		value.set(getValue());
+	}
+	
+	public Object getValue() {
+		return null;
 	}
 	
 	protected abstract void renderElement(Html html);
-		
-	public abstract void populate(Value value);
 	
-	/**
-	 * Called by {@link Element#createAndInitState} to set the elementId, 
-	 * parent, formState and to assign a unique id. Invokes 
-	 * {@link #onInit(Element, Value)} to allow subclasses to perform 
-	 * additional initialization tasks.
-	 */
-	final void init(ElementState parent, FormState formState, Value value) {
-		this.parent = parent;
-		this.formState = formState;
-		if (parent != null) {
-			id = parent.register(this);
+	@SuppressWarnings("unchecked")
+	protected <T> T getOrCreate(Object oldValue, Class<T> requiredType, Class<? extends T> defaultType) {
+		if (oldValue == null) {
+			return instanciateType(requiredType, defaultType);
 		}
-		onInit(value);
+		return (T) oldValue;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> T instanciateType(Class<T> requiredType, Class<? extends T> defaultType) {
+		Class<?> type = getTypeInfo().getType();
+		if (canInstanciate(type)) {
+			return (T) instanciate(type);
+		}
+		if (defaultType == null) {
+			defaultType = requiredType;
+		}
+		return instanciate(defaultType);
+	}
+	
+	private <T> T instanciate(Class<T> type) {
+		try {
+			return type.newInstance();
+		}
+		catch (Exception e) {
+			throw ExceptionUtils.wrapReflectionException(e);
+		}
+	}
+	
+	private boolean canInstanciate(Class<?> type) {
+		if (type != null && !type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
+			for (Constructor<?> c : type.getConstructors()) {
+				if (c.getParameterTypes().length == 0 && Modifier.isPublic(c.getModifiers())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**
 	 * Returns a newly created unique id by delegating the call to the parent 
 	 * state.
 	 * 
-	 * @see #init(Element, ElementState, FormState, Value)
+	 * @see #init(Element, ElementState, FormState, TypedValue)
 	 * @see FormState#register(ElementState)
 	 */
 	String register(ElementState state) {
@@ -161,5 +223,42 @@ public abstract class ElementState implements Serializable {
 	 */
 	FormState getFormStateInternal() {
 		return formState;
+	}
+	
+	public void addStateEventHandler(StateEventHandler handler) {
+		if (handlers == null) {
+			handlers = Generics.newArrayList();
+		}
+		handlers.add(handler);
+	}
+	
+	public void handleStateEvent(StateEvent event) {
+		if (handlers != null) {
+			for (StateEventHandler handler : handlers) {
+				handler.handle(event);
+			}
+		}
+		if (!event.isStopped() && parent != null) {
+			parent.handleStateEvent(event);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		if (hashCode == null) {
+			hashCode = id != null ? id.hashCode() : 0;
+		}
+		return hashCode;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (getClass().equals(obj.getClass())) {
+			return id != null && id.equals(getClass().cast(obj).id);
+		}
+		return false;
 	}
 }

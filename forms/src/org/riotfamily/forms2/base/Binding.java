@@ -12,26 +12,26 @@
  */
 package org.riotfamily.forms2.base;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Map;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms2.client.Html;
+import org.riotfamily.forms2.value.TypeInfo;
 import org.riotfamily.forms2.value.Value;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.util.Assert;
 
 
-public class Binding extends Element {
+public class Binding extends ElementWrapper {
 
 	private String target;
-
-	private Element element;
 	
 	public Binding() {
 	}
 			
 	public Binding(String target, Element element) {
+		super(element);
 		this.target = target;
-		this.element = element;
 	}
 	
 	public void setTarget(String target) {
@@ -39,42 +39,76 @@ public class Binding extends Element {
 	}
 
 	public void setElement(Element element) {
-		this.element = element;
+		wrap(element);
 	}
 
-	@Override
-	public Collection<Element> getChildElements() {
-		return Collections.singleton(element);
-	}
-
-	public class State extends ElementState {
-
-		private ElementState nestedState;
+	public class State extends ElementWrapper.State {
+		
+		TypeInfo typeInfo;
 		
 		@Override
-		protected Html wrap(Html html) {
-			return html;
+		protected void onInitWrapper() {
+			TypeInfo parentType = getParent().getTypeInfo();
+			if (parentType.isMap()) {
+				typeInfo = new TypeInfo(parentType.getMapValueType());
+			}
+			else {
+				Assert.notNull(parentType.getType(), this.toString());
+				Class<?> propertyType = new BeanWrapperImpl(parentType.getType()).getPropertyType(target);
+				typeInfo = new TypeInfo(propertyType);
+			}
 		}
 		
 		@Override
-		protected void onInit(Value value) {
-			Value nestedValue = value.getNested(target);
-			nestedState = element.createState(this, nestedValue);
+		public TypeInfo getTypeInfo() {
+			return typeInfo;
+		}
+		
+		@Override
+		public void setValue(Object value) {
+			super.setValue(getNestedObject(value));
 		}
 
 		@Override
 		public void renderElement(Html html) {
 			Html div = html.div("labeled");
 			div.div("label").messageText(target, FormatUtils.propertyToTitleCase(target));
-			nestedState.render(div);
+			super.renderElement(div);
 		}
 
 		@Override
 		public void populate(Value value) {
-			Value nestedValue = value.getNested(target);
-			nestedState.populate(nestedValue);
-			value.setNested(target, nestedValue.get());
+			Object parent = value.get();
+			Value nestedValue = new Value(getNestedObject(parent));
+			super.populate(nestedValue);
+			setNestedObject(parent, nestedValue.get());
+		}
+
+		@SuppressWarnings("unchecked")
+		private Object getNestedObject(Object value) {
+			if (value == null) {
+				return null;
+			}
+			if (value instanceof Map) {
+				return ((Map) value).get(target);
+			}
+			return new BeanWrapperImpl(value).getPropertyValue(target);
 		}
 		
+		@SuppressWarnings("unchecked")
+		private void setNestedObject(Object parent, Object object) {
+			if (parent instanceof Map) {
+				((Map) parent).put(target, object);
+			}
+			else {
+				new BeanWrapperImpl(parent).setPropertyValue(target, object);
+			}
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("Binding.State[target=%s]", target);
+		}
 	}
+	
 }

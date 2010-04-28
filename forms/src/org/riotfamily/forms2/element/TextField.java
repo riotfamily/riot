@@ -16,7 +16,6 @@ import org.riotfamily.forms2.base.Element;
 import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
-import org.riotfamily.forms2.value.Value;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.ConversionServiceFactory;
 
@@ -29,10 +28,12 @@ public class TextField extends Element {
 		private String text;
 		
 		@Override
-		protected void onInit(Value value) {
-			Object obj = value.get();
-			if (obj != null) {
-				text = conversionService.convert(obj, String.class);
+		public void setValue(Object value) {
+			if (value != null) {
+				text = conversionService.convert(value, String.class);
+			}
+			else {
+				text = null;
 			}
 		}
 		
@@ -50,10 +51,11 @@ public class TextField extends Element {
 		}
 
 		@Override
-		public void populate(Value value) {
-			Class<?> type = value.require(Object.class, String.class).getTypeDescriptor().getType();
-			Object obj = conversionService.convert(text, type);
-			value.set(obj);
+		public Object getValue() {
+			if (getTypeInfo().getType() != null) {
+				return conversionService.convert(text, getTypeInfo().getType());
+			}
+			return text;
 		}
 		
 	}

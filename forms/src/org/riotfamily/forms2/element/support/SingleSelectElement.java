@@ -15,7 +15,6 @@ package org.riotfamily.forms2.element.support;
 import java.io.Serializable;
 
 import org.riotfamily.forms2.base.UserInterface;
-import org.riotfamily.forms2.value.Value;
 import org.springframework.util.ObjectUtils;
 
 public abstract class SingleSelectElement extends SelectElement {
@@ -52,8 +51,8 @@ public abstract class SingleSelectElement extends SelectElement {
 		}
 
 		@Override
-		public void populate(Value value) {
-			value.set(resolve(getSelectedReference()));
+		public Object getValue() {
+			return resolve(getSelectedReference());
 		}
 		
 	}

@@ -10,25 +10,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms2.value;
+package org.riotfamily.forms2.base;
 
-import org.springframework.core.convert.TypeDescriptor;
+import java.io.Serializable;
 
-public class SimpleValue extends AbstractMutableValue {
-	
-	private Object object;
-	
-	public SimpleValue(TypeDescriptor typeDescriptor) {
-		super(typeDescriptor);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <T> T get() {
-		return (T) object;
-	}
+public interface StateEventHandler extends Serializable {
 
-	public void set(Object object) {
-		this.object = object;
-	}
+	void handle(StateEvent event);
 
 }

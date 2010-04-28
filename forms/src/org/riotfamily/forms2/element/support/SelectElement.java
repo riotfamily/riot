@@ -15,6 +15,7 @@ package org.riotfamily.forms2.element.support;
 import java.io.Serializable;
 import java.util.List;
 
+import org.riotfamily.common.ui.RenderingService;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.base.Element;
 import org.riotfamily.forms2.base.ElementState;
@@ -22,13 +23,15 @@ import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.option.IdentityReferenceAdapter;
 import org.riotfamily.forms2.option.OptionReferenceAdapter;
 import org.riotfamily.forms2.option.OptionsModel;
-import org.riotfamily.forms2.value.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class SelectElement extends Element {
 
 	private transient OptionsModel optionsModel;
 	
-	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO
+	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO Use ReferenceService or make this part of the Value class
+	
+	private transient RenderingService renderingService;
 	
 	public OptionReferenceAdapter getReferenceAdapter() {
 		return referenceAdapter;
@@ -38,6 +41,11 @@ public abstract class SelectElement extends Element {
 		this.optionsModel = optionsModel;
 	}
 
+	@Autowired
+	public void setRenderingService(RenderingService renderingService) {
+		this.renderingService = renderingService;
+	}
+	
 	public Object resolve(Serializable reference) {
 		return referenceAdapter.resolve(reference);
 	}
@@ -49,11 +57,18 @@ public abstract class SelectElement extends Element {
 		if (items != null) {
 			for (Object item : items) {
 				state.addOption(
-						referenceAdapter.createReference(item), 
-						item.toString(),
+						referenceAdapter.createReference(item),
+						getLabel(item),
 						isSelected(item, value));
 			}
 		}
+	}
+
+	protected String getLabel(Object item) {
+		if (renderingService != null) {
+			return renderingService.render(item);
+		}
+		return item != null ? item.toString() : "";
 	}
 
 	protected abstract boolean isSelected(Object option, Object value);
@@ -65,8 +80,9 @@ public abstract class SelectElement extends Element {
 		protected List<Option> options = Generics.newArrayList();
 			
 		@Override
-		protected void onInit(Value value) {
-			createOptions(this, value.get());
+		public void setValue(Object value) {
+			options.clear();
+			createOptions(this, value);
 		}
 		
 		public void addOption(Serializable reference, String label, boolean selected) {

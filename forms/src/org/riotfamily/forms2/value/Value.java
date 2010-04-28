@@ -12,22 +12,23 @@
  */
 package org.riotfamily.forms2.value;
 
-import org.springframework.core.convert.TypeDescriptor;
+public class Value {
 
-public interface Value {
+	private Object object;
+	
+	public Value() {
+	}
 
-	public <T, D extends T> Value require(Class<T> requiredType, Class<D> defaultType);
-	
-	public TypeDescriptor getTypeDescriptor();
+	public Value(Object object) {
+		this.object = object;
+	}
 
-	public void set(Object object);
-	
-	public <T> T get();
-	
-	public <T> T getOrCreate();
+	public Object get() {
+		return object;
+	}
+		
+	public void set(Object object) {
+		this.object = object;  
+	}
 
-	public Value getNested(String name);
-	
-	public void setNested(String name, Object object);
-	
 }

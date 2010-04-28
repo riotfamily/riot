@@ -33,6 +33,10 @@ public class SubmitButton extends Element {
 	public class State extends ElementState {
 		
 		@Override
+		public void setValue(Object value) {
+		}
+		
+		@Override
 		protected void renderElement(Html html) {
 			html.button("click").messageText(label);
 		}

@@ -25,8 +25,8 @@ import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.FormResource;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.client.ScriptResource;
+import org.riotfamily.forms2.value.TypeInfo;
 import org.riotfamily.forms2.value.Value;
-import org.riotfamily.forms2.value.ValueFactory;
 
 public class ListEditor extends Element {
 
@@ -61,34 +61,44 @@ public class ListEditor extends Element {
 
 		private List<ElementState> itemStates = Generics.newArrayList();
 		
-		private Class<?> itemType;
+		private TypeInfo itemTypeInfo;
 		
 		@Override
-		protected void onInit(Value value) {
-			value.require(List.class, ArrayList.class);
-			itemType = value.getTypeDescriptor().getElementTypeDescriptor().getType();
-			if (value.get() != null) {
-				Collection<?> c = value.get();
+		protected void onInit() {
+			itemTypeInfo = new TypeInfo(getParent().getTypeInfo().getElementType());
+		}
+		
+		@Override
+		public TypeInfo getTypeInfo() {
+			return itemTypeInfo;
+		}
+		
+		@Override
+		public void setValue(Object value) {
+			List<?> c = (List<?>) value;
+			if (c != null) {
 				for (Object item : c) {
 					addItem(item);
 				}
 			}
+			else {
+				itemStates.clear();
+			}
 		}
-		
+				
 		private ElementState addItem(Object object) {
-			Value value = ValueFactory.createValue(object, itemType);
-			ElementState state = itemEditor.createState(this, value);
+			ElementState state = itemEditor.createState(this);
 			itemStates.add(state);
 			return state;
 		}
-		
+
 		@Override
+		@SuppressWarnings("unchecked")
 		public void populate(Value value) {
-			value.require(List.class, ArrayList.class);
-			List<Object> c = value.getOrCreate();
+			List c = getOrCreate(value.get(), List.class, ArrayList.class);
 			c.clear();
 			for (ElementState itemState : itemStates) {
-				Value itemValue = ValueFactory.createValue(null, itemType);
+				Value itemValue = new Value();
 				itemState.populate(itemValue);
 				c.add(itemValue.get());
 			}

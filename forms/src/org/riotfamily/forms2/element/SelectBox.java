@@ -17,9 +17,17 @@ import java.util.List;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.element.support.Option;
 import org.riotfamily.forms2.element.support.SingleSelectElement;
+import org.riotfamily.forms2.option.OptionsModel;
 
 public class SelectBox extends SingleSelectElement {
 
+	public SelectBox() {
+	}
+	
+	public SelectBox(OptionsModel optionsModel) {
+		setOptionsModel(optionsModel);
+	}
+	
 	@Override
 	protected void buildOptionsDom(List<Option> options, Html html) {
 		Html select = html.elem("select").propagate("click", "select");

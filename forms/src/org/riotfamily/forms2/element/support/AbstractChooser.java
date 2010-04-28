@@ -18,15 +18,19 @@ import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.option.IdentityReferenceAdapter;
 import org.riotfamily.forms2.option.OptionReferenceAdapter;
-import org.riotfamily.forms2.value.Value;
 
 public class AbstractChooser {
 
-	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO
+	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO Use ReferenceService or make this part of the Value class
 	
 	protected class State extends ElementState {
 
 		private Serializable reference;
+		
+		@Override
+		public void setValue(Object value) {
+			reference = referenceAdapter.createReference(value);
+		}
 		
 		@Override
 		protected void renderElement(Html html) {
@@ -34,11 +38,7 @@ public class AbstractChooser {
 		}
 		
 		@Override
-		public void populate(Value value) {
-			value.set(getObject());
-		}
-
-		private Object getObject() {
+		public Object getValue() {
 			return referenceAdapter.resolve(reference);
 		}
 		

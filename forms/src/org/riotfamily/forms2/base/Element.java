@@ -18,7 +18,6 @@ import java.util.Collections;
 
 import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.forms2.client.FormResource;
-import org.riotfamily.forms2.value.Value;
 
 /**
  * Base class for all form elements. Elements themselves are stateless and must
@@ -28,18 +27,18 @@ public abstract class Element implements Serializable {
 	
 	/**
 	 * Creates a new state instance for the given value. After 
-	 * calling {@link #createState(Value)}, the init() method is invoked,
+	 * calling {@link #createState(TypedValue)}, the init() method is invoked,
 	 * passing the specified parent.
 	 */
-	ElementState createAndInitState(ElementState parent, Value value) {
+	ElementState createAndInitState(ElementState parent) {
 		FormState formState = parent != null ? parent.getFormState() : null;
 		ElementState state = createState();
-		state.init(parent, formState, value);
+		state.init(parent, formState);
 		return state;
 	}
 	
-	public final ElementState createState(ElementState parent, Value value) {
-		return createAndInitState(parent, value);
+	public final ElementState createState(ElementState parent) {
+		return createAndInitState(parent);
 	}
 	
 	/**

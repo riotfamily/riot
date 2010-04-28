@@ -12,43 +12,43 @@
  */
 package org.riotfamily.forms2.value;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.springframework.core.convert.TypeDescriptor;
 
-@SuppressWarnings("unchecked")
-public class MapValue extends AbstractContainerValue {
+public class TypeInfo implements Serializable {
 
-	private Map map;
+	private Class<?> type;
 	
-	public MapValue(TypeDescriptor typeDescriptor) {
-		super(typeDescriptor);
-	}
+	private Class<?> mapValueType;
+	
+	private Class<?> elementType;
 
-	public <T> T get() {
-		return (T) map;
+	public TypeInfo(Class<?> type) {
+		this.type = type;
 	}
-	
-	public void set(Object object) {
-		this.map = (Map) object;
-	}
-		
-	@Override
-	public Object getNestedObject(String name) {
-		if (map == null) {
-			return null;
-		}
-		return map.get(name);
+			
+	public TypeInfo(TypeDescriptor typeDescriptor) {
+		type = typeDescriptor.getType();
+		mapValueType = typeDescriptor.getMapValueType();
+		elementType = typeDescriptor.getElementType();
 	}
 	
-	@Override
-	protected TypeDescriptor getNestedTypeDescriptor(String name) {
-		return getTypeDescriptor().getMapValueTypeDescriptor();
+	public Class<?> getType() {
+		return type;
 	}
 
-	@Override
-	public void setNestedObject(String name, Object object) {
-		map.put(name, object);
+	public Class<?> getMapValueType() {
+		return mapValueType;
 	}
 
+	public Class<?> getElementType() {
+		return elementType;
+	}
+
+	public boolean isMap() {
+		return type != null && Map.class.isAssignableFrom(type);
+	}
+	
 }

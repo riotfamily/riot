@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import org.riotfamily.forms2.Form;
 import org.riotfamily.forms2.FormSubmissionHandler;
 import org.riotfamily.forms2.SubmitButton;
 import org.riotfamily.forms2.base.Binding;
+import org.riotfamily.forms2.base.DependentElement;
 import org.riotfamily.forms2.base.FormState;
 import org.riotfamily.forms2.client.Action;
 import org.riotfamily.forms2.client.ClientEvent;
@@ -37,8 +39,10 @@ import org.riotfamily.forms2.element.ListEditor;
 import org.riotfamily.forms2.element.NestedForm;
 import org.riotfamily.forms2.element.RadioButtonGroup;
 import org.riotfamily.forms2.element.SelectBox;
+import org.riotfamily.forms2.element.SwitchElement;
+import org.riotfamily.forms2.element.TextArea;
 import org.riotfamily.forms2.element.TextField;
-import org.riotfamily.forms2.element.TinyMCE;
+import org.riotfamily.forms2.option.DependentOptionsModel;
 import org.riotfamily.forms2.option.OptionsModel;
 import org.riotfamily.forms2.option.StaticOptionsModel;
 import org.slf4j.Logger;
@@ -71,14 +75,26 @@ public abstract class AbstractFormTestController implements FormSubmissionHandle
 		SelectBox selectBox = new SelectBox();
 		selectBox.setOptionsModel(options);
 		form.add(new Binding("select", selectBox));
+
+		form.add(new DependentElement(new Binding("select2", new SelectBox(new DependentOptionsModel<String>() {
+			@Override
+			protected Iterable<?> getOptions(String s) {
+				return Collections.singletonList(s);
+			}
+		}))));
 		
 		form.add(new Binding("file", new FileUpload()));
-		form.add(new Binding("tinymce", new TinyMCE()));
+		//form.add(new Binding("tinymce", new TinyMCE()));
 
 		NestedForm nested = new NestedForm();
 		initNestedForm(nested);
 		nested.add(new Binding("text", new TextField()));
 		form.add(new Binding("nested", nested));
+		
+		form.add(new SwitchElement("discriminator")
+			.addCase("1", new Binding("case1", new TextField()))
+			.addCase("2", new Binding("case2", new TextArea()))
+			);
 		
 		button = new SubmitButton("Save", this);
 		form.add(button);
@@ -103,14 +119,18 @@ public abstract class AbstractFormTestController implements FormSubmissionHandle
 		
 	@RequestMapping(method=RequestMethod.GET, headers="X-Requested-With=XMLHttpRequest")
 	public @ResponseBody List<Action> handleEvent(HttpSession session, ClientEvent event) throws Exception {
+		serializeState(session, event);
+		return form.dispatchEvent(session, event);
+	}
+
+	private void serializeState(HttpSession session, ClientEvent event)
+			throws IOException, ClassNotFoundException {
 		
 		FormState formState = form.getState(session, event);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		new ObjectOutputStream(out).writeObject(formState);
 		formState = (FormState) new ObjectInputStream(new ByteArrayInputStream(out.toByteArray())).readObject();
 		formState.put(session);
-		
-		return form.dispatchEvent(session, event);
 	}
 		
 	@RequestMapping(method=RequestMethod.POST)

@@ -31,8 +31,7 @@ import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.client.IdGenerator;
 import org.riotfamily.forms2.client.LoadingCodeGenerator;
 import org.riotfamily.forms2.client.Resources;
-import org.riotfamily.forms2.value.Value;
-import org.riotfamily.forms2.value.ValueFactory;
+import org.riotfamily.forms2.value.TypeInfo;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
@@ -40,8 +39,6 @@ public class FormElement extends ContainerElement {
 
 	private List<Element> externalElements = Generics.newArrayList();
 	
-	private transient ValueFactory valueFactory;
-
 	/**
 	 * Initializes all transient fields with the values from the given element.
 	 */
@@ -114,25 +111,21 @@ public class FormElement extends ContainerElement {
 		}
 		return resources;
 	}
-		
-	public ValueFactory getValueFactory() {
-		return valueFactory;
-	}
-		
-	@Override
-	public State createAndInitState(ElementState parent, Value value) {
-		State state = new State();
-		state.init(null, state, value);
-		for (Element element : externalElements) {
-			state.register(element.createState(state, value));
+			
+	public State createAndInitState(Object object, Class<?> type) {
+		if (object != null) {
+			type = object.getClass();
 		}
+		State state = new State(new TypeInfo(type));
+		for (Element element : externalElements) {
+			state.register(element.createState(state));
+		}
+		state.setValue(object);
 		return state;
 	}
 	
 	public final class State extends ContainerElement.State implements FormState {
 
-		private Class<?> type;
-		
 		private Serializable target;
 		
 		private Map<String, ElementState> statesById = Generics.newHashMap();
@@ -145,19 +138,19 @@ public class FormElement extends ContainerElement {
 		
 		private IdGenerator idGenerator = new IdGenerator();
 
-		State() {
+		private final TypeInfo typeInfo;
+
+		State(TypeInfo typeInfo) {
 			super(UUID.randomUUID().toString());
-		}
-		
-		@Override
-		protected void onInitContainer(Value value) {
-			this.type = value.getTypeDescriptor().getType();
-		}
-		
-		public Class<?> getType() {
-			return type;
+			this.typeInfo = typeInfo;
+			init(null, this);
 		}
 			
+		@Override
+		public TypeInfo getTypeInfo() {
+			return typeInfo;
+		}
+		
 		@Override
 		public Html newHtml() {
 			return new Html(idGenerator);
@@ -169,7 +162,7 @@ public class FormElement extends ContainerElement {
 			statesById.put(id, state);
 			return id;
 		}
-					
+		
 		public void setTarget(Serializable target) {
 			this.target = target;
 		}

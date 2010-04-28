@@ -10,33 +10,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms2.base;
+package org.riotfamily.forms2.value;
 
-import javax.servlet.http.HttpSession;
+public interface TypeHint {
 
-import org.riotfamily.forms2.client.Html;
-import org.riotfamily.forms2.value.TypeInfo;
-import org.riotfamily.forms2.value.Value;
+	Class<?> getType();
 
-public interface FormState {
-
-	void populate(Value value);
-
-	String render();
-
-	ElementState getElementState(String stateId);
-
-	void put(HttpSession session);
-
-	Html newHtml();
-
-	TypeInfo getTypeInfo();
-
-	String id();
-
-	void setContextPath(String contextPath);
-	
-	void setResourcePath(String resourcePath);
-
-	String resolveResource(String string);
 }

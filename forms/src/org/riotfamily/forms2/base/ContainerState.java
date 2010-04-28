@@ -12,31 +12,10 @@
  */
 package org.riotfamily.forms2.base;
 
-import javax.servlet.http.HttpSession;
+import java.util.List;
 
-import org.riotfamily.forms2.client.Html;
-import org.riotfamily.forms2.value.TypeInfo;
-import org.riotfamily.forms2.value.Value;
+public interface ContainerState {
 
-public interface FormState {
+	List<ElementState> getChildStates();
 
-	void populate(Value value);
-
-	String render();
-
-	ElementState getElementState(String stateId);
-
-	void put(HttpSession session);
-
-	Html newHtml();
-
-	TypeInfo getTypeInfo();
-
-	String id();
-
-	void setContextPath(String contextPath);
-	
-	void setResourcePath(String resourcePath);
-
-	String resolveResource(String string);
 }

@@ -33,8 +33,8 @@ public class PasswordField extends Element {
 		private String strength;
 		
 		@Override
-		protected void onInit(Value value) {
-			this.alreadySet = value.get() != null;
+		public void setValue(Object value) {
+			this.alreadySet = value != null;
 		}
 		
 		@Override
@@ -43,7 +43,7 @@ public class PasswordField extends Element {
 				value.set(password);
 			}
 		}
-		
+				
 		public void updatePassword(UserInterface ui, String value) {
 			password = value;
 			//calculate strength

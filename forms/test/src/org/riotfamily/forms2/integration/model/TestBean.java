@@ -25,6 +25,8 @@ public class TestBean {
 	
 	private String select;
 	
+	private String select2;
+	
 	private Date date;
 	
 	private String tinymce;
@@ -34,6 +36,12 @@ public class TestBean {
 	private byte[] file;
 	
 	private TestBean nested;
+	
+	private String discriminator;
+	
+	private String case1;
+	
+	private String case2;
 
 	public String getText() {
 		return text;
@@ -57,6 +65,14 @@ public class TestBean {
 
 	public void setSelect(String select) {
 		this.select = select;
+	}
+	
+	public String getSelect2() {
+		return select2;
+	}
+
+	public void setSelect2(String select2) {
+		this.select2 = select2;
 	}
 
 	public Date getDate() {
@@ -99,6 +115,30 @@ public class TestBean {
 		this.nested = nested;
 	}
 	
+	public String getDiscriminator() {
+		return discriminator;
+	}
+
+	public void setDiscriminator(String discriminator) {
+		this.discriminator = discriminator;
+	}
+
+	public String getCase1() {
+		return case1;
+	}
+
+	public void setCase1(String case1) {
+		this.case1 = case1;
+	}
+
+	public String getCase2() {
+		return case2;
+	}
+
+	public void setCase2(String case2) {
+		this.case2 = case2;
+	}
+
 	@Override
 	public String toString() {
 		return FormatUtils.toJSON(this);

@@ -53,10 +53,11 @@ public abstract class MultiSelectElement extends SelectElement {
 			}
 			return refs;
 		}
-		
+
 		@Override
+		@SuppressWarnings("unchecked")
 		public void populate(Value value) {
-			Set<Object> set = value.require(Set.class, LinkedHashSet.class).getOrCreate();
+			Set set = getOrCreate(value.get(), Set.class, LinkedHashSet.class);
 			set.clear();
 			for (Option option : options) {
 				if (option.isSelected()) {

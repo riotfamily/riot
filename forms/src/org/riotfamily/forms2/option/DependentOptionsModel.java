@@ -10,31 +10,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms2.element;
+package org.riotfamily.forms2.option;
 
-import org.riotfamily.forms2.base.ContainerElement;
-import org.riotfamily.forms2.value.TypeHint;
-import org.riotfamily.forms2.value.Value;
+import org.riotfamily.forms2.base.DependentElement;
+import org.riotfamily.forms2.base.ElementState;
 
-public class NestedForm extends ContainerElement implements TypeHint {
+public abstract class DependentOptionsModel<T> implements OptionsModel {
 
-	private Class<?> type;
-	
-	public void setType(Class<?> type) {
-		this.type = type;
+	@SuppressWarnings("unchecked")
+	public final Iterable<?> getOptions(ElementState state) {
+		T value = (T) DependentElement.getPrecedingElement(state).getValue();
+		return getOptions(value);
 	}
 	
-	public Class<?> getType() {
-		return type;
-	}
-	
-	public class State extends ContainerElement.State {
-				
-		@Override
-		public void populate(Value value) {
-			getOrCreate(value.get(), null, null);
-			super.populate(value);
-		}
+	protected abstract Iterable<?> getOptions(T object); 
 
-	}
 }

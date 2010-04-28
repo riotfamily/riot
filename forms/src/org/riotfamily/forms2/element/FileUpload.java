@@ -18,7 +18,6 @@ import org.riotfamily.forms2.base.Element;
 import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
-import org.riotfamily.forms2.value.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileUpload extends Element {
@@ -30,6 +29,11 @@ public class FileUpload extends Element {
 		private String contentType;
 		
 		private String originalFilename;
+		
+		@Override
+		public void setValue(Object value) {
+			// TODO Auto-generated method stub
+		}
 		
 		@Override
 		protected void renderElement(Html html) {
@@ -91,10 +95,6 @@ public class FileUpload extends Element {
 			originalFilename = file.getOriginalFilename();
 			uploadId = ProgressMonitor.nextUploadId();
 			ui.replace(this, "form", renderForm());
-		}
-		
-		@Override
-		public void populate(Value value) {
 		}
 		
 	}
