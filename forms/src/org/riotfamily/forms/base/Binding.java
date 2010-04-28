@@ -21,7 +21,9 @@ import org.riotfamily.forms.value.Value;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
 
-
+/**
+ * Wrapper that binds an element to a property or map value.
+ */
 public class Binding extends ElementWrapper {
 
 	private String target;

@@ -14,6 +14,10 @@ package org.riotfamily.forms.base;
 
 import java.util.List;
 
+/**
+ * Interface to be implemented by states that contain nested states. Used to
+ * lookup the preceding sibling of state.
+ */
 public interface ContainerState {
 
 	List<Element.State> getChildStates();

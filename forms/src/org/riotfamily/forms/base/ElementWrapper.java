@@ -20,6 +20,9 @@ import org.riotfamily.forms.value.TypeHint;
 import org.riotfamily.forms.value.TypeInfo;
 import org.riotfamily.forms.value.Value;
 
+/**
+ * Abstract base class for elements that act as wrapper for other elements.
+ */
 public abstract class ElementWrapper extends Element {
 
 	private Element wrappedElement;

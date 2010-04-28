@@ -20,7 +20,10 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.client.Html;
 import org.riotfamily.forms.value.Value;
 
-public class ContainerElement extends Element {
+/**
+ * Abstract base class for elements that contain nested elements.
+ */
+public abstract class ContainerElement extends Element {
 
 	private List<Element> childElements = Generics.newArrayList();
 	

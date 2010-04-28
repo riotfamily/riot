@@ -49,6 +49,10 @@ public abstract class Element implements Serializable {
 		return state;
 	}
 	
+	/**
+	 * Verifies that the getChildElements() method the parent element is 
+	 * implemented correctly.
+	 */
 	private void verifyParentImplementation(State parent) {
 		if (!verified) {
 			Collection<Element> childElements = parent.getElement().getChildElements();
