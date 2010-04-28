@@ -37,6 +37,13 @@ public class RenderingService implements InitializingBean {
 		}
 	}
 	
+	public String render(Object object) {
+		if (object == null) {
+			return "";
+		}
+		return render(object, TypeDescriptor.forObject(object));
+	}
+	
 	public String render(Object object, TypeDescriptor typeDescriptor) {
 		for (Renderer renderer : renderers) {
 			if (renderer.supports(typeDescriptor)) {
