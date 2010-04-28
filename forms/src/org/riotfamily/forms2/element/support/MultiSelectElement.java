@@ -28,25 +28,25 @@ public abstract class MultiSelectElement extends SelectElement {
 		return Set.class;
 	}
 	
-	@Override
-	protected boolean isSelected(Object option, Object value) {
-		if (value == null) {
-			return option == null;
-		}
-		return ((Set<?>) value).contains(option);
-	}
-	
-	public class State extends SelectElement.State {
+	public abstract class State extends SelectElement.State {
 
+		@Override
+		protected boolean isSelected(Object option, Object value) {
+			if (value == null) {
+				return option == null;
+			}
+			return ((Set<?>) value).contains(option);
+		}
+		
 		public void select(UserInterface ui, List<String> values) {
-			for (Option option : options) {
+			for (OptionState option : options) {
 				option.setSelected(values.contains(option.getValue()));
 			}
 		}
 		
 		protected List<Serializable> getSelectedReferences() {
 			List<Serializable> refs = Generics.newArrayList();
-			for (Option option : options) {
+			for (OptionState option : options) {
 				if (option.isSelected()) {
 					refs.add(option.getReference());
 				}
@@ -57,9 +57,9 @@ public abstract class MultiSelectElement extends SelectElement {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void populate(Value value) {
-			Set set = getOrCreate(value.get(), Set.class, LinkedHashSet.class);
+			Set set = getOrCreate(value, Set.class, LinkedHashSet.class);
 			set.clear();
-			for (Option option : options) {
+			for (OptionState option : options) {
 				if (option.isSelected()) {
 					set.add(resolve(option.getReference()));
 				}

@@ -12,11 +12,8 @@
  */
 package org.riotfamily.forms2.option;
 
-import java.io.Serializable;
+public interface OptionCreator {
 
-public interface OptionReferenceAdapter {
+	public Option createOption(Object object);
 
-	public Serializable createReference(Object object);
-	
-	public Object resolve(Serializable reference);
 }

@@ -24,25 +24,29 @@ public abstract class SingleSelectElement extends SelectElement {
 		return Object.class;
 	}
 	
-	@Override
-	protected boolean isSelected(Object option, Object value) {
-		return ObjectUtils.nullSafeEquals(option, value);
-	}
-		
-	public class State extends SelectElement.State {
+	public abstract class State extends SelectElement.State {
 
+		@Override
+		protected boolean isSelected(Object option, Object value) {
+			return ObjectUtils.nullSafeEquals(option, value);
+		}
+		
 		public void select(UserInterface ui, String value) {
 			select(value);
 		}
 		
 		protected void select(String value) {
-			for (Option option : options) {
+			for (OptionState option : options) {
 				option.setSelected(option.getValue().equals(value));
 			}
 		}
 		
+		protected void selectFirst() {
+			select(options.get(0).getValue());
+		}
+		
 		protected Serializable getSelectedReference() {
-			for (Option option : options) {
+			for (OptionState option : options) {
 				if (option.isSelected()) {
 					return option.getReference();
 				}

@@ -14,7 +14,7 @@ package org.riotfamily.forms2.option;
 
 import java.io.Serializable;
 
-public class IdentityReferenceAdapter implements OptionReferenceAdapter {
+public class IdentityReferenceAdapter implements ReferenceAdapter {
 
 	public Serializable createReference(Object object) {
 		return (Serializable) object;

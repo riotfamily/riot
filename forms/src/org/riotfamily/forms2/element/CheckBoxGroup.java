@@ -16,15 +16,18 @@ import java.util.List;
 
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.element.support.MultiSelectElement;
-import org.riotfamily.forms2.element.support.Option;
+import org.riotfamily.forms2.element.support.OptionState;
 
 public class CheckBoxGroup extends MultiSelectElement {
 
-	@Override
-	protected void buildOptionsDom(List<Option> options, Html html) {
-		for (Option option : options) {
-			html.input("checkbox", option.getValue());
-			html.labelPrev(option.getLabel());
+	public class State extends MultiSelectElement.State {
+		
+		@Override
+		protected void buildOptionsDom(List<OptionState> options, Html html) {
+			for (OptionState option : options) {
+				html.input("checkbox", option.getValue());
+				html.labelPrev(option.getLabel());
+			}
 		}
 	}
 

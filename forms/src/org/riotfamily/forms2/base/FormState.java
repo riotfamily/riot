@@ -24,7 +24,7 @@ public interface FormState {
 
 	String render();
 
-	ElementState getElementState(String stateId);
+	Element.State getElementState(String stateId);
 
 	void put(HttpSession session);
 

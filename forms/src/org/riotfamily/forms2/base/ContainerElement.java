@@ -33,9 +33,9 @@ public class ContainerElement extends Element {
 		return childElements;
 	}
 		
-	protected class State extends ElementState implements ContainerState {
+	protected class State extends Element.State implements ContainerState {
 
-		private List<ElementState> childStates = Generics.newArrayList();
+		private List<Element.State> childStates = Generics.newArrayList();
 		
 		protected State() {
 		}
@@ -44,14 +44,14 @@ public class ContainerElement extends Element {
 			super(id);
 		}
 		
-		public List<ElementState> getChildStates() {
+		public List<Element.State> getChildStates() {
 			return Collections.unmodifiableList(childStates);
 		}
 		
 		@Override
 		protected final void onInit() {
 			for (Element element : childElements) {
-				ElementState state = element.createState(this);
+				Element.State state = element.createState(this);
 				childStates.add(state);
 			}
 			onInitContainer();
@@ -62,21 +62,21 @@ public class ContainerElement extends Element {
 		
 		@Override
 		public void setValue(Object value) {
-			for (ElementState state : childStates) {
+			for (Element.State state : childStates) {
 				state.setValue(value);
 			}
 		}
 		
 		@Override
 		protected void renderElement(Html html) {
-			for (ElementState state : childStates) {
+			for (Element.State state : childStates) {
 				state.render(html);
 			}
 		}
 		
 		@Override
 		public void populate(Value value) {
-			for (ElementState state : childStates) {
+			for (Element.State state : childStates) {
 				state.populate(value);
 			}
 		}

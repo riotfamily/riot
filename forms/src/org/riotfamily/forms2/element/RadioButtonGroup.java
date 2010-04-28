@@ -15,21 +15,23 @@ package org.riotfamily.forms2.element;
 import java.util.List;
 
 import org.riotfamily.forms2.client.Html;
-import org.riotfamily.forms2.element.support.Option;
+import org.riotfamily.forms2.element.support.OptionState;
 import org.riotfamily.forms2.element.support.SingleSelectElement;
 
 public class RadioButtonGroup extends SingleSelectElement {
 
-	@Override
-	protected void buildOptionsDom(List<Option> options, Html html) {
-		html = html.elem("fieldset");
-		for (Option option : options) {
-			html.input("radio", option.getValue())
-				.attr("name", option.getGroupName())
-				.propagate("click", "select");
-			
-			html.labelPrev(option.getLabel());
+	public class State extends SingleSelectElement.State {
+		
+		@Override
+		protected void buildOptionsDom(List<OptionState> options, Html html) {
+			html = html.elem("fieldset");
+			for (OptionState option : options) {
+				html.input("radio", option.getValue())
+					.attr("name", option.getGroupName())
+					.propagate("click", "select");
+				
+				html.labelPrev(option.getLabel());
+			}
 		}
 	}
-
 }

@@ -18,22 +18,27 @@ import java.util.List;
 import org.riotfamily.common.ui.RenderingService;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
+import org.riotfamily.forms2.base.Element.State;
 import org.riotfamily.forms2.client.Html;
+import org.riotfamily.forms2.option.DefaultOptionCreator;
 import org.riotfamily.forms2.option.IdentityReferenceAdapter;
-import org.riotfamily.forms2.option.OptionReferenceAdapter;
+import org.riotfamily.forms2.option.Option;
+import org.riotfamily.forms2.option.OptionCreator;
 import org.riotfamily.forms2.option.OptionsModel;
+import org.riotfamily.forms2.option.ReferenceAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class SelectElement extends Element {
 
 	private transient OptionsModel optionsModel;
 	
-	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO Use ReferenceService or make this part of the Value class
+	private transient ReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO Use ReferenceService or make this part of the Value class
 	
 	private transient RenderingService renderingService;
 	
-	public OptionReferenceAdapter getReferenceAdapter() {
+	private transient OptionCreator optionCreator = DefaultOptionCreator.defaultInstance();
+	
+	public ReferenceAdapter getReferenceAdapter() {
 		return referenceAdapter;
 	}
 	
@@ -52,48 +57,59 @@ public abstract class SelectElement extends Element {
 		
 	protected abstract Class<?> getRequiredType();
 	
-	final void createOptions(State state, Object value) {
-		Iterable<?> items = optionsModel.getOptions(state);
-		if (items != null) {
-			for (Object item : items) {
-				state.addOption(
-						referenceAdapter.createReference(item),
-						getLabel(item),
-						isSelected(item, value));
-			}
-		}
-	}
+	abstract class State extends Element.State {
 
-	protected String getLabel(Object item) {
-		if (renderingService != null) {
-			return renderingService.render(item);
-		}
-		return item != null ? item.toString() : "";
-	}
-
-	protected abstract boolean isSelected(Object option, Object value);
-	
-	protected abstract void buildOptionsDom(List<Option> options, Html html);
-	
-	abstract class State extends ElementState {
-
-		protected List<Option> options = Generics.newArrayList();
+		protected List<OptionState> options = Generics.newArrayList();
 			
 		@Override
 		public void setValue(Object value) {
 			options.clear();
-			createOptions(this, value);
+			createOptions(value);
 		}
 		
-		public void addOption(Serializable reference, String label, boolean selected) {
-			String value = String.valueOf(options.size());
-			options.add(new Option(id(), reference, value, label, selected));
+		private void createOptions(Object value) {
+			Iterable<?> items = optionsModel.getOptions(this);
+			if (items != null) {
+				for (Object item : items) {
+					Option option = optionCreator.createOption(item);
+					options.add(new OptionState(
+							id(), 
+							referenceAdapter.createReference(option.getValue()), 
+							String.valueOf(options.size()), 
+							renderLabel(option.getLabel()), 
+							isSelected(option.getValue(), value)));
+				}
+			}
+			postProcessOptions();
+		}
+		
+		protected String renderLabel(Object label) {
+			if (renderingService != null) {
+				return renderingService.render(label);
+			}
+			return label != null ? label.toString() : "";
+		}
+		
+		protected abstract boolean isSelected(Object option, Object value);
+		
+		protected void postProcessOptions() {
+		}
+		
+		protected boolean anyOptionSelected() {
+			for (OptionState option : options) {
+				if (option.isSelected()) {
+					return true;
+				}
+			}
+			return false;
 		}
 		
 		@Override
 		protected void renderElement(Html html) {
 			buildOptionsDom(options, html);
 		}
+		
+		protected abstract void buildOptionsDom(List<OptionState> options, Html html);
 		
 	}
 	

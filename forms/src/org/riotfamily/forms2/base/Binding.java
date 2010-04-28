@@ -42,6 +42,11 @@ public class Binding extends ElementWrapper {
 		wrap(element);
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Binding[target=%s]", target);
+	}
+	
 	public class State extends ElementWrapper.State {
 		
 		TypeInfo typeInfo;
@@ -107,7 +112,7 @@ public class Binding extends ElementWrapper {
 		
 		@Override
 		public String toString() {
-			return String.format("Binding.State[target=%s]", target);
+			return String.format("%s$State[id=%s]", Binding.this, id());
 		}
 	}
 	

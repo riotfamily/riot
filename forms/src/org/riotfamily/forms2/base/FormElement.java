@@ -121,6 +121,7 @@ public class FormElement extends ContainerElement {
 			state.register(element.createState(state));
 		}
 		state.setValue(object);
+		
 		return state;
 	}
 	
@@ -128,7 +129,7 @@ public class FormElement extends ContainerElement {
 
 		private Serializable target;
 		
-		private Map<String, ElementState> statesById = Generics.newHashMap();
+		private Map<String, Element.State> statesById = Generics.newHashMap();
 		
 		private int elementCount = 0;
 
@@ -157,7 +158,7 @@ public class FormElement extends ContainerElement {
 		}
 		
 		@Override
-		String register(ElementState state) {
+		String register(Element.State state) {
 			String id = "s" + elementCount++;
 			statesById.put(id, state);
 			return id;
@@ -184,8 +185,8 @@ public class FormElement extends ContainerElement {
 			return contextPath + resourcePath + res;
 		}
 		
-		public ElementState getElementState(String id) {
-			ElementState state = statesById.get(id);
+		public Element.State getElementState(String id) {
+			Element.State state = statesById.get(id);
 			Assert.notNull(state, "No such state: '" + id + "'");
 			return state;
 		}

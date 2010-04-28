@@ -40,9 +40,9 @@ public abstract class ElementWrapper extends Element {
 		return Collections.singleton(wrappedElement);
 	}
 
-	protected class State extends ElementState {
+	protected class State extends Element.State {
 
-		private ElementState wrappedState;
+		private Element.State wrappedState;
 		
 		@Override
 		protected final void onInit() {

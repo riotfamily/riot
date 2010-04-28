@@ -10,11 +10,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms2.base;
+package org.riotfamily.forms2.element.support;
 
 import java.util.List;
 
-import org.riotfamily.forms2.client.Html;
+import org.riotfamily.forms2.base.ContainerState;
+import org.riotfamily.forms2.base.Element;
+import org.riotfamily.forms2.base.ElementWrapper;
+import org.riotfamily.forms2.base.StateEvent;
+import org.riotfamily.forms2.base.StateEventHandler;
 import org.riotfamily.forms2.value.Value;
 
 public class DependentElement extends ElementWrapper {
@@ -23,12 +27,12 @@ public class DependentElement extends ElementWrapper {
 		super(wrappedElement);
 	}
 
-	public static ElementState getPrecedingElement(ElementState state) {
+	public static Element.State getPrecedingElement(Element.State state) {
 		while (state != null) {
-			ElementState parent = state.getParent();
+			Element.State parent = state.getParent();
 			if (parent instanceof ContainerState) {
 				ContainerState container = (ContainerState) parent;
-				List<ElementState> c = container.getChildStates();
+				List<Element.State> c = container.getChildStates();
 				int i = c.indexOf(state);
 				if (i == -1) {
 					i = c.size();
@@ -50,20 +54,16 @@ public class DependentElement extends ElementWrapper {
 	
 	private static class ElementUpdater implements StateEventHandler {
 		
-		private ElementState state;
+		private Element.State state;
 		
-		public ElementUpdater(ElementState state) {
+		public ElementUpdater(Element.State state) {
 			this.state = state;
 		}
 
 		public void handle(StateEvent event) {
 			event.stop();
-			Html html = state.getFormState().newHtml();
 			state.setValue(new Value());
-			state.render(html);
-			UserInterface ui = event.getUserInterface();
-			ui.replace(state, null, html);
-			state.handleStateEvent(new StateEvent(state, "update", ui));
+			event.getUserInterface().refresh(state);
 		}
 	}
 }

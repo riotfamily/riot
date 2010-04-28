@@ -14,16 +14,16 @@ package org.riotfamily.forms2.element.support;
 
 import java.io.Serializable;
 
-import org.riotfamily.forms2.base.ElementState;
+import org.riotfamily.forms2.base.Element;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.option.IdentityReferenceAdapter;
-import org.riotfamily.forms2.option.OptionReferenceAdapter;
+import org.riotfamily.forms2.option.ReferenceAdapter;
 
-public class AbstractChooser {
+public class AbstractChooser extends Element {
 
-	private transient OptionReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO Use ReferenceService or make this part of the Value class
+	private transient ReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO Use ReferenceService or make this part of the Value class
 	
-	protected class State extends ElementState {
+	public class State extends Element.State {
 
 		private Serializable reference;
 		

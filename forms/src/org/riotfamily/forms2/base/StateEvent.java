@@ -12,29 +12,24 @@
  */
 package org.riotfamily.forms2.base;
 
-import org.riotfamily.forms2.value.Value;
 
 public class StateEvent {
 
-	private ElementState source;
+	private Element.State source;
 	
 	private String type;
 	
 	private boolean stopped;
 	
-	private Object value;
-	
-	private boolean valuePopulated;
-
 	private final UserInterface ui;
 
-	public StateEvent(ElementState source, String type, UserInterface ui) {
+	public StateEvent(Element.State source, String type, UserInterface ui) {
 		this.source = source;
 		this.type = type;
 		this.ui = ui;
 	}
 
-	public ElementState getSource() {
+	public Element.State getSource() {
 		return source;
 	}
 
@@ -54,14 +49,4 @@ public class StateEvent {
 		stopped = true;
 	}
 	
-	public Object getValue() {
-		if (!valuePopulated) {
-			Value temp = new Value();
-			source.populate(temp);
-			value = temp.get();
-			valuePopulated = true;
-		}
-		return value;
-	}
-
 }

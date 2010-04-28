@@ -18,7 +18,6 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
 import org.riotfamily.forms2.base.FormElement;
 import org.riotfamily.forms2.base.FormState;
 import org.riotfamily.forms2.base.StateEvent;
@@ -70,10 +69,10 @@ public class Form {
 	}
 	
 	public List<Action> dispatchEvent(FormState formState, ClientEvent event) {
-		ElementState elementState = formState.getElementState(event.getStateId());
+		Element.State state = formState.getElementState(event.getStateId());
 		UserInterface ui = new UserInterface();
-		invoke(elementState, event.getHandler(), ui, event.getFileOrValue());
-		elementState.handleStateEvent(new StateEvent(elementState, event.getHandler(), ui));
+		invoke(state, event.getHandler(), ui, event.getFileOrValue());
+		state.handleStateEvent(new StateEvent(state, event.getHandler(), ui));
 		return ui.getActions();
 	}
 	

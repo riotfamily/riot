@@ -12,17 +12,27 @@
  */
 package org.riotfamily.forms2.option;
 
-import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.element.support.DependentElement;
-
-public abstract class DependentOptionsModel<T> implements OptionsModel {
-
-	@SuppressWarnings("unchecked")
-	public final Iterable<?> getOptions(Element.State state) {
-		T value = (T) DependentElement.getPrecedingElement(state).getValue();
-		return getOptions(value);
-	}
+public class Option {
 	
-	protected abstract Iterable<?> getOptions(T object); 
+	private Object value;
+	
+	private Object label;
+	
+	public Option(Object value) {
+		this(value, value);
+	}
+			
+	public Option(Object value, Object label) {
+		this.value = value;
+		this.label = label;
+	}
+
+	public Object getLabel() {
+		return label;
+	}
+
+	public Object getValue() {
+		return value;
+	}
 
 }

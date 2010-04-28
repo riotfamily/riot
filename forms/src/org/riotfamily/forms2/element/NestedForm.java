@@ -32,7 +32,7 @@ public class NestedForm extends ContainerElement implements TypeHint {
 				
 		@Override
 		public void populate(Value value) {
-			getOrCreate(value.get(), null, null);
+			getOrCreate(value, null, null);
 			super.populate(value);
 		}
 

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
+import org.riotfamily.forms2.base.Element.State;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.FormResource;
 import org.riotfamily.forms2.client.Html;
@@ -57,9 +57,9 @@ public class ListEditor extends Element {
 		return new ScriptResource("forms/listEditor.js");
 	}
 		
-	public class State extends ElementState {
+	public class State extends Element.State {
 
-		private List<ElementState> itemStates = Generics.newArrayList();
+		private List<Element.State> itemStates = Generics.newArrayList();
 		
 		private TypeInfo itemTypeInfo;
 		
@@ -86,8 +86,8 @@ public class ListEditor extends Element {
 			}
 		}
 				
-		private ElementState addItem(Object object) {
-			ElementState state = itemEditor.createState(this);
+		private Element.State addItem(Object object) {
+			Element.State state = itemEditor.createState(this);
 			itemStates.add(state);
 			return state;
 		}
@@ -95,9 +95,9 @@ public class ListEditor extends Element {
 		@Override
 		@SuppressWarnings("unchecked")
 		public void populate(Value value) {
-			List c = getOrCreate(value.get(), List.class, ArrayList.class);
+			List c = getOrCreate(value, List.class, ArrayList.class);
 			c.clear();
-			for (ElementState itemState : itemStates) {
+			for (Element.State itemState : itemStates) {
 				Value itemValue = new Value();
 				itemState.populate(itemValue);
 				c.add(itemValue.get());
@@ -111,7 +111,7 @@ public class ListEditor extends Element {
 		@Override
 		protected void renderElement(Html html) {
 			Html ul = html.ul().cssClass("items");
-			for (ElementState itemState : itemStates) {
+			for (Element.State itemState : itemStates) {
 				renderItem(ul, itemState);
 			}
 			html.button("add");
@@ -123,7 +123,7 @@ public class ListEditor extends Element {
 		/**
 		 * Renders a single list-item, as well as buttons to move or delete it.
 		 */
-		private void renderItem(Html html, ElementState itemState) {
+		private void renderItem(Html html, Element.State itemState) {
 			Html tr = html.li().id(id() + "_" + itemState.id()).table().tr();
 			if (dragAndDrop) {
 				tr.td("handle");
@@ -143,7 +143,7 @@ public class ListEditor extends Element {
 		 * the user clicks the add button.
 		 */
 		public void add(UserInterface ui, String value) {
-			ElementState itemState = addItem(null);
+			Element.State itemState = addItem(null);
 			Html html = newHtml();
 			renderItem(html, itemState);
 			ui.insert(this, "ul:first", html);
@@ -210,7 +210,7 @@ public class ListEditor extends Element {
 		
 		/**
 		 * Sorts the list according to the specified order, where order is a 
-		 * list of {@link ElementState#id() stateIds}. The method is invoked
+		 * list of {@link Element.State#id() stateIds}. The method is invoked
 		 * when the list is re-ordered via drag-and-drop.
 		 */
 		public void sort(UserInterface ui, List<String> order) {
@@ -222,7 +222,7 @@ public class ListEditor extends Element {
 	/**
 	 * Comparator implementation used by the {@link #sort} method.
 	 */
-	private static class SortOrderComparator implements Comparator<ElementState> {
+	private static class SortOrderComparator implements Comparator<Element.State> {
 
 		private final List<String> order;
 
@@ -230,7 +230,7 @@ public class ListEditor extends Element {
 			this.order = order;
 		}
 
-		public int compare(ElementState o1, ElementState o2) {
+		public int compare(Element.State o1, Element.State o2) {
 			Integer i1 = order.indexOf(o1.id());
 			Integer i2 = order.indexOf(o2.id());
 			return i1.compareTo(i2);

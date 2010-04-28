@@ -16,6 +16,6 @@ import java.util.List;
 
 public interface ContainerState {
 
-	List<ElementState> getChildStates();
+	List<Element.State> getChildStates();
 
 }

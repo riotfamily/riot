@@ -15,14 +15,14 @@ package org.riotfamily.forms2.element;
 import org.riotfamily.common.web.mvc.multipart.ProgressMonitor;
 import org.riotfamily.common.web.mvc.multipart.UploadProgress;
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
+import org.riotfamily.forms2.base.Element.State;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileUpload extends Element {
 	
-	public class State extends ElementState {
+	public class State extends Element.State {
 
 		private String uploadId = ProgressMonitor.nextUploadId();
 

@@ -13,7 +13,7 @@
 package org.riotfamily.forms2;
 
 import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.base.ElementState;
+import org.riotfamily.forms2.base.Element.State;
 import org.riotfamily.forms2.base.UserInterface;
 import org.riotfamily.forms2.client.Html;
 import org.riotfamily.forms2.value.Value;
@@ -30,7 +30,7 @@ public class SubmitButton extends Element {
 		//form.addStatusListener(this);
 	}
 			
-	public class State extends ElementState {
+	public class State extends Element.State {
 		
 		@Override
 		public void setValue(Object value) {

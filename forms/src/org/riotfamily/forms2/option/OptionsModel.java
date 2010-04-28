@@ -12,10 +12,10 @@
  */
 package org.riotfamily.forms2.option;
 
-import org.riotfamily.forms2.base.ElementState;
+import org.riotfamily.forms2.base.Element;
 
 public interface OptionsModel {
 
-	public Iterable<?> getOptions(ElementState state);
+	public Iterable<?> getOptions(Element.State state);
 
 }

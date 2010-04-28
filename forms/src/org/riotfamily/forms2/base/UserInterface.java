@@ -36,7 +36,7 @@ public class UserInterface {
 	/**
 	 * Updates an element by replacing its content.
 	 */
-	public void update(ElementState state, String selector, Html html) {
+	public void update(Element.State state, String selector, Html html) {
 		invoke(state, selector, "html", html);
 		eval(html.extractScripts());
 	}
@@ -44,15 +44,22 @@ public class UserInterface {
 	/**
 	 * Replaces an element.
 	 */
-	public void replace(ElementState state, String selector, Html html) {
+	public void replace(Element.State state, String selector, Html html) {
 		invoke(state, selector, "replaceWith", html);
 		eval(html.extractScripts());
+	}
+	
+	public void refresh(Element.State state) {
+		Html html = state.getFormState().newHtml();
+		state.render(html);
+		replace(state, null, html);
+		state.handleStateEvent(new StateEvent(state, "refresh", this));
 	}
 
 	/**
 	 * Appends content to an element.
 	 */
-	public void insert(ElementState state, String selector, Html html) {
+	public void insert(Element.State state, String selector, Html html) {
 		invoke(state, selector, "append", html);
 		eval(html.extractScripts());
 	}
@@ -60,48 +67,48 @@ public class UserInterface {
 	/**
 	 * Removes an element.
 	 */
-	public void remove(ElementState state, String selector) {
+	public void remove(Element.State state, String selector) {
 		invoke(state, selector, "remove");
 	}
 	
 	/**
 	 * Moves an element before its previous sibling.
 	 */
-	public void moveUp(ElementState state, String selector) {
+	public void moveUp(Element.State state, String selector) {
 		invoke(state, selector, "moveUp");
 	}
 	
 	/**
 	 * Moves an element after its next sibling.
 	 */
-	public void moveDown(ElementState state, String selector) {
+	public void moveDown(Element.State state, String selector) {
 		invoke(state, selector, "moveDown");
 	}
 	
 	/**
 	 * Adds a CSS class to all matching elements.
 	 */
-	public void addClassName(ElementState state, String selector, String className) {
+	public void addClassName(Element.State state, String selector, String className) {
 		invoke(state, selector, "addClass", className);
 	}
 	
 	/**
 	 * Removes a CSS class from all matching elements.
 	 */
-	public void removeClassName(ElementState state, String selector, String className) {
+	public void removeClassName(Element.State state, String selector, String className) {
 		invoke(state, selector, "removeClass", className);
 	}
 	
 	/**
 	 */
-	public void invoke(ElementState state, String selector, String method, Object... args) {
+	public void invoke(Element.State state, String selector, String method, Object... args) {
 		action(state.id(), selector, "invoke").set("method", method).set("args", args);
 	}
 	
 	/**
 	 * Schedules the submission of a synthetic event.
 	 */
-	public void schedule(ElementState state, String handler, String value, long millis) {
+	public void schedule(Element.State state, String handler, String value, long millis) {
 		action(state.id(), null, "schedule")
 			.set("handler", handler)
 			.set("value", value)

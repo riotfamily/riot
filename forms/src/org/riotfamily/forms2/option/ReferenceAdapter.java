@@ -12,17 +12,11 @@
  */
 package org.riotfamily.forms2.option;
 
-import org.riotfamily.forms2.base.Element;
-import org.riotfamily.forms2.element.support.DependentElement;
+import java.io.Serializable;
 
-public abstract class DependentOptionsModel<T> implements OptionsModel {
+public interface ReferenceAdapter {
 
-	@SuppressWarnings("unchecked")
-	public final Iterable<?> getOptions(Element.State state) {
-		T value = (T) DependentElement.getPrecedingElement(state).getValue();
-		return getOptions(value);
-	}
+	public Serializable createReference(Object object);
 	
-	protected abstract Iterable<?> getOptions(T object); 
-
+	public Object resolve(Serializable reference);
 }
