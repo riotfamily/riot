@@ -12,9 +12,12 @@
  */
 package org.riotfamily.pages.config;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.forms.Form;
+import org.riotfamily.forms.base.Element;
 
 public abstract class AbstractPageType implements PageType {
 
@@ -22,7 +25,7 @@ public abstract class AbstractPageType implements PageType {
 	
 	private String label;
 	
-	private String form;
+	private Form form;
 	
 	private Object handler;
 	
@@ -47,15 +50,23 @@ public abstract class AbstractPageType implements PageType {
 		this.label = label;
 	}
 
-	public String getForm() {
-		if (form == null) {
-			form = name + "-page";
-		}
-		return form;
+	public void setElements(List<Object> elements) {
+		addElements(elements);
 	}
-
-	public void setForm(String form) {
-		this.form = form;
+	
+	@SuppressWarnings("unchecked")
+	private void addElements(Collection<Object> elements) {
+		for (Object element : elements) {
+			if (element instanceof Element) {
+				form.add((Element) element);
+			}
+			else if (element instanceof Collection) {
+				addElements((Collection) element);
+			}
+			else {
+				throw new IllegalArgumentException("Expected either an Element or a Collection: " + element);
+			}
+		}
 	}
 
 	public Object getHandler() {

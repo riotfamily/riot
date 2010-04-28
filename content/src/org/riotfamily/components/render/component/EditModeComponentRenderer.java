@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.meta.ComponentMetaDataProvider;
 import org.riotfamily.components.model.Component;
-import org.riotfamily.forms2.Form;
+import org.riotfamily.forms.Form;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

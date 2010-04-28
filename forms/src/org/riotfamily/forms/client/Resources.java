@@ -10,28 +10,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
-
-import java.util.List;
-
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+package org.riotfamily.forms.client;
 
 
-public interface PageType {
+public final class Resources {
 
-	public String getName();
-
-	//public Element getForm();
+	private Resources() {
+	}
 	
-	public Object getHandler();
+	public static final ScriptResource JQUERY_UI = 
+			new ScriptResource("jquery/ui/jquery-ui.js", "jQuery.ui",
+			new StylesheetResource("jquery/ui/jquery-ui.css"));
 	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
+	public static final ScriptResource RIOT_FORMS = 
+			new ScriptResource("forms/form.js", "riot.form", JQUERY_UI, 
+			new StylesheetResource("forms/form.css"));
 	
 }

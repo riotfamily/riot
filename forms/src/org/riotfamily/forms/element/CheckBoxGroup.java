@@ -10,28 +10,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.element;
 
 import java.util.List;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+import org.riotfamily.forms.client.Html;
+import org.riotfamily.forms.element.support.MultiSelectElement;
+import org.riotfamily.forms.element.support.OptionState;
 
+public class CheckBoxGroup extends MultiSelectElement {
 
-public interface PageType {
+	public class State extends MultiSelectElement.State {
+		
+		@Override
+		protected void buildOptionsDom(List<OptionState> options, Html html) {
+			for (OptionState option : options) {
+				html.input("checkbox", option.getValue());
+				html.labelPrev(option.getLabel());
+			}
+		}
+	}
 
-	public String getName();
-
-	//public Element getForm();
-	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }

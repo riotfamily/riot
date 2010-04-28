@@ -10,28 +10,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.client;
 
-import java.util.List;
-
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
-
-
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
+/**
+ * Interface for external resources like JavaScript libraries or 
+ * Cascading Stylesheets (CSS).
+ */
+public interface FormResource {
 	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
+	public void accept(ResourceVisitor visitor);
 
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
+	public String getUrl();
+
 }

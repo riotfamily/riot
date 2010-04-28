@@ -10,28 +10,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.client;
 
-import java.util.List;
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
+ */
+public interface ResourceVisitor {
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
-
-
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
+	public void visitStyleSheet(StylesheetResource res);
 	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
+	public void visitScript(ScriptResource res);
 
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }

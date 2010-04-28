@@ -10,28 +10,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.option;
 
-import java.util.List;
+import java.io.Serializable;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+public class IdentityReferenceAdapter implements ReferenceAdapter {
 
+	public Serializable createReference(Object object) {
+		return (Serializable) object;
+	}
 
-public interface PageType {
+	public Object resolve(Serializable reference) {
+		return reference;
+	}
 
-	public String getName();
-
-	//public Element getForm();
-	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }

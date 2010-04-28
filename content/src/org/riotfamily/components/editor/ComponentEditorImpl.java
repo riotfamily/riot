@@ -44,7 +44,7 @@ import org.riotfamily.components.support.OverrideMethodRequestWrapper;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.session.LoginManager;
-import org.riotfamily.forms2.Form;
+import org.riotfamily.forms.Form;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;

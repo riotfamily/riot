@@ -10,28 +10,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.option;
 
-import java.util.List;
+public interface OptionCreator {
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+	public Option createOption(Object object);
 
-
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
-	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }

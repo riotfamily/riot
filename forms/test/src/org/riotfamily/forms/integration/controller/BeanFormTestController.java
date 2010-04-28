@@ -10,28 +10,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.integration.controller;
 
-import java.util.List;
+import javax.annotation.Resource;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+import org.riotfamily.forms.integration.model.TestBean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+@Controller
+@RequestMapping("/form/bean")
+public class BeanFormTestController extends AbstractFormTestController {
 
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
+	@Resource
+	private TestBean testBean;
 	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
+	@Override
+	protected Object getBackingObject() {
+		return testBean;
+	}
 
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }

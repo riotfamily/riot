@@ -10,28 +10,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.element;
 
-import java.util.List;
+import org.riotfamily.forms.base.ContainerElement;
+import org.riotfamily.forms.value.TypeHint;
+import org.riotfamily.forms.value.Value;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+public class NestedForm extends ContainerElement implements TypeHint {
 
-
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
+	private Class<?> type;
 	
-	public Object getHandler();
+	public void setType(Class<?> type) {
+		this.type = type;
+	}
 	
-	public PageType getParent();
+	public Class<?> getType() {
+		return type;
+	}
 	
-	public List<? extends PageType> getChildTypes();
+	public class State extends ContainerElement.State {
+				
+		@Override
+		public void populate(Value value) {
+			getOrCreate(value, null, null);
+			super.populate(value);
+		}
 
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
+	}
 }

@@ -10,28 +10,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.option;
 
-import java.util.List;
+import org.riotfamily.forms.base.Element;
+import org.riotfamily.forms.element.support.DependentElement;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+public abstract class DependentOptionsModel<T> implements OptionsModel {
 
-
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
+	@SuppressWarnings("unchecked")
+	public final Iterable<?> getOptions(Element.State state) {
+		T value = (T) DependentElement.getPrecedingElement(state).getValue();
+		return getOptions(value);
+	}
 	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
+	protected abstract Iterable<?> getOptions(T object); 
 
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }

@@ -8,7 +8,7 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <context:component-scan base-package="org.riotfamily.forms2" />
+    <context:component-scan base-package="org.riotfamily.forms" />
     
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
         <property name="defaultLocale"><value>en_US</value></property>
@@ -37,7 +37,7 @@
         <property name="locations">
             <list>
 	            <value>classpath:/org/riotfamily/resources/</value>
-	            <value>classpath:/org/riotfamily/forms2/resources/</value>
+	            <value>classpath:/org/riotfamily/forms/resources/</value>
             </list>
         </property>
     </bean>

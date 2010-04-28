@@ -8,11 +8,11 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <context:component-scan base-package="org.riotfamily.forms2" />
+    <context:component-scan base-package="org.riotfamily.forms" />
        
     <util:map id="testMap" />
     
-    <bean id="testBean" class="org.riotfamily.forms2.integration.model.TestBean" />
+    <bean id="testBean" class="org.riotfamily.forms.integration.model.TestBean" />
    
     <bean id="shutdown" class="java.lang.Object" />
    

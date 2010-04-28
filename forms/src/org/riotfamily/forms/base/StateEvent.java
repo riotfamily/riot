@@ -10,28 +10,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
-
-import java.util.List;
-
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+package org.riotfamily.forms.base;
 
 
-public interface PageType {
+public class StateEvent {
 
-	public String getName();
-
-	//public Element getForm();
+	private Element.State source;
 	
-	public Object getHandler();
+	private String type;
 	
-	public PageType getParent();
+	private boolean stopped;
 	
-	public List<? extends PageType> getChildTypes();
+	private final UserInterface ui;
 
-	public Page getPage(Site site, Object object);
+	public StateEvent(Element.State source, String type, UserInterface ui) {
+		this.source = source;
+		this.type = type;
+		this.ui = ui;
+	}
+
+	public Element.State getSource() {
+		return source;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public UserInterface getUserInterface() {
+		return ui;
+	}
 	
-	void register(SitemapSchema schema, PageType parent);
+	public boolean isStopped() {
+		return stopped;
+	}
+
+	public void stop() {
+		stopped = true;
+	}
 	
 }

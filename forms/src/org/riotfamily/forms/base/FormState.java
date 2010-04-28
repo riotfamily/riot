@@ -10,28 +10,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.base;
 
-import java.util.List;
+import javax.servlet.http.HttpSession;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+import org.riotfamily.forms.client.Html;
+import org.riotfamily.forms.value.TypeInfo;
+import org.riotfamily.forms.value.Value;
 
+public interface FormState {
 
-public interface PageType {
+	void populate(Value value);
 
-	public String getName();
+	String render();
 
-	//public Element getForm();
+	Element.State getElementState(String stateId);
+
+	void put(HttpSession session);
+
+	Html newHtml();
+
+	TypeInfo getTypeInfo();
+
+	String id();
+
+	void setContextPath(String contextPath);
 	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
+	void setResourcePath(String resourcePath);
 
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
+	String resolveResource(String string);
 }

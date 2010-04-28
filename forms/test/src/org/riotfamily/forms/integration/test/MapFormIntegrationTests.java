@@ -10,28 +10,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.integration.test;
 
-import java.util.List;
+import java.util.Map;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+import javax.annotation.Resource;
 
+public class MapFormIntegrationTests extends AbstractFormIntegrationTests {
 
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
+	@Resource
+	private Map<String, Object> testMap;
 	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
+	@Override
+	protected String getControllerMapping() {
+		return "form/map";
+	}
 
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
+	@Override
+	protected Object getFieldValue(String field) {
+		return testMap.get(field);
+	}
+
 }

@@ -34,10 +34,10 @@
             </s:columns>
             <s:form id="speciesForm">
                 <s:elements>
-                    <bean class="org.riotfamily.forms2.base.Binding">
+                    <bean class="org.riotfamily.forms.base.Binding">
                         <property name="target" value="name" />
                         <property name="element">
-                            <bean class="org.riotfamily.forms2.element.TextField" />
+                            <bean class="oorg.riotfamily.forms.elementTextField" />
                         </property>
                     </bean>
                 </s:elements>

@@ -10,28 +10,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.integration.controller;
 
-import java.util.List;
+import java.io.IOException;
+import java.io.Writer;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+import javax.annotation.Resource;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-public interface PageType {
+@Controller
+public class ShutdownController {
 
-	public String getName();
-
-	//public Element getForm();
+	@Resource
+	private Object shutdown;
 	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
+	@RequestMapping("/shutdown")
+	public void shutdown(Writer out) throws IOException {
+		synchronized (shutdown) {
+			shutdown.notify();			
+		}
+		out.write("Server shut down.");
+	}
 }

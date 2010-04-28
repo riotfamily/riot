@@ -10,28 +10,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.base;
 
 import java.util.List;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
+public interface ContainerState {
 
+	List<Element.State> getChildStates();
 
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
-	
-	public Object getHandler();
-	
-	public PageType getParent();
-	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
-	
-	void register(SitemapSchema schema, PageType parent);
-	
 }

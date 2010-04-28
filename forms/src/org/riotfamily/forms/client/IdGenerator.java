@@ -10,28 +10,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.pages.config;
+package org.riotfamily.forms.client;
 
-import java.util.List;
+import java.io.Serializable;
 
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
-
-
-public interface PageType {
-
-	public String getName();
-
-	//public Element getForm();
+public class IdGenerator implements Serializable {
 	
-	public Object getHandler();
+	private int index;
 	
-	public PageType getParent();
+	private String prevId;
 	
-	public List<? extends PageType> getChildTypes();
-
-	public Page getPage(Site site, Object object);
+	private String nextId;
 	
-	void register(SitemapSchema schema, PageType parent);
+	/**
+	 * Returns the id from the last call to inputId().
+	 */
+	String prev() {
+		return prevId;
+	}
 	
+	/**
+	 * Returns a new id that will be used as next inputId.
+	 */
+	String next() {
+		nextId = newId();
+		return nextId;
+	}
+	
+	private String newId() {
+		return "f" + index++;
+	}
+	
+	String inputId() {
+		prevId = nextId != null ? nextId : newId();
+		return prevId;
+	}
 }

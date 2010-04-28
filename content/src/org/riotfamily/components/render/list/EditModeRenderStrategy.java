@@ -25,7 +25,7 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentRenderer;
-import org.riotfamily.forms2.Form;
+import org.riotfamily.forms.Form;
 
 public class EditModeRenderStrategy extends DefaultRenderStrategy {
 
