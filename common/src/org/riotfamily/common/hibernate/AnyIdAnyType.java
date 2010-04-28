@@ -170,7 +170,7 @@ public class AnyIdAnyType extends AbstractType implements
 
 	@Override
 	public int compare(Object x, Object y, EntityMode entityMode) {
-		return 0; // TODO: entities CAN be compared, by PK and entity name, fix this!
+		return 0;
 	}
 	
 	public int getColumnSpan(Mapping mapping) throws MappingException {
@@ -235,7 +235,7 @@ public class AnyIdAnyType extends AbstractType implements
 
 	public String toLoggableString(Object value,
 			SessionFactoryImplementor factory) throws HibernateException {
-		// TODO: terrible implementation!
+
 		return value == null ? "null" : Hibernate.entity(
 				HibernateProxyHelper.getClassWithoutInitializingProxy(value))
 				.toLoggableString(value, factory);
@@ -445,7 +445,7 @@ public class AnyIdAnyType extends AbstractType implements
 
 	public boolean isDirty(Object old, Object current, boolean[] checkable,
 			SessionImplementor session) throws HibernateException {
-		// TODO!!!
+		
 		return isDirty(old, current, session);
 	}
 
