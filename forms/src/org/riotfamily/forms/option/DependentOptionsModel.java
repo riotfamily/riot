@@ -13,13 +13,12 @@
 package org.riotfamily.forms.option;
 
 import org.riotfamily.forms.base.Element;
-import org.riotfamily.forms.element.support.DependentElement;
 
 public abstract class DependentOptionsModel<T> implements OptionsModel {
 
 	@SuppressWarnings("unchecked")
 	public final Iterable<?> getOptions(Element.State state) {
-		T value = (T) DependentElement.getPrecedingElement(state).getValue();
+		T value = (T) state.getPrecedingState().getValue();
 		return getOptions(value);
 	}
 	

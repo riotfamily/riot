@@ -13,7 +13,6 @@
 package org.riotfamily.forms.base;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.riotfamily.common.util.Generics;
@@ -36,26 +35,19 @@ public abstract class ContainerElement extends Element {
 		return childElements;
 	}
 		
-	protected class State extends Element.State implements ContainerState {
+	protected class State extends Element.State {
 
-		private List<Element.State> childStates = Generics.newArrayList();
-		
 		protected State() {
 		}
 		
 		State(String id) {
 			super(id);
 		}
-		
-		public List<Element.State> getChildStates() {
-			return Collections.unmodifiableList(childStates);
-		}
-		
+				
 		@Override
 		protected final void onInit() {
 			for (Element element : childElements) {
-				Element.State state = element.createState(this);
-				childStates.add(state);
+				element.createState(this);
 			}
 			onInitContainer();
 		}
@@ -65,21 +57,21 @@ public abstract class ContainerElement extends Element {
 		
 		@Override
 		public void setValue(Object value) {
-			for (Element.State state : childStates) {
+			for (Element.State state : getChildStates()) {
 				state.setValue(value);
 			}
 		}
 		
 		@Override
 		protected void renderElement(Html html) {
-			for (Element.State state : childStates) {
+			for (Element.State state : getChildStates()) {
 				state.render(html);
 			}
 		}
 		
 		@Override
 		public void populate(Value value) {
-			for (Element.State state : childStates) {
+			for (Element.State state : getChildStates()) {
 				state.populate(value);
 			}
 		}

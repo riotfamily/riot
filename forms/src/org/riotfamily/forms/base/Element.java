@@ -41,10 +41,10 @@ public abstract class Element implements Serializable {
 	 * calling {@link #createState()}, the init() method is invoked,
 	 * passing the specified parent.
 	 */
-	final Element.State createAndInitState(Element.State parent) {
+	final State createAndInitState(State parent) {
 		verifyParentImplementation(parent);
 		FormState formState = parent.getFormState();
-		Element.State state = createState();
+		State state = createState();
 		state.init(parent, formState);
 		return state;
 	}
@@ -119,7 +119,9 @@ public abstract class Element implements Serializable {
 		
 		private boolean enabled = true;
 			
-		private Element.State parent;
+		private State parent;
+		
+		private List<State> childStates = Generics.newArrayList();
 		
 		private FormState formState;
 
@@ -140,8 +142,53 @@ public abstract class Element implements Serializable {
 			this.id = id;
 		}
 		
+		/**
+		 * Called by {@link Element#createAndInitState} to set the parent and 
+		 * formState and to assign a unique id. Invokes {@link #onInit()} 
+		 * to allow subclasses to perform additional initialization tasks.
+		 */
+		final void init(Element.State parent, FormState formState) {
+			this.parent = parent;
+			this.formState = formState;
+			if (parent != null) {
+				id = parent.register(this);
+				parent.getChildStates().add(this);
+			}
+			onInit();
+		}
+
+		/**
+		 * Callback method that can be overwritten by subclasses to perform 
+		 * initialization tasks.
+		 * <p>
+		 * At this point it is guaranteed that the {@link #id() id}, 
+		 * the {@link #getParent() parent}, the {@link #getElementId() elementId}
+		 * and the {@link #getFormState() formState} have been set.
+		 * <p>
+		 * <b>Important:</b> Implementations that need to created nested states 
+		 * must do this in this method, not inside their constructor.
+		 */
+		protected void onInit() {
+		}
+		
 		Element getElement() {
 			return Element.this;
+		}
+		
+		protected List<State> getChildStates() {
+			return childStates;
+		}
+		
+		State getPrecedingState(State state) {
+			int i = childStates.indexOf(state);
+			if (i == -1) {
+				i = childStates.size();
+			}
+			return childStates.get(i - 1);
+		}
+		
+		public final State getPrecedingState() {
+			return parent.getPrecedingState(this);
 		}
 		
 		/**
@@ -216,35 +263,6 @@ public abstract class Element implements Serializable {
 			return formState.newHtml();
 		}
 
-		/**
-		 * Called by {@link Element#createAndInitState} to set the elementId, 
-		 * parent, formState and to assign a unique id. Invokes 
-		 * {@link #onInit()} to allow subclasses to perform additional 
-		 * initialization tasks.
-		 */
-		final void init(Element.State parent, FormState formState) {
-			this.parent = parent;
-			this.formState = formState;
-			if (parent != null) {
-				id = parent.register(this);
-			}
-			onInit();
-		}
-
-		/**
-		 * Callback method that can be overwritten by subclasses to perform 
-		 * initialization tasks.
-		 * <p>
-		 * At this point it is guaranteed that the {@link #id() id}, 
-		 * the {@link #getParent() parent}, the {@link #getElementId() elementId}
-		 * and the {@link #getFormState() formState} have been set.
-		 * <p>
-		 * <b>Important:</b> Implementations that need to created nested states 
-		 * must do this in this method, not inside their constructor.
-		 */
-		protected void onInit() {
-		}
-		
 		public abstract void setValue(Object value);
 		
 		public void populate(Value value) {
@@ -302,7 +320,7 @@ public abstract class Element implements Serializable {
 		 * parent state.
 		 * @see FormState#register(Element.State)
 		 */
-		String register(Element.State state) {
+		String register(State state) {
 			return parent.register(state);
 		}
 

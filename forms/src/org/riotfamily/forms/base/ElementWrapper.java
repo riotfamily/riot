@@ -57,6 +57,11 @@ public abstract class ElementWrapper extends Element {
 		}
 
 		@Override
+		Element.State getPrecedingState(Element.State state) {
+			return getPrecedingState();
+		}
+		
+		@Override
 		public TypeInfo getTypeInfo() {
 			if (wrappedElement instanceof TypeHint) {
 				Class<?> type = ((TypeHint) wrappedElement).getType();

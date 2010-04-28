@@ -18,7 +18,6 @@ import java.util.List;
 import org.riotfamily.common.ui.RenderingService;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.base.Element;
-import org.riotfamily.forms.base.Element.State;
 import org.riotfamily.forms.client.Html;
 import org.riotfamily.forms.option.DefaultOptionCreator;
 import org.riotfamily.forms.option.IdentityReferenceAdapter;

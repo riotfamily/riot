@@ -12,9 +12,6 @@
  */
 package org.riotfamily.forms.element.support;
 
-import java.util.List;
-
-import org.riotfamily.forms.base.ContainerState;
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.base.ElementWrapper;
 import org.riotfamily.forms.base.StateEvent;
@@ -26,28 +23,11 @@ public class DependentElement extends ElementWrapper {
 		super(wrappedElement);
 	}
 
-	public static Element.State getPrecedingElement(Element.State state) {
-		while (state != null) {
-			Element.State parent = state.getParent();
-			if (parent instanceof ContainerState) {
-				ContainerState container = (ContainerState) parent;
-				List<Element.State> c = container.getChildStates();
-				int i = c.indexOf(state);
-				if (i == -1) {
-					i = c.size();
-				}
-				return c.get(i - 1);
-			}
-			state = parent;
-		}
-		throw new IllegalStateException("Element must be nested within a container");
-	}
-	
 	public class State extends ElementWrapper.State {
 		
 		@Override
 		protected void onInitWrapper() {
-			getPrecedingElement(this).addStateEventHandler(new ElementUpdater(this));
+			getPrecedingState().addStateEventHandler(new ElementUpdater(this));
 		}		
 	}
 	
