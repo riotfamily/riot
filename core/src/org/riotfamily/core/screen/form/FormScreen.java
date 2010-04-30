@@ -233,7 +233,9 @@ public class FormScreen extends AjaxFormController
 		
 		
 		// Recreate context to make sure it includes the objectId (in case of newly created objects)
-		context = context.createParentContext().createItemContext(form.getBackingObject());
+		if (form.isNew()) {
+			context = context.createParentContext().createItemContext(form.getBackingObject());
+		}
 
 		String focus = request.getParameter("focus");
 
