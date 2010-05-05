@@ -6,6 +6,7 @@ RiotCheckboxGroup.prototype = {
 		el.options = this.el.getElementsBySelector('input');
 		el.options.each(function(cb) {
 			el.form = cb.form;
+			cb.selected = cb.checked;
 			cb.observe('click', handler.bind(el, cb));
 		});
 	},
