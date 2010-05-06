@@ -31,6 +31,8 @@ public interface Page extends ContentContainerOwner {
 	
 	public String getPath();
 	
+	public String getUrl();
+	
 	public String getTitle();
 
 	public PageType getPageType();

@@ -180,6 +180,11 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	}
 	
 	@Transient
+	public String getUrl() {
+		return getPath() + getSite().getDefaultSuffix(this); 
+	}
+	
+	@Transient
 	public boolean isRequestable() {
 		return (isPublished() && site.isEnabled())
 			|| AccessController.isAuthenticatedUser();

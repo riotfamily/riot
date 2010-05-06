@@ -66,6 +66,10 @@ public class VirtualPage implements Page {
 		return title;
 	}
 	
+	public String getUrl() {
+		return getPath() + getSite().getDefaultSuffix(this); 
+	}
+	
 	public Site getSite() {
 		return parent.getSite();
 	}
