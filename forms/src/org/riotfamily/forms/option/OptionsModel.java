@@ -12,9 +12,11 @@
  */
 package org.riotfamily.forms.option;
 
+import java.io.Serializable;
+
 import org.riotfamily.forms.base.Element;
 
-public interface OptionsModel {
+public interface OptionsModel extends Serializable {
 
 	public Iterable<?> getOptions(Element.State state);
 

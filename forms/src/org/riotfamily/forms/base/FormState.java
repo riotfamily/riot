@@ -15,6 +15,7 @@ package org.riotfamily.forms.base;
 import javax.servlet.http.HttpSession;
 
 import org.riotfamily.forms.client.Html;
+import org.riotfamily.forms.client.ResourceManager;
 import org.riotfamily.forms.value.TypeInfo;
 import org.riotfamily.forms.value.Value;
 
@@ -34,9 +35,8 @@ public interface FormState {
 
 	String id();
 
-	void setContextPath(String contextPath);
+	FormServices getServices();
 	
-	void setResourcePath(String resourcePath);
-
-	String resolveResource(String string);
+	ResourceManager getResourceManager();
+	
 }

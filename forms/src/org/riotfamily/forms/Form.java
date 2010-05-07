@@ -13,7 +13,6 @@
 package org.riotfamily.forms;
 
 import java.lang.reflect.Method;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -22,8 +21,8 @@ import org.riotfamily.forms.base.FormElement;
 import org.riotfamily.forms.base.FormState;
 import org.riotfamily.forms.base.StateEvent;
 import org.riotfamily.forms.base.UserInterface;
-import org.riotfamily.forms.client.Action;
 import org.riotfamily.forms.client.ClientEvent;
+import org.riotfamily.forms.client.Update;
 import org.riotfamily.forms.value.Value;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.ConversionServiceFactory;
@@ -64,16 +63,16 @@ public class Form {
 		return formElement.getState(session, event.getFormId());
 	}
 	
-	public List<Action> dispatchEvent(HttpSession session, ClientEvent event) {
+	public Update dispatchEvent(HttpSession session, ClientEvent event) {
 		return dispatchEvent(getState(session, event), event);	
 	}
 	
-	public List<Action> dispatchEvent(FormState formState, ClientEvent event) {
+	public Update dispatchEvent(FormState formState, ClientEvent event) {
 		Element.State state = formState.getElementState(event.getStateId());
-		UserInterface ui = new UserInterface();
+		UserInterface ui = new UserInterface(formState);
 		invoke(state, event.getHandler(), ui, event.getFileOrValue());
 		state.handleStateEvent(new StateEvent(state, event.getHandler(), ui));
-		return ui.getActions();
+		return ui.getUpdate();
 	}
 	
 	private void invoke(Object obj, String name, Object... params) {

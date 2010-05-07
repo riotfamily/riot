@@ -222,7 +222,7 @@ public class Html extends DomBuilder<Html> {
 		return s;
 	}
 	
-	public Html inlineScripts() {
+	public Html embedScripts() {
 		if (scripts.length() > 0) {
 			elem("script").text(extractScripts());
 		}

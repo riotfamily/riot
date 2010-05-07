@@ -14,17 +14,17 @@ package org.riotfamily.common.ui;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.format.support.FormattingConversionService;
 
 public class SpringConversionRenderer implements Renderer {
 
 	private static TypeDescriptor TARGET_TYPE = TypeDescriptor.valueOf(String.class);
 	
-	private FormattingConversionService conversionService;
+	private ConversionService conversionService;
 
 	@Autowired
-	public void setConversionService(FormattingConversionService conversionService) {
+	public SpringConversionRenderer(ConversionService conversionService) {
 		this.conversionService = conversionService;
 	}
 	

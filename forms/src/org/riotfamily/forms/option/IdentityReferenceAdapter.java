@@ -16,6 +16,10 @@ import java.io.Serializable;
 
 public class IdentityReferenceAdapter implements ReferenceAdapter {
 
+	public boolean supports(Object object) {
+		return object instanceof Serializable;
+	}
+	
 	public Serializable createReference(Object object) {
 		return (Serializable) object;
 	}

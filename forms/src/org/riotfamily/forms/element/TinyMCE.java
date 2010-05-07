@@ -16,9 +16,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.forms.client.FormResource;
 import org.riotfamily.forms.client.Html;
-import org.riotfamily.forms.client.ScriptResource;
+import org.riotfamily.forms.client.Resources;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 public class TinyMCE extends TextArea {
@@ -36,12 +35,12 @@ public class TinyMCE extends TextArea {
 	
 	private Map<String, Object> config;
 	
-	@Override
-	protected FormResource getResource() {
-		return new ScriptResource("tinymce/jquery.tinymce.js", "jquery.tinymce");
-	}
-	
 	public class State extends TextArea.State {
+
+		@Override
+		public Resources getResources() {
+			return new Resources().script("tinymce/jquery.tinymce.js", "jquery.tinymce");
+		}
 		
 		@Override
 		protected void renderElement(Html html) {
@@ -62,7 +61,7 @@ public class TinyMCE extends TextArea {
 			merged.put("add_unload_trigger", false);
 			merged.put("submit_patch", false);
 			merged.put("relative_urls", false);
-			merged.put("script_url", getFormState().resolveResource("tinymce/tiny_mce_src.js"));
+			merged.put("script_url", getFormState().getResourceManager().resolveResource("tinymce/tiny_mce_src.js"));
 			merged.put("setup", "riot.form.tinymceSetup");
 			merged.put("theme_advanced_layout_manager", "RowLayout");
 			merged.put("theme_advanced_containers_default_align", "left");

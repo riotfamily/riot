@@ -12,48 +12,26 @@
  */
 package org.riotfamily.forms.element.support;
 
-import java.io.Serializable;
 import java.util.List;
 
-import org.riotfamily.common.ui.RenderingService;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.client.Html;
 import org.riotfamily.forms.option.DefaultOptionCreator;
-import org.riotfamily.forms.option.IdentityReferenceAdapter;
 import org.riotfamily.forms.option.Option;
 import org.riotfamily.forms.option.OptionCreator;
 import org.riotfamily.forms.option.OptionsModel;
-import org.riotfamily.forms.option.ReferenceAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class SelectElement extends Element {
 
-	private transient OptionsModel optionsModel;
+	private OptionsModel optionsModel;
 	
-	private transient ReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO Use ReferenceService or make this part of the Value class
-	
-	private transient RenderingService renderingService;
-	
-	private transient OptionCreator optionCreator = DefaultOptionCreator.defaultInstance();
-	
-	public ReferenceAdapter getReferenceAdapter() {
-		return referenceAdapter;
-	}
+	private OptionCreator optionCreator = DefaultOptionCreator.defaultInstance();
 	
 	public void setOptionsModel(OptionsModel optionsModel) {
 		this.optionsModel = optionsModel;
 	}
 
-	@Autowired
-	public void setRenderingService(RenderingService renderingService) {
-		this.renderingService = renderingService;
-	}
-	
-	public Object resolve(Serializable reference) {
-		return referenceAdapter.resolve(reference);
-	}
-		
 	protected abstract Class<?> getRequiredType();
 	
 	abstract class State extends Element.State {
@@ -73,7 +51,7 @@ public abstract class SelectElement extends Element {
 					Option option = optionCreator.createOption(item);
 					options.add(new OptionState(
 							id(), 
-							referenceAdapter.createReference(option.getValue()), 
+							getReferenceService().createReference(option.getValue()), 
 							String.valueOf(options.size()), 
 							renderLabel(option.getLabel()), 
 							isSelected(option.getValue(), value)));
@@ -83,10 +61,7 @@ public abstract class SelectElement extends Element {
 		}
 		
 		protected String renderLabel(Object label) {
-			if (renderingService != null) {
-				return renderingService.render(label);
-			}
-			return label != null ? label.toString() : "";
+			return getRenderingService().render(label);
 		}
 		
 		protected abstract boolean isSelected(Object option, Object value);

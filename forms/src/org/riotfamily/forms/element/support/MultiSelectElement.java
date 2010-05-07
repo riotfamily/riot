@@ -61,7 +61,7 @@ public abstract class MultiSelectElement extends SelectElement {
 			set.clear();
 			for (OptionState option : options) {
 				if (option.isSelected()) {
-					set.add(resolve(option.getReference()));
+					set.add(getReferenceService().resolve(option.getReference()));
 				}
 			}
 		}

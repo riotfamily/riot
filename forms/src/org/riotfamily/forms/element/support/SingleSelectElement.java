@@ -12,9 +12,8 @@
  */
 package org.riotfamily.forms.element.support;
 
-import java.io.Serializable;
-
 import org.riotfamily.forms.base.UserInterface;
+import org.riotfamily.forms.option.Reference;
 import org.springframework.util.ObjectUtils;
 
 public abstract class SingleSelectElement extends SelectElement {
@@ -45,7 +44,7 @@ public abstract class SingleSelectElement extends SelectElement {
 			select(options.get(0).getValue());
 		}
 		
-		protected Serializable getSelectedReference() {
+		protected Reference getSelectedReference() {
 			for (OptionState option : options) {
 				if (option.isSelected()) {
 					return option.getReference();
@@ -56,7 +55,7 @@ public abstract class SingleSelectElement extends SelectElement {
 
 		@Override
 		public Object getValue() {
-			return resolve(getSelectedReference());
+			return getReferenceService().resolve(getSelectedReference());
 		}
 		
 	}

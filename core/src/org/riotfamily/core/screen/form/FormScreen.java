@@ -40,8 +40,8 @@ import org.riotfamily.forms.FormSubmissionHandler;
 import org.riotfamily.forms.SubmitButton;
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.base.FormState;
-import org.riotfamily.forms.client.Action;
 import org.riotfamily.forms.client.ClientEvent;
+import org.riotfamily.forms.client.Update;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -113,8 +113,10 @@ public class FormScreen extends AbstractRiotScreen implements ItemScreen, BeanNa
 	public String renderForm(HttpServletRequest request, ModelMap model) throws IOException {
 		ScreenContext context = ScreenContextHolder.get();
 		FormState formState = form.createState(context.getObject(), context.getDao().getEntityClass());
-		formState.setContextPath(request.getContextPath());
-		formState.setResourcePath(riotRuntime.getResourcePath());
+		formState.getResourceManager()
+				.setContextPath(request.getContextPath())
+				.setResourcePath(riotRuntime.getResourcePath());
+		
 		formState.put(request.getSession()); //REVISIT Move to Form.java
 		model.put("form", form.render(formState));
 		//model.put("button", button.render(formState));
@@ -137,7 +139,7 @@ public class FormScreen extends AbstractRiotScreen implements ItemScreen, BeanNa
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, headers="X-Requested-With=XMLHttpRequest")
-	public @ResponseBody List<Action> handleEvent(HttpSession session, ClientEvent event) {
+	public @ResponseBody Update handleEvent(HttpSession session, ClientEvent event) {
 		return form.dispatchEvent(session, event);
 	}
 	

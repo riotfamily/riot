@@ -13,7 +13,6 @@
 package org.riotfamily.forms.element;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -21,10 +20,8 @@ import java.util.List;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.base.UserInterface;
-import org.riotfamily.forms.base.Element.State;
-import org.riotfamily.forms.client.FormResource;
 import org.riotfamily.forms.client.Html;
-import org.riotfamily.forms.client.ScriptResource;
+import org.riotfamily.forms.client.Resources;
 import org.riotfamily.forms.value.TypeInfo;
 import org.riotfamily.forms.value.Value;
 
@@ -45,16 +42,6 @@ public class ListEditor extends Element {
 
 	public void setItemEditor(Element itemEditor) {
 		this.itemEditor = itemEditor;
-	}
-		
-	@Override
-	public Collection<Element> getChildElements() {
-		return Collections.singleton(itemEditor);
-	}
-	
-	@Override
-	public FormResource getResource() {
-		return new ScriptResource("forms/listEditor.js");
 	}
 		
 	public class State extends Element.State {
@@ -102,6 +89,11 @@ public class ListEditor extends Element {
 				itemState.populate(itemValue);
 				c.add(itemValue.get());
 			}
+		}
+		
+		@Override
+		public Resources getResources() {
+			return new Resources().script("forms/listEditor.js");
 		}
 		
 		/**

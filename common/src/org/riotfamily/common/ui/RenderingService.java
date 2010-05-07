@@ -12,12 +12,14 @@
  */
 package org.riotfamily.common.ui;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 
 public class RenderingService implements InitializingBean {
@@ -26,6 +28,17 @@ public class RenderingService implements InitializingBean {
 
 	@Autowired
 	private ApplicationContext applicationContext;
+	
+	public RenderingService() {
+	}
+	
+	public RenderingService(Renderer... renderers) {
+		this.renderers = Arrays.asList(renderers);
+	}
+	
+	public static RenderingService newInstance(ConversionService conversionService) {
+		return new RenderingService(new SpringConversionRenderer(conversionService));
+	}
 	
 	public void setRenderers(List<Renderer> renderers) {
 		this.renderers = renderers;

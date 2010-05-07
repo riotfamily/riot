@@ -10,16 +10,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.riotfamily.forms.client;
+package org.riotfamily.forms.option;
 
-/**
- * Interface for external resources like JavaScript libraries or 
- * Cascading Stylesheets (CSS).
- */
-public interface FormResource {
+import java.io.Serializable;
+
+public class Reference implements Serializable {
+
+	private int adapterIndex;
 	
-	public void accept(ResourceVisitor visitor);
+	private Serializable data;
 
-	public String getUrl();
+	public Reference(int adapterIndex, Serializable data) {
+		this.adapterIndex = adapterIndex;
+		this.data = data;
+	}
+
+	public int getAdapterIndex() {
+		return adapterIndex;
+	}
+
+	public Serializable getData() {
+		return data;
+	}
 
 }

@@ -4,19 +4,13 @@ riot.form = (function($) {
 
 	var formUrl;
 	
+	var resourceBaseUrl;
+	
 	var handlers = {
 		invoke: function(el, data) {
 			el[data.method].apply(el, data.args);
 		},
-		/*
-		each: function(el, data) {
-			el.find(data.selector).each(function() {
-				var el = $(this);
-				el[data.method].apply(el, data.args);
-			})
-		},
-		*/
-		eval: function(el, data) {
+		'eval': function(el, data) {
 			eval(data.script);
 		},
 		schedule: function(el, data) {
@@ -24,7 +18,7 @@ riot.form = (function($) {
 				el.submitEvent(data.handler, data.value);
 			}, data.millis);
 		}
-	}
+	};
 	
 	function getElement(id, selector) {
 		var el = $('#' + id);
@@ -34,11 +28,64 @@ riot.form = (function($) {
 		return el;
 	}
 	
-	function processAction() {
-		if (handlers[this.command]) {
-			var el = getElement(this.id, this.selector);
-			handlers[this.command](el, this.data);
+	function loadStylesheets(stylesheets) {
+		$.each(stylesheets, function() { 
+			$('<link>', {rel:  'stylesheet', type: 'text/css', href: resourceBaseUrl + this}).appendTo('head');
+		});	
+	}
+	
+	function isPresent(exp) {
+		var s = exp.split('.');
+		exp = '';
+		for (var i = 0; i < s.length; i++) {
+			exp += s[i];
+			if (eval('typeof ' + exp) == 'undefined') {
+				return false;
+			}
+			exp += '.';
 		}
+		return true;
+	}
+	
+	function loadScripts(scripts, callback) {
+		if (scripts && scripts.length > 0) {
+			var s = scripts.shift();
+			if (!s.test || !isPresent(s.test)) {
+				$.getScript(resourceBaseUrl + s.url, function() {
+					loadScripts(scripts, callback);
+				});
+			}
+			else {
+				loadScripts(scripts, callback);
+			}
+		}
+		else if (callback) {
+			callback();
+		}
+	} 
+	
+	function loadResources(resources, callback) {
+		if (resources.stylesheets) {
+			loadStylesheets(resources.stylesheets);
+		}
+		loadScripts(resources.scripts, callback);
+	}
+	
+	function processActions(actions) {
+		if (actions) {
+			$.each(actions, function() {
+				if (handlers[this.command]) {
+					var el = getElement(this.id, this.selector);
+					handlers[this.command](el, this.data);
+				}
+			});
+		}
+	}
+	
+	function processUpdate(update) {
+		loadResources(update, function() {
+			processActions(update.actions);
+		});
 	}
 	
 	$.fn.submitEvent = function(handler, value) {
@@ -51,12 +98,10 @@ riot.form = (function($) {
 				value: value
 			},
 			dataType: 'json',
-			success: function(actions) {
-				$.each(actions, processAction);
-			}
+			success: processUpdate
 		});
 		return this;
-	}
+	};
 
 		
 	// ------------------------------------------------------------------------
@@ -75,14 +120,18 @@ riot.form = (function($) {
 			formUrl = url;
 		},
 		
+		setResourceBaseUrl: function(url) {
+			resourceBaseUrl = url;
+		},
+		
 		/**
-		 * Usually actions are processed as result of a submitEvent() call. This
+		 * Usually updates are processed as result of a submitEvent() call. This
 		 * function allows the server to use the same functionality inside an 
 		 * init-script.
 		 */
-		processActions: function(actions) {
-			$.each(actions, processAction);
-		},
+		processUpdate: processUpdate,
+		
+		loadScripts: loadScripts,
 		
 		/**
 		 * Setup-callback for TinyMCE instances that registers an onchange and
@@ -98,8 +147,9 @@ riot.form = (function($) {
 			e.onChange.add(save);
 			e.onInit.add(function() {
 				e.getWin().onblur = save;
-			})
+			});
 		}
-	}
+	};
 	
 })(jQuery);
+

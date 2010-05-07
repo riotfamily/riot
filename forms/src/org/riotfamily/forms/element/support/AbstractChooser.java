@@ -12,24 +12,19 @@
  */
 package org.riotfamily.forms.element.support;
 
-import java.io.Serializable;
-
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.client.Html;
-import org.riotfamily.forms.option.IdentityReferenceAdapter;
-import org.riotfamily.forms.option.ReferenceAdapter;
+import org.riotfamily.forms.option.Reference;
 
 public class AbstractChooser extends Element {
 
-	private transient ReferenceAdapter referenceAdapter = new IdentityReferenceAdapter(); //TODO Use ReferenceService or make this part of the Value class
-	
 	public class State extends Element.State {
 
-		private Serializable reference;
+		private Reference reference;
 		
 		@Override
 		public void setValue(Object value) {
-			reference = referenceAdapter.createReference(value);
+			reference = getReferenceService().createReference(value);
 		}
 		
 		@Override
@@ -39,7 +34,7 @@ public class AbstractChooser extends Element {
 		
 		@Override
 		public Object getValue() {
-			return referenceAdapter.resolve(reference);
+			return getReferenceService().resolve(reference);
 		}
 		
 	}

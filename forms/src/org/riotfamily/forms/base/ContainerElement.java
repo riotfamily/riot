@@ -12,7 +12,6 @@
  */
 package org.riotfamily.forms.base;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.riotfamily.common.util.Generics;
@@ -29,12 +28,7 @@ public abstract class ContainerElement extends Element {
 	public void add(Element element) {
 		childElements.add(element);
 	}
-	
-	@Override
-	public Collection<Element> getChildElements() {
-		return childElements;
-	}
-		
+			
 	protected class State extends Element.State {
 
 		protected State() {

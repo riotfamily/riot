@@ -14,15 +14,10 @@ package org.riotfamily.forms.element;
 
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.base.UserInterface;
-import org.riotfamily.forms.base.Element.State;
 import org.riotfamily.forms.client.Html;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.ConversionServiceFactory;
 
 public class TextField extends Element {
 
-	private transient ConversionService conversionService = ConversionServiceFactory.createDefaultConversionService();
-	
 	public class State extends Element.State {
 
 		private String text;
@@ -30,7 +25,7 @@ public class TextField extends Element {
 		@Override
 		public void setValue(Object value) {
 			if (value != null) {
-				text = conversionService.convert(value, String.class);
+				text = getConversionService().convert(value, String.class);
 			}
 			else {
 				text = null;
@@ -53,7 +48,7 @@ public class TextField extends Element {
 		@Override
 		public Object getValue() {
 			if (getTypeInfo().getType() != null) {
-				return conversionService.convert(text, getTypeInfo().getType());
+				return getConversionService().convert(text, getTypeInfo().getType());
 			}
 			return text;
 		}

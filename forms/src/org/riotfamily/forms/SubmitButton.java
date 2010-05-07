@@ -14,13 +14,12 @@ package org.riotfamily.forms;
 
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.base.UserInterface;
-import org.riotfamily.forms.base.Element.State;
 import org.riotfamily.forms.client.Html;
 import org.riotfamily.forms.value.Value;
 
 public class SubmitButton extends Element {
 	
-	private transient String label;
+	private String label;
 	
 	private transient FormSubmissionHandler submissionHandler;
 

@@ -16,7 +16,10 @@ import java.io.Serializable;
 
 public interface ReferenceAdapter {
 
+	public boolean supports(Object object);
+	
 	public Serializable createReference(Object object);
 	
 	public Object resolve(Serializable reference);
+
 }

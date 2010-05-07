@@ -12,9 +12,6 @@
  */
 package org.riotfamily.forms.base;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.riotfamily.forms.client.Html;
 import org.riotfamily.forms.value.TypeHint;
 import org.riotfamily.forms.value.TypeInfo;
@@ -38,11 +35,10 @@ public abstract class ElementWrapper extends Element {
 		this.wrappedElement = element;
 	}
 	
-	@Override
-	public Collection<Element> getChildElements() {
-		return Collections.singleton(wrappedElement);
+	protected Element getWrappedElement() {
+		return wrappedElement;
 	}
-
+	
 	protected class State extends Element.State {
 
 		private Element.State wrappedState;

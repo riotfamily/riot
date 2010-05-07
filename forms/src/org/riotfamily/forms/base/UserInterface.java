@@ -17,6 +17,8 @@ import java.util.List;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.client.Action;
 import org.riotfamily.forms.client.Html;
+import org.riotfamily.forms.client.Resources;
+import org.riotfamily.forms.client.Update;
 import org.springframework.util.StringUtils;
 
 /**
@@ -26,11 +28,14 @@ public class UserInterface {
 
 	private List<Action> actions = Generics.newArrayList();
 	
-	public UserInterface() {
+	private FormState formState;
+	
+	public UserInterface(FormState formState) {
+		this.formState = formState;
 	}
 	
-	public List<Action> getActions() {
-		return actions;
+	public Update getUpdate() {
+		return new Update(new Resources(), actions);
 	}
 	
 	/**

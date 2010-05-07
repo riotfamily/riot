@@ -18,20 +18,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Writer;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormSubmissionHandler;
 import org.riotfamily.forms.SubmitButton;
 import org.riotfamily.forms.base.Binding;
 import org.riotfamily.forms.base.FormState;
-import org.riotfamily.forms.client.Action;
 import org.riotfamily.forms.client.ClientEvent;
+import org.riotfamily.forms.client.Update;
 import org.riotfamily.forms.element.Datepicker;
 import org.riotfamily.forms.element.FileUpload;
 import org.riotfamily.forms.element.ListEditor;
@@ -41,8 +40,6 @@ import org.riotfamily.forms.element.SelectBox;
 import org.riotfamily.forms.element.SwitchElement;
 import org.riotfamily.forms.element.TextArea;
 import org.riotfamily.forms.element.TextField;
-import org.riotfamily.forms.element.support.DependentElement;
-import org.riotfamily.forms.option.DependentOptionsModel;
 import org.riotfamily.forms.option.OptionsModel;
 import org.riotfamily.forms.option.StaticOptionsModel;
 import org.slf4j.Logger;
@@ -76,12 +73,14 @@ public abstract class AbstractFormTestController implements FormSubmissionHandle
 		selectBox.setOptionsModel(options);
 		form.add(new Binding("select", selectBox));
 
+		/*
 		form.add(new DependentElement(new Binding("select2", new SelectBox(new DependentOptionsModel<String>() {
 			@Override
 			protected Iterable<?> getOptions(String s) {
 				return Collections.singletonList(s);
 			}
 		}))));
+		*/
 		
 		form.add(new Binding("file", new FileUpload()));
 		//form.add(new Binding("tinymce", new TinyMCE()));
@@ -118,7 +117,7 @@ public abstract class AbstractFormTestController implements FormSubmissionHandle
 	}
 		
 	@RequestMapping(method=RequestMethod.GET, headers="X-Requested-With=XMLHttpRequest")
-	public @ResponseBody List<Action> handleEvent(HttpSession session, ClientEvent event) throws Exception {
+	public @ResponseBody Update handleEvent(HttpSession session, ClientEvent event) throws Exception {
 		serializeState(session, event);
 		return form.dispatchEvent(session, event);
 	}
@@ -129,6 +128,7 @@ public abstract class AbstractFormTestController implements FormSubmissionHandle
 		FormState formState = form.getState(session, event);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		new ObjectOutputStream(out).writeObject(formState);
+		log.info("FormState size in session {}", FormatUtils.formatByteSize(out.size()));
 		formState = (FormState) new ObjectInputStream(new ByteArrayInputStream(out.toByteArray())).readObject();
 		formState.put(session);
 	}

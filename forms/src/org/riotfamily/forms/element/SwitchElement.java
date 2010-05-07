@@ -12,15 +12,13 @@
  */
 package org.riotfamily.forms.element;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.base.Binding;
 import org.riotfamily.forms.base.Element;
+import org.riotfamily.forms.base.ElementWrapper;
 import org.riotfamily.forms.base.StateEvent;
 import org.riotfamily.forms.base.StateEventHandler;
 import org.riotfamily.forms.client.Html;
@@ -40,12 +38,7 @@ public class SwitchElement extends Element {
 	public SwitchElement() {
 		selectBox = new SelectBox(caseContainer);
 	}
-	
-	@Override
-	public Collection<Element> getChildElements() {
-		return Arrays.asList(binding, caseContainer);
-	}
-	
+		
 	public SwitchElement(String discriminator) {
 		this();
 		setDiscriminator(discriminator);
@@ -111,16 +104,7 @@ public class SwitchElement extends Element {
 	private class CaseContainer extends Element implements OptionsModel {
 		
 		private List<Case> cases = Generics.newArrayList();
-		
-		@Override
-		public Collection<Element> getChildElements() {
-			List<Element> elements = Generics.newArrayList();
-			for (Case c : cases) {
-				elements.add(c.getElement());
-			}
-			return elements;
-		}
-		
+				
 		public class State extends Element.State {
 			
 			private Map<String, Element.State> states = Generics.newHashMap();
@@ -130,7 +114,7 @@ public class SwitchElement extends Element {
 			@Override
 			protected void onInit() {
 				for (Case c : cases) {
-					states.put(c.discriminator, c.element.createState(this));
+					states.put(c.discriminator, c.getElement().createState(this));
 				}
 			}
 			
@@ -166,21 +150,19 @@ public class SwitchElement extends Element {
 		}
 	}
 	
-	public class Case implements Serializable {
+	public class Case extends ElementWrapper {
 		
 		private String label;
 		
 		private String discriminator;
 		
-		private Element element;
-
 		public Case() {
 		}
 		
 		public Case(String label, String discriminator, Element element) {
+			super(element);
 			this.label = label;
 			this.discriminator = discriminator;
-			this.element = element;
 		}
 
 		@OptionLabel
@@ -194,7 +176,7 @@ public class SwitchElement extends Element {
 		}
 
 		public Element getElement() {
-			return element;
+			return getWrappedElement();
 		}
 
 	}

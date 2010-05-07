@@ -12,14 +12,19 @@
  */
 package org.riotfamily.forms.client;
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.4
- */
-public interface ResourceVisitor {
+import java.util.List;
 
-	public void visitStyleSheet(StylesheetResource res);
+public class Update extends Resources {
 	
-	public void visitScript(ScriptResource res);
+	private List<Action> actions;
 
+	public Update(Resources resources, List<Action> actions) {
+		super(resources);
+		this.actions = actions;
+	}
+
+	public List<Action> getActions() {
+		return actions;
+	}
+	
 }

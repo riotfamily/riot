@@ -14,19 +14,24 @@ package org.riotfamily.forms.base;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
+import org.riotfamily.common.ui.RenderingService;
 import org.riotfamily.common.util.ExceptionUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.forms.client.FormResource;
 import org.riotfamily.forms.client.Html;
+import org.riotfamily.forms.client.Resources;
+import org.riotfamily.forms.option.ReferenceService;
 import org.riotfamily.forms.value.TypeInfo;
 import org.riotfamily.forms.value.Value;
+import org.springframework.core.GenericCollectionTypeResolver;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Base class for all form elements. Elements themselves are stateless and must
@@ -34,37 +39,18 @@ import org.springframework.util.ClassUtils;
  */
 public abstract class Element implements Serializable {
 	
-	private boolean verified;
-	
 	/**
 	 * Creates a new state instance for the given value. After 
 	 * calling {@link #createState()}, the init() method is invoked,
 	 * passing the specified parent.
 	 */
 	final State createAndInitState(State parent) {
-		verifyParentImplementation(parent);
 		FormState formState = parent.getFormState();
 		State state = createState();
 		state.init(parent, formState);
 		return state;
 	}
 	
-	/**
-	 * Verifies that the getChildElements() method the parent element is 
-	 * implemented correctly.
-	 */
-	private void verifyParentImplementation(State parent) {
-		if (!verified) {
-			Collection<Element> childElements = parent.getElement().getChildElements();
-			String message = parent.getElement().getClass()  
-					+ ".getChildElements() must return a Collection containing " + this;
-			
-			Assert.notNull(childElements, message);
-			Assert.state(childElements.contains(this), message);
-			verified = true;
-		}
-	}
-
 	public final Element.State createState(Element.State parent) {
 		return createAndInitState(parent);
 	}
@@ -91,26 +77,40 @@ public abstract class Element implements Serializable {
 		}
 	}
 	
-	/**
-	 * Subclasses may overwrite this method if the element depends on external
-	 * resources like CSS or JavaScript files. The default implementation calls
-	 * {@link #getResource()}.
-	 */
-	public Collection<FormResource> getResources() {
-		FormResource res = getResource();
-		return res != null ? Collections.singleton(res) : null;
-	}
-
-	/**
-	 * The default implementation returns <code>null</code>.
-	 * @see #getResources()
-	 */
-	protected FormResource getResource() {
-		return null;
-	}
-	
-	public Collection<Element> getChildElements() {
-		return null;
+	protected void collectNestedElements(Collection<Element> elements) {
+		if (elements.contains(this)) {
+			return;
+		}
+		elements.add(this);
+		try {
+			Class<?> c = getClass();
+			while (Element.class.isAssignableFrom(c)) {
+				for (Field field : c.getDeclaredFields()) {
+					ReflectionUtils.makeAccessible(field);
+					if (Element.class.isAssignableFrom(field.getType())) {
+						Element el = (Element) field.get(this);
+						if (el != null) {
+							el.collectNestedElements(elements);
+						}
+					}
+					else if (Collection.class.isAssignableFrom(field.getType())) {
+						Class<?> itemType = GenericCollectionTypeResolver.getCollectionFieldType(field);
+						if (Element.class.isAssignableFrom(itemType)) {	
+							for (Element el : (Collection<? extends Element>) field.get(this)) {
+								if (el != null) {
+									el.collectNestedElements(elements);
+								}
+							}
+						}
+					}
+				}
+				c = c.getSuperclass();
+			}
+		}
+		catch (Exception e) {
+			throw ExceptionUtils.wrapReflectionException(e);
+		}
+		
 	}
 	
 	public abstract class State implements Serializable {
@@ -226,11 +226,26 @@ public abstract class Element implements Serializable {
 		
 		/**
 		 * Enables or disables the element. Disabling an element also implicitly 
-		 * disables its decendants, as {@link #isEnabled()} takes the parent state
+		 * disables its descendants, as {@link #isEnabled()} takes the parent state
 		 * into account. 
 		 */
 		public final void setEnabled(boolean enabled) {
 			this.enabled = enabled;
+		}
+		
+		public Resources getResources() {
+			return null;
+		}
+		
+		protected Resources collectResources(Resources res) {
+			res.add(getResources());
+			List<Element.State> childStates = getChildStates();
+			if (childStates != null) {
+				for (Element.State child : childStates) {
+					child.collectResources(res);
+				}
+			}
+			return res;
 		}
 		
 		/**
@@ -330,6 +345,7 @@ public abstract class Element implements Serializable {
 		 * to return a reference to itself.
 		 */
 		FormState getFormStateInternal() {
+			Assert.notNull(formState, "FormState can't be accessed before init() is called.");
 			return formState;
 		}
 		
@@ -368,6 +384,18 @@ public abstract class Element implements Serializable {
 				return id != null && id.equals(getClass().cast(obj).id);
 			}
 			return false;
+		}
+		
+		protected final ConversionService getConversionService() {
+			return getFormState().getServices().getConversionService();
+		}
+		
+		protected final RenderingService getRenderingService() {
+			return getFormState().getServices().getRenderingService();
+		}
+		
+		protected final ReferenceService getReferenceService() {
+			return getFormState().getServices().getReferenceService();
 		}
 	}
 

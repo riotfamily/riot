@@ -14,6 +14,8 @@ package org.riotfamily.forms.element.support;
 
 import java.io.Serializable;
 
+import org.riotfamily.forms.option.Reference;
+
 public class OptionState implements Serializable {
 
 	private String groupName;
@@ -24,9 +26,9 @@ public class OptionState implements Serializable {
 	
 	private boolean selected;
 	
-	private Serializable reference;
+	private Reference reference;
 	
-	public OptionState(String groupName, Serializable reference, String value, String label, boolean selected) {
+	public OptionState(String groupName, Reference reference, String value, String label, boolean selected) {
 		this.groupName = groupName;
 		this.reference = reference;
 		this.value = value;
@@ -38,7 +40,7 @@ public class OptionState implements Serializable {
 		return groupName;
 	}
 	
-	public Serializable getReference() {
+	public Reference getReference() {
 		return reference;
 	}
 	

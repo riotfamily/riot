@@ -12,39 +12,27 @@
  */
 package org.riotfamily.forms.client;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.riotfamily.common.util.FormatUtils;
 import org.springframework.util.Assert;
 
 /**
  *
  */
-public class ScriptResource implements FormResource {
+public class ScriptResource implements Serializable {
 	
 	private String url;
 	
 	private String test;
 	
-	private Collection<FormResource> dependencies;
-	
 	public ScriptResource(String url) {
-		this.url = url;
+		this(url, null);
 	}
 	
-	public ScriptResource(String url, FormResource... dependencies) {
-		this(url, null, dependencies);
-	}
-	
-	public ScriptResource(String url, String test, FormResource... dependencies) {
+	public ScriptResource(String url, String test) {
 		Assert.notNull(url);
 		this.url = url;
 		this.test = test;
-		if (dependencies != null && dependencies.length > 0) {
-			this.dependencies = Arrays.asList(dependencies);
-		}
 	}
 	
 	public String getUrl() {
@@ -54,19 +42,10 @@ public class ScriptResource implements FormResource {
 	public String getTest() {
 		return this.test;
 	}
-
-	@JsonIgnore
-	public Collection<FormResource> getDependencies() {
-		return this.dependencies;
-	}
-
-	public void accept(ResourceVisitor vistor) {
-		vistor.visitScript(this);
-	}
 	
 	@Override
 	public String toString() {
-		return FormatUtils.toJSON(this);
+		return url;
 	}
 	
 	@Override

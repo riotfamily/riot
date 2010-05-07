@@ -12,7 +12,9 @@
  */
 package org.riotfamily.forms.option;
 
-public interface OptionCreator {
+import java.io.Serializable;
+
+public interface OptionCreator extends Serializable {
 
 	public Option createOption(Object object);
 

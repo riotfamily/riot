@@ -12,18 +12,55 @@
  */
 package org.riotfamily.forms.client;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Set;
 
-public final class Resources {
+import org.riotfamily.common.util.Generics;
 
-	private Resources() {
+
+public class Resources implements Serializable {
+
+	private Set<ScriptResource> scripts = Generics.newLinkedHashSet();
+	
+	private Set<String> stylesheets = Generics.newLinkedHashSet();
+
+	public Resources() {
 	}
 	
-	public static final ScriptResource JQUERY_UI = 
-			new ScriptResource("jquery/ui/jquery-ui.js", "jQuery.ui",
-			new StylesheetResource("jquery/ui/jquery-ui.css"));
+	public Resources(Resources other) {
+		add(other);
+	}
+
+	public Resources add(Resources other) {
+		if (other != null) { 
+			scripts.addAll(other.scripts);
+			stylesheets.addAll(other.stylesheets);
+		}
+		return this;
+	}
 	
-	public static final ScriptResource RIOT_FORMS = 
-			new ScriptResource("forms/form.js", "riot.form", JQUERY_UI, 
-			new StylesheetResource("forms/form.css"));
+	public Resources script(String url) {
+		scripts.add(new ScriptResource(url));
+		return this;
+	}
+	
+	public Resources script(String url, String test) {
+		scripts.add(new ScriptResource(url, test));
+		return this;
+	}
+	
+	public Resources stylesheet(String url) {
+		stylesheets.add(url);
+		return this;
+	}
+	
+	public Collection<ScriptResource> getScripts() {
+		return scripts;
+	}
+	
+	public Collection<String> getStylesheets() {
+		return stylesheets;
+	}
 	
 }
