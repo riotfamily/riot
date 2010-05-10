@@ -4,7 +4,7 @@ var initListEditor = function(id) {
     
     var tr = '#'+id+'>li>table>tbody>tr';
     
-    $$(tr+'>td.button', tr+'>td>input.button').each(function(b) {
+    $$(tr+'>td.button div', tr+'>td>input.button').each(function(b) {
         var td = b.tagName == 'TD' ? b : b.up('td');
         b.onmouseover = td.addClassName.bind(td, 'hover');
     	b.onmouseout = td.removeClassName.bind(td, 'hover');
@@ -13,10 +13,10 @@ var initListEditor = function(id) {
     	el[(state ? 'add' : 'remove') + 'ClassName'](className);
     }
     var updateClassNames = function() {
-    	$$(tr+'>td.up').each(function(b, i) {
+    	$$(tr+'>td.up div').each(function(b, i) {
     		toggle(b, 'disabled', i == 0);
         });
-    	var down = $$(tr+'>td.down');
+    	var down = $$(tr+'>td.down div');
     	var last = down.length-1;
     	down.each(function(b, i) {
     		toggle(b, 'disabled', i == last);
@@ -24,7 +24,7 @@ var initListEditor = function(id) {
         if (order) order.value = $$('#' + id + '>li').pluck('id').join(',') + ',';
     };
     
-    $$(tr+'>td.up').invoke('observe', 'click', function() {
+    $$(tr+'>td.up div').invoke('observe', 'click', function() {
         this.removeClassName('hover');
         var li = this.up('li');
         var prev = li.previous('li');
@@ -32,7 +32,7 @@ var initListEditor = function(id) {
         updateClassNames();
         if (li.viewportOffset()[1] < 0) li.scrollTo();
     });
-    $$(tr+'>td.down').invoke('observe', 'click', function() {
+    $$(tr+'>td.down div').invoke('observe', 'click', function() {
         this.removeClassName('hover');
         var li = this.up('li');
         var next = li.next('li');

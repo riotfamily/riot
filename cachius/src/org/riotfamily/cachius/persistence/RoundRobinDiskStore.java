@@ -26,10 +26,34 @@ public class RoundRobinDiskStore implements DiskStore {
 	private int maxFilesPerDir = 500;
 	
 	public RoundRobinDiskStore(File baseDir, int depth) {
-		this.baseDir = baseDir;
+		setBaseDir(baseDir);
+		setDepth(depth);
+	}
+	
+	private void setBaseDir(File baseDir) {
+		this.baseDir = new File(baseDir, "items");
+		delete(this.baseDir);
+		this.baseDir.mkdirs();
+	}
+	
+	public File getBaseDir() {
+		return baseDir;
+	}
+	
+	private void setDepth(int depth) {
 		this.depth = depth;
 		this.index = new int[depth];
 	}
+	
+	private static void delete(File f) {
+        if (f.isDirectory()) {
+            File[] entries = f.listFiles();
+            for (int i = 0; i < entries.length; i++) {
+            	delete(entries[i]);
+            }
+        }
+        f.delete();
+    }
 	
 	public void setMaxFilesPerDir(int maxFilesPerDir) {
 		this.maxFilesPerDir = maxFilesPerDir;

@@ -117,17 +117,16 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	
 	/**
 	 * Creates the given directory and all parent directories (unless they 
-	 * already exist). If the directory can't be created or is not writable
-	 * an error message is logged. 
+	 * already exist). If the directory can't be created an IOException is
+	 * thrown.
 	 */
-	protected File createDir(File dir) {
-		if (!(dir.exists() || dir.mkdirs())) {
-			log.error("Error creating directory: " + dir.getPath());
+	protected File createDir(File dir) throws IOException {
+		if (dir.exists()) {
+			return dir;
 		}
-		if (!dir.canWrite()) {
-			log.error("Directory " + dir.getPath() 
-					+ " is not writable for user " 
-					+ System.getProperty("user.name"));
+		if (!dir.mkdirs()) {
+			throw new IOException("Can't create directory " + dir.getPath()
+					+ " as user " + System.getProperty("user.name"));
 		}
 		return dir;
 	}
@@ -146,7 +145,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	 * new directory when the number of files exceeds the 
 	 * {@link #setMaxFilesPerDir(int) maxFilesPerDir} value.
 	 */
-	protected File getStorageDir() {
+	protected File getStorageDir() throws IOException {
 		if (shouldUseNewStorageDir()) {
 			synchronized (this) {
 				while (shouldUseNewStorageDir()) {
@@ -162,12 +161,15 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	 * Returns an empty new directory with an unique name within the current
 	 * storageDir. 
 	 */
-	protected File getUniqueDir() {
+	protected File getUniqueDir() throws IOException {
 		File parent = getStorageDir();
 		for (int i = 0; i < maxFilesPerDir; i++) {
 			File dir = new File(parent, dirNameGenerator.generate());
 			if (!dir.exists()) {
-				dir.mkdir();
+				if (!dir.mkdirs()) {
+					throw new IOException("Can't create directory " + dir.getPath()
+							+ " as user " + System.getProperty("user.name"));
+				}
 				return dir;
 			}
 		}

@@ -348,35 +348,33 @@ table.item td.removeButton {
     border-bottom: 1px solid #dadada;
     xmargin-bottom: 1px;
 }
-
-.listEditor td.button,
-.listEditor td.removeButton {
+.listEditor td.down {
+    vertical-align: bottom;
+}
+.listEditor td.up div,
+.listEditor td.down div {
     width: 32px;
+    height: 16px;
     background-color: #ebebeb;
     background-repeat: no-repeat;
     background-position: 0 center;
-    overflow: hidden;   
+    overflow: hidden;
 }
-.listEditor td.hover,
 .listEditor td.hover div {
     color: #fff;
     background-color: #8eb5e5;
     background-position: -32px center;
 }
 
-.listEditor td.up, 
-.listEditor td.down {
-    height: 16px;
-}
-.listEditor td.up {
+.listEditor td.up div {
     border-bottom: 1px solid #fff;
     background-image: url(images/list_up.gif);
 }
-.listEditor td.down {
+.listEditor td.down div {
     border-top: 1px solid #fff;
     background-image: url(images/list_down.gif);
 }
-.listEditor td.disabled {
+.listEditor td.button div.disabled {
     background-color: #ebebeb;
     background-position: -64px center;
 }
