@@ -183,7 +183,13 @@
 		</s:commands>
 		<s:form id="page" icon="page">
 		    <s:elements>
-	            <!--  TODO -->
+		    	<bean class="org.riotfamily.forms.base.Binding">
+                    <property name="target" value="pathComponent" />
+                    <property name="element">
+                        <bean class="org.riotfamily.forms.element.TextField" />
+                    </property>
+                </bean>
+	            <bean class="org.riotfamily.pages.riot.form.PagePropertiesElement" />
 	        </s:elements>
 		</s:form>
 	</s:list>

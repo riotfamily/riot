@@ -14,6 +14,8 @@ package org.riotfamily.forms.client;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Templates;
@@ -25,11 +27,15 @@ import javax.xml.transform.stream.StreamSource;
 import org.codehaus.jackson.annotate.JsonValue;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 
 public class Html extends DomBuilder<Html> {
 
+	private static Pattern messageKeyPattern = Pattern.compile("^\\{(.*?)(?::(.*))?\\}$");
+	
 	private static Templates templates;
 	static {
 		try {
@@ -43,6 +49,8 @@ public class Html extends DomBuilder<Html> {
 	
 	private MessageSource messageSource;
 
+	private String messageKeyPrefix;
+	
 	private Locale locale;
 	
 	private IdGenerator idGenerator;
@@ -58,6 +66,12 @@ public class Html extends DomBuilder<Html> {
 		super(child, parent);
 		this.idGenerator = parent.idGenerator;
 		this.scripts = parent.scripts;
+		this.messageKeyPrefix = parent.messageKeyPrefix;
+	}
+	
+	public Html setMessageKeyPrefix(String messageKeyPrefix) {
+		this.messageKeyPrefix = messageKeyPrefix;
+		return this;
 	}
 	
 	@Override
@@ -77,12 +91,22 @@ public class Html extends DomBuilder<Html> {
 		return this;
 	}
 	
-	public void setMessageKeyPrefix(String prefix) {
-		
-	}
-
-	private String message(String defaultText) {
-		return message(FormatUtils.toCssClass(defaultText), defaultText);
+	private String message(String s) {
+		//TODO Refactor to use the same code for list columns
+		Matcher m = messageKeyPattern.matcher(s);
+		if (m.matches()) {
+			String key = m.group(1);
+			String defaultText = m.group(2);
+			if (defaultText == null) {
+				defaultText = FormatUtils.xmlToTitleCase(StringUtils.unqualify(key));
+			}
+			if (key.startsWith(".")) {
+				Assert.notNull(messageKeyPrefix, "Key is relative but no messageKeyPrefix has been set.");
+				key = messageKeyPrefix + key;
+			}
+			return message(key, defaultText);
+		}
+		return s;
 	}
 	
 	private String message(String labelKey, String defaultText) {
@@ -95,19 +119,11 @@ public class Html extends DomBuilder<Html> {
 	public Html messageText(String defaultText) {
 		return text(message(defaultText));
 	}
-	
-	public Html messageText(String labelKey, String defaultText) {
-		return text(message(labelKey, defaultText));
-	}
-	
+		
 	public Html messageAttr(String name, String defaultText) {
 		return attr(name, message(defaultText));
 	}
-	
-	public Html messageAttr(String name, String labelKey, String defaultText) {
-		return attr(name, message(labelKey, defaultText));
-	}
-	
+		
 	public Html div() {
 		return elem("div");
 	}
@@ -140,18 +156,18 @@ public class Html extends DomBuilder<Html> {
 		return td().cssClass(className);
 	}
 	
-	public Html label(String defaultText) {
-		return label(defaultText, idGenerator.next());
+	public Html label(String text) {
+		return label(text, idGenerator.next());
 	}
 	
-	public Html labelPrev(String defaultText) {
-		return label(defaultText, idGenerator.prev());
+	public Html labelPrev(String text) {
+		return label(text, idGenerator.prev());
 	}
 	
-	protected Html label(String defaultText, String inputId) {
+	protected Html label(String text, String inputId) {
 		return elem("label")
 				.attr("for", inputId)
-				.messageText(defaultText);
+				.messageText(text);
 	}
 	
 	public Html input(String type, String value) {

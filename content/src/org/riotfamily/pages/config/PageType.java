@@ -14,6 +14,7 @@ package org.riotfamily.pages.config;
 
 import java.util.List;
 
+import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
@@ -22,13 +23,13 @@ public interface PageType {
 
 	public String getName();
 
-	//public Element getForm();
+	public NestedForm getForm();
 	
 	public Object getHandler();
 	
 	public PageType getParent();
 	
-	public List<? extends PageType> getChildTypes();
+	public List<PageType> getChildTypes();
 
 	public Page getPage(Site site, Object object);
 	

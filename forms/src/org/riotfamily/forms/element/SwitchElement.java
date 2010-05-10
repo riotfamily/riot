@@ -29,14 +29,17 @@ import org.riotfamily.forms.value.Value;
 
 public class SwitchElement extends Element {
 
+	private CaseContainer caseContainer;
+
 	private SelectBox selectBox;
 	
 	private Binding binding;
 	
-	private CaseContainer caseContainer = new CaseContainer();
-	
 	public SwitchElement() {
+		caseContainer = new CaseContainer();
 		selectBox = new SelectBox(caseContainer);
+		binding = new Binding();
+		binding.setElement(selectBox);
 	}
 		
 	public SwitchElement(String discriminator) {
@@ -45,7 +48,11 @@ public class SwitchElement extends Element {
 	}
 	
 	public final void setDiscriminator(String name) {
-		binding = new Binding(name, selectBox);
+		binding.setTarget(name);
+	}
+	
+	public final void setLabel(String label) {
+		binding.setLabel(label);
 	}
 	
 	public SwitchElement addCase(Case c) {
@@ -87,12 +94,6 @@ public class SwitchElement extends Element {
 			containerState.setValue(value);
 		}
 		
-		@Override
-		public void populate(Value value) {
-			bindingState.populate(value);
-			containerState.populate(value);
-		}
-
 		@Override
 		protected void renderElement(Html html) {
 			bindingState.render(html);

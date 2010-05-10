@@ -16,7 +16,6 @@ import org.riotfamily.common.web.mvc.multipart.ProgressMonitor;
 import org.riotfamily.common.web.mvc.multipart.UploadProgress;
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.base.UserInterface;
-import org.riotfamily.forms.base.Element.State;
 import org.riotfamily.forms.client.Html;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,7 +78,7 @@ public class FileUpload extends Element {
 					ui.invoke(this, ".ui-progressbar-value", "css", "width", progress.getPercentage() + "%");
 				}
 				else {
-					status.messageText("Waiting for data");
+					status.messageText("{.waiting:Waiting for data}");
 				}
 				ui.update(this, ".status", status);
 				ui.schedule(this, "updateProgress", uploadId, 500);

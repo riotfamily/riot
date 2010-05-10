@@ -37,7 +37,26 @@
             </p:system-page>
             
             <p:type name="default" handler="defaultPageController">
+            	<p:form>
+            		<bean class="org.riotfamily.forms.base.Binding">
+            			<constructor-arg value="foo" />
+            			<constructor-arg>
+            				<bean class="org.riotfamily.forms.element.TextField" />
+            			</constructor-arg>
+            		</bean>
+            	</p:form>
                 <p:type-ref name="default" />
+            </p:type>
+            
+            <p:type name="other" handler="defaultPageController">
+            	<p:form>
+            		<bean class="org.riotfamily.forms.base.Binding">
+            			<constructor-arg value="bar" />
+            			<constructor-arg>
+            				<bean class="org.riotfamily.forms.element.TextArea" />
+            			</constructor-arg>
+            		</bean>
+            	</p:form>
             </p:type>
 
         </p:root-page>

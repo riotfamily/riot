@@ -14,6 +14,7 @@ package org.riotfamily.pages.config;
 
 import org.riotfamily.common.beans.namespace.ChildDecorator;
 import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.namespace.ListDecorator;
 import org.riotfamily.common.beans.namespace.ListItemDecorator;
 import org.riotfamily.common.beans.namespace.MapEntryDecorator;
 import org.riotfamily.common.beans.namespace.PropertyDecorator;
@@ -33,6 +34,7 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 		
 		ChildDecorator typeDecorator = new ChildDecorator()
 				.register("handler", new PropertyDecorator())
+				.register("form", new ListDecorator("elements"))
 				.register("type", new ListItemDecorator("childTypes"))
 				.register("type-ref", new ListItemDecorator("childTypes"))
 				.register("prop", new MapEntryDecorator("properties", "key"))

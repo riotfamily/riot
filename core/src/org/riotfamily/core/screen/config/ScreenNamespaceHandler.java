@@ -38,7 +38,7 @@ public class ScreenNamespaceHandler extends GenericNamespaceHandlerSupport {
 		register("form", FormScreen.class)
 				.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR)
 				.setDecorator(new ChildDecorator()
-					.register("elements", new PropertyDecorator())
+					.register("elements", new ListDecorator())
 					.register("screenlets", new ListDecorator())
 					.setDefault(new ListItemDecorator("childScreens")));
 		

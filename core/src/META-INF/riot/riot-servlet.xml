@@ -56,6 +56,14 @@
 		</property>
 	</bean>
 	
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+    	<description>
+    		Resolves the Locale for Riot users.
+    	</description>
+    	<property name="defaultLocale" value="en_US" />
+    </bean>
+    
+	
 	<bean class="org.riotfamily.common.web.mvc.scope.FlashScopeRequestInterceptor" />
 
 	<bean class="org.riotfamily.common.web.mvc.interceptor.OpenSessionInViewRequestInterceptor">
@@ -68,13 +76,6 @@
 		<dwr:config-param name="activeReverseAjaxEnabled" value="true" />
 	</dwr:controller>
 	
-    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
-    	<description>
-    		Resolves the Locale for Riot users.
-    	</description>
-    	<property name="defaultLocale"><value>en_US</value></property>
-    </bean>
-    
 	<bean class="org.riotfamily.common.web.mvc.interceptor.RequestHolderInterceptor" />
 			
 	<bean id="screenHandlerMapping" class="org.riotfamily.core.screen.ScreenHandlerMapping">
@@ -371,7 +372,7 @@
 		<value>/WEB-INF/riot-config/resources/</value>
 		<value>classpath:/org/riotfamily/core/runtime/resources/</value>
 		<value>classpath:/org/riotfamily/resources/</value>
-		<value>classpath:/org/riotfamily/forms2/resources/</value>
+		<value>classpath:/org/riotfamily/forms/resources/</value>
 	</util:list>
 	
 	<bean id="resourceController" name="/resources/{version}/**" class="org.riotfamily.common.web.resource.ResourceController">

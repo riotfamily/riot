@@ -101,10 +101,9 @@
 				<xsd:sequence>
 				    <xsd:element name="elements">
 				        <xsd:complexType>
-                            <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                                <xsd:element ref="beans:bean" />
-                                <xsd:element ref="beans:ref" />
-                            </xsd:choice>
+                            <xsd:sequence>
+								<xsd:any minOccurs="0" maxOccurs="unbounded" />
+							</xsd:sequence>
                         </xsd:complexType>
 				    </xsd:element>
 					<xsd:group ref="screenElements" minOccurs="0" maxOccurs="unbounded" />

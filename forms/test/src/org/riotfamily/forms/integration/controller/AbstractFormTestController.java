@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
@@ -40,6 +41,8 @@ import org.riotfamily.forms.element.SelectBox;
 import org.riotfamily.forms.element.SwitchElement;
 import org.riotfamily.forms.element.TextArea;
 import org.riotfamily.forms.element.TextField;
+import org.riotfamily.forms.element.support.DependentElement;
+import org.riotfamily.forms.option.DependentOptionsModel;
 import org.riotfamily.forms.option.OptionsModel;
 import org.riotfamily.forms.option.StaticOptionsModel;
 import org.slf4j.Logger;
@@ -57,6 +60,13 @@ public abstract class AbstractFormTestController implements FormSubmissionHandle
 	
 	private SubmitButton button;
 	
+	private static class TestOptionsModel extends DependentOptionsModel<String> {
+		@Override
+		protected Iterable<?> getOptions(String s) {
+			return Collections.singletonList(s);
+		}
+	}
+	
 	public AbstractFormTestController() {
 		form = new Form();
 		form.add(new Binding("text", new TextField()));
@@ -73,14 +83,7 @@ public abstract class AbstractFormTestController implements FormSubmissionHandle
 		selectBox.setOptionsModel(options);
 		form.add(new Binding("select", selectBox));
 
-		/*
-		form.add(new DependentElement(new Binding("select2", new SelectBox(new DependentOptionsModel<String>() {
-			@Override
-			protected Iterable<?> getOptions(String s) {
-				return Collections.singletonList(s);
-			}
-		}))));
-		*/
+		form.add(new DependentElement(new Binding("select2", new SelectBox(new TestOptionsModel()))));
 		
 		form.add(new Binding("file", new FileUpload()));
 		//form.add(new Binding("tinymce", new TinyMCE()));

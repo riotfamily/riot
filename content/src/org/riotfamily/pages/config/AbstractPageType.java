@@ -16,8 +16,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.forms.Form;
 import org.riotfamily.forms.base.Element;
+import org.riotfamily.forms.element.NestedForm;
 
 public abstract class AbstractPageType implements PageType {
 
@@ -25,11 +25,11 @@ public abstract class AbstractPageType implements PageType {
 	
 	private String label;
 	
-	private Form form;
-	
 	private Object handler;
 	
 	private PageType parent;
+
+	private NestedForm form = new NestedForm();
 	
 	public String getName() {
 		return name;
@@ -69,6 +69,10 @@ public abstract class AbstractPageType implements PageType {
 		}
 	}
 
+	public NestedForm getForm() {
+		return form;
+	}
+	
 	public Object getHandler() {
 		return handler;
 	}
@@ -77,7 +81,7 @@ public abstract class AbstractPageType implements PageType {
 		this.handler = handler;
 	}
 		
-	public List<? extends PageType> getChildTypes() {
+	public List<PageType> getChildTypes() {
 		return null;
 	}
 	

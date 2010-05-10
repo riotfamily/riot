@@ -12,100 +12,55 @@
  */
 package org.riotfamily.pages.riot.form;
 
-import org.riotfamily.core.screen.ScreenContext;
+import java.util.Collection;
+import java.util.Collections;
+
 import org.riotfamily.core.screen.ScreenContextHolder;
 import org.riotfamily.forms.base.Binding;
 import org.riotfamily.forms.base.Element;
-import org.riotfamily.forms.element.NestedForm;
-import org.riotfamily.forms.element.SelectBox;
-import org.riotfamily.forms.option.OptionsModel;
+import org.riotfamily.forms.client.Html;
+import org.riotfamily.forms.element.SwitchElement;
+import org.riotfamily.pages.config.PageType;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 public class PagePropertiesElement extends Element {
 
-	private SelectBox selectBox;
-	
-	public PagePropertiesElement() {
-		selectBox = new SelectBox();
-		new Binding("pageType", selectBox);
-		new Binding("contentContainer.previewVersion", new NestedForm());
-	}
-
-	
-	public class Foo implements OptionsModel {
-		public Iterable<?> getOptions(Element.State state) { 
-			ScreenContext screenContext = ScreenContextHolder.get();
-			screenContext.getParent();
-			screenContext.getObject();
-			Page parent = null;
-			return parent.getPageType().getChildTypes();
-		}
-	}
-	/*
 	public class State extends Element.State {
-		
-		private Element.State bindingState;
-		
-		private PropertyContainer.State containerState;
+
+		private Element.State switchState;
 		
 		@Override
 		protected void onInit() {
-			
+			SwitchElement switchElement = new SwitchElement("pageTypeName");
+			switchElement.setLabel("{pageType}");
+			for (PageType pageType : getPageTypes()) {
+				switchElement.addCase(pageType.getName(), pageType.getName(), 
+						new Binding("contentContainer.previewVersion", pageType.getForm()).omitLabel());
+			}
+			switchState = switchElement.createState(this);
 		}
-	}
-
-	private class PropertyContainer extends Element {
 		
-		//private List<Case> cases = Generics.newArrayList();
+		private Collection<PageType> getPageTypes() {
+			Object parent = ScreenContextHolder.get().getParent();
+			if (parent instanceof Page) {
+				return ((Page) parent).getPageType().getChildTypes();
+			}
+			else if (parent instanceof Site) {
+				return Collections.singleton(((Site) parent).getRootPage().getPageType());
+			}
+			throw new IllegalStateException("Parent must either be a Page or a Site");
+		}
 		
 		@Override
-		public Collection<Element> getChildElements() {
-			List<Element> elements = Generics.newArrayList();
-			for (Case c : cases) {
-				elements.add(c.getElement());
-			}
-			return elements;
+		protected void renderElement(Html html) {
+			switchState.render(html); //REVISIT Overwrite render instead?
 		}
 		
-		public class State extends Element.State {
-			
-			private Map<String, Element.State> states = Generics.newHashMap();
-			
-			private Element.State activeState;
-			
-			@Override
-			protected void onInit() {
-				for (Case c : cases) {
-					states.put(c.discriminator, c.element.createState(this));
-				}
-			}
-			
-			@Override
-			public void setValue(Object value) {
-				activeState.setValue(value);
-			}
-						
-			public void activate(String discriminator) {
-				activeState = states.get(discriminator);
-			}
-			
-			@Override
-			public void populate(Value value) {
-				for (Element.State state : states.values()) {
-					if (state != activeState) {
-						state.setValue(null);
-						state.populate(value);
-					}
-				}
-				activeState.populate(value);
-			}
-
-			@Override
-			protected void renderElement(Html html) {
-				activeState.render(html);	
-			}
-
+		@Override
+		public void setValue(Object value) {
+			switchState.setValue(value);
 		}
+		
 	}
-*/
 }

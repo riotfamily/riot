@@ -266,8 +266,10 @@ public abstract class Element implements Serializable {
 		 * the element's Java class is assigned as CSS class.
 		 */
 		Html wrap(Html html) {
+			Class<?> elementClass = getClass().getDeclaringClass();
 			return html.div("state").id(id())
-					.addClass(ClassUtils.getShortName(getClass().getDeclaringClass()));
+					.setMessageKeyPrefix(elementClass.getName())
+					.addClass(ClassUtils.getShortName(elementClass));
 		}
 		
 		/**

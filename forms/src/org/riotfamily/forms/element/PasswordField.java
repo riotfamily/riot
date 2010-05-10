@@ -14,7 +14,6 @@ package org.riotfamily.forms.element;
 
 import org.riotfamily.forms.base.Element;
 import org.riotfamily.forms.base.UserInterface;
-import org.riotfamily.forms.base.Element.State;
 import org.riotfamily.forms.client.Html;
 import org.riotfamily.forms.value.Value;
 
@@ -61,7 +60,7 @@ public class PasswordField extends Element {
 		public void buildStrength(Html html) {
 			html.div("strength")
 				.div(strength)
-				.messageText("strength." + strength);
+				.messageText(String.format("{.strength.%s}", strength));
 		}
 		
 		@Override
@@ -70,11 +69,11 @@ public class PasswordField extends Element {
 				if (alreadySet) {
 					//html.button("Keep old password");
 				}
-				html.label("Enter new password");
+				html.label("{.input:Enter new password}");
 				html.input("password", password);
 				
 				buildStrength(html);
-				html.label("Re-type password");
+				html.label("{.confirm:Re-type password}");
 				html.input("password", confirmation).addClass("confirm");
 			}
 			else {

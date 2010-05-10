@@ -14,7 +14,6 @@ package org.riotfamily.forms.base;
 
 import java.util.Map;
 
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.client.Html;
 import org.riotfamily.forms.value.TypeInfo;
 import org.riotfamily.forms.value.Value;
@@ -28,6 +27,10 @@ public class Binding extends ElementWrapper {
 
 	private String target;
 	
+	private String label;
+	
+	private boolean renderLabel = true;
+	
 	public Binding() {
 	}
 			
@@ -36,8 +39,17 @@ public class Binding extends ElementWrapper {
 		this.target = target;
 	}
 	
+	public Binding omitLabel() {
+		renderLabel = false;
+		return this;
+	}
+	
 	public void setTarget(String target) {
 		this.target = target;
+	}
+	
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public void setElement(Element element) {
@@ -78,9 +90,14 @@ public class Binding extends ElementWrapper {
 
 		@Override
 		public void renderElement(Html html) {
-			Html div = html.div("labeled");
-			div.div("label").messageText(target, FormatUtils.propertyToTitleCase(target));
-			super.renderElement(div);
+			if (renderLabel) {
+				html = html.div("labeled");
+				if (label == null) {
+					label = String.format("{%s.%s}", getParent().getTypeInfo().getType().getName(), target);
+				}
+				html.div("label").messageText(label);
+			}
+			super.renderElement(html);
 		}
 
 		@Override

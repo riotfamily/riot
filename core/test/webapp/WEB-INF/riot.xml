@@ -37,7 +37,7 @@
                     <bean class="org.riotfamily.forms.base.Binding">
                         <property name="target" value="name" />
                         <property name="element">
-                            <bean class="oorg.riotfamily.forms.elementTextField" />
+                            <bean class="org.riotfamily.forms.element.TextField" />
                         </property>
                     </bean>
                 </s:elements>
