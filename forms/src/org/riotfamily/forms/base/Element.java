@@ -27,6 +27,7 @@ import org.riotfamily.forms.client.Resources;
 import org.riotfamily.forms.option.ReferenceService;
 import org.riotfamily.forms.value.TypeInfo;
 import org.riotfamily.forms.value.Value;
+import org.springframework.beans.BeanUtils;
 import org.springframework.core.GenericCollectionTypeResolver;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.util.Assert;
@@ -77,6 +78,7 @@ public abstract class Element implements Serializable {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void collectNestedElements(Collection<Element> elements) {
 		if (elements.contains(this)) {
 			return;
@@ -295,30 +297,24 @@ public abstract class Element implements Serializable {
 		@SuppressWarnings("unchecked")
 		protected <T> T getOrCreate(Value value, Class<T> requiredType, Class<? extends T> defaultType) {
 			if (value.get() == null) {
-				value.set(instanciateType(requiredType, defaultType));
+				value.set(instantiateType(requiredType, defaultType));
 			}
 			return (T) value.get();
 		}
 		
 		@SuppressWarnings("unchecked")
-		private <T> T instanciateType(Class<T> requiredType, Class<? extends T> defaultType) {
+		protected <T> T instantiateType(Class<T> requiredType, Class<? extends T> defaultType) {
 			Class<?> type = getTypeInfo().getType();
-			if (canInstanciate(type)) {
-				return (T) instanciate(type);
+			if (!canInstanciate(type)) {
+				if (defaultType == null) {
+					defaultType = requiredType;
+				}	
+				type = defaultType;
 			}
-			if (defaultType == null) {
-				defaultType = requiredType;
+			if (requiredType != null) {
+				Assert.isAssignable(requiredType, type);
 			}
-			return instanciate(defaultType);
-		}
-		
-		private <T> T instanciate(Class<T> type) {
-			try {
-				return type.newInstance();
-			}
-			catch (Exception e) {
-				throw ExceptionUtils.wrapReflectionException(e);
-			}
+			return (T) BeanUtils.instantiate(type);
 		}
 		
 		private boolean canInstanciate(Class<?> type) {

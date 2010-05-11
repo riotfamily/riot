@@ -30,7 +30,6 @@ import org.riotfamily.forms.client.ResourceManager;
 import org.riotfamily.forms.client.Resources;
 import org.riotfamily.forms.value.TypeInfo;
 import org.riotfamily.forms.value.Value;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
@@ -183,23 +182,17 @@ public class FormElement extends ContainerElement {
 			return html.embedScripts().toString();
 		}
 
-		private Object createObject() {
-			return BeanUtils.instantiate(typeInfo.getType());
-		}
-		
 		@Override
-		public void setValue(Object value) {
-			if (value == null) {
-				value = createObject();
+		public void setValue(Object object) {
+			if (object == null) {
+				object = instantiateType(null, null);
 			}
-			super.setValue(value);
+			super.setValue(object);
 		}
 		
 		@Override
 		public void populate(Value value) {
-			if (value.get() == null) {
-				value.set(createObject());
-			}
+			getOrCreate(value, null, null);
 			super.populate(value);
 		}
 
