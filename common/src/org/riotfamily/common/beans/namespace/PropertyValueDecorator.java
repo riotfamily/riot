@@ -12,6 +12,7 @@
  */
 package org.riotfamily.common.beans.namespace;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -60,6 +61,6 @@ public class PropertyValueDecorator implements BeanDefinitionDecorator {
 		if (propertyName != null) {
 			return propertyName;
 		}
-		return XmlUtils.getLocalName(node);
+		return FormatUtils.xmlToCamelCase(XmlUtils.getLocalName(node));
 	}
 }

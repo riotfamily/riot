@@ -113,11 +113,11 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	}
 	
 	@Column(name="pageType")
-	protected String getPageTypeName() {
+	public String getPageTypeName() {
 		return pageTypeName;
 	}
 	
-	protected void setPageTypeName(String pageTypeName) {
+	public void setPageTypeName(String pageTypeName) {
 		this.pageTypeName = pageTypeName;
 	}
 	

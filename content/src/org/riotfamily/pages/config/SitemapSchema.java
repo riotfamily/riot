@@ -12,6 +12,7 @@
  */
 package org.riotfamily.pages.config;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -20,6 +21,8 @@ import java.util.Set;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.forms.base.Element;
+import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
@@ -45,6 +48,8 @@ public class SitemapSchema implements ApplicationContextAware, InitializingBean 
 	
 	private Set<String> virtualParents = Generics.newHashSet();
 
+	private NestedForm form = new NestedForm();
+	
 	private SitemapSchemaRepository repository;
 	
 	private TransactionTemplate transaction;
@@ -117,6 +122,29 @@ public class SitemapSchema implements ApplicationContextAware, InitializingBean 
 	
 	public Set<String> getVirtualParents() {
 		return virtualParents;
+	}
+	
+	public void setElements(List<Object> elements) {
+		addElements(elements);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addElements(Collection<Object> elements) {
+		for (Object element : elements) {
+			if (element instanceof Element) {
+				form.add((Element) element);
+			}
+			else if (element instanceof Collection) {
+				addElements((Collection) element);
+			}
+			else {
+				throw new IllegalArgumentException("Expected either an Element or a Collection: " + element);
+			}
+		}
+	}
+
+	public NestedForm getForm() {
+		return form;
 	}
 	
 	void syncSystemPages() {

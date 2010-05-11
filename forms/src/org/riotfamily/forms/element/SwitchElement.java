@@ -95,6 +95,12 @@ public class SwitchElement extends Element {
 		}
 		
 		@Override
+		public void populate(Value value) {
+			bindingState.populate(value);
+			containerState.populate(value);
+		}
+		
+		@Override
 		protected void renderElement(Html html) {
 			bindingState.render(html);
 			containerState.render(html);

@@ -22,6 +22,7 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 			<xsd:sequence>
+				<xsd:element name ="form" type="any" minOccurs="0" />
 				<xsd:element name="root-page" type="root-page" />
 			</xsd:sequence>
 			<xsd:attribute name="name" type="xsd:string" default="default" />

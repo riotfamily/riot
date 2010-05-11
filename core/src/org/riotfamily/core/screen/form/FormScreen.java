@@ -158,7 +158,7 @@ public class FormScreen extends AbstractRiotScreen implements ItemScreen, BeanNa
 		try {
 			Object backingObject = context.getObject();
 			Object entity = form.populate(backingObject, state);
-			context.getDao().save(entity, context.getParent());
+			context.getDao().save(entity, ScreenUtils.getParentObjectOrNode(context));
 			result = new Notification(messageSoruce, riotRuntime.getResourcePath())
 				.setIcon("save")
 				.setMessageKey("label.form.saved")

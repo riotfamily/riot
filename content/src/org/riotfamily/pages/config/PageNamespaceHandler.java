@@ -30,7 +30,9 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 	public void init() {
 		register("schema", SitemapSchema.class)
 				.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR)
-				.setDecorator(new PropertyDecorator("rootPage"));
+				.setDecorator(new ChildDecorator()
+						.register("form", new ListDecorator("elements"))
+						.register("root-page", new PropertyValueDecorator()));
 		
 		ChildDecorator typeDecorator = new ChildDecorator()
 				.register("handler", new PropertyDecorator())

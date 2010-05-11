@@ -42,6 +42,8 @@ public interface ScreenContext {
 	
 	public Object getParent();
 	
+	public Object getParentNode();
+	
 	public ScreenLink getLink();
 	
 }

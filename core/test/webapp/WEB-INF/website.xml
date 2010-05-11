@@ -26,6 +26,14 @@
     </bean>
     
     <p:schema name="default">
+    	<p:form>
+     		<bean class="org.riotfamily.forms.base.Binding">
+      			<constructor-arg value="foo" />
+      			<constructor-arg>
+      				<bean class="org.riotfamily.forms.element.TextField" />
+      			</constructor-arg>
+      		</bean>
+       	</p:form>
         <p:root-page>
             <p:handler>
                 <bean class="org.riotfamily.pages.controller.FolderController" />

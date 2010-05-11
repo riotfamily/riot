@@ -287,7 +287,7 @@ public abstract class Element implements Serializable {
 		}
 		
 		public Object getValue() {
-			return null;
+			throw new IllegalStateException("Element does not support getValue(), use populate(Value) instead.");
 		}
 		
 		protected abstract void renderElement(Html html);

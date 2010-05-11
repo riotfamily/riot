@@ -213,7 +213,7 @@
 			</s:commands>
 			<s:form id="site">
 			    <s:elements>
-			        <!--  TODO -->
+			        <bean class="org.riotfamily.pages.riot.form.SitePropertiesElement" />
 			    </s:elements>
 			</s:form>
 		</s:list>

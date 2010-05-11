@@ -29,6 +29,8 @@ import org.riotfamily.forms.client.IdGenerator;
 import org.riotfamily.forms.client.ResourceManager;
 import org.riotfamily.forms.client.Resources;
 import org.riotfamily.forms.value.TypeInfo;
+import org.riotfamily.forms.value.Value;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
@@ -62,7 +64,6 @@ public class FormElement extends ContainerElement {
 			state.register(element.createState(state));
 		}
 		state.setValue(object);
-		
 		return state;
 	}
 	
@@ -180,6 +181,26 @@ public class FormElement extends ContainerElement {
 			render(html);
 			resourceManager.addLoadingCode(html);
 			return html.embedScripts().toString();
+		}
+
+		private Object createObject() {
+			return BeanUtils.instantiate(typeInfo.getType());
+		}
+		
+		@Override
+		public void setValue(Object value) {
+			if (value == null) {
+				value = createObject();
+			}
+			super.setValue(value);
+		}
+		
+		@Override
+		public void populate(Value value) {
+			if (value.get() == null) {
+				value.set(createObject());
+			}
+			super.populate(value);
 		}
 
 		public void put(HttpSession session) {

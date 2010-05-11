@@ -73,4 +73,16 @@ public final class ScreenUtils {
 		}
 		return null;
 	}
+
+	public static Object getParentObjectOrNode() {
+		return getParentObjectOrNode(ScreenContextHolder.get());
+	}
+	
+	public static Object getParentObjectOrNode(ScreenContext context) {
+		Object parent = context.getParentNode();
+		if (parent == null) {
+			parent = context.getParent();
+		}
+		return parent;
+	}
 }

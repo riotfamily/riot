@@ -12,7 +12,7 @@
 	        * Strips the hash sign to convert the URL of newly created objects into their canonical form. 
 	        */
 	       function getFormUrl() {
-	           return window.location.href.replace('#', '');
+	           return window.location.href.replace(/^(.*?)(?:\/-\/.+\/.+|\/)#(.+)$/, '$1/$2');
 	       }
 	       
 	       /**

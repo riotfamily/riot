@@ -117,6 +117,9 @@ public class Site extends ActiveRecordBeanSupport {
 			else if (locale != null) {
 				name = locale.toString();
 			}
+			else {
+				name = "";
+			}
 		}
 		return name;
 	}

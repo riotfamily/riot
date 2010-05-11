@@ -20,6 +20,7 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
 import org.riotfamily.core.dao.Hierarchy;
 import org.riotfamily.core.dao.RiotDao;
+import org.riotfamily.core.dao.Tree;
 
 public class DefaultScreenContext implements ScreenContext {
 
@@ -176,6 +177,20 @@ public class DefaultScreenContext implements ScreenContext {
 			}
 		}
 		return parent;
+	}
+	
+	public Object getParentNode() {
+		if (parentId != null) {
+			if (nestedTreeItem) {
+				return dao.load(parentId);
+			}
+		}
+		else if (getObject() != null) {
+			if (dao instanceof Tree) {
+				return ((Tree) dao).getParentNode(object);
+			}
+		}
+		return null;
 	}
 	
 	public String getTitle() {
