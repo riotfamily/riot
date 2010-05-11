@@ -22,6 +22,8 @@ import org.riotfamily.pages.model.Site;
 public interface PageType {
 
 	public String getName();
+	
+	public String getLabel();
 
 	public NestedForm getForm();
 	

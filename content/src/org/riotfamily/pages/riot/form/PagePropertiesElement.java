@@ -36,7 +36,7 @@ public class PagePropertiesElement extends Element {
 			SwitchElement switchElement = new SwitchElement("pageTypeName");
 			switchElement.setLabel("{pageType}");
 			for (PageType pageType : getPageTypes()) {
-				switchElement.addCase(pageType.getName(), pageType.getName(), 
+				switchElement.addCase(pageType.getLabel(), pageType.getName(), 
 						new Binding("contentContainer.previewVersion", pageType.getForm()).omitLabel());
 			}
 			switchState = switchElement.createState(this);
