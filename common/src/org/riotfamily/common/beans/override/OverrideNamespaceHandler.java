@@ -22,7 +22,6 @@ import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -76,12 +75,13 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 		
 		@Override
-		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
+		protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
 				ParserContext parserContext, Element element) {
 			
 			BeanDefinition bd = new RootBeanDefinition();
 			parserContext.getDelegate().parsePropertyElements(element, bd);
-			beanDefinition.addPropertyValue("propertyValues", bd.getPropertyValues());
+			bean.getPropertyValues().add("propertyValues", bd.getPropertyValues());
+			return bean;
 		}
 	}
 	
@@ -93,16 +93,16 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		
 		@Override
 		@SuppressWarnings("unchecked")
-		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
+		protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
 				ParserContext parserContext, Element element) {
 			
-			Map entries = parserContext.getDelegate().parseMapElement(
-					element, beanDefinition.getBeanDefinition());
+			Map entries = parserContext.getDelegate().parseMapElement(element, bean);
 			
 			// The parsed Map is a ManagedMap. We put the values into a
 			// HashMap so that the reference resolution is deferred until
 			// the actual target bean is initialized.
-			beanDefinition.addPropertyValue("entries", new HashMap(entries));
+			bean.getPropertyValues().add("entries", new HashMap(entries));
+			return bean;
 		}
 	}
 	
@@ -113,16 +113,16 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 		
 		@Override
-		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
+		protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
 				ParserContext parserContext, Element element) {
 			
-			List<?> values = parserContext.getDelegate().parseListElement(
-					element, beanDefinition.getBeanDefinition());
+			List<?> values = parserContext.getDelegate().parseListElement(element, bean);
 			
 			// The parsed List is a ManagedList. We put the values into an
 			// ArrayList so that the reference resolution is deferred until
 			// the actual target bean is initialized.
-			beanDefinition.addPropertyValue("values", new ArrayList<Object>(values));
+			bean.getPropertyValues().add("values", new ArrayList<Object>(values));
+			return bean;
 		}
 	}
 
@@ -142,15 +142,15 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 		
 		@Override
-		protected void postProcess(BeanDefinitionBuilder builder, 
+		protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
 				ParserContext parserContext, Element element) {
 			
 			BeanReplacement replacement = new BeanReplacement(
 					parserContext.getDelegate().parseBeanDefinitionElement(
-					element, null, builder.getBeanDefinition()));
+					element, null, bean));
 			
-			builder.addPropertyValue("beanReplacement", replacement);
-			builder.getBeanDefinition().getPropertyValues().setConverted();
+			bean.getPropertyValues().add("beanReplacement", replacement).setConverted();
+			return bean;
 		}
 	}
 	

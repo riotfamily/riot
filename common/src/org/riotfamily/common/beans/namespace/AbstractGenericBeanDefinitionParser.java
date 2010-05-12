@@ -23,6 +23,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -142,7 +143,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	}
 
 	/**
-	 * Creates a {@link BeanDefinitionBuilder} instance for the
+	 * Creates a {@link RootBeanDefinition} instance for the
 	 * {@link #getBeanClass bean Class} and passes it to the
 	 * {@link #doParse} strategy method.
 	 * @param element the element that is to be parsed into a single BeanDefinition
@@ -153,20 +154,24 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	 * @see #doParse
 	 */
 	protected final AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(beanClass);
-		builder.getRawBeanDefinition().setSource(parserContext.extractSource(element));
+		RootBeanDefinition bean = new RootBeanDefinition(beanClass); 
+		bean.setSource(parserContext.extractSource(element));
 		if (parserContext.isNested()) {
 			// Inner bean definition must receive same scope as containing bean.
-			builder.setScope(parserContext.getContainingBeanDefinition().getScope());
+			bean.setScope(parserContext.getContainingBeanDefinition().getScope());
 		}
 		if (parserContext.isDefaultLazyInit()) {
 			// Default-lazy-init applies to custom bean definitions as well.
-			builder.setLazyInit(true);
+			bean.setLazyInit(true);
 		}
-		builder.setAutowireMode(autowireMode);
-		builder.setFactoryMethod(factoryMethod);
-		doParse(element, parserContext, builder);
-		return builder.getBeanDefinition();
+		bean.setAutowireMode(autowireMode);
+		bean.setFactoryMethodName(factoryMethod);
+		RootBeanDefinition result = doParse(element, parserContext, bean);
+		if (result == null) {
+			result = bean;
+		}
+		result.validate();
+		return result;
 	}
 
 	/**
@@ -293,7 +298,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 
 	/**
 	 * Parse the supplied {@link Element} and populate the supplied
-	 * {@link BeanDefinitionBuilder} as required.
+	 * {@link RooBeanDefinition} as required.
 	 * <p>The default implementation delegates to the <code>doParse</code>
 	 * version without ParserContext argument.
 	 * @param element the XML element being parsed
@@ -301,18 +306,19 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	 * @param builder used to define the <code>BeanDefinition</code>
 	 * @see #doParse(Element, BeanDefinitionBuilder)
 	 */
-	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-		doParse(element, builder);
+	protected RootBeanDefinition doParse(Element element, ParserContext parserContext, RootBeanDefinition bean) {
+		return doParse(element, bean);
 	}
 
 	/**
 	 * Parse the supplied {@link Element} and populate the supplied
-	 * {@link BeanDefinitionBuilder} as required.
+	 * {@link RootBeanDefinition} as required.
 	 * <p>The default implementation does nothing.
 	 * @param element the XML element being parsed
 	 * @param builder used to define the <code>BeanDefinition</code>
 	 */
-	protected void doParse(Element element, BeanDefinitionBuilder builder) {
+	protected RootBeanDefinition doParse(Element element, RootBeanDefinition bean) {
+		return bean;
 	}
 
 }

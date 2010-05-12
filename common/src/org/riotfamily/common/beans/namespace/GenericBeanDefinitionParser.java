@@ -18,7 +18,7 @@ import java.util.HashSet;
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
@@ -63,31 +63,16 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 		this.aliasAttribute = aliasAttribute;
 	}
 	
+	@Override
 	protected String resolveAlias(Element element, 
 			AbstractBeanDefinition definition, ParserContext parserContext) {
 		
 		return aliasAttribute != null ? element.getAttribute(aliasAttribute) : null;
 	}
 
-	/**
-	 * Parse the supplied {@link Element} and populate the supplied
-	 * {@link BeanDefinitionBuilder} as required.
-	 * <p>This implementation maps any attributes present on the
-	 * supplied element to {@link org.springframework.beans.PropertyValue}
-	 * instances, and
-	 * {@link BeanDefinitionBuilder#addPropertyValue(String, Object) adds them}
-	 * to the
-	 * {@link org.springframework.beans.factory.config.BeanDefinition builder}.
-	 * <p>The {@link #extractPropertyName(String)} method is used to
-	 * reconcile the name of an attribute with the name of a JavaBean
-	 * property.
-	 * @param element the XML element being parsed
-	 * @param parserContext the object encapsulating the current state of the parsing process
-	 * @param builder used to define the <code>BeanDefinition</code>
-	 * @see #extractPropertyName(String)
-	 */
-	protected final void doParse(Element element, 
-			ParserContext parserContext, BeanDefinitionBuilder builder) {
+	@Override
+	protected RootBeanDefinition doParse(Element element, 
+			ParserContext parserContext, RootBeanDefinition bean) {
 		
 		NamedNodeMap attributes = element.getAttributes();
 		for (int x = 0; x < attributes.getLength(); x++) {
@@ -105,10 +90,10 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 				else {
 					value = attribute.getValue();
 				}
-				builder.addPropertyValue(propertyName, value);
+				bean.getPropertyValues().add(propertyName, value);
 			}
 		}
-		postProcess(builder, parserContext, element);
+		return postProcess(bean, parserContext, element);
 	}
 	
 	/**
@@ -141,7 +126,7 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	 * @return the extracted JavaBean property name (must never be <code>null</code>)
 	 */
 	protected String extractPropertyName(String attributeName) {
-		String property = (String) translations.get(attributeName);
+		String property = translations.get(attributeName);
 		if (property == null) {
 			property = Conventions.attributeNameToPropertyName(attributeName);
 		}
@@ -153,25 +138,25 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	 * bean definition after parsing is complete.
 	 * <p>The default implementation delegates to the <code>postProcess</code>
 	 * version without ParserContext argument.
-	 * @param beanDefinition the parsed (and probably totally defined) bean definition being built
+	 * @param bean the parsed (and probably totally defined) bean definition being built
 	 * @param parserContext the object encapsulating the current state of the parsing process
 	 * @param element the XML element that was the source of the bean definition's metadata
 	 */
-	protected void postProcess(BeanDefinitionBuilder beanDefinition, 
+	protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
 			ParserContext parserContext, Element element) {
 		
-		postProcess(beanDefinition, element);
+		return postProcess(bean, element);
 	}
 	
 	/**
 	 * Hook method that derived classes can implement to inspect/change a
 	 * bean definition after parsing is complete.
 	 * <p>The default implementation does nothing.
-	 * @param beanDefinition the parsed (and probably totally defined) bean definition being built
+	 * @param bean the parsed (and probably totally defined) bean definition being built
 	 * @param element the XML element that was the source of the bean definition's metadata
 	 */
-	protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {
+	protected RootBeanDefinition postProcess(RootBeanDefinition bean, Element element) {
+		return bean;
 	}
-
 
 }
