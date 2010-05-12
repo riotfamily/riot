@@ -167,6 +167,19 @@ gradle.taskGraph.whenReady {taskGraph ->
 }
 
 /**
+ * Use separate output folders for each module to support Spring's classpath*:-lookups when running tests
+ * from inside Eclipse (work-around for http://jira.codehaus.org/browse/GRADLE-879).
+ */
+eclipse << {
+	sw = new StringBuffer()
+	f = file('.classpath');
+	f.eachLine({
+		sw << it.replaceAll('kind="src" path="(.+?)/.+?"', '$0 output="$1/build/eclipse"') << '\n'
+	})
+	f.text = sw
+}
+
+/**
  * Creates the gradlew wrapper scripts
  */
 task wrapper(type: Wrapper) {
