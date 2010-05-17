@@ -28,7 +28,11 @@ public abstract class ContainerElement extends Element {
 	public void add(Element element) {
 		childElements.add(element);
 	}
-			
+	
+	public void setChildElements(List<Element> childElements) {
+		this.childElements = childElements;
+	}
+		
 	protected class State extends Element.State {
 
 		protected State() {

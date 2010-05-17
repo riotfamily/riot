@@ -143,13 +143,13 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	}
 	
 	protected BeanDefinitionHolder decorate(Element element, ParserContext parserContext, BeanDefinitionHolder holder) {
+		if (decorator != null) {
+			holder = decorator.decorate(element, holder, parserContext);
+		}
 		NamedNodeMap attributes = element.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node node = attributes.item(i);
 			holder = decorateIfRequired(node, holder, parserContext);
-		}
-		if (decorator != null) {
-			holder = decorator.decorate(element, holder, parserContext);
 		}
 		return holder; 
 	}

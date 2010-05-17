@@ -17,23 +17,67 @@
 	<xsd:complexType name="element">
 		<xsd:attribute ref="bind" />
 	</xsd:complexType>
-	
+		
 	<xsd:element name="textfield" type="element" />
 	<xsd:element name="password" type="element" />
 	<xsd:element name="textarea" type="element" />
 	<xsd:element name="tinymce" type="element" />
 	<xsd:element name="datepicker" type="element" />
-		
-	<!--
-	<xsd:element name="foo">
+	<xsd:element name="file" type="element" />
+	<xsd:element name="checkbox" type="element" />
+	
+	<xsd:element name="list">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="element">
-					<xsd:attribute name="bar" />
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:sequence>
+				<xsd:any />
+			</xsd:sequence>
+			<xsd:attribute ref="bind" />
 		</xsd:complexType>
 	</xsd:element>
-	-->
 	
+	<xsd:element name="nested">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:any minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute ref="bind" />
+			<xsd:attribute name="type" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="dependent">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:any />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="switch">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded">
+				<xsd:element name="case">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:any />
+						</xsd:sequence>
+						<xsd:attribute name="value" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="discriminator" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="select">
+		<xsd:sequence>
+			<xsd:any />
+		</xsd:sequence>
+		<xsd:attribute ref="bind" />
+	</xsd:complexType>
+
+	<xsd:element name="select" type="select" />
+	<xsd:element name="radio-group" type="select" />
+	<xsd:element name="checkbox-group" type="select" />
+
 </xsd:schema>

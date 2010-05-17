@@ -12,12 +12,24 @@
  */
 package org.riotfamily.forms.config;
 
+import org.riotfamily.common.beans.namespace.ConstructorArgDecorator;
 import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.namespace.ListDecorator;
+import org.riotfamily.common.beans.namespace.PropertyDecorator;
 import org.riotfamily.forms.base.Binding;
+import org.riotfamily.forms.element.CheckBoxGroup;
 import org.riotfamily.forms.element.Datepicker;
+import org.riotfamily.forms.element.FileUpload;
+import org.riotfamily.forms.element.ListEditor;
+import org.riotfamily.forms.element.NestedForm;
+import org.riotfamily.forms.element.PasswordField;
+import org.riotfamily.forms.element.RadioButtonGroup;
+import org.riotfamily.forms.element.SelectBox;
+import org.riotfamily.forms.element.SwitchElement;
 import org.riotfamily.forms.element.TextArea;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.element.TinyMCE;
+import org.riotfamily.forms.element.support.DependentElement;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -35,9 +47,22 @@ public class FormNamespaceHandler extends GenericNamespaceHandlerSupport {
 	public void init() {
 		registerBeanDefinitionDecoratorForAttribute("bind", new BindingDecorator());
 		register("textfield", TextField.class);
+		register("password", PasswordField.class);
 		register("textarea", TextArea.class);
 		register("tinymce", TinyMCE.class);
 		register("datepicker", Datepicker.class);
+		register("file", FileUpload.class);
+		//register("checkbox", Checkbox.class);
+		
+		
+		register("list", ListEditor.class).setDecorator(new PropertyDecorator("itemEditor"));
+		register("nested", NestedForm.class).setDecorator(new ListDecorator("childElements"));
+		register("dependent", DependentElement.class).setDecorator(new ConstructorArgDecorator());
+		register("switch", SwitchElement.class); //TODO Parse nested case elements
+		
+		register("select", SelectBox.class).setDecorator(new PropertyDecorator("optionsModel"));
+		register("radio-group", RadioButtonGroup.class).setDecorator(new PropertyDecorator("optionsModel"));
+		register("checkbox-group", CheckBoxGroup.class).setDecorator(new PropertyDecorator("optionsModel"));
 	}
 
 	private static class BindingDecorator implements BeanDefinitionDecorator {

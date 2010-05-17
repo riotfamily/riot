@@ -2,11 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:f="http://www.riotfamily.org/schema/forms"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+        http://www.riotfamily.org/schema/forms http://www.riotfamily.org/schema/forms/form-9.0.xsd">
 
     <context:component-scan base-package="org.riotfamily.forms" />
        
@@ -15,5 +17,49 @@
     <bean id="testBean" class="org.riotfamily.forms.integration.model.TestBean" />
    
     <bean id="shutdown" class="java.lang.Object" />
+    
+    <bean id="options" class="org.riotfamily.forms.option.StaticOptionsModel">
+    	<constructor-arg>
+    		<list>
+    			<value>foo</value>
+    			<value>bar</value>
+    		</list>
+    	</constructor-arg>
+    </bean>
+    
+    <util:list id="formElements">
+    	<f:textfield f:bind="text" />
+    	<f:datepicker f:bind="date" />
+    	<f:list f:bind="list">
+    		<f:textfield />
+    	</f:list>
+    	<f:radio-group f:bind="radio">
+    		<ref bean="options" />
+    	</f:radio-group>
+    	<f:select f:bind="select">
+    		<ref bean="options" />
+    	</f:select>
+    	<!--
+    	<f:dependent>
+	    	<f:select f:bind="select2">
+	    		
+	    	</f:select>
+    	</f:dependent>
+    	-->
+    	<f:file f:bind="file" />
+    	<f:nested f:bind="nested" type="org.riotfamily.forms.integration.model.TestBean">
+    		<f:textfield f:bind="text" />
+    	</f:nested>
+    	<!-- 
+    	<f:switch discriminator="discriminator">
+    		<case value="1">
+    			<f:textfield f:bind="case1" />
+    		</case>
+    		<case value="2">
+    			<f:textarea f:bind="case2" />
+    		</case>
+    	</f:switch>
+    	-->
+    </util:list>
    
 </beans>

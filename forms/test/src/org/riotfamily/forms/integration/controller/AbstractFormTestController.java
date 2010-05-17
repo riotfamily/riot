@@ -47,12 +47,13 @@ import org.riotfamily.forms.option.OptionsModel;
 import org.riotfamily.forms.option.StaticOptionsModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-public abstract class AbstractFormTestController implements FormSubmissionHandler {
+public abstract class AbstractFormTestController implements FormSubmissionHandler, InitializingBean {
 
 	private Logger log = LoggerFactory.getLogger(AbstractFormTestController.class);
 	
@@ -68,41 +69,49 @@ public abstract class AbstractFormTestController implements FormSubmissionHandle
 	}
 	
 	public AbstractFormTestController() {
-		form = new Form();
-		form.add(new Binding("text", new TextField()));
-		form.add(new Binding("date", new Datepicker()));
-		form.add(new Binding("list", new ListEditor(new TextField())));
+	}
+	
+	protected Form createForm() {
+		Form f = new Form();
+		f.add(new Binding("text", new TextField()));
+		f.add(new Binding("date", new Datepicker()));
+		f.add(new Binding("list", new ListEditor(new TextField())));
 
 		OptionsModel options = new StaticOptionsModel("foo", "bar");
 		
 		RadioButtonGroup radioGroup = new RadioButtonGroup();
 		radioGroup.setOptionsModel(options);
-		form.add(new Binding("radio", radioGroup));
+		f.add(new Binding("radio", radioGroup));
 		
 		SelectBox selectBox = new SelectBox();
 		selectBox.setOptionsModel(options);
-		form.add(new Binding("select", selectBox));
+		f.add(new Binding("select", selectBox));
 
-		form.add(new DependentElement(new Binding("select2", new SelectBox(new TestOptionsModel()))));
+		f.add(new DependentElement(new Binding("select2", new SelectBox(new TestOptionsModel()))));
 		
-		form.add(new Binding("file", new FileUpload()));
+		f.add(new Binding("file", new FileUpload()));
 		//form.add(new Binding("tinymce", new TinyMCE()));
 
 		NestedForm nested = new NestedForm();
 		initNestedForm(nested);
 		nested.add(new Binding("text", new TextField()));
-		form.add(new Binding("nested", nested));
+		f.add(new Binding("nested", nested));
 		
-		form.add(new SwitchElement("discriminator")
+		f.add(new SwitchElement("discriminator")
 			.addCase("1", new Binding("case1", new TextField()))
 			.addCase("2", new Binding("case2", new TextArea()))
 			);
 		
 		button = new SubmitButton("Save", this);
-		form.add(button);
+		f.add(button);
+		return f;
 	}
 	
 	protected void initNestedForm(NestedForm nested) {
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		form = createForm();
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
