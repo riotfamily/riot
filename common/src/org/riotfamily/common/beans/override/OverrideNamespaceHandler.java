@@ -75,13 +75,12 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 		
 		@Override
-		protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
+		protected void postProcess(RootBeanDefinition bean, 
 				ParserContext parserContext, Element element) {
 			
 			BeanDefinition bd = new RootBeanDefinition();
 			parserContext.getDelegate().parsePropertyElements(element, bd);
 			bean.getPropertyValues().add("propertyValues", bd.getPropertyValues());
-			return bean;
 		}
 	}
 	
@@ -93,7 +92,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		
 		@Override
 		@SuppressWarnings("unchecked")
-		protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
+		protected void postProcess(RootBeanDefinition bean, 
 				ParserContext parserContext, Element element) {
 			
 			Map entries = parserContext.getDelegate().parseMapElement(element, bean);
@@ -102,7 +101,6 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			// HashMap so that the reference resolution is deferred until
 			// the actual target bean is initialized.
 			bean.getPropertyValues().add("entries", new HashMap(entries));
-			return bean;
 		}
 	}
 	
@@ -113,7 +111,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 		
 		@Override
-		protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
+		protected void postProcess(RootBeanDefinition bean, 
 				ParserContext parserContext, Element element) {
 			
 			List<?> values = parserContext.getDelegate().parseListElement(element, bean);
@@ -122,7 +120,6 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			// ArrayList so that the reference resolution is deferred until
 			// the actual target bean is initialized.
 			bean.getPropertyValues().add("values", new ArrayList<Object>(values));
-			return bean;
 		}
 	}
 
@@ -142,7 +139,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 		
 		@Override
-		protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
+		protected void postProcess(RootBeanDefinition bean, 
 				ParserContext parserContext, Element element) {
 			
 			BeanReplacement replacement = new BeanReplacement(
@@ -150,7 +147,6 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 					element, null, bean));
 			
 			bean.getPropertyValues().add("beanReplacement", replacement).setConverted();
-			return bean;
 		}
 	}
 	

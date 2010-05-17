@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:f="http://www.riotfamily.org/schema/forms"
 	xmlns:s="http://www.riotfamily.org/schema/core/screen"
 	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
@@ -10,6 +11,8 @@
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.riotfamily.org/schema/forms
+		http://www.riotfamily.org/schema/forms/form-9.0.xsd
 		http://www.riotfamily.org/schema/core/screen
 		http://www.riotfamily.org/schema/core/screen-9.0.xsd
 		http://www.riotfamily.org/schema/common/override
@@ -183,12 +186,7 @@
 		</s:commands>
 		<s:form id="page" icon="page">
 		    <s:elements>
-		    	<bean class="org.riotfamily.forms.base.Binding">
-                    <property name="target" value="pathComponent" />
-                    <property name="element">
-                        <bean class="org.riotfamily.forms.element.TextField" />
-                    </property>
-                </bean>
+		    	<f:textfield f:bind="pathComponent" />
 	            <bean class="org.riotfamily.pages.riot.form.PagePropertiesElement" />
 	        </s:elements>
 		</s:form>

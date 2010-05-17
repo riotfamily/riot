@@ -71,29 +71,29 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	}
 
 	@Override
-	protected RootBeanDefinition doParse(Element element, 
-			ParserContext parserContext, RootBeanDefinition bean) {
-		
+	protected void doParse(Element element, ParserContext parserContext, RootBeanDefinition bean) {
 		NamedNodeMap attributes = element.getAttributes();
 		for (int x = 0; x < attributes.getLength(); x++) {
 			Attr attribute = (Attr) attributes.item(x);
-			String name = attribute.getLocalName();
-			if (isEligibleAttribute(name, parserContext)) {
-				String propertyName = extractPropertyName(name);
-				Assert.state(StringUtils.hasText(propertyName),
-						"Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
-
-				Object value;
-				if (references.contains(propertyName)) {
-					value = new RuntimeBeanReference(attribute.getValue());
+			if (attribute.getNamespaceURI() == null) {
+				String name = attribute.getLocalName();
+				if (isEligibleAttribute(name, parserContext)) {
+					String propertyName = extractPropertyName(name);
+					Assert.state(StringUtils.hasText(propertyName),
+							"Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
+	
+					Object value;
+					if (references.contains(propertyName)) {
+						value = new RuntimeBeanReference(attribute.getValue());
+					}
+					else {
+						value = attribute.getValue();
+					}
+					bean.getPropertyValues().add(propertyName, value);
 				}
-				else {
-					value = attribute.getValue();
-				}
-				bean.getPropertyValues().add(propertyName, value);
 			}
 		}
-		return postProcess(bean, parserContext, element);
+		postProcess(bean, parserContext, element);
 	}
 	
 	/**
@@ -142,10 +142,10 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	 * @param parserContext the object encapsulating the current state of the parsing process
 	 * @param element the XML element that was the source of the bean definition's metadata
 	 */
-	protected RootBeanDefinition postProcess(RootBeanDefinition bean, 
+	protected void postProcess(RootBeanDefinition bean, 
 			ParserContext parserContext, Element element) {
 		
-		return postProcess(bean, element);
+		postProcess(bean, element);
 	}
 	
 	/**
@@ -155,8 +155,7 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	 * @param bean the parsed (and probably totally defined) bean definition being built
 	 * @param element the XML element that was the source of the bean definition's metadata
 	 */
-	protected RootBeanDefinition postProcess(RootBeanDefinition bean, Element element) {
-		return bean;
+	protected void postProcess(RootBeanDefinition bean, Element element) {
 	}
 
 }

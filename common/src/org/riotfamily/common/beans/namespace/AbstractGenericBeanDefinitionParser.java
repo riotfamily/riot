@@ -27,10 +27,13 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * Class similar to Spring's {@link AbstractSingleBeanDefinitionParser}.
@@ -111,6 +114,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 					"to your classpath.");
 		}
 		AbstractBeanDefinition definition = parseInternal(element, parserContext);
+		BeanDefinitionHolder holder;
 		if (!parserContext.isNested()) {
 			try {
 				String id = resolveId(element, definition, parserContext);
@@ -119,10 +123,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 							"Id is required for element '" + element.getLocalName() + "' when used as a top-level tag", element);
 				}
 				String[] aliases = resolveAliases(element, definition, parserContext);
-				BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, id, aliases);
-				if (decorator != null) {
-					holder = decorator.decorate(element, holder, parserContext);
-				}
+				holder = decorate(element, parserContext, new BeanDefinitionHolder(definition, id, aliases));
 				registerBeanDefinition(holder, parserContext.getRegistry());
 				if (shouldFireEvents()) {
 					BeanComponentDefinition componentDefinition = new BeanComponentDefinition(holder);
@@ -135,13 +136,40 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 				return null;
 			}
 		}
-		else if (decorator != null) {
-			BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, "");
-			decorator.decorate(element, holder, parserContext);
+		else {
+			holder = decorate(element, parserContext, new BeanDefinitionHolder(definition, ""));
 		}
-		return definition;
+		return holder.getBeanDefinition();
+	}
+	
+	protected BeanDefinitionHolder decorate(Element element, ParserContext parserContext, BeanDefinitionHolder holder) {
+		NamedNodeMap attributes = element.getAttributes();
+		for (int i = 0; i < attributes.getLength(); i++) {
+			Node node = attributes.item(i);
+			holder = decorateIfRequired(node, holder, parserContext);
+		}
+		if (decorator != null) {
+			holder = decorator.decorate(element, holder, parserContext);
+		}
+		return holder; 
 	}
 
+	private BeanDefinitionHolder decorateIfRequired(Node node, BeanDefinitionHolder holder, 
+			ParserContext parserContext) {
+
+		String namespace = node.getNamespaceURI();
+		if (namespace != null) {
+			NamespaceHandler handler = parserContext.getReaderContext().getNamespaceHandlerResolver().resolve(namespace);
+			if (handler != null) {
+				return handler.decorate(node, holder, new ParserContext(
+						parserContext.getReaderContext(), 
+						parserContext.getDelegate(), 
+						parserContext.getContainingBeanDefinition()));
+			}
+		}
+		return holder;
+	}
+	
 	/**
 	 * Creates a {@link RootBeanDefinition} instance for the
 	 * {@link #getBeanClass bean Class} and passes it to the
@@ -166,12 +194,9 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 		}
 		bean.setAutowireMode(autowireMode);
 		bean.setFactoryMethodName(factoryMethod);
-		RootBeanDefinition result = doParse(element, parserContext, bean);
-		if (result == null) {
-			result = bean;
-		}
-		result.validate();
-		return result;
+		doParse(element, parserContext, bean);
+		bean.validate();
+		return bean;
 	}
 
 	/**
@@ -306,8 +331,8 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	 * @param builder used to define the <code>BeanDefinition</code>
 	 * @see #doParse(Element, BeanDefinitionBuilder)
 	 */
-	protected RootBeanDefinition doParse(Element element, ParserContext parserContext, RootBeanDefinition bean) {
-		return doParse(element, bean);
+	protected void doParse(Element element, ParserContext parserContext, RootBeanDefinition bean) {
+		doParse(element, bean);
 	}
 
 	/**
@@ -317,8 +342,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	 * @param element the XML element being parsed
 	 * @param builder used to define the <code>BeanDefinition</code>
 	 */
-	protected RootBeanDefinition doParse(Element element, RootBeanDefinition bean) {
-		return bean;
+	protected void doParse(Element element, RootBeanDefinition bean) {
 	}
 
 }

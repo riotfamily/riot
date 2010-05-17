@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.riotfamily.org/schema/forms"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:tool="http://www.springframework.org/schema/tool"
+	attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.riotfamily.org/schema/forms">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" />
+		
+	<xsd:import namespace="http://www.springframework.org/schema/tool"
+		schemaLocation="http://www.springframework.org/schema/tool/spring-tool-3.0.xsd" />
+
+	<xsd:attribute name="bind" type="xsd:string" />
+
+	<xsd:complexType name="element">
+		<xsd:attribute ref="bind" />
+	</xsd:complexType>
+	
+	<xsd:element name="textfield" type="element" />
+	<xsd:element name="password" type="element" />
+	<xsd:element name="textarea" type="element" />
+	<xsd:element name="tinymce" type="element" />
+	<xsd:element name="datepicker" type="element" />
+		
+	<!--
+	<xsd:element name="foo">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="element">
+					<xsd:attribute name="bar" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	-->
+	
+</xsd:schema>
