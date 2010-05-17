@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.riotfamily.common.beans.namespace.GenericBeanDefinitionParser;
 import org.riotfamily.common.beans.namespace.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.xml.XmlUtils;
+import org.riotfamily.common.util.XmlUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

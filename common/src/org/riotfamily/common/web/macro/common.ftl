@@ -446,18 +446,6 @@
 	</#if>
 </#macro>
 
-<#function hyphenate html>
-	<#return commonMacroHelper.hyphenate(html) />
-</#function>
-
-<#function hyphenateAndEncode html>
-	<#return encodeLinks(commonMacroHelper.hyphenate(html)) />
-</#function>
-
-<#function hyphenatePlainText text>
-	<#return commonMacroHelper.hyphenatePlainText(text) />
-</#function>
-
 <#---
   - Splits a list into a specified number of groups. The items are distributed
   - evenly. Example:

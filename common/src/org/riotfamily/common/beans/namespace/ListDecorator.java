@@ -14,7 +14,7 @@ package org.riotfamily.common.beans.namespace;
 
 import java.util.List;
 
-import org.riotfamily.common.xml.XmlUtils;
+import org.riotfamily.common.util.XmlUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
