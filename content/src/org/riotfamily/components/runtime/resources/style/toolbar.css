@@ -206,6 +206,7 @@ body > #riot-notification {
 	border-color: #fff;
 	max-height: 250px;
 	overflow: auto;
+	*width: 105px;
 }
 
 .riot-types .type {
@@ -222,6 +223,7 @@ body > #riot-notification {
 	line-height: 16px;
 	white-space: nowrap;
 	border: 1px solid #f0f0f0;
+	*width: 105px;
 }
 
 .riot-types .type:hover {
