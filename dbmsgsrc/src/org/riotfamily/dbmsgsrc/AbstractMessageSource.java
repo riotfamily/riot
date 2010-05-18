@@ -91,7 +91,7 @@ public abstract class AbstractMessageSource implements HierarchicalMessageSource
 	}
 
 
-	public final String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+	public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
 		String msg = getMessageInternal(code, args, locale, defaultMessage);
 		if (msg != null) {
 			return msg;
@@ -106,7 +106,7 @@ public abstract class AbstractMessageSource implements HierarchicalMessageSource
 		return renderDefaultMessage(defaultMessage, args, locale);
 	}
 
-	public final String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
+	public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
 		String msg = getMessageInternal(code, args, locale, null);
 		if (msg != null) {
 			return msg;
@@ -118,7 +118,7 @@ public abstract class AbstractMessageSource implements HierarchicalMessageSource
 		throw new NoSuchMessageException(code, locale);
 	}
 
-	public final String getMessage(MessageSourceResolvable resolvable, Locale locale)
+	public String getMessage(MessageSourceResolvable resolvable, Locale locale)
 			throws NoSuchMessageException {
 
 		String[] codes = resolvable.getCodes();
