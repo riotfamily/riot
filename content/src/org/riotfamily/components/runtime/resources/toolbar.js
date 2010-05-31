@@ -179,7 +179,7 @@ riot.ToolbarButton = Class.create({
 	},
 
 	getHandlerTargets: function() {
-		return document.body.select(this.selector);
+		return $(document.body).select(this.selector);
 	},
 
 	applyHandler: function(enable) {

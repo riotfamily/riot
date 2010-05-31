@@ -226,34 +226,24 @@ public class FormScreen extends AjaxFormController
 		}
 		transactionManager.commit(status);
 	}
-
-	private boolean hasChildScreens() {
-		return getChildScreens() != null && !getChildScreens().isEmpty();
-	}
 	
 	protected ModelAndView afterSaveOrUpdate(
 			Form form, HttpServletRequest request,
 			ScreenContext context, boolean save) {
 		
-		ModelAndView mv;
-		String focus = request.getParameter("focus");
 		
 		// Recreate context to make sure it includes the objectId (in case of newly created objects)
-		context = context.createParentContext().createItemContext(form.getBackingObject());
-		
-		if (focus != null || (save && hasChildScreens())) {
-			mv = reloadForm(form, context, focus);
+		if (form.isNew()) {
+			context = context.createParentContext().createItemContext(form.getBackingObject());
 		}
-		else {
-			mv = showParentList(context);
-		}
-		
-		mv.addObject("notification", new FormNotification(form)
+
+		String focus = request.getParameter("focus");
+
+		return reloadForm(form, context, focus)
+				.addObject("notification", new FormNotification(form)
 				.setIcon("save")
 				.setMessageKey("label.form.saved")
 				.setDefaultMessage("Your changes have been saved."));
-		
-		return mv;
 	}
 
 	protected ModelAndView showParentList(ScreenContext context) {

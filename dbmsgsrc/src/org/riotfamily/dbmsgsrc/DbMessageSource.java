@@ -16,14 +16,14 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 
-import org.riotfamily.common.hibernate.ActiveRecordUtils;
 import org.riotfamily.common.web.cache.tags.CacheTagUtils;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-@Transactional
 public class DbMessageSource extends AbstractMessageSource {
 
 	public static final String DEFAULT_BUNDLE = "default";
@@ -55,13 +55,36 @@ public class DbMessageSource extends AbstractMessageSource {
 	public void setEscapeSingleQuotes(boolean escapeSingleQuotes) {
 		this.escapeSingleQuotes = escapeSingleQuotes;
 	}
-		
+
+	@Override
+	@Transactional
+	public String getMessage(MessageSourceResolvable resolvable, Locale locale)
+				throws NoSuchMessageException {
+
+		return super.getMessage(resolvable, locale);
+	}
+
+	@Override
+	@Transactional
+	public String getMessage(String code, Object[] args, Locale locale)
+				throws NoSuchMessageException {
+
+		return super.getMessage(code, args, locale);
+	}
+
+	@Override
+	@Transactional
+	public String getMessage(String code, Object[] args, String defaultMessage,
+				Locale locale) {
+
+		return super.getMessage(code, args, defaultMessage, locale);
+	}
+
 	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
 		MessageBundleEntry result = MessageBundleEntry.loadByBundleAndCode(bundle, code);
 		if (result == null) {
 			result = new MessageBundleEntry(bundle, code, defaultMessage);
 			result.save();
-			ActiveRecordUtils.flushSession();
 		}
 		return result;
 	}

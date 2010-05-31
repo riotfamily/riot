@@ -51,6 +51,7 @@ public class PasswordField extends TemplateElement
 		textField.setConfirm(confirm);
 	}
 	
+	@Override
 	public void setRequired(boolean required) {
 		super.setRequired(required);
 		textField.setRequired(required);
@@ -93,7 +94,8 @@ public class PasswordField extends TemplateElement
 			return initialValue;
 		}
 		String value = (String) textField.getValue();
-		if (hash != null && !hash.equalsIgnoreCase("plain") 
+		if (value != null && hash != null 
+				&& !hash.equalsIgnoreCase("plain") 
 				&& !hash.equalsIgnoreCase("false")) {
 			
 			value = HashUtils.hash(value, hash);
@@ -139,16 +141,19 @@ public class PasswordField extends TemplateElement
 	
 	private class ToggleButton extends Button {
 		
+		@Override
 		public String getLabelKey() {
 			return showInput 
 					? "label.passwordField.keep" 
 					: "label.passwordField.change";
 		}
 
+		@Override
 		protected void onClick() {
 			toggle();
 		}
 		
+		@Override
 		public int getEventTypes() {
 			return JavaScriptEvent.ON_CLICK;
 		}
