@@ -474,11 +474,14 @@ riot.Popup = Class.create({
 				doc.viewport = document.viewport;
 				doc.body.parentNode.style.border = 'none';
 				var w = 600;
-				Element.extend(doc.body).select('.element').each(function (el) {
-					if (el.up().getWidth() > w) {
-						w = el.up().getWidth();
-					}
-				});
+				var body = Element.extend(doc.body);
+				if (body.select) {
+					body.select('.element').each(function (el) {
+						if (el.up().getWidth() > w) {
+							w = el.up().getWidth();
+						}
+					});
+				}
 				w += 32;
 				w = Math.min(Math.round(document.viewport.getWidth() - 32), w);
 				var offsetH = Math.max(doc.body.offsetHeight,document.documentElement.clientHeight) + 32;
