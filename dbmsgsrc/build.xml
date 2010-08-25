@@ -1,7 +1,0 @@
-<project name="riot-dbmsgsrc" default="compile">
-
-	<property name="module.title" value="Riot DB Message Source" />
-	
-	<import file="../module-build.xml" />
-
-</project>

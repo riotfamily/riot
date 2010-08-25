@@ -1,7 +1,0 @@
-<project name="cachius" default="compile">
-	
-	<property name="module.title" value="Cachius" />
-	
-	<import file="../module-build.xml" />
-
-</project>

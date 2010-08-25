@@ -1,0 +1,5 @@
+dependencies {
+	compile project(':core'), project(':common'), libs(['spring_core', 'c3p0'])
+	provided lib('servlet_api')
+}
+

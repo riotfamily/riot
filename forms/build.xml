@@ -1,7 +1,0 @@
-<project name="riot-forms" default="compile">
-	
-	<property name="module.title" value="Riot Forms" />
-	
-	<import file="../module-build.xml" />
-	
-</project>

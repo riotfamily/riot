@@ -39,7 +39,7 @@
 		<constructor-arg ref="viewComponentRenderer" />
 		<property name="toolbarScripts">
 			<list>
-				<value>riot-js/resources.js</value>
+				<value>riot/resources.js</value>
 				<value>toolbar-loader.js</value>
 			</list>
 		</property>

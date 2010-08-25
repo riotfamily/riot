@@ -1,0 +1,12 @@
+dependencies {
+	compile project(':cachius'), 
+			libs(['slf4j', 'log4j', 'dom4j',
+			      'spring_orm', 'spring_webmvc', 'spring_context_support',
+			      'commons_fileupload', 'jpa', 'hibernate_annotations', 
+			      'freemarker', 'json_lib', 'quartz', 'yuicompressor'])
+	
+	provided libs(['servlet_api', 'javax_mail'])
+	
+	runtime project(':revolt'), libs(['jta', 'hibernate_ehcache', 'ehcache', 'javassist', 'cglib'])
+}
+

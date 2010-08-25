@@ -1,7 +1,0 @@
-<project name="riot-media" default="compile">
-
-	<property name="module.title" value="Riot Media Management" />
-	
-	<import file="../module-build.xml" />
-	
-</project>

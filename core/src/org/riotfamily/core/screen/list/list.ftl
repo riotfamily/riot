@@ -12,7 +12,7 @@
 		<@riot.script src="/engine.js" />
 		<@riot.script src="/util.js" />
 		<@riot.script src="/interface/ListService.js" />
-		<@riot.script src="riot-js/pager.js" />
+		<@riot.script src="riot/pager.js" />
 		<@riot.script src="list.js" />
 		<#if chooser??>
 			<@template.set bodyClass="chooser" />

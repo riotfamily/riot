@@ -18,7 +18,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.RiotHyphenator;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.performance.ResourceStamper;
 import org.springframework.context.ApplicationContext;
@@ -39,9 +38,7 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 	private ResourceStamper stamper;
 	
 	private HandlerUrlResolver handlerUrlResolver;
-	
-	private RiotHyphenator hyphenator;
-	
+		
 	private boolean compressResources = false;
 	
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -60,10 +57,6 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 		this.handlerUrlResolver = handlerUrlResolver;
 	}
 	
-	public void setHyphenator(RiotHyphenator hyphenator) {
-		this.hyphenator = hyphenator;
-	}
-
 	public void setCompressResources(boolean compressResources) {
 		this.compressResources = compressResources;
 	}
@@ -72,8 +65,7 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 			HttpServletResponse response, Map<String, ?> model) {
 		
 		return new CommonMacroHelper(applicationContext, request, response, 
-				servletContext, stamper, handlerUrlResolver, hyphenator, 
-				compressResources);
+				servletContext, stamper, handlerUrlResolver, compressResources);
 	}
 
 }

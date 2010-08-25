@@ -11,7 +11,7 @@
 		<@riot.script src="/util.js" />
 
 		<@riot.script src="/interface/ListService.js" />
-		<@riot.script src="riot-js/pager.js" />
+		<@riot.script src="riot/pager.js" />
 		<@riot.script src="list.js" />
 		<div id="form">${form}</div>
 	</@template.block>

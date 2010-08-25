@@ -8,7 +8,7 @@
 	riot.Resources.setBasePath(riot.resourcePath)
 		.loadStyleSheet('style/toolbar.css')
 		.loadStyleSheet('style/edit-mode.css')
-		.loadStyleSheet('riot-js/window/dialog.css')
+		.loadStyleSheet('riot/window/dialog.css')
 		.loadScriptSequence([
 			{src: riot.path + '/engine.js', test: 'dwr.engine'},
 			{src: riot.path + '/util.js', test: 'dwr.util'},
@@ -18,13 +18,13 @@
 	function loadToolbarScripts() {
 		var scripts = [	
    			{src: 'prototype/prototype.js', test: 'Prototype'},
-			{src: 'riot-js/util.js', test: 'RElement'},
+			{src: 'riot/util.js', test: 'RElement'},
 			{src: 'scriptaculous/effects.js', test: 'Effect'},
 			{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
-			{src: 'riot-js/cookiejar.js', test: 'CookieJar'},
+			{src: 'riot/cookiejar.js', test: 'CookieJar'},
 			{src: 'toolbar.js', test: 'riot.toolbar'},
-			{src: 'riot-js/effects.js', test: 'Effect.Remove'},
-			{src: 'riot-js/window/dialog.js', test: 'riot.window'},
+			{src: 'riot/effects.js', test: 'Effect.Remove'},
+			{src: 'riot/window/dialog.js', test: 'riot.window'},
 			{src: 'inplace.js', test: 'riot.InplaceEditor'},
 			{src: 'components.js', test: 'riot.components', onload: activateToolbar}
 		]; 

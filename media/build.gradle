@@ -1,0 +1,4 @@
+dependencies {
+	compile project(':core'), libs(['json_lib'])
+	provided libs(['servlet_api'])
+}

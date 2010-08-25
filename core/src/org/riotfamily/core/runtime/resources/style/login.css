@@ -10,11 +10,12 @@ table.center {
 }
 td.center {
 	width: 100%;
+	padding: 50px;
 	vertical-align: middle;
 }
 #wrapper {
 	height: 100%;
-	background: url(images/riot_footer.gif) bottom right no-repeat;
+	background: url(images/footer/logo.gif) bottom right no-repeat;
 }
 
 .username td,
@@ -38,7 +39,7 @@ td.input {
 }
 
 .error {
-	background: url(images/error.png) left center no-repeat;
+	background: url(images/icons/error.png) left center no-repeat;
 	line-height: 20px;
 	padding-left: 20px;
 	margin-bottom: 10px;
@@ -62,56 +63,23 @@ td.input {
 	margin: 0 1px;
 }
 
-.box .t,
-.box .b {
-	height: 18px;
-}
-.box .l,
-.box .r {
-	width: 25px;
+.box {
+    _height: 1px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    filter: progid:DXImageTransform.Microsoft.Blur(pixelRadius=5,MakeShadow=true,ShadowOpacity=0.5);
+    background: #000\9
 }
 
-.box .t .l {
-	background-image: url(images/login/tl.png);
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/tl.png', sizingMethod='scale');
-	_background: transparent;
-}
-.box .t .c {
-	background-image: url(images/login/tc.png);
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/tc.png', sizingMethod='scale');
-	_background: transparent;
-}
-.box .t .r {
-	background-image: url(images/login/tr.png);
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/tr.png', sizingMethod='scale');
-	_background: transparent;
-}
-.box .m .l {
-	background-image: url(images/login/ml.png);
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/ml.png', sizingMethod='scale');
-	_background: transparent;
-}
-.box .m .c {
-	background-color: #f0f0f0;
-	padding: 20px;
-}
-.box .m .r {
-	background-image: url(images/login/mr.png);
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/mr.png', sizingMethod='scale');
-	_background: transparent;
-}
-.box .b .l {
-	background-image: url(images/login/bl.png);
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/bl.png', sizingMethod='scale');
-	_background: transparent;
-}
-.box .b .c {
-	background-image: url(images/login/bc.png);
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/bc.png', sizingMethod='scale');
-	_background: transparent;
-}
-.box .b .r {
-	background-image: url(images/login/br.png);
-	_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${contextPath}${resourcePath}/style/images/login/br.png', sizingMethod='scale');
-	_background: transparent;
+form {
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    position: relative;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    top: 2px;
+    left: 2px;
 }

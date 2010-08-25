@@ -13,7 +13,7 @@
 		<@riot.stylesheet href="style/form-custom.css" />
 		<@riot.script src="prototype/prototype.js" />
 		<@riot.script src="path.js" />
-		<@riot.script src="riot-js/util.js" />		
+		<@riot.script src="riot/util.js" />		
 		<script type="text/javascript" language="JavaScript">
 			subPage('<@spring.messageText "label.status.changePassword", "Change Password" />');
 			<#--

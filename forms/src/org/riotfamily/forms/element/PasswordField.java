@@ -84,7 +84,7 @@ public class PasswordField extends TemplateElement
 	
 	public FormResource getResource() {
 		if (strengthMeter) {
-			return new ScriptResource("riot-js/pw-strength.js", "PasswordStrengthMeter");
+			return new ScriptResource("riot/pw-strength.js", "PasswordStrengthMeter");
 		}
 		return null;
 	}

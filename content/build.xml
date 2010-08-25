@@ -1,7 +1,0 @@
-<project name="riot-content" default="compile">
-
-	<property name="module.title" value="Riot Content" />
-	
-	<import file="../module-build.xml" />
-	
-</project>

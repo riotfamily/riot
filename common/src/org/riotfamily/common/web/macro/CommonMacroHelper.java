@@ -38,7 +38,6 @@ import org.riotfamily.common.beans.property.PropertyUtils;
 import org.riotfamily.common.ui.ObjectGroup;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.util.RiotHyphenator;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.performance.ResourceStamper;
 import org.riotfamily.common.web.support.ServletUtils;
@@ -86,9 +85,7 @@ public class CommonMacroHelper {
 	private ResourceStamper stamper;
 
 	private HandlerUrlResolver handlerUrlResolver;
-	
-	private RiotHyphenator hyphenator;
-	
+		
 	private boolean compressResources;
 	
 	private Locale requestLocale = null;
@@ -101,7 +98,7 @@ public class CommonMacroHelper {
 			HttpServletRequest request, HttpServletResponse response, 
 			ServletContext servletContext, ResourceStamper stamper, 
 			HandlerUrlResolver handlerUrlResolver,
-			RiotHyphenator hyphenator, boolean compressResources) {
+			boolean compressResources) {
 
 		this.ctx = ctx;
 		this.request = request;
@@ -109,7 +106,6 @@ public class CommonMacroHelper {
 		this.servletContext = servletContext;
 		this.stamper = stamper;
 		this.handlerUrlResolver = handlerUrlResolver;
-		this.hyphenator = hyphenator;
 		this.compressResources = compressResources;
 	}
 
@@ -346,23 +342,6 @@ public class CommonMacroHelper {
 	
 	public int round(float number) {
 		return Math.round(number);
-	}
-	
-	public String hyphenatePlainText(String text) {
-		return hyphenator.hyphenate(getLocale(), text);
-	}
-	
-	public String hyphenate(String markup) {
-		StringBuffer sb = new StringBuffer();
-		Matcher matcher = TEXT_PATTERN.matcher(markup);
-		while (matcher.find()) {
-			String text = matcher.group(1);
-			if (text.length() > 0) {
-				sb.append(hyphenatePlainText(text));
-			}
-			sb.append(matcher.group(2));
-		}
-		return sb.toString();
 	}
 	
 	/**

@@ -1,71 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="common/src"/>
-	<classpathentry kind="src" path="linkcheck/src"/>
-	<classpathentry kind="src" path="cachius/src"/>
-	<classpathentry kind="src" path="forms/src"/>
-	<classpathentry kind="src" path="core/src"/>
-	<classpathentry kind="src" path="media/src"/>
-	<classpathentry kind="src" path="revolt/src"/>
-	<classpathentry kind="src" path="statistics/src"/>
-	<classpathentry kind="src" path="dbmsgsrc/src"/>
-	<classpathentry kind="src" path="crawler/src"/>
-	<classpathentry kind="src" path="search/src"/>
-	<classpathentry kind="src" path="content/src"/>
-	<classpathentry kind="src" path="cachius/test"/>
-	<classpathentry kind="src" path="core/test"/>
-	<classpathentry kind="src" path="common/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/activation.jar"/>
-	<classpathentry kind="lib" path="lib/dwr.jar"/>
-	<classpathentry kind="lib" path="lib/freemarker.jar" sourcepath="lib/freemarker.src.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://freemarker.org/docs/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/json-lib.jar"/>
-	<classpathentry kind="lib" path="lib/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/servlet.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://tomcat.apache.org/tomcat-5.5-doc/servletapi/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/c3p0.jar"/>
-	<classpathentry kind="lib" path="lib/yuicompressor.jar"/>
-	<classpathentry kind="lib" path="lib/quartz.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-analyzers.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-core.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-highlighter.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-snowball.jar"/>
-	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
-	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
-	<classpathentry kind="lib" path="lib/dom4j.jar"/>
-	<classpathentry kind="lib" path="lib/texhyphj.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate.jar" sourcepath="lib/hibernate.src.zip"/>
-	<classpathentry kind="lib" path="lib/persistence.jar"/>
-	<classpathentry kind="lib" path="lib/poi.jar"/>
-	<classpathentry kind="lib" path="lib/javamail.jar"/>
-	<classpathentry kind="lib" path="lib/xstream.jar" sourcepath="lib/xstream.src.zip"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/spring-aop.jar" sourcepath="lib/spring-aop.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-beans.jar" sourcepath="lib/spring-beans.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-context-support.jar" sourcepath="lib/spring-context-support.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-context.jar" sourcepath="lib/spring-context.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-core.jar" sourcepath="lib/spring-core.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-expression.jar" sourcepath="lib/spring-expression.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-jdbc.jar"/>
-	<classpathentry kind="lib" path="lib/spring-orm.jar" sourcepath="lib/spring-orm.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-transaction.jar" sourcepath="lib/spring-transaction.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-web-servlet.jar" sourcepath="lib/spring-web-servlet.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-web.jar" sourcepath="lib/spring-web.src.zip"/>
-	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-log4j.jar"/>
-	<classpathentry kind="lib" path="lib/junit.jar"/>
-	<classpathentry kind="lib" path="lib/aop-api.jar"/>
-	<classpathentry kind="lib" path="lib/spring-test.jar"/>
-	<classpathentry kind="lib" path="lib/spring-asm.jar"/>
-	<classpathentry kind="lib" path="lib/cglib-nodep.jar"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="src" output="cachius/build/eclipse" path="cachius/src"/>
+	<classpathentry kind="src" output="cachius/build/eclipse" path="cachius/test"/>
+	<classpathentry kind="src" output="common/build/eclipse" path="common/src"/>
+	<classpathentry kind="src" output="common/build/eclipse" path="common/test"/>
+	<classpathentry kind="src" output="content/build/eclipse" path="content/src"/>
+	<classpathentry kind="src" output="core/build/eclipse" path="core/src"/>
+	<classpathentry kind="src" output="core/build/eclipse" path="core/test"/>
+	<classpathentry kind="src" output="dbmsgsrc/build/eclipse" path="dbmsgsrc/src"/>
+	<classpathentry kind="src" output="forms/build/eclipse" path="forms/src"/>
+	<classpathentry kind="src" output="jslibs/build/eclipse" path="jslibs/src"/>
+	<classpathentry kind="src" output="media/build/eclipse" path="media/src"/>
+	<classpathentry kind="src" output="revolt/build/eclipse" path="revolt/src"/>
+	<classpathentry kind="src" output="statistics/build/eclipse" path="statistics/src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-jdbc/jars/spring-jdbc-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-jdbc/sources/spring-jdbc-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/net.sourceforge.nekohtml/nekohtml/jars/nekohtml-1.9.14.jar" sourcepath="GRADLE_CACHE/net.sourceforge.nekohtml/nekohtml/sources/nekohtml-1.9.14-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-web/jars/spring-web-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-web/sources/spring-web-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.jitr/jitr/jars/jitr-1.0.0.jar" sourcepath="GRADLE_CACHE/org.jitr/jitr/sources/jitr-1.0.0-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-expression/jars/spring-expression-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-expression/sources/spring-expression-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/net.sourceforge.htmlunit/htmlunit-core-js/jars/htmlunit-core-js-2.7.jar" sourcepath="GRADLE_CACHE/net.sourceforge.htmlunit/htmlunit-core-js/sources/htmlunit-core-js-2.7-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/commons-beanutils/commons-beanutils/jars/commons-beanutils-1.7.0.jar" sourcepath="GRADLE_CACHE/commons-beanutils/commons-beanutils/sources/commons-beanutils-1.7.0-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/net.sourceforge.htmlunit/htmlunit/jars/htmlunit-2.7.jar" sourcepath="GRADLE_CACHE/net.sourceforge.htmlunit/htmlunit/sources/htmlunit-2.7-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-test/jars/spring-test-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-test/sources/spring-test-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.hsqldb/hsqldb/jars/hsqldb-1.8.0.10.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.directwebremoting/dwr/jars/dwr-3.0.0.117.dev.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/xalan/xalan/jars/xalan-2.7.1.jar" sourcepath="GRADLE_CACHE/xalan/xalan/sources/xalan-2.7.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/c3p0/c3p0/jars/c3p0-0.9.1.2.jar" sourcepath="GRADLE_CACHE/c3p0/c3p0/sources/c3p0-0.9.1.2-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/javax.servlet/servlet-api/jars/servlet-api-2.5.jar" sourcepath="GRADLE_CACHE/javax.servlet/servlet-api/sources/servlet-api-2.5-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/xml-apis/xml-apis/jars/xml-apis-1.3.04.jar" sourcepath="GRADLE_CACHE/xml-apis/xml-apis/sources/xml-apis-1.3.04-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.w3c.css/sac/jars/sac-1.3.jar" sourcepath="GRADLE_CACHE/org.w3c.css/sac/sources/sac-1.3-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.hibernate/hibernate-core/jars/hibernate-core-3.3.2.GA.jar" sourcepath="GRADLE_CACHE/org.hibernate/hibernate-core/sources/hibernate-core-3.3.2.GA-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/commons-lang/commons-lang/jars/commons-lang-2.4.jar" sourcepath="GRADLE_CACHE/commons-lang/commons-lang/sources/commons-lang-2.4-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.hibernate/hibernate-commons-annotations/jars/hibernate-commons-annotations-3.1.0.GA.jar" sourcepath="GRADLE_CACHE/org.hibernate/hibernate-commons-annotations/sources/hibernate-commons-annotations-3.1.0.GA-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-asm/jars/spring-asm-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-asm/sources/spring-asm-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/commons-fileupload/commons-fileupload/jars/commons-fileupload-1.2.1.jar" sourcepath="GRADLE_CACHE/commons-fileupload/commons-fileupload/sources/commons-fileupload-1.2.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/junit/junit/jars/junit-4.8.1.jar" sourcepath="GRADLE_CACHE/junit/junit/sources/junit-4.8.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-context/jars/spring-context-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-context/sources/spring-context-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.mortbay.jetty/servlet-api/jars/servlet-api-2.5-20081211.jar" sourcepath="GRADLE_CACHE/org.mortbay.jetty/servlet-api/sources/servlet-api-2.5-20081211-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-core/jars/spring-core-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-core/sources/spring-core-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/aopalliance/aopalliance/jars/aopalliance-1.0.jar" sourcepath="GRADLE_CACHE/aopalliance/aopalliance/sources/aopalliance-1.0-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/javax.activation/activation/jars/activation-1.1.jar" sourcepath="GRADLE_CACHE/javax.activation/activation/sources/activation-1.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/commons-collections/commons-collections/jars/commons-collections-3.2.1.jar" sourcepath="GRADLE_CACHE/commons-collections/commons-collections/sources/commons-collections-3.2.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/net.sf.ezmorph/ezmorph/jars/ezmorph-1.0.6.jar" sourcepath="GRADLE_CACHE/net.sf.ezmorph/ezmorph/sources/ezmorph-1.0.6-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/commons-io/commons-io/jars/commons-io-1.4.jar" sourcepath="GRADLE_CACHE/commons-io/commons-io/sources/commons-io-1.4-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar" sourcepath="GRADLE_CACHE/commons-logging/commons-logging/sources/commons-logging-1.1.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.mortbay.jetty/jetty-util/jars/jetty-util-6.1.22.jar" sourcepath="GRADLE_CACHE/org.mortbay.jetty/jetty-util/sources/jetty-util-6.1.22-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.mortbay.jetty/jetty/jars/jetty-6.1.22.jar" sourcepath="GRADLE_CACHE/org.mortbay.jetty/jetty/sources/jetty-6.1.22-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/dom4j/dom4j/jars/dom4j-1.6.1.jar" sourcepath="GRADLE_CACHE/dom4j/dom4j/sources/dom4j-1.6.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/net.sourceforge.cssparser/cssparser/jars/cssparser-0.9.5.jar" sourcepath="GRADLE_CACHE/net.sourceforge.cssparser/cssparser/sources/cssparser-0.9.5-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.hibernate/hibernate-ehcache/jars/hibernate-ehcache-3.3.2.GA.jar" sourcepath="GRADLE_CACHE/org.hibernate/hibernate-ehcache/sources/hibernate-ehcache-3.3.2.GA-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/cglib/cglib-nodep/jars/cglib-nodep-2.2.jar" sourcepath="GRADLE_CACHE/cglib/cglib-nodep/sources/cglib-nodep-2.2-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/net.sf.ehcache/ehcache-core/jars/ehcache-core-1.7.2.jar" sourcepath="GRADLE_CACHE/net.sf.ehcache/ehcache-core/sources/ehcache-core-1.7.2-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-aop/jars/spring-aop-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-aop/sources/spring-aop-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-tx/jars/spring-tx-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-tx/sources/spring-tx-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/xalan/serializer/jars/serializer-2.7.1.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/log4j/log4j/jars/log4j-1.2.14.jar" sourcepath="GRADLE_CACHE/log4j/log4j/sources/log4j-1.2.14-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/xerces/xercesImpl/jars/xercesImpl-2.9.1.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/commons-codec/commons-codec/jars/commons-codec-1.4.jar" sourcepath="GRADLE_CACHE/commons-codec/commons-codec/sources/commons-codec-1.4-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.slf4j/slf4j-api/jars/slf4j-api-1.5.10.jar" sourcepath="GRADLE_CACHE/org.slf4j/slf4j-api/sources/slf4j-api-1.5.10-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/net.sf.ehcache/ehcache/jars/ehcache-1.2.3.jar" sourcepath="GRADLE_CACHE/net.sf.ehcache/ehcache/sources/ehcache-1.2.3-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.slf4j/slf4j-log4j12/jars/slf4j-log4j12-1.5.10.jar" sourcepath="GRADLE_CACHE/org.slf4j/slf4j-log4j12/sources/slf4j-log4j12-1.5.10-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-beans/jars/spring-beans-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-beans/sources/spring-beans-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.apache.poi/poi/jars/poi-3.5-FINAL.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-context-support/jars/spring-context-support-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-context-support/sources/spring-context-support-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/commons-httpclient/commons-httpclient/jars/commons-httpclient-3.1.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/javax.transaction/jta/jars/jta-1.1.jar" sourcepath="GRADLE_CACHE/javax.transaction/jta/sources/jta-1.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.slf4j/jcl-over-slf4j/jars/jcl-over-slf4j-1.5.10.jar" sourcepath="GRADLE_CACHE/org.slf4j/jcl-over-slf4j/sources/jcl-over-slf4j-1.5.10-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/net.sf.json-lib/json-lib/jars/json-lib-2.2.3-jdk15.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/javax.persistence/persistence-api/jars/persistence-api-1.0.jar" sourcepath="GRADLE_CACHE/javax.persistence/persistence-api/sources/persistence-api-1.0-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.opensymphony.quartz/quartz/jars/quartz-1.6.1.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/com.yahoo.platform.yui/yuicompressor/jars/yuicompressor-2.4.2.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.freemarker/freemarker/jars/freemarker-2.3.16.jar" sourcepath="GRADLE_CACHE/org.freemarker/freemarker/sources/freemarker-2.3.16-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/javassist/javassist/jars/javassist-3.8.0.GA.jar" sourcepath="GRADLE_CACHE/javassist/javassist/sources/javassist-3.8.0.GA-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.hibernate/hibernate-annotations/jars/hibernate-annotations-3.4.0.GA.jar" sourcepath="GRADLE_CACHE/org.hibernate/hibernate-annotations/sources/hibernate-annotations-3.4.0.GA-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/antlr/antlr/jars/antlr-2.7.6.jar" sourcepath="GRADLE_CACHE/antlr/antlr/sources/antlr-2.7.6-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/javax.mail/mail/jars/mail-1.4.1.jar" sourcepath="GRADLE_CACHE/javax.mail/mail/sources/mail-1.4.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/com.thoughtworks.xstream/xstream/jars/xstream-1.3.1.jar" sourcepath="GRADLE_CACHE/com.thoughtworks.xstream/xstream/sources/xstream-1.3.1-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-webmvc/jars/spring-webmvc-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-webmvc/sources/spring-webmvc-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.hibernate/ejb3-persistence/jars/ejb3-persistence-1.0.2.GA.jar" sourcepath="GRADLE_CACHE/org.hibernate/ejb3-persistence/sources/ejb3-persistence-1.0.2.GA-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/xpp3/xpp3_min/jars/xpp3_min-1.1.4c.jar" sourcepath="GRADLE_CACHE/xpp3/xpp3_min/sources/xpp3_min-1.1.4c-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="GRADLE_CACHE/org.springframework/spring-orm/jars/spring-orm-3.0.0.RELEASE.jar" sourcepath="GRADLE_CACHE/org.springframework/spring-orm/sources/spring-orm-3.0.0.RELEASE-sources.jar"/>
+	<classpathentry kind="var" path="GRADLE_CACHE"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

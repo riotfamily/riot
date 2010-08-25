@@ -1,0 +1,17 @@
+dependencies {
+	compile project(':common'), libs(['spring_webmvc', 'json_lib'])
+
+	provided libs(['servlet_api'])
+	
+	runtime libs(['commons_fileupload']),
+			project(':jslibs')
+	
+	testCompile project(':common'),
+				'net.sourceforge.htmlunit:htmlunit:2.7',
+				'org.jitr:jitr:1.0.0'
+				
+	testRuntime 'org.mortbay.jetty:jetty:6.1.22',
+				'org.slf4j:jcl-over-slf4j:1.5.10',
+				'org.slf4j:slf4j-log4j12:1.5.10',
+				'log4j:log4j:1.2.14'
+}

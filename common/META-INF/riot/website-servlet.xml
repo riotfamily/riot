@@ -204,7 +204,6 @@
 	<bean id="commonMacroHelper" class="org.riotfamily.common.web.macro.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
 		<property name="handlerUrlResolver" ref="handlerUrlResolver" />
-		<property name="hyphenator" ref="riotHyphenator" />
 		<property name="compressResources" value="${riot.resources.compress=true}" />
 	</bean>
 	
@@ -223,10 +222,6 @@
 	
 	<bean id="templateMacroHelper" class="org.riotfamily.common.web.template.TemplateMacroHelperFactory" />
 		
-	<bean id="riotHyphenator" class="org.riotfamily.common.util.RiotHyphenator">
-		<property name="baseDir" value="/WEB-INF/hyphenation" />
-	</bean>
-	
 	<bean id="txt2ImgController" name="${riot.utils.uriPrefix=/riot-utils}/txt2img.{type}" class="org.riotfamily.common.web.txt2img.Txt2ImgController">
 		<property name="compressor">
 			<bean class="org.riotfamily.common.web.performance.YUIJavaScriptCompressor">

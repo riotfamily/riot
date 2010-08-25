@@ -316,7 +316,7 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	show: function($super) {
 		tinyMCE_GZ = {loaded: true};
 		var $this = this;
-		riot.Resources.loadScript('tiny_mce/tiny_mce_src.js', 'tinymce');
+		riot.Resources.loadScript('tinymce/tiny_mce_src.js', 'tinymce');
 		riot.Resources.waitFor('tinymce.WindowManager', function() {
 			$super();
 			$this.initEditor();

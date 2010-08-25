@@ -337,7 +337,7 @@ public class Form implements BeanEditor {
 		doc.start("script").body();
 		writer.write("if (!(window.riot && riot.Resources)) document.write('" 
 				+ "<script src=\"" + formContext.getContextPath()
-				+ formContext.getResourcePath() + "riot-js/resources.js"
+				+ formContext.getResourcePath() + "riot/resources.js"
 				+ "\"></scr'+'ipt>');\n");
 		doc.end();
 		doc.start("script").body();

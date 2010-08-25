@@ -82,8 +82,8 @@ public class TinyMCE extends AbstractTextElement
 	}
 
 	public FormResource getResource() {
-		return new ScriptResource("tiny_mce/tiny_mce_src.js", "tinymce.WindowManager",
-				new ScriptResource("tiny_mce/lazy_load_fix.js", "tinyMCE_GZ"));
+		return new ScriptResource("tinymce/tiny_mce_src.js", "tinymce.WindowManager",
+				new ScriptResource("tinymce/lazy_load_fix.js", "tinyMCE_GZ"));
 	}
 
 	private String getJsonConfig() {

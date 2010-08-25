@@ -1,3 +1,11 @@
 build
-lib
 .DS_Store
+.gradle
+/bin
+/target
+/.classpath
+/.classpath.old
+/.project
+/.pydevproject
+*.pyc
+gradle-app.setting

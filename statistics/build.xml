@@ -1,7 +1,0 @@
-<project name="riot-statistics" default="compile">
-
-	<property name="module.title" value="Riot Statistics" />
-	
-	<import file="../module-build.xml" />
-	
-</project>
