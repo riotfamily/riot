@@ -1,2 +1,1 @@
 http\://www.riotfamily.org/schema/common/override=org.riotfamily.common.beans.override.OverrideNamespaceHandler
-http\://www.riotfamily.org/schema/common/txt2img=org.riotfamily.common.web.txt2img.Txt2ImgNamespaceHandler

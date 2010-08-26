@@ -155,7 +155,6 @@
 				<entry key="c" value="classpath:org/riotfamily/common/web/macro/common.ftl" />
 				<entry key="form" value="classpath:org/riotfamily/common/web/macro/form.ftl" />
 				<entry key="template" value="classpath:org/riotfamily/common/web/template/template.ftl" />
-				<entry key="txt2img" value="classpath:org/riotfamily/common/web/txt2img/txt2img.ftl" />
 			</map>
 		</property>
 		<property name="utilityClasses">
@@ -209,40 +208,6 @@
 	
 	<bean id="formMacroHelper" class="org.riotfamily.common.web.macro.FormMacroHelperFactory" />
 	
-	<bean id="buttonService" class="org.riotfamily.common.web.txt2img.ButtonService">
-		<constructor-arg ref="cacheService" />
-		<constructor-arg ref="resourceStamper" />
-		<property name="reloadable" value="${riot.resources.reloadable=false}" />
-		<property name="riotUtilsUriPrefix" value="${riot.utils.uriPrefix=/riot-utils}" />
-	</bean>
-	
-	<bean id="txt2ImgMacroHelper" class="org.riotfamily.common.web.txt2img.Txt2ImgMacroHelperFactory">
-		<constructor-arg ref="buttonService" />
-	</bean>
-	
 	<bean id="templateMacroHelper" class="org.riotfamily.common.web.template.TemplateMacroHelperFactory" />
-		
-	<bean id="txt2ImgController" name="${riot.utils.uriPrefix=/riot-utils}/txt2img.{type}" class="org.riotfamily.common.web.txt2img.Txt2ImgController">
-		<property name="compressor">
-			<bean class="org.riotfamily.common.web.performance.YUIJavaScriptCompressor">
-				<property name="enabled" value="${riot.resources.compress=true}" />
-			</bean>			
-		</property>
-	</bean>
-	
-	<bean id="txt2imgButtonController" name="${riot.utils.uriPrefix=/riot-utils}/imagebtn/{style}.*" class="org.riotfamily.common.web.txt2img.ButtonController">
-		<constructor-arg ref="buttonService" />
-	</bean>
-	
-	<bean id="txt2imgButtonCssController" name="${riot.utils.uriPrefix=/riot-utils}/imagebtn/buttons.css" class="org.riotfamily.common.web.txt2img.ButtonStylesheetController">
-		<constructor-arg ref="buttonService" />
-	</bean>
-		
-	<bean id="countryFlagController" name="${riot.utils.uriPrefix=/riot-utils}/country/{locale}.gif" class="org.riotfamily.common.web.controller.CountryFlagController">
-		<constructor-arg ref="fileTypeMap" />
-		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/images/flags/" />
-		<property name="defaultFlag" value="europeanunion" />
-		<property name="suffix" value=".gif" />
-	</bean>
 
 </beans>

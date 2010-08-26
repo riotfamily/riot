@@ -1,5 +1,3 @@
 http\://www.riotfamily.org/schema/common/override.xsd=/org/riotfamily/common/beans/override/override.xsd
 http\://www.riotfamily.org/schema/common/override-9.0.xsd=/org/riotfamily/common/beans/override/override.xsd
-http\://www.riotfamily.org/schema/common/txt2img.xsd=org/riotfamily/common/web/txt2img/txt2img.xsd
-http\://www.riotfamily.org/schema/common/txt2img-9.0.xsd=org/riotfamily/common/web/txt2img/txt2img.xsd
 
