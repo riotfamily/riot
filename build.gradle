@@ -179,8 +179,8 @@ gradle.taskGraph.whenReady {taskGraph ->
  * Creates the gradlew wrapper scripts
  */
 task wrapper(type: Wrapper) {
-	gradleVersion = '0.9-preview-3'
-	jarPath = 'wrapper'
+	jarPath = '.gradlew'
+	gradleVersion = '0.9-rc-1'
 }
 
 // ---------------------------------------------------------------------------
