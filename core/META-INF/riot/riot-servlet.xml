@@ -45,7 +45,6 @@
 	
 	<util:list id="messageBasenames">
     	<value>/WEB-INF/i18n/messages</value>
-    	<value>/WEB-INF/riot-config/messages</value>
 		<value>classpath:/org/riotfamily/core/runtime/i18n/messages</value>
 	</util:list>
 	
@@ -331,7 +330,7 @@
 		<property name="priorityConfigLocations">
 			<list>
 				<value>classpath:/org/riotfamily/core/runtime/forms.xml</value>
-				<value>/WEB-INF/riot-config/forms.xml</value>
+				<value>/WEB-INF/forms.xml</value>
 			</list>
 		</property>
 		<property name="mimetypesMap" ref="fileTypeMap" />
@@ -395,15 +394,10 @@
 	</util:map>
 	
 	<util:list id="resourceMappings">
-		<!-- Allow styles to be overwritten in WEB-INF/style -->
-		<bean class="org.riotfamily.core.resource.ResourceMapping">
-			<property name="path" value="/style/" />
-			<property name="location" value="/WEB-INF/riot-config/style/" />
-		</bean>
 		<!-- Allow any resource to be overwritten in WEB-INF/resources -->
 		<bean class="org.riotfamily.core.resource.ResourceMapping">
 			<property name="path" value="/" />
-			<property name="location" value="/WEB-INF/riot-config/resources/" />
+			<property name="location" value="/WEB-INF/resources/" />
 		</bean>
 		<!-- Riot core resources -->
 		<bean class="org.riotfamily.core.resource.ResourceMapping">

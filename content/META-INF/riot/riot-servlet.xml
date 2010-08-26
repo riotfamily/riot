@@ -42,7 +42,7 @@
 	<bean id="contentFormRepository" class="org.riotfamily.components.config.ContentFormRepository">
 		<property name="configLocations">
 		    <list>
-		        <value>/WEB-INF/riot-config/content-forms.xml</value>
+		        <value>/WEB-INF/content-forms.xml</value>
 		    </list>
 		</property>
 		<property name="customElements" ref="customFormElements" />
