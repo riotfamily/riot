@@ -213,11 +213,6 @@ public class ObjectChooser extends AbstractChooser
 		return getRiotDao().load(objectId);
 	}
 	
-	@Override
-	public Object getValue() {
-		return super.getValue() != null ? getRiotDao().update(super.getValue()) : null;
-	}
-
 	protected void renderLabel(Object object, PrintWriter writer) {
 		if (object == null) {
 			return;
