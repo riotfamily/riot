@@ -39,7 +39,6 @@ public class PageProperties extends ContentContainer {
 					getPreviewVersion().setValue(entry.getKey(), list.createCopy());
 				}
 			}
-			setDirty(true);
 		}
 	}
 
