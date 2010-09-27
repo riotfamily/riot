@@ -377,12 +377,12 @@ riot.components = (function() {
 		},
 			
 		propertiesOn: function() {
-			this.element.parentNode.addClassName('riot-mode-properties');
+			this.element.up().addClassName('riot-mode-properties');
 			this.setClickHandler(this.editProperties.bind(this));
 		},
 		
 		propertiesOff: function() {
-			this.element.parentNode.removeClassName('riot-mode-properties');
+			this.element.up().removeClassName('riot-mode-properties');
 			this.removeClickHandler();
 		},
 		

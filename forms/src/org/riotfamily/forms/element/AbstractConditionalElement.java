@@ -114,7 +114,7 @@ public abstract class AbstractConditionalElement extends AbstractElement
 
 	@Override
 	public String getStyleClass() {
-		if (!hide) {
+		if (!hide || isEditable()) {
 			return editor.getStyleClass();
 		}
 		return null;

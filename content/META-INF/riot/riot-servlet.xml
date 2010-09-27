@@ -207,7 +207,6 @@
 			<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.CutCommand" />
-			<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.CopyCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.PasteCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
 			<bean class="org.riotfamily.components.riot.command.PublishCommand" />
