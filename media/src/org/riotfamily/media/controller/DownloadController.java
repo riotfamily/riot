@@ -53,6 +53,7 @@ public class DownloadController implements Controller {
 
 		if (!validReferer(request)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return null;
 		}		
 		String uri = "/" + HandlerUrlUtils.getPathWithinMapping(request);
 		if (uri != null) {
