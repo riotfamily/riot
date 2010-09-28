@@ -118,6 +118,7 @@ public class Txt2ImgController extends AbstractCacheableController
 
 		if (!validReferer(request)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return null;
 		}
 		
 		String extension = FormatUtils.getExtension(request.getRequestURI());
@@ -141,7 +142,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		if (refererPattern == null) {
 			return true;
 		}
-		String referer = request.getHeader("Referer");
+		String referer = ServletUtils.getReferer(request);
 		return referer == null || refererPattern.matcher(referer).matches();
 	}	
 
