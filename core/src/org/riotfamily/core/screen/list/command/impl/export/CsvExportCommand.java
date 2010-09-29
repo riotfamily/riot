@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.core.screen.list.command.CommandContext;
 import org.springframework.beans.BeanWrapperImpl;
 
 public class CsvExportCommand extends AbstractExportCommand {
@@ -53,7 +54,7 @@ public class CsvExportCommand extends AbstractExportCommand {
 	}
 	
 	@Override
-	protected void export(Collection<?> items, OutputStream out) throws IOException {
+	protected void export(CommandContext context, Collection<?> items, OutputStream out) throws IOException {
 		PrintWriter pw = new PrintWriter(new OutputStreamWriter(out, encoding));
 		for (Object item : items) {
 			BeanWrapperImpl wrapper = new BeanWrapperImpl(item);

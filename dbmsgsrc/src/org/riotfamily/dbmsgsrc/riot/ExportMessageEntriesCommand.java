@@ -23,10 +23,11 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.impl.export.AbstractExportCommand;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 
-public class MessageEntryExportCommand extends AbstractExportCommand {
+public class ExportMessageEntriesCommand extends AbstractExportCommand {
 
 	@Override
 	protected String getFileExtension() {
@@ -34,7 +35,7 @@ public class MessageEntryExportCommand extends AbstractExportCommand {
 	}
 	
 	@Override
-	protected void export(Collection<?> items, OutputStream out) throws IOException {
+	protected void export(CommandContext context, Collection<?> items, OutputStream out) throws IOException {
 		HSSFWorkbook wb = new WorkbookCreator().createWorkbook(items);
 		wb.write(out);
 	}
@@ -83,7 +84,7 @@ public class MessageEntryExportCommand extends AbstractExportCommand {
 		    style.setFont(font);
 		    
 			HSSFRow row = sheet.createRow(0);
-			short col = 0;
+			int col = 0;
 			for (String label : labels) {
 				 HSSFCell cell = row.createCell(col++);
 				 cell.setCellStyle(style);
@@ -102,10 +103,10 @@ public class MessageEntryExportCommand extends AbstractExportCommand {
 				addCell(row, 3, entry.getComment(), editable);				
 			}
 
-			sheet.autoSizeColumn((short) 0);
-			sheet.setColumnWidth((short) 1, (short) (25 * 256));
-			sheet.setColumnWidth((short) 2, (short) (50 * 256));
-			sheet.setColumnWidth((short) 3, (short) (50 * 256));			
+			sheet.autoSizeColumn(0);
+			sheet.setColumnWidth(1, (25 * 256));
+			sheet.setColumnWidth(2, (50 * 256));
+			sheet.setColumnWidth(3, (50 * 256));			
 		}
 
 		private String getCategory(MessageBundleEntry entry) {
@@ -118,7 +119,7 @@ public class MessageEntryExportCommand extends AbstractExportCommand {
 		}
 
 		private void addCell(HSSFRow row, int i, String text, HSSFCellStyle style) {
-			HSSFCell cell = row.createCell((short) i);
+			HSSFCell cell = row.createCell(i);
 			cell.setCellStyle(style);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			if (text == null) {

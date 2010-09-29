@@ -25,22 +25,20 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.riotfamily.core.screen.list.command.CommandContext;
-import org.riotfamily.core.screen.list.command.Selection;
 import org.riotfamily.core.screen.list.command.impl.export.AbstractExportCommand;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.pages.model.Site;
 
-public class TranslationExportCommand extends AbstractExportCommand {
-	
-	@Override
-	public String getFileExtension() {
-		return "xls";
-	}
+public class ExportMessagesCommand extends AbstractExportCommand {
 
 	@Override
-	protected void export(CommandContext context, Selection selection, OutputStream out) throws IOException {
+	protected String getFileExtension() {
+		return "xls";
+	}
+	
+	@Override
+	protected void export(CommandContext context, Collection<?> items, OutputStream out) throws IOException {
 		Site site = (Site) context.getParent();
-		Collection<?> items = getItems(context, selection);
 		HSSFWorkbook wb = new WorkbookCreator().createWorkbook(items, site);
 		wb.write(out);
 	}
@@ -89,7 +87,7 @@ public class TranslationExportCommand extends AbstractExportCommand {
 		    style.setFont(font);
 		    
 			HSSFRow row = sheet.createRow(0);
-			short col = 0;
+			int col = 0;
 			for (String label : labels) {
 				 HSSFCell cell = row.createCell(col++);
 				 cell.setCellStyle(style);
@@ -114,12 +112,12 @@ public class TranslationExportCommand extends AbstractExportCommand {
 				addCell(row, 5, message.getText(), hidden);
 			}
 
-			sheet.autoSizeColumn((short) 0);
-			sheet.setColumnWidth((short) 1, (short) (25 * 256));
-			sheet.setColumnWidth((short) 2, (short) (50 * 256));
-			sheet.setColumnWidth((short) 3, (short) (50 * 256));
-			sheet.setColumnWidth((short) 4, (short) (50 * 256));
-			sheet.setColumnHidden((short) 5, true);
+			sheet.autoSizeColumn(0);
+			sheet.setColumnWidth(1, (25 * 256));
+			sheet.setColumnWidth(2, (50 * 256));
+			sheet.setColumnWidth(3, (50 * 256));
+			sheet.setColumnWidth(4, (50 * 256));
+			sheet.setColumnHidden(5, true);
 		}
 
 		private String getCategory(Message message) {
@@ -132,7 +130,7 @@ public class TranslationExportCommand extends AbstractExportCommand {
 		}
 
 		private void addCell(HSSFRow row, int i, String text, HSSFCellStyle style) {
-			HSSFCell cell = row.createCell((short) i);
+			HSSFCell cell = row.createCell(i);
 			cell.setCellStyle(style);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			if (text == null) {

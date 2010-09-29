@@ -31,14 +31,9 @@ public abstract class AbstractExportCommand extends AbstractCommand {
 	
 	@Override
 	protected String getIcon() {
-		return "table_go";
+		return "table_row_delete";
 	}
 
-	@Override
-	protected String getAction() {
-		return "viewItem";
-	}
-	
 	public CommandResult execute(CommandContext context, Selection selection) 
 			throws IOException {
 		
@@ -64,10 +59,10 @@ public abstract class AbstractExportCommand extends AbstractCommand {
 	protected void export(CommandContext context, Selection selection,
 			OutputStream out) throws IOException {
 		
-		export(getItems(context, selection), out);
+		export(context, getItems(context, selection), out);
 	}
 	
-	protected void export(Collection<?> items, OutputStream out) throws IOException {
+	protected void export(CommandContext context, Collection<?> items, OutputStream out) throws IOException {
 	}
 	
 	protected Collection<?> getItems(CommandContext context, Selection selection) {
@@ -82,12 +77,11 @@ public abstract class AbstractExportCommand extends AbstractCommand {
 	}
 	
 	protected String getFileExtension() {
-		return ".bin";
+		return "bin";
 	}
 
 	protected String getMimeType() {
 		return "application/octet-stream";
 	}
 
-	
 }

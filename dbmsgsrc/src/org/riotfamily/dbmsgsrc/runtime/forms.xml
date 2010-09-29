@@ -20,11 +20,6 @@
 		</map>
 	</form>
 	
-	<form id="dbMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
-		<textarea bind="entry.comment" read-only="true" />
-		<textarea bind="text" required="true" />
-	</form>
-	
 	<form id="dbMessageFilter" bean-class="java.util.HashMap">
 		<checkbox bind="notTranslatedOnly" />
 		<checkbox bind="equalToDefaultText" />		

@@ -48,17 +48,13 @@ public class ImportMessagesCommand extends DialogCommand {
 	
 	@Override
 	protected String getIcon() {
-		return "import";
-	}
-	
-	@Override
-	protected String getAction() {
-		return "add";
+		return "table_row_insert";
 	}
 	
 	@Override
 	public Form createForm(CommandContext context, Selection selection) {
 		Form form = new Form(Upload.class);
+		form.setId("importMessagesForm");
 		FileUpload fileUpload = new FileUpload();
 		fileUpload.setRequired(true);
 		form.addElement(fileUpload, "data");

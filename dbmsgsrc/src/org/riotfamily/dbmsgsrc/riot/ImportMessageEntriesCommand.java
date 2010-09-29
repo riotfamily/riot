@@ -48,12 +48,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 	
 	@Override
 	protected String getIcon() {
-		return "arrow_up";
-	}
-	
-	@Override
-	protected String getAction() {
-		return "add";
+		return "table_row_insert";
 	}
 	
 	@Override
@@ -69,7 +64,7 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 	}
 	
 	@Override
-		public CommandResult handleInput(CommandContext context,
+	public CommandResult handleInput(CommandContext context,
 				Selection selection, Object input, String button) {
 
 		Upload upload = (Upload) input;
