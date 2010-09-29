@@ -25,10 +25,14 @@ package org.riotfamily.pages.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.riot.security.AccessController;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -55,6 +59,16 @@ public final class PageValidationUtils {
 			}
 		}
 		return false;
+	}
+	
+	public static String[] grantPageTypes(String[] pageTypes, Page parentPage) {
+		List<String> grantedPageTypes = Generics.newArrayList();
+		for (String type : pageTypes) {
+			if (AccessController.isGranted("usePageType", type, parentPage)) {
+				grantedPageTypes.add(type);
+			}
+		}
+		return StringUtils.toStringArray(grantedPageTypes);
 	}
 
 	/**

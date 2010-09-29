@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import org.riotfamily.pages.dao.PageValidationUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.setup.PageTypeHierarchy;
 import org.riotfamily.riot.list.command.CommandContext;
@@ -39,8 +40,8 @@ public class AddPageCommand extends AddCommand {
 	@Override
 	public boolean isEnabled(CommandContext context) {
 		Page page = (Page) context.getBean();
-		return super.isEnabled(context) && 
-				pageTypeHierarchy.getChildTypeOptions(page).length > 0;
+		String[] pagesTypes = PageValidationUtils.grantPageTypes(pageTypeHierarchy.getChildTypeOptions(page), page);
+		return super.isEnabled(context) && pagesTypes.length > 0;
 	}
 
 }

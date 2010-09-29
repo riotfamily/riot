@@ -28,6 +28,7 @@ import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
+import org.riotfamily.pages.dao.PageValidationUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.setup.PageTypeHierarchy;
@@ -72,7 +73,7 @@ public class PageFormInitializer implements FormInitializer {
 			}
 			String[] pageTypes = pageTypeHierarchy.getChildTypeOptions(parentPage);
 			if (pageTypes.length > 0) {
-				sb = createPageTypeBox(form, pageTypes);
+				sb = createPageTypeBox(form, pageTypes, parentPage);
 				pageType = pageTypes[0];
 			}
 			else {
@@ -94,11 +95,11 @@ public class PageFormInitializer implements FormInitializer {
 		form.addElement(ppe, "pageProperties");
 	}
 	
-	private SelectBox createPageTypeBox(Form form, String[] handlerNames) {
+	private SelectBox createPageTypeBox(Form form, String[] handlerNames, Page parentPage) {
 		if (handlerNames.length > 1) {
 			SelectBox sb = new SelectBox();
 			sb.setRequired(true);
-			sb.setOptions(handlerNames);
+			sb.setOptions(PageValidationUtils.grantPageTypes(handlerNames, parentPage));
 			sb.setLabelMessageKey("page.pageType.");
 			sb.setAppendLabel(true);
 			NestedForm nodeForm = new NestedForm();
