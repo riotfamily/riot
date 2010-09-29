@@ -35,6 +35,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
@@ -59,6 +61,7 @@ import org.springframework.web.multipart.MultipartFile;
 )
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorValue("file")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="media")
 public class RiotFile extends ActiveRecordBeanSupport {
 	
 	protected MediaService mediaService;
