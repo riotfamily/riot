@@ -160,7 +160,7 @@ public class HibernateComponentDao implements ComponentDao {
 
 	public boolean publishContainer(ContentContainer container) {
 		boolean published = false;
-		if (container.isDirty()) {
+		if (container.isDirty() || container.getLiveVersion() == null) {
 			Content preview = container.getPreviewVersion();
 			if (preview != null) {
 				AccessController.assertIsGranted("publish", container);
