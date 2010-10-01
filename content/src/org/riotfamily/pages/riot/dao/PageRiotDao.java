@@ -156,6 +156,9 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 		ContentPage page = (ContentPage) entity;
 		page.getParent().removePage(page);
 		((ContentPage) dest).addPage(page);
+		// TODO: Hack to ensure correct pathes when moving pages.
+		// This really should be done by the EntityListener. 
+		page.updatePath();
 	}
 	
 	public boolean canCopy(Object entity) {

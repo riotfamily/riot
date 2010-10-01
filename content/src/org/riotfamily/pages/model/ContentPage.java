@@ -264,7 +264,8 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		this.path = path;
 	}
 	
-	private void updatePath() {
+	// TODO: This method really should be private again.
+	public void updatePath() {
 		String oldPath = this.path;
 		if (materializePath()) {
 			PageAlias.create(this, oldPath);
