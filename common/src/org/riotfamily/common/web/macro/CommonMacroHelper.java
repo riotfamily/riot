@@ -171,7 +171,11 @@ public class CommonMacroHelper {
 	public String getMessage(MessageSourceResolvable resolvable) {
 		return ctx.getMessage(resolvable, getLocale());
 	}
-		
+
+	public String encodeUrl(String url) {
+		return response.encodeURL(url);
+	}
+
 	public String resolveUrl(String url) {
 		return ServletUtils.resolveUrl(url, request);
 	}
