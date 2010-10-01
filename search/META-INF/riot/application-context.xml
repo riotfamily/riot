@@ -34,7 +34,7 @@
 	
 	<!-- The following overrides are only applied when the riot-pages module is present -->
 	
-	<override:if-present ref="pageResolver">
+	<override:if-present ref="sitemapSchemaRepository">
 		<!--
 		 - Service to identify sites by their URL. 
 		 -->
