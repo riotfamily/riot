@@ -8,7 +8,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.riotfamily.pages.mapping.PageResolver;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.search.SearchController;
 
 /**
@@ -21,10 +21,9 @@ public class SiteSearchController extends SearchController {
     protected Query createFilterQuery(HttpServletRequest request) {
         Query query = null;
         
-        Page currentPage = PageResolver.getResolvedPage(request);
-        if (currentPage != null) {
-            String siteId = currentPage.getSite().getId().toString();
-            
+        Site currentSite = PageResolver.getResolvedSite(request);
+        if (currentSite != null) {
+            String siteId = currentSite.getId().toString();
             query = new TermQuery(new Term("siteId", siteId));
         }
         
