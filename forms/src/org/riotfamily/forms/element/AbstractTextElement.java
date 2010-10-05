@@ -54,6 +54,8 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	private boolean trim = true;
 
+	private boolean emptyAsNull = true;
+
 	private boolean allowAutocomplete;
 
 	private String defaultText;
@@ -108,6 +110,14 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		this.trim = trim;
 	}
 
+	/**
+	 * Sets wheter to treat empty user input as null.
+	 * @param emptyAsNull
+	 */
+	public void setEmptyAsNull(boolean emptyAsNull) {
+		this.emptyAsNull = emptyAsNull;
+	}
+	
 	/**
 	 * Sets whether browsers are allowed to perform autocompletion. 
 	 */
@@ -222,7 +232,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	protected void setValueFromText() {
 		Object oldValue = value;
-		if (!StringUtils.hasText(text)) {
+		if (emptyAsNull && !StringUtils.hasText(text)) {
 			value = null;
 		}
 		else {

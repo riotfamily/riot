@@ -67,6 +67,7 @@
 				<xsd:attribute name="default" type="xsd:string" />
 				<xsd:attribute name="max-length" type="xsd:positiveInteger" />
 				<xsd:attribute name="trim" type="xsd:boolean" default="true" />
+				<xsd:attribute name="emptyAsNull" type="xsd:boolean" default="true" />
 				<xsd:attribute name="allow-autocomplete" type="xsd:boolean" default="false" />
 				<xsd:attribute name="confirm-message-text" type="xsd:string" />
 				<xsd:attribute name="confirm-message-key" type="xsd:string" />
@@ -118,6 +119,8 @@
 					<xsd:attribute name="max-length" type="xsd:positiveInteger" />
 					<xsd:attribute name="rows" type="xsd:positiveInteger" />
 					<xsd:attribute name="cols" type="xsd:positiveInteger" />
+					<xsd:attribute name="trim" type="xsd:boolean" default="true" />
+					<xsd:attribute name="emptyAsNull" type="xsd:boolean" default="true" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
