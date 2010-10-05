@@ -40,7 +40,7 @@
 		<form:map bind="messages" label-renderer="org.riotfamily.riot.ui.LocaleRenderer">
 			<form:key-options ref="locales" />
 			<form:nested-form indent="false" bean-class="org.riotfamily.dbmsgsrc.model.Message">
-				<form:textarea bind="text" required="true" />
+				<form:textarea bind="text" required="true" trim="false" emptyAsNull="false" />
 			</form:nested-form>
 		</form:map>
 	</form:form>
@@ -66,7 +66,7 @@
 	
 	<form:form id="dbMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
 		<form:textarea bind="entry.comment" read-only="true" />
-		<form:textarea bind="text" required="true" />
+		<form:textarea bind="text" required="true" trim="false" emptyAsNull="false" />
 	</form:form>
 	
 	<form:form id="dbMessageFilter" bean-class="java.util.HashMap">
@@ -97,7 +97,7 @@
 		<form:map bind="messages" label-renderer="org.riotfamily.riot.ui.LocaleRenderer">
 			<form:key-options class="org.riotfamily.dbmsgsrc.support.CurrentLocaleOptionsModel" />
 			<form:nested-form indent="false" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">
-				<form:textarea bind="text" />
+				<form:textarea bind="text" trim="false" emptyAsNull="false" />
 			</form:nested-form>
 		</form:map>
 	</form:form>
