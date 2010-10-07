@@ -119,27 +119,29 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 			}
 			addComponent("keyEditor", keyEditor);
 			
-			Button addButton = new Button();
-			addButton.setLabelKey("label.form.map.add");
-			addButton.setLabel("Add");
-			addButton.setPartitialSubmit(getId());
-			addButton.addClickListener(new ClickListener() {
-				public void clicked(ClickEvent event) {
-					Object key = keyEditor.getValue();
-					if (key == null) {
-						ErrorUtils.reject(keyEditor, "map.emptyKey");
+			if (isEnabled()) {
+				Button addButton = new Button();
+				addButton.setLabelKey("label.form.map.add");
+				addButton.setLabel("Add");
+				addButton.setPartitialSubmit(getId());
+				addButton.addClickListener(new ClickListener() {
+					public void clicked(ClickEvent event) {
+						Object key = keyEditor.getValue();
+						if (key == null) {
+							ErrorUtils.reject(keyEditor, "map.emptyKey");
+						}
+						else if (getKeys().contains(key)) {
+							ErrorUtils.reject(keyEditor, "map.duplicateKey");
+						}
+						else {
+							addItem(key, null, true);
+							keyEditor.setValue(null);
+							getFormListener().elementChanged(keyEditor);
+						}
 					}
-					else if (getKeys().contains(key)) {
-						ErrorUtils.reject(keyEditor, "map.duplicateKey");
-					}
-					else {
-						addItem(key, null, true);
-						keyEditor.setValue(null);
-						getFormListener().elementChanged(keyEditor);
-					}
-				}
-			});
-			addComponent("addButton", addButton);
+				});
+				addComponent("addButton", addButton);
+			}
 		}
 	}
 	
@@ -250,7 +252,7 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 	}
 	
 	protected void addItem(Object key, Object value, boolean newItem) {		
-		MapItem item = new MapItem(key, keyEditor != null);
+		MapItem item = new MapItem(key, keyEditor != null && isEnabled());
 		items.addElement(item);
 		item.focus();
 		item.setValue(value, newItem);
