@@ -47,6 +47,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -192,18 +193,21 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 	 */
 	public String getItemLabel(Object object) {
 		StringBuilder label = new StringBuilder();
-		Pattern p = Pattern.compile("([\\w.]+)(\\W*)");
-		Matcher m = p.matcher(getLabelProperty());
-		while (m.find()) {
-			String property = m.group(1);
-			Object value = PropertyUtils.getProperty(object, property);
-			if (value != null) {
-				label.append(value);
-				label.append(m.group(2));
+		String labelProperty = getLabelProperty(); 
+		if (labelProperty != null) {
+			Pattern p = Pattern.compile("([\\w.\\[\\]]+)(\\W*)");
+			Matcher m = p.matcher(labelProperty);
+			while (m.find()) {
+				String property = m.group(1);
+				Object value = PropertyUtils.getProperty(object, property);
+				if (value != null) {
+					label.append(value);
+					label.append(m.group(2));
+				}
 			}
-		}
-		if (label.length() > 0) {
-			return label.toString();
+			if (label.length() > 0) {
+				return label.toString();
+			}
 		}
 		return null;
 	}
@@ -214,14 +218,19 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 	
 	private String getLabelProperty() {
 		if (labelProperty == null) {
-			labelProperty = getFirstProperty();
+			labelProperty = getFirstReadableProperty();
 		}
 		return labelProperty;
 	}
 	
-	private String getFirstProperty() {
+	private String getFirstReadableProperty() {
 		if (columns != null && !columns.isEmpty()) {
-			return columns.get(0).getProperty();
+			for (int i = 0; i < columns.size(); i++) {
+				String property = columns.get(i).getProperty();
+				if (StringUtils.hasText(property)) {
+					return property;
+				}
+			}
 		}
 		return null;
 	}
