@@ -42,7 +42,7 @@ public class CutCommand extends AbstractCommand implements ClipboardCommand {
 	
 	@Override
 	protected String getAction() {
-		return null;
+		return "cut";
 	}
 	
 	@Override

@@ -33,7 +33,7 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 	
 	@Override
 	protected String getAction() {
-		return null;
+		return "copy";
 	}
 	
 	@Override
