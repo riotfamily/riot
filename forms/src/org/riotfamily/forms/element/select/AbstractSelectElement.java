@@ -120,6 +120,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase
 	public void reset() {
 		if (getFormContext() != null) {
 			optionItems = null;
+			optionValues = null;
 			if (getFormListener() != null) {
 				getFormListener().elementChanged(this);
 			}
