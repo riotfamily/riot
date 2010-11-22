@@ -23,7 +23,6 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.ui.ObjectRenderer;
-import org.riotfamily.common.ui.StringRenderer;
 import org.riotfamily.common.web.mvc.mapping.HandlerUrlResolver;
 import org.riotfamily.core.screen.ScreenRepository;
 import org.riotfamily.core.screen.list.ColumnConfig;
@@ -31,6 +30,7 @@ import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.dto.CommandButton;
 import org.riotfamily.core.screen.list.dto.ListItem;
 import org.riotfamily.core.screen.list.dto.ListModel;
+import org.riotfamily.core.ui.DefaultObjectRenderer;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.FormContextFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -69,7 +69,7 @@ public class ListService {
 		this.formContextFactory = formContextFactory;
 		this.handlerUrlResolver = handlerUrlResolver;
 		this.resourcePath = resourcePath;
-		this.defaultObjectRenderer = new StringRenderer();
+		this.defaultObjectRenderer = new DefaultObjectRenderer(resourcePath);
 	}
 		
 	public PlatformTransactionManager getTransactionManager() {

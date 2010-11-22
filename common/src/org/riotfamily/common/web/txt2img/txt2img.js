@@ -158,6 +158,9 @@ var Txt2ImgReplacement = Class.create({
 				width = this.el.offsetWidth - parseInt(this.el.getStyle('padding-left'))
 						- parseInt(this.el.getStyle('padding-right'));
 			}
+			if (!width && !isFloating) {
+				width = parseInt(this.el.getStyle('width')) || 0;
+			}
 	
 			var color = this.el.getStyle('color');
 			var hoverColor = this.getHoverColor();

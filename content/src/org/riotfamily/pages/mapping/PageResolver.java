@@ -99,9 +99,9 @@ public final class PageResolver {
         if (page == null) {
             page = resolveVirtualChildPage(site, lookupPath);
         }
-        if (page == null || 
-                (!page.getContentContainer().isPublished() && 
-                !EditModeUtils.isPreview(request, null))) {
+        if (page == null || ((!site.isEnabled() ||
+				!page.getContentContainer().isPublished()) && 
+				!EditModeUtils.isPreview(request, null))) {
             
             return null;
         }

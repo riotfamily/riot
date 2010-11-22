@@ -19,6 +19,10 @@
 			</nested-form>
 		</map>
 	</form>
+
+	<form id="messageBundleEntryFilter" bean-class="java.util.HashMap">
+		<checkbox bind="notTranslatedOnly" />
+	</form>
 	
 	<form id="dbMessageFilter" bean-class="java.util.HashMap">
 		<checkbox bind="notTranslatedOnly" />

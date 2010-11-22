@@ -15,6 +15,8 @@ package org.riotfamily.common.web.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.mvc.view.JsonView;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -27,11 +29,13 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class SessionKeepAliveController implements Controller {
 
+	private String identity = ObjectUtils.getIdentityHexString(this);
+	
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
 		request.getSession(false);
-		return null;
+		return new ModelAndView(new JsonView("{ identity: \"" + identity + "\" }"));
 	}
 
 }
