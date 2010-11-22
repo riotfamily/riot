@@ -70,7 +70,7 @@ public class ActiveRecordClassExposer implements ConfigurationPostProcessor {
 		TemplateHashModel statics = getBeansWrapper(config).getStaticModels();
 		Collection<ClassMetadata> allMetadata = sessionFactory.getAllClassMetadata().values();
 		for (ClassMetadata meta : allMetadata) {
-			Class mappedClass = meta.getMappedClass(EntityMode.POJO);
+			Class<?> mappedClass = meta.getMappedClass(EntityMode.POJO);
 			if (ActiveRecord.class.isAssignableFrom(mappedClass)) {
 				String key = ClassUtils.getShortName(mappedClass);
 				if (config.getSharedVariable(key) != null) {
