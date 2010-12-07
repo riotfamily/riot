@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.DocumentWriter;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.event.Button;
@@ -284,7 +285,7 @@ public class Form implements BeanEditor {
 	}
 
 	public String createId() {
-		return this.id + "e" + idCount++;
+		return FormatUtils.toCssClass(this.id) + "e" + idCount++;
 	}
 
 	/**
