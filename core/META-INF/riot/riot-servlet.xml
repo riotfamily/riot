@@ -290,6 +290,12 @@
 		</property>
 	</bean>
 	
+	<bean id="changePasswordController" name="/changePassword" class="org.riotfamily.core.security.ui.ChangePasswordController">		
+		<constructor-arg ref="formContextFactory" />
+		<constructor-arg ref="riotUserDao" />
+		<constructor-arg ref="transactionManager" />
+	</bean>
+	
 	<!-- Root group screen -->
 	
 	<bean id="home" class="org.riotfamily.core.screen.GroupScreen">

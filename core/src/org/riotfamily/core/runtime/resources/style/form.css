@@ -638,3 +638,11 @@ div.autocomplete ul li.selected {
 .button-remove {
 	margin-top: 10px;
 } 
+.change-password .buttons {
+	display: block;
+}
+.change-password {
+	margin:0;
+	padding: 25px 0 0 25px;
+    width: 545px;
+}
