@@ -58,8 +58,8 @@ function submitEvent(e, onComplete) {
 
 function submitElement(id, clickedButton) {
 	
-	var form = $(clickedButton.form);
-	var url = form.action || window.loction.href;
+	var form = $(clickedButton).up('form');
+	var url = form.action || window.location.href;
 	
 	var elements;
 	if (id != form.id) {
