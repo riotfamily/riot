@@ -146,12 +146,15 @@ function performAction(action) {
 }
 
 function focusElement(e) {
-	if (e) {
-		if (e.nodeName.match(/(input|textarea|button)/i)) {
-			e.focus();
-			return true;
+	try {
+		if (e) {
+			if (e.nodeName.match(/(input|textarea|button)/i)) {
+				e.focus();
+				return true;
+			}
+			return e.immediateDescendants().any(focusElement);
 		}
-		return e.immediateDescendants().any(focusElement);
+	} catch (ex) {
 	}
 	return false;
 }
