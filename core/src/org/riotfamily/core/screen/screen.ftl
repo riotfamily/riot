@@ -46,7 +46,7 @@
 	</div>
 	<div id="footer">
 		<div id="footer-content">
-			<a href="${c.urlForHandler('logoutController')}" class="logout"><@c.message "logout">Logout</@c.message></a> | <a href="${c.urlForHandler('changePasswordController')}" id="changePassword" class="change-password"><@c.message "changePassword">Change Password</@c.message></a>
+			<a href="${c.urlForHandler('logoutController')}" class="logout"><@c.message "logout">Logout</@c.message></a> | <a href="${c.urlForHandler('changePasswordController')}" id="changePassword"><@c.message "changePassword">Change Password</@c.message></a>
 		</div>
 	</div>
 	<script>
