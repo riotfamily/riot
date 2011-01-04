@@ -269,7 +269,9 @@ ul.checkboxGroup label {
 	font-weight: bold;
 }
 
-
+.collectionEditor {
+	overflow: hidden;
+}
 .collectionEditor ul.items {
 	padding: 0;
 	margin: 0;
@@ -533,6 +535,7 @@ ul.radioButtonGroup {
 	cursor: help;
 	background: url(images/form/hint.gif) left center no-repeat;
 	vertical-align: middle;
+	position: relative;
 }
 
 .hint {
