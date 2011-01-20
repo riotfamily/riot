@@ -114,7 +114,7 @@
 			<#local text = c.getMessage(code) />
 		</#if>
 		<#local attributes = addErrorClass(attributes, field, errorClass) />
-		<label for="${for}"${c.joinAttributes(attributes)}>${text?html}</label>
+		<label for="${for}"${c.joinAttributes(attributes)}>${text}</label>
 	</#compress>
 </#macro>
 
@@ -180,7 +180,7 @@
 <#macro checkbox field id=field errorClass="error" value="true" attributes...>
 	<#compress>
 		<#local attributes = addErrorClass(attributes, field, errorClass) />
-		<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check formMacroHelper.getValue(field)! == value />${c.joinAttributes(attributes)} />
+		<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check formMacroHelper.isSelected(field, value) />${c.joinAttributes(attributes)} />
 		<input type="hidden" name="_${field}" value="on"/>
 	</#compress>
 </#macro>
@@ -192,11 +192,11 @@
 	<#compress>
 		<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
 			<#if labelFirst>
-				<label for="${id}">${label?html}</label>
+				<label for="${id}">${label}</label>
 				<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check checked/> />		
 			<#else>
 				<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check checked/> />
-				<label for="${id}">${label?html}</label>
+				<label for="${id}">${label}</label>
 			</#if>
 		</@listOptions>
 		<input type="hidden" name="_${field}" value="on" />
@@ -210,11 +210,11 @@
 	<#compress>
 		<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
 			<#if labelFirst>
-				<label for="${id}">${label?html}</label>
+				<label for="${id}">${label}</label>
 				<input type="radio" name="${field}" id="${id}" value="${value?html}"<@check checked/> />
 			<#else>			
 				<input type="radio" name="${field}" id="${id}" value="${value?html}"<@check checked/> />
-				<label for="${id}">${label?html}</label>
+				<label for="${id}">${label}</label>
 			</#if>		
 		</@listOptions>
 	</#compress>
@@ -288,7 +288,7 @@
   --> 
 <#macro option value label=value selected=false attributes...>
 	<#compress>
-		<option value="${value?html}"<#if selected> selected="selected"</#if>${c.joinAttributes(attributes)}>${label?html}</option>
+		<option value="${value?html}"<#if selected> selected="selected"</#if>${c.joinAttributes(attributes)}>${label}</option>
 	</#compress>
 </#macro>
 
