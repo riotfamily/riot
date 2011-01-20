@@ -15,6 +15,7 @@ package org.riotfamily.common.web.cache.tags;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.hibernate.HibernateUtils;
 import org.riotfamily.common.web.cache.TagCacheItems;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -35,7 +36,8 @@ public class AnnotationCacheTagGenerator implements CacheTagGenerator {
 		if (obj.getClass().isAnnotationPresent(TagCacheItems.class)) {
 			String id = HibernateUtils.getIdAsString(sessionFactory, obj);
 			Assert.notNull(id, "Model contains unsaved entity:" + obj);
-			return CacheTagUtils.getTag(obj.getClass(), id);
+			Class<?> target = AnnotationUtils.findAnnotationDeclaringClass(TagCacheItems.class ,obj.getClass());
+			return CacheTagUtils.getTag(target , id);
 		}
 		return null;
 	}
