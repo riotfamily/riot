@@ -112,8 +112,10 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 
 	public void handleJavaScriptEvent(JavaScriptEvent event) {
+		Object oldObject = object;
 		setObjectId(event.getValue());
 		getFormListener().elementChanged(this);
+		fireChangeEvent(object, oldObject);
 	}
 	
 	public FormResource getResource() {

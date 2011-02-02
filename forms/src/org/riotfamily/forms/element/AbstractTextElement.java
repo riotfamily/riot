@@ -167,7 +167,9 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	}
 
 	public void setValue(Object value) {
-		if (value == null && !getEditorBinding().isEditingExistingBean()) {
+		if (value == null && getEditorBinding() != null
+				&& !getEditorBinding().isEditingExistingBean()) {
+
 			value = getDefaultValue();
 		}
 		this.value = value;

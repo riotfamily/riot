@@ -46,6 +46,7 @@ public class PublishCommand extends AbstractBatchCommand<ContentContainerOwner> 
 		if (container.isDirty()) {
 			container.publish();
 		}
-		return new RefreshListResult();
+		String objectId = context.getScreen().getDao().getObjectId(owner);
+		return new RefreshListResult(objectId).refreshAll();
 	}
 }

@@ -12,14 +12,26 @@
  */
 package org.riotfamily.dbmsgsrc.riot;
 
+import java.util.Locale;
+
 import org.riotfamily.core.screen.list.command.CommandContext;
+import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.Selection;
-import org.riotfamily.core.screen.list.command.impl.support.AbstractCommand;
+import org.riotfamily.core.screen.list.command.impl.dialog.DialogCommand;
+import org.riotfamily.core.screen.list.command.result.RefreshListResult;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
+import org.riotfamily.forms.Form;
+import org.riotfamily.forms.element.Textarea;
+import org.riotfamily.pages.model.Site;
 
-public abstract class EditMessageCommand extends AbstractCommand {
+public class EditMessageCommand extends DialogCommand {
 
+	@Override
+	protected String getIcon() {
+		return "pencil";
+	}
+	
 	@Override
 	protected String getName() {
 		return "edit";
@@ -27,11 +39,44 @@ public abstract class EditMessageCommand extends AbstractCommand {
 	
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
-		if (selection.size() != 1) {
-			return false;
-		}
-		Message message = (Message) selection.getSingleItem().getObject();
-		return !MessageBundleEntry.C_LOCALE.equals(message.getLocale());
+		return selection.size() == 1;
 	}
 	
+	@Override
+	protected boolean isShowOnForm(CommandContext context) {
+		return false;
+	}
+	
+	@Override
+	public Form createForm(CommandContext context, Selection selection) {
+		Form form = new Form(Message.class);
+
+		Message message = (Message) selection.getSingleItem().getObject();
+		if (MessageBundleEntry.C_LOCALE.equals(message.getLocale())) {
+			MessageBundleEntry entry = message.getEntry();
+			Site site = (Site) context.getParent();
+			Locale locale = site.getLocale();
+			entry.addTranslation(locale);
+			message = entry.getMessages().get(locale);
+			message.setEntry(entry);
+		}
+		
+		form.setBackingObject(message);
+		Textarea comment = new Textarea();
+		comment.setReadOnly(true);
+		Textarea text = new Textarea();
+		form.addElement(comment, "entry.comment");
+		form.addElement(text, "text");
+		addButton(form, "Save");
+		return form;
+	}
+	
+	@Override
+	public CommandResult handleInput(CommandContext context,
+			Selection selection, Object input, String button) {
+
+		context.getScreenContext().getDao().update(input);
+		return new RefreshListResult();
+	}
+
 }

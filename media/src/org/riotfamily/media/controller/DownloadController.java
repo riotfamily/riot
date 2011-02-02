@@ -14,6 +14,7 @@ package org.riotfamily.media.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,13 +33,28 @@ public class DownloadController implements Controller {
 	
 	private	FileStore fileStore;
 	
+	private Pattern refererPattern;	
+	
 	public DownloadController(FileStore fileStore) {
 		this.fileStore = fileStore;
 	}
 	
+	/**
+	 * Sets a regular expression that is used to check the Referer header.
+	 * You may use this setting to prevent other websites from using your
+	 * DownloadController.
+	 */
+	public void setRefererPattern(Pattern refererPattern) {
+		this.refererPattern = refererPattern;
+	}	
+	
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
+		if (!validReferer(request)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}		
 		String uri = "/" + HandlerUrlUtils.getPathWithinMapping(request);
 		if (uri != null) {
 			File file = fileStore.retrieve(uri);
@@ -55,5 +71,17 @@ public class DownloadController implements Controller {
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		return null;
 	}
+	
+	private boolean validReferer(HttpServletRequest request) {
+		if (refererPattern == null) {
+			return true;
+		}
+		String referer = request.getHeader("Referer");
+		if (referer != null && !refererPattern.matcher(referer).matches()) {
+			log.debug("Invalid request from referer: " + referer);
+			return false;
+		}
+		return true;
+	}	
 
 }

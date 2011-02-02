@@ -61,6 +61,17 @@
 </#function>
 
 <#---
+  - Adds the sessionId to the given URI if necessary.
+  - <h4>Example:</h4>
+  - <pre>${encode('/foo.html')}
+  - ==> /context/foo.html;jsessionid=...
+  - </pre> 
+  -->
+<#function encode href>
+	<#return commonMacroHelper.encodeUrl(href?trim) />
+</#function>
+
+<#---
   - Adds the contextPath and sessionId to all links found in the given HTML if necessary.
   - <h4>Example:</h4>
   - <pre>${encodeLinks('Hello &lt;a href="/world.html"&gt;World&lt;/a&gt;')} 

@@ -292,7 +292,7 @@ public class CssTemplateController extends AbstractCacheableController
 					}	
 				}
 				else {
-					if (basePath != null) {
+					if (basePath != null && !ServletUtils.isAbsoluteUrl(url)) {
 						url = StringUtils.applyRelativePath(basePath, url);
 					}
 				}

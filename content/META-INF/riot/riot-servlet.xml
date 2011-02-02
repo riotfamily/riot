@@ -207,7 +207,6 @@
 			<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.CutCommand" />
-			<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.CopyCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.clipboard.PasteCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
 			<bean class="org.riotfamily.components.riot.command.PublishCommand" />
@@ -216,26 +215,28 @@
 		</s:commands>
 		<s:form id="page" icon="page" />
 	</s:list>
+
+	<s:list id="sites" icon="world">
+		<s:dao>
+			<ref bean="siteRiotDao" />
+		</s:dao>
+		<s:columns>
+			<s:column property="name" />
+			<s:column property="locale" />
+			<s:column property="enabled" />
+		</s:columns>
+		<s:commands>
+			<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
+			<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
+			<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
+			<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
+			<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
+		</s:commands>
+		<s:form id="site" />
+	</s:list>
 	
 	<override:add ref="systemScreens">
-		<s:list id="sites" icon="world">
-			<s:dao>
-				<ref bean="siteRiotDao" />
-			</s:dao>
-			<s:columns>
-				<s:column property="name" />
-				<s:column property="locale" />
-				<s:column property="enabled" />
-			</s:columns>
-			<s:commands>
-				<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
-				<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
-				<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
-				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
-				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
-			</s:commands>
-			<s:form id="site" />
-		</s:list>
+		<ref bean="sites" />
 	</override:add>
 
 </beans>

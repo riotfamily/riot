@@ -99,9 +99,9 @@ public final class PageResolver {
         if (page == null) {
             page = resolveVirtualChildPage(site, lookupPath);
         }
-        if (page == null || 
-                (!page.getContentContainer().isPublished() && 
-                !EditModeUtils.isPreview(request, null))) {
+        if (page == null || ((!site.isEnabled() ||
+				!page.getContentContainer().isPublished()) && 
+				!EditModeUtils.isPreview(request, null))) {
             
             return null;
         }
@@ -110,10 +110,13 @@ public final class PageResolver {
 	
 	private static Page resolveVirtualChildPage(Site site, String lookupPath) {
 		for (ContentPage parent : ContentPage.findByTypesAndSite(site.getSchema().getVirtualParents(), site)) {
-			if (lookupPath.startsWith(parent.getPath())) {
-				SystemPageType parentType = (SystemPageType) parent.getPageType();
+			String parentPath = parent.getPath();
+			if (lookupPath.startsWith(parentPath)) {
 				String tail = lookupPath.substring(parent.getPath().length());
-				return parentType.getVirtualChildType().resolve(parent, tail);
+				if (tail.startsWith("/")) {
+					SystemPageType parentType = (SystemPageType) parent.getPageType();
+					return parentType.getVirtualChildType().resolve(parent, tail);
+				}
 			}
 		}
 		return null;

@@ -8,7 +8,7 @@
 		<#list elements.elements as element>
 			<#assign composite = element.compositeElement?default(false) && element.label?? />
 			<div id="container-${element.id}" class="${element.styleClass!}"<#if !element.visible> style="display: none"</#if>>
-				<#if element.label?? && (elements.elements?size > 1)>
+				<#if element.label?? && (elements.elements?size > 0)>
 					<div class="title<#if composite> composite-title</#if>">
 						<label for="${element.eventTriggerId}">
 							<#if element.label?has_content>

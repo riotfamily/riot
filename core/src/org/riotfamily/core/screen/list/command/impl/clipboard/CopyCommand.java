@@ -33,11 +33,14 @@ public class CopyCommand extends AbstractCommand implements ClipboardCommand {
 	
 	@Override
 	protected String getAction() {
-		return null;
+		return "copy";
 	}
 	
 	@Override
 	public boolean isEnabled(CommandContext context, Selection selection) {
+		if (selection.isEmpty()) {
+			return false;
+		}
 		CopyAndPaste dao = getDao(context.getScreen());
 		for (SelectionItem item : selection) {
 			if (!dao.canCopy(item.getObject())) {

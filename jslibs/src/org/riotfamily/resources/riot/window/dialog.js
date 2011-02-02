@@ -26,12 +26,13 @@ riot.window = (function() {
 	function windowOpened(dialog) {
 		var top = findTopModal();
 		stack.push(dialog);
+		dialog.scroll = document.viewport.getScrollOffsets();
 		var zIndex = stack.length * 2 + 1001;
 		if (dialog.options.modal) {
 			if (!top) {
 				var initialWidth = document.body.offsetWidth;
 				Element.makeClipping(root);
-				
+				window.scrollTo(dialog.scroll.left, dialog.scroll.top);
 				var h = Math.max(document.viewport.getHeight(), Element.getHeight(document.body));
 				overlay.style.height = h + 'px';
 				document.body.appendChild(overlay);
@@ -62,6 +63,7 @@ riot.window = (function() {
 			else {
 				document.body.style.marginRight = 0;
 				root.undoClipping();
+				window.scrollTo(dialog.scroll.left, dialog.scroll.top);
 				if (Prototype.Browser.WebKit) {
 					// Force re-rendering of scrollbars in Safari
 					window.scrollBy(0,-1);

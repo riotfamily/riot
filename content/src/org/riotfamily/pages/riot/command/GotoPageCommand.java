@@ -33,7 +33,7 @@ public class GotoPageCommand extends AbstractBatchCommand<ContentPage> {
 
 	@Override
 	protected String getAction() {
-		return null;
+		return "goToPage";
 	}
 	
 	@Override

@@ -12,6 +12,8 @@
  */
 package org.riotfamily.dbmsgsrc.riot;
 
+import java.util.Map;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.core.dao.ListParams;
@@ -44,7 +46,18 @@ public class MessageBundleEntryDao extends AbstractHqlDao {
 	protected String getWhere() {
 		return "this.bundle = :bundle";
 	}
-	
+
+	@Override
+	protected String getFilterWhereClause(ListParams params) {
+		StringBuffer filter = new StringBuffer();
+		Map<?, ?> filterMap = (Map<?, ?>) params.getFilter();
+		
+		if ((Boolean)filterMap.get("notTranslatedOnly")) {
+			filter.append("this.messages.size <= 1");
+		}
+		return filter.toString();
+	}
+
 	@Override
 	protected void setQueryParameters(Query query, Object parent, ListParams params) {
 		super.setQueryParameters(query, parent, params);
@@ -57,4 +70,5 @@ public class MessageBundleEntryDao extends AbstractHqlDao {
 		entry.setBundle(bundle);
 		super.save(entity, parent);
 	}
+
 }

@@ -12,6 +12,7 @@
  */
 package org.riotfamily.dbmsgsrc.model;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -181,6 +182,22 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 	
 	public static MessageBundleEntry load(Long id) {
 		return load(MessageBundleEntry.class, id);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void removeEmptyEntries(String bundle) {
+		List<MessageBundleEntry> entries = getSession().createCriteria(MessageBundleEntry.class)
+			.setCacheable(true)
+			.setCacheRegion("messages")
+			.add(Restrictions.sizeLe("messages", 1))
+			.add(Restrictions.naturalId()
+				.set("bundle", bundle))
+				.list();
+		
+		for (MessageBundleEntry entry : entries) {
+			entry.delete();
+		}
+
 	}
 
 }

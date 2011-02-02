@@ -43,28 +43,52 @@
 		</property>
 	</override:bean>
 	
+	<s:list id="messageBundleEntries" icon="database_key" filter-form="messageBundleEntryFilter">
+		<s:dao>
+			<bean class="org.riotfamily.dbmsgsrc.riot.MessageBundleEntryDao">
+				<constructor-arg ref="sessionFactory" />
+				<property name="search" value="code,messages.text" />
+			</bean>
+		</s:dao>
+		<s:columns>
+			<s:column property="code" />
+			<s:column property="defaultMessage.text" />
+			<s:column property="translated" />
+		</s:columns>
+		<s:commands>
+			<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
+			<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
+			<bean class="org.riotfamily.dbmsgsrc.riot.RemoveEmptyEntriesCommand" />
+			<bean class="org.riotfamily.dbmsgsrc.riot.ImportMessageEntriesCommand" />
+			<bean class="org.riotfamily.dbmsgsrc.riot.ExportMessageEntriesCommand" />
+			<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
+		</s:commands>
+		<s:form id="messageBundleEntry" />
+	</s:list>
+
 	<override:add ref="systemScreens">
-		<s:list id="messageBundleEntries" icon="database_key">
-			<s:dao>
-				<bean class="org.riotfamily.dbmsgsrc.riot.MessageBundleEntryDao">
-					<constructor-arg ref="sessionFactory" />
-					<property name="search" value="code,messages.text" />
-				</bean>
-			</s:dao>
-			<s:columns>
-				<s:column property="code" />
-				<s:column property="defaultMessage.text" />
-				<s:column property="translated" />
-			</s:columns>
-			<s:commands>
-				<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
-				<bean class="org.riotfamily.core.screen.list.command.impl.DeleteCommand" />
-				<bean class="org.riotfamily.core.screen.list.command.impl.AddCommand" />
-				<bean class="org.riotfamily.dbmsgsrc.riot.MessageEntryExportCommand" />
-				<bean class="org.riotfamily.dbmsgsrc.riot.ImportMessageEntriesCommand" />
-			</s:commands>
-			<s:form id="messageBundleEntry" />
-		</s:list>
+		<ref bean="messageBundleEntries" />
 	</override:add>
-  	
+
+	<s:list id="localDbMessages" icon="database_key" filter-form="dbMessageFilter">
+		<s:dao>
+			<bean class="org.riotfamily.dbmsgsrc.riot.LocalMessageDao">
+				<constructor-arg ref="sessionFactory" />
+				<property name="search" value="entry.code,entry.defaultMessage.text,text" />
+			</bean>
+		</s:dao>
+		<s:columns>
+			<s:column property="entry.code" lookup-level="2" />
+			<s:column property="entry.defaultMessage.text" lookup-level="2" />
+			<s:column sortable="false">
+				<ref bean="localMessageRenderer" />
+			</s:column>
+		</s:columns>
+		<s:commands>
+			<bean class="org.riotfamily.dbmsgsrc.riot.EditMessageCommand" />
+			<bean class="org.riotfamily.dbmsgsrc.riot.ImportMessagesCommand" />
+			<bean class="org.riotfamily.dbmsgsrc.riot.ExportMessagesCommand" />
+		</s:commands>
+	</s:list>	
+
 </beans>

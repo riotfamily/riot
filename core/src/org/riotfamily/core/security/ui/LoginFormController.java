@@ -16,16 +16,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.mvc.mapping.HandlerUrlUtils;
-import org.riotfamily.core.security.session.LoginRequestInterceptor;
+import org.riotfamily.core.runtime.RiotRuntime;
+import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.session.LoginManager;
+import org.riotfamily.core.security.session.LoginRequestInterceptor;
+import org.riotfamily.core.security.session.SecurityContext;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.RedirectView;
 
-public class LoginFormController implements Controller {
+public class LoginFormController implements Controller, ApplicationContextAware {
 
+	private ApplicationContext applicationContext;
+	
 	private LoginManager loginManager;
 	
 	private String viewName = ResourceUtils.getPath(
@@ -49,6 +56,12 @@ public class LoginFormController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 
+		// Check users already logged in
+		RiotUser user = SecurityContext.getCurrentUser();
+		if (user != null) {
+			return new ModelAndView(new RedirectView(getHomeUrl(request)));
+		}
+		
 		String username = request.getParameter("riot-username");
 		String password = request.getParameter("riot-password");
 		
@@ -60,7 +73,7 @@ public class LoginFormController implements Controller {
 				else {
 					String successUrl = LoginRequestInterceptor.getInterceptedUrl(request);
 					if (successUrl == null) {
-						successUrl = HandlerUrlUtils.getUrl(request, "home");
+						successUrl = getHomeUrl(request);
 					}
 					return new ModelAndView(new RedirectView(successUrl));
 				}
@@ -73,6 +86,17 @@ public class LoginFormController implements Controller {
 		else {
 			return new ModelAndView(viewName);
 		}
+	}
+
+	private String getHomeUrl(HttpServletRequest request) {
+		return request.getContextPath() + 
+				RiotRuntime.getRuntime(applicationContext).getServletPrefix();
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		
+		this.applicationContext = applicationContext;
 	}
 
 }
