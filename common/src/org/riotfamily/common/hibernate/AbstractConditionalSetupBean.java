@@ -35,7 +35,7 @@ public abstract class AbstractConditionalSetupBean extends AbstractSetupBean {
 		}
 	}
 	
-	protected abstract void doSetup(Session session);
+	protected abstract void doSetup(Session session) throws Exception;
 
 	private boolean isSetupRequired(Session session) {
 		if (condition == null) {
