@@ -26,7 +26,7 @@
 		</dwr:convert>
 	</dwr:configuration>
 	
-	<dwr:annotation-config />
+	<dwr:annotation-config id="dwrConfig" />
 	
 	<bean id="configurer" class="org.riotfamily.common.beans.config.ProfileConfigurer">
 		<property name="ignoreResourceNotFound" value="true" />
