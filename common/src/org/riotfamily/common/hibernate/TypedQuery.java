@@ -27,6 +27,7 @@ import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -473,6 +474,15 @@ public class TypedQuery<T> implements Query {
 
 	public Object uniqueResult() throws HibernateException {
 		return query.uniqueResult();
+	}
+
+	public boolean isReadOnly() {
+		return query.isReadOnly();
+	}
+
+	public TypedQuery<T> setLockOptions(LockOptions lockOptions) {
+		query.setLockOptions(lockOptions);
+		return this;
 	}
 	
 }

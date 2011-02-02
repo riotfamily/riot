@@ -1,5 +1,5 @@
 libraries = [
-	jpa: 'javax.persistence:persistence-api:1.0',
+	jpa: 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final',
 	jta: 'javax.transaction:jta:1.1',
 	c3p0: 'c3p0:c3p0:0.9.1.2',
 	slf4j: 'org.slf4j:slf4j-api:1.6.1',
@@ -9,9 +9,8 @@ libraries = [
 	junit: 'junit:junit:4.8.1',
 	jetty: 'org.mortbay.jetty:jetty:6.1.22',
 	servlet_api: 'javax.servlet:servlet-api:2.5',
-	hibernate: 'org.hibernate:hibernate-core:3.3.2.GA',
-	hibernate_ehcache: 'org.hibernate:hibernate-ehcache:3.3.2.GA',
-	hibernate_annotations: 'org.hibernate:hibernate-annotations:3.4.0.GA',
+	hibernate: 'org.hibernate:hibernate-core:3.6.0.Final',
+	hibernate_ehcache: 'org.hibernate:hibernate-ehcache:3.6.0.Final',
 	javassist: 'javassist:javassist:3.8.0.GA',
 	cglib: 'cglib:cglib-nodep:2.2',
 	ehcache: 'net.sf.ehcache:ehcache-core:1.7.2',
@@ -23,14 +22,14 @@ libraries = [
 	commons_fileupload: 'commons-fileupload:commons-fileupload:1.2.1',
 	commons_httpclient: 'commons-httpclient:commons-httpclient:3.1',
 	xstream: 'com.thoughtworks.xstream:xstream:1.3.1',
-	dwr: 'org.directwebremoting:dwr:3.0.0.117.dev',
+	dwr: 'org.directwebremoting:dwr:3.0.0.161.dev',
 	yuicompressor: 'com.yahoo.platform.yui:yuicompressor:2.4.2',
 	htmlparser: 'org.htmlparser:htmlparser:1.6',
 	hsqldb: 'org.hsqldb:hsqldb:1.8.0.10',
 	apache_poi: 'org.apache.poi:poi:3.5-FINAL'
 ] + modules('lucene', 'org.apache.lucene:lucene-$name:2.4.1', 
 		  'core', 'highlighter', 'analyzers', 'snowball') + 
-	modules('spring', 'org.springframework:spring-$name:3.0.0.RELEASE',
+	modules('spring', 'org.springframework:spring-$name:3.0.5.RELEASE',
 		  'core', 'expression', 'beans', 'aop', 'context', 'context-support',
 		  'tx', 'jdbc', 'orm', 'oxm', 'web', 'webmvc', 'test');
 
@@ -119,7 +118,9 @@ subprojects {
 			classifier = 'sources'
 		}
 		artifacts {
-			archives sourceJar
+			archives sourceJar {
+				type = 'sources'
+			}
 		}
 	}
 	

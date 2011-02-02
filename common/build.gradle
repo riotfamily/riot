@@ -2,7 +2,7 @@ dependencies {
 	compile project(':cachius'), 
 			libs(['slf4j', 'log4j', 'dom4j',
 			      'spring_orm', 'spring_webmvc', 'spring_context_support',
-			      'commons_fileupload', 'jpa', 'hibernate_annotations', 
+			      'commons_fileupload', 'jpa', 'hibernate', 
 			      'freemarker', 'json_lib', 'quartz', 'yuicompressor'])
 	
 	provided libs(['servlet_api', 'javax_mail'])

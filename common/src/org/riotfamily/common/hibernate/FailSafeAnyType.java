@@ -23,7 +23,6 @@ import java.util.Map;
 import org.hibernate.CacheMode;
 import org.hibernate.EntityMode;
 import org.hibernate.FlushMode;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.ObjectNotFoundException;
@@ -33,6 +32,8 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Transaction;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.engine.EntityKey;
+import org.hibernate.engine.LoadQueryInfluencers;
+import org.hibernate.engine.NonFlushedChanges;
 import org.hibernate.engine.PersistenceContext;
 import org.hibernate.engine.QueryParameters;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -45,6 +46,7 @@ import org.hibernate.jdbc.JDBCContext;
 import org.hibernate.loader.custom.CustomQuery;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.type.AnyType;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
 
 /**
@@ -58,9 +60,9 @@ import org.hibernate.type.Type;
 public class FailSafeAnyType extends AnyType {
 
 	public FailSafeAnyType() {
-		super(Hibernate.STRING, Hibernate.LONG);
+		super(StandardBasicTypes.STRING, StandardBasicTypes.LONG);
 	}
-
+	
 	public FailSafeAnyType(Type metaType, Type identifierType) {
 		super(metaType, identifierType);
 	}
@@ -341,6 +343,18 @@ public class FailSafeAnyType extends AnyType {
 
 		public void setFlushMode(FlushMode fm) {
 			session.setFlushMode(fm);
+		}
+
+		public NonFlushedChanges getNonFlushedChanges() throws HibernateException {
+			return session.getNonFlushedChanges();
+		}
+
+		public void applyNonFlushedChanges(NonFlushedChanges nonFlushedChanges) throws HibernateException {
+			session.applyNonFlushedChanges(nonFlushedChanges);
+		}
+
+		public LoadQueryInfluencers getLoadQueryInfluencers() {
+			return session.getLoadQueryInfluencers();
 		}
 		
 	}
