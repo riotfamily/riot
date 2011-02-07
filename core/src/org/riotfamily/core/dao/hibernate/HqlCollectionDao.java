@@ -100,13 +100,14 @@ public class HqlCollectionDao extends AbstractHqlDao implements
 	@Override
 	protected void initDao() throws Exception {
 		Assert.notNull(collectionProperty, "The collectionProperty must be set");
-		Assert.isTrue(parentProperty != null || parentClass != null,
-				"Either parentProperty or parentClass must be set");
-		
-		if (entityClass == null && parentClass != null) {
+		if (entityClass == null) {
+			Assert.notNull(parentClass, "Eiter entityClass or parentClass must be set");
 			entityClass = PropertyUtils.getCollectionPropertyType(parentClass, collectionProperty);
 		}
-		Assert.notNull(entityClass, "The entityClass must be set");		
+		if (parentClass == null) {
+			Assert.notNull(parentProperty, "Eiter paretnClass or parentProperty must be set");
+			parentClass = PropertyUtils.getPropertyType(entityClass, parentProperty);
+		}
 	}
 
 	protected String getRole() {
@@ -133,13 +134,17 @@ public class HqlCollectionDao extends AbstractHqlDao implements
 		if (parentProperty != null) {
 			PropertyUtils.setProperty(entity, parentProperty, parent);
 		}
-		getCollection(parent).add(entity);
+		if (parent != null) {
+			getCollection(parent).add(entity);
+		}
 		super.save(entity, parent);
 	}
 
 	@Override
 	public void delete(Object entity, Object parent) {
-		getCollection(parent).remove(entity);
+		if (parent != null) {
+			getCollection(parent).remove(entity);
+		}
 		super.delete(entity, parent);
 	}
 
