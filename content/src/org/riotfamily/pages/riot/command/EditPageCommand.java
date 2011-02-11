@@ -46,6 +46,16 @@ public class EditPageCommand extends AbstractSingleItemCommand<Page>{
 	}
 	
 	@Override
+	protected boolean isEnabled(CommandContext context, Page page) {
+		if (page instanceof VirtualPage) {
+			VirtualPage virualPage = (VirtualPage) page;
+			Object object = virualPage.getObject();
+			return formRepository.findFormId(object.getClass()) != null;
+		}
+		return page instanceof ContentPage;
+	}
+	
+	@Override
 	protected CommandResult execute(CommandContext context, Page page) {
 		ScreenContext targetContext = null;
 		if (page instanceof ContentPage) {
