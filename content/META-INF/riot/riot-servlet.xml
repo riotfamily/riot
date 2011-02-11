@@ -202,7 +202,10 @@
 			</s:column>
 		</s:columns>
 		<s:commands>
-			<bean class="org.riotfamily.core.screen.list.command.impl.EditCommand" />
+			<bean class="org.riotfamily.pages.riot.command.EditPageCommand">
+				<constructor-arg ref="screenRepository" />
+				<constructor-arg ref="formRepository" />
+			</bean>
 			<bean class="org.riotfamily.pages.riot.command.GotoPageCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.MoveUpCommand" />
 			<bean class="org.riotfamily.core.screen.list.command.impl.MoveDownCommand" />
