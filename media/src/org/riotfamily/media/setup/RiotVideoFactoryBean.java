@@ -24,7 +24,14 @@ public class RiotVideoFactoryBean extends AbstractFactoryBean<RiotVideo> {
 	
 	private Resource resource;
 
+	public RiotVideoFactoryBean() {
+	}
+	
 	public RiotVideoFactoryBean(Resource resource) {
+		this.resource = resource;
+	}
+	
+	public void setResource(Resource resource) {
 		this.resource = resource;
 	}
 
