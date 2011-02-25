@@ -15,6 +15,7 @@ package org.riotfamily.components.xstream;
 import org.riotfamily.pages.config.SystemPageType;
 import org.riotfamily.pages.config.VirtualPageType;
 import org.riotfamily.pages.model.ContentPage;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.VirtualPage;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -40,7 +41,6 @@ public class VirtualPageConverter implements Converter {
 		
 		writer.addAttribute("parent-id", parent.getId().toString());
 		writer.addAttribute("path-component", page.getPathComponent());
-		
 	}
 
 	public Object unmarshal(HierarchicalStreamReader reader,
@@ -52,7 +52,9 @@ public class VirtualPageConverter implements Converter {
 		ContentPage parent = ContentPage.load(Long.valueOf(parentId));
 		SystemPageType parentType = (SystemPageType) parent.getPageType();
 		VirtualPageType type = parentType.getVirtualChildType();
-		return type.resolve(parent, pathComponent);
+		Page page = type.resolve(parent, pathComponent);
+		XStreamMarshaller.addReference(context, parent);
+		return page;
 	}
 
 	
