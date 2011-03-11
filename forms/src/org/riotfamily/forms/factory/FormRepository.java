@@ -28,6 +28,8 @@ public interface FormRepository {
 	
 	public Class<?> getBeanClass(String formId);
 	
+	public String findFormId(Class<?> beanClass);
+	
 	public void addListener(ConfigurationEventListener listener);
 
 }

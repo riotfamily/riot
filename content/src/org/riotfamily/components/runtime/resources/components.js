@@ -706,10 +706,12 @@ riot.components = (function() {
 	});
 
 	dwr.engine.setErrorHandler(function(err, ex) {
-		if (ex.javaClassName == 'org.riotfamily.riot.security.PermissionDeniedException') {
-			new riot.window.dialog({
-				title: '${title.permissionDenied}', 
-				url: riot.contextPath + ex.permissionRequestUrl	
+		if (ex.javaClassName == 'org.riotfamily.core.security.policy.PermissionDeniedException') {
+			new riot.window.Dialog({
+				url: riot.contextPath + ex.permissionRequestUrl,
+				minHeight : 255,
+				closeButton: true,
+				autoSize: true
 			});
 		}
 	});

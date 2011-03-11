@@ -12,11 +12,15 @@
  */
 package org.riotfamily.common.web.mvc.servlet;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.beans.reload.BeanConfigurationWatcher;
 import org.riotfamily.common.beans.reload.ConfigurableBean;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -83,6 +87,15 @@ public class ReloadableDispatcherServlet extends InterceptingDispatcherServlet
 
 		watcher.checkForModifications();
 		super.doDispatch(request, response);
+	}
+	
+	@Override
+	protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (ServletUtils.isDirectRequest(request)) {
+			super.doHead(request, response);
+		} else {
+			doGet(request, response);
+		}
 	}
 
 	public void configure() {

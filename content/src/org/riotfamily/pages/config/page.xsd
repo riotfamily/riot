@@ -103,13 +103,11 @@
 		<xsd:sequence>
 			<xsd:element name ="handler" type="bean-or-ref" minOccurs="0" />
 			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
-			<xsd:choice>
-				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="type" type="type" />
-					<xsd:element name="type-ref" type="type-ref" />
-					<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
-				</xsd:choice>
-				<xsd:element name="virtual-page" type="virtual-page" minOccurs="0" />
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="type" type="type" />
+				<xsd:element name="type-ref" type="type-ref" />
+				<xsd:element name="system-page" type="system-page" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element name="virtual-page" type="virtual-page" minOccurs="0" maxOccurs="1"/>
 			</xsd:choice>
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="required" />

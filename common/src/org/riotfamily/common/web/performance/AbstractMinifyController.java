@@ -21,6 +21,7 @@ import java.io.Reader;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.cache.AbstractCacheableController;
@@ -116,7 +117,6 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 				}
 				capture(path, buffer, request, response);		
 			}
-			
 			String contentType = getContentType();
 			if (contentType != null) {
 				response.setContentType(contentType);
@@ -141,7 +141,7 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 			throws ServletException, IOException {
 		
 		CapturingResponseWrapper wrapper = new CapturingResponseWrapper(response, buffer);
-		request.getRequestDispatcher(path).include(request, wrapper);
+		request.getRequestDispatcher(path).include(new IgnoreIfModifiedSinceRequestWrapper(request), wrapper);
 		wrapper.flush();
 		buffer.write('\n');
 	}
@@ -149,5 +149,23 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 	protected abstract String getContentType();
 	
 	protected abstract Compressor getCompressor();
+	
+	private static class IgnoreIfModifiedSinceRequestWrapper extends HttpServletRequestWrapper {
+		
+		private static final String HEADER_IFMODSINCE = "If-Modified-Since";
+		
+		public IgnoreIfModifiedSinceRequestWrapper(HttpServletRequest request) {
+			super(request);
+		}
+
+		@Override
+		public long getDateHeader(String name) {
+			if (HEADER_IFMODSINCE.equals(name)) {
+				return -1L;
+			}
+			return super.getDateHeader(name);
+		}
+
+	}
 
 }

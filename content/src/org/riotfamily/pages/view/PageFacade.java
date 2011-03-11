@@ -137,14 +137,16 @@ public class PageFacade extends ContentContainerOwnerFacade {
 	}
 		
 	public List<PageFacade> getChildren() {
+		ArrayList<PageFacade> result = Generics.newArrayList();
 		CacheTagUtils.tagIfSupported(page);
 		VirtualPageType type = page.getSite().getSchema().getVirtualChildType(page);
 		if (type != null) {
 			Collection<Page> children = type.listChildren(page);
 			CacheTagUtils.tagIfSupported(children);
-			return createFacades(children);
+			result.addAll(createFacades(children)) ;
 		}
-		return createFacades(page.getChildren());
+		result.addAll(createFacades(page.getChildren()));
+		return result;
 	}
 
 	public List<PageFacade> getSiblings() {
