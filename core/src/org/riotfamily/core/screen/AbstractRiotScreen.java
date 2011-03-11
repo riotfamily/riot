@@ -32,6 +32,8 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware,
 	
 	private String icon;
 	
+	private String vanityTitle;
+	
 	private RiotScreen parentScreen;
 	
 	private MessageSource messageSource;
@@ -64,6 +66,14 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware,
 		this.icon = icon;
 	}
 
+	public String getVanityTitle() {
+		return vanityTitle;
+	}
+
+	public void setVanityTitle(String vanityTitle) {
+		this.vanityTitle = vanityTitle;
+	}
+
 	public RiotScreen getParentScreen() {
 		return parentScreen;
 	}
@@ -80,7 +90,8 @@ public abstract class AbstractRiotScreen implements RiotScreen, BeanNameAware,
 	
 	public String getTitle(ScreenContext context) {
 		String code = "screen." + getId();
-		String defaultTitle = FormatUtils.xmlToTitleCase(getId());
+		String defaultTitle = vanityTitle != null ? vanityTitle : getId();
+		defaultTitle = FormatUtils.xmlToTitleCase(defaultTitle);
 		Locale locale = RequestContextUtils.getLocale(context.getRequest());
 		return messageSource.getMessage(code, null, defaultTitle, locale);
 	}
