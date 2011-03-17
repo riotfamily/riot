@@ -45,11 +45,11 @@ public class ReverseUrlHanderMappingAdapter implements ReverseHandlerMappingAdap
 	
 	private class ReverseUrlHandlerMapping implements ReverseHandlerMapping {
 		
-		private final Map<String, List<HandlerUrl>> urlsForName = Generics.newHashMap();
+		private Map<String, List<HandlerUrl>> urlsForName = Generics.newHashMap();
 		
-		private final Map<Class<?>, List<HandlerUrl>> urlsForClass = Generics.newHashMap();
+		private Map<Class<?>, List<HandlerUrl>> urlsForClass = Generics.newHashMap();
 		
-		private final ApplicationContext context;
+		private ApplicationContext context;
 		
 		public ReverseUrlHandlerMapping(AbstractUrlHandlerMapping mapping) {
 			context = mapping.getApplicationContext();

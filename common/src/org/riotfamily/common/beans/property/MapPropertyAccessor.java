@@ -53,7 +53,7 @@ public class MapPropertyAccessor extends AbstractPropertyAccessor {
 	}
 
 	public boolean isReadableProperty(String propertyName) {
-		return getMap().containsKey(propertyName);
+		return true;
 	}
 
 	public boolean isWritableProperty(String propertyName) {

@@ -57,7 +57,7 @@ public class HandlerUrl implements Comparable<HandlerUrl> {
 			return numberOfPlaceholders == 0;
 		}
 		for (String prop : variables) {
-			if (!pa.isReadableProperty(prop)) {
+			if (!pa.isReadableProperty(prop) || pa.getPropertyValue(prop) == null) {
 				return false;
 			}
 		}
