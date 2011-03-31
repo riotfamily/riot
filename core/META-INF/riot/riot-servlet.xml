@@ -21,6 +21,9 @@
 	<tx:annotation-driven />
 	
 	<dwr:configuration>
+		<dwr:convert type="exception" class="org.riotfamily.core.security.policy.PermissionDeniedException">
+			<dwr:include method="message,permissionRequestUrl"/>
+		</dwr:convert>
 		<dwr:convert type="exception" class="java.lang.Exception">
 			<dwr:exclude method="stackTrace"/>
 		</dwr:convert>

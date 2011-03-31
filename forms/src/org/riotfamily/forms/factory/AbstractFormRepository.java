@@ -13,6 +13,7 @@
 package org.riotfamily.forms.factory;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.riotfamily.forms.Form;
 
@@ -40,6 +41,15 @@ public abstract class AbstractFormRepository implements FormRepository {
 
 	public Class<?> getBeanClass(String id) {
 		return getFormFactory(id).getBeanClass();
+	}
+	
+	public String findFormId(Class<?> beanClass) {
+		for (Entry<String, FormFactory> entry : factories.entrySet()) {
+			if (beanClass.equals(entry.getValue().getBeanClass())) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 
 	public void registerFormFactory(String id, FormFactory formFactory) {

@@ -23,8 +23,15 @@ import org.springframework.core.io.Resource;
 public class RiotSwfFactoryBean extends AbstractFactoryBean<RiotSwf> {
 	
 	private Resource resource;
+	
+	public RiotSwfFactoryBean() {
+	}
 
 	public RiotSwfFactoryBean(Resource resource) {
+		this.resource = resource;
+	}
+	
+	public void setResource(Resource resource) {
 		this.resource = resource;
 	}
 

@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.screen.form.FormScreen;
 import org.springframework.util.Assert;
 
 public class ScreenRepository {
@@ -60,4 +61,16 @@ public class ScreenRepository {
 		return (T) screen;
 	}
 
+	
+	public FormScreen findFormScreen(String formId) {
+		for (RiotScreen screen : screenMap.values()) {
+			if (screen instanceof FormScreen) {
+				FormScreen formScreen = (FormScreen) screen;
+				if (formId.equals(formScreen.getFormId())) {
+					return formScreen;
+				}
+			}
+		}
+		return null;
+	}
 }

@@ -188,15 +188,16 @@
 <#---
   - Renders a list of checkboxes for the given options. See also #listOptions.
   -->
-<#macro checkboxes field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="">
+<#macro checkboxes field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="" errorClass="error" attributes...>
 	<#compress>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
 		<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
 			<#if labelFirst>
-				<label for="${id}">${label}</label>
-				<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />		
+				<label for="${id}"${c.joinAttributes(attributes)}>${label}</label>
+				<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/>${c.joinAttributes(attributes)} />		
 			<#else>
-				<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />
-				<label for="${id}">${label}</label>
+				<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/>${c.joinAttributes(attributes)} />
+				<label for="${id}"${c.joinAttributes(attributes)}>${label}</label>
 			</#if>
 		</@listOptions>
 		<input type="hidden" name="_${field}" value="on" />
@@ -206,15 +207,16 @@
 <#---
   - Renders a list of radio buttons for the given options. See also #listOptions.
   -->
-<#macro radioButtons field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="">
+<#macro radioButtons field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="" errorClass="error" attributes...>
 	<#compress>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
 		<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
 			<#if labelFirst>
-				<label for="${id}">${label}</label>
-				<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
+				<label for="${id}"${c.joinAttributes(attributes)}>${label}</label>
+				<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/>${c.joinAttributes(attributes)} />
 			<#else>			
-				<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
-				<label for="${id}">${label}</label>
+				<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/>${c.joinAttributes(attributes)} />
+				<label for="${id}"${c.joinAttributes(attributes)}>${label}</label>
 			</#if>		
 		</@listOptions>
 	</#compress>
