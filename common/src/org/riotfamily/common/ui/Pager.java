@@ -17,6 +17,7 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.web.util.UrlPathHelper;
 
 /**
@@ -48,8 +49,6 @@ public class Pager {
 
 	private String pageParam;
 
-	private String linkPrefix;
-	
 	private String encodingScheme = "UTF-8";
 	
 	private boolean copyParameters = true;
@@ -79,10 +78,16 @@ public class Pager {
 
 	public void initialize(HttpServletRequest request, int padding,
 			String pageParam) {
+		
+		initialize(getLinkPrefix(request), padding, pageParam);
+	}
+	
+	public void initialize(String linkPrefix, int padding,
+			String pageParam) {
 
 		this.pageParam = pageParam;
-		prepareLinkPrefix(request);
-
+		linkPrefix = ServletUtils.addParameter(linkPrefix, pageParam, "");
+		
 		int start = currentPage - padding;
 		int end = currentPage + padding;
 
@@ -130,7 +135,7 @@ public class Pager {
 		}
 	}
 
-	private void prepareLinkPrefix(HttpServletRequest request) {
+	private String getLinkPrefix(HttpServletRequest request) {
 		StringBuffer url = new StringBuffer(
 				urlPathHelper.getOriginatingRequestUri(request));
 		
@@ -149,7 +154,7 @@ public class Pager {
 		}
 		url.append(pageParam);
 		url.append('=');
-		linkPrefix = url.toString();
+		return url.toString();
 	}
 
 	protected String urlEncode(String s) {
