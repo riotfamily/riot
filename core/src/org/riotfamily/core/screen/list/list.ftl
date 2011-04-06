@@ -9,14 +9,17 @@
 <@template.extend file="../screen.ftl">
 	
 	<@template.block name="main">
+		<#if chooser??>
+			<@template.set bodyClass="chooser" />
+			<script type="text/javascript" language="JavaScript">
+				window.dialogName = window.name;
+			</script>
+		</#if>
 		<@riot.script src="/engine.js" />
 		<@riot.script src="/util.js" />
 		<@riot.script src="/interface/ListService.js" />
 		<@riot.script src="riot/pager.js" />
 		<@riot.script src="list.js" />
-		<#if chooser??>
-			<@template.set bodyClass="chooser" />
-		</#if>
 		<div id="list"></div>
 	</@template.block>
 

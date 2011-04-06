@@ -267,7 +267,7 @@ riot.window = (function() {
 		}),
 		
 		getDialog: function(win) {
-			return findDialogById(win.name);
+			return findDialogById(win.dialogName || win.name);
 		},
 		
 		ask: function(title, question, answers, callback) {
