@@ -27,7 +27,7 @@ public class UnpublishCommand extends AbstractBatchCommand<ContentContainerOwner
 	
 	@Override
 	protected String getAction() {
-		return "publish";
+		return "unpublish";
 	}
 	
 	@Override

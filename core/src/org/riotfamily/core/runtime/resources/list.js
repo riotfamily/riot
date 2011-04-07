@@ -628,10 +628,17 @@ dwr.engine.setTextHtmlHandler(function() {
 
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName) {
-		if (ex.javaClassName == 'org.riotfamily.core.security.PermissionDeniedException'
+		if (ex.javaClassName == 'org.riotfamily.core.security.policy.PermissionDeniedException'
 				&& ex.permissionRequestUrl) {
-		
-			location.href = top.contextPath + ex.permissionRequestUrl;
+			
+			new riot.window.Dialog({
+				url: riot.contextPath + ex.permissionRequestUrl,
+				minHeight : 255,
+				closeButton: true,
+				autoSize: true,
+				onClose: list.setIdle.bind(list)
+			});
+			
 		}
 		else {
 			list.setIdle();

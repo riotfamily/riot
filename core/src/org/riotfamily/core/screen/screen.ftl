@@ -20,6 +20,7 @@
 	
 	<script language="JavaScript" type="text/javascript">
 		riot.Resources.setBasePath('${c.url(runtime.resourcePath)}');
+		riot.contextPath = '${request.contextPath}';
 	</script>
 	
 </head>

@@ -23,8 +23,15 @@ import org.springframework.core.io.Resource;
 public class RiotFileFactoryBean extends AbstractFactoryBean<RiotFile> {
 	
 	private Resource resource;
+	
+	public RiotFileFactoryBean() {
+	}
 
 	public RiotFileFactoryBean(Resource resource) {
+		this.resource = resource;
+	}
+	
+	public void setResource(Resource resource) {
 		this.resource = resource;
 	}
 

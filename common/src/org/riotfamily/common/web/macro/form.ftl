@@ -188,15 +188,16 @@
 <#---
   - Renders a list of checkboxes for the given options. See also #listOptions.
   -->
-<#macro checkboxes field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="">
+<#macro checkboxes field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="" errorClass="error" attributes...>
 	<#compress>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
 		<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
 			<#if labelFirst>
-				<label for="${id}">${label?html}</label>
-				<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check checked/> />		
+				<label for="${id}"${c.joinAttributes(attributes)}>${label?html}</label>
+				<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check checked/>${c.joinAttributes(attributes)} />		
 			<#else>
-				<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check checked/> />
-				<label for="${id}">${label?html}</label>
+				<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check checked/>${c.joinAttributes(attributes)} />
+				<label for="${id}"${c.joinAttributes(attributes)}>${label?html}</label>
 			</#if>
 		</@listOptions>
 		<input type="hidden" name="_${field}" value="on" />
@@ -208,6 +209,7 @@
   -->
 <#macro radioButtons field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="">
 	<#compress>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
 		<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
 			<#if labelFirst>
 				<label for="${id}">${label?html}</label>

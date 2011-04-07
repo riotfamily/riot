@@ -21,6 +21,7 @@ import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentMap;
 import org.riotfamily.components.model.ContentMapImpl;
 import org.riotfamily.components.model.ContentMapMarshaller;
+import org.riotfamily.pages.model.VirtualPage;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -67,7 +68,8 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		xstream.alias("component", Component.class);
 		xstream.alias("component-list", ComponentList.class);
 		xstream.alias("content-map", ContentMapImpl.class);
-
+		xstream.alias("virtual-page", VirtualPage.class);
+			
 		Mapper mapper = xstream.getMapper();
 
 		xstream.registerConverter(new HibernateEntityConverter(mapper,
@@ -75,6 +77,7 @@ public class XStreamMarshaller implements ContentMapMarshaller,
 		xstream.registerConverter(new ComponentListConverter(mapper), 1);
 		xstream.registerConverter(new ComponentConverter(mapper), 2);
 		xstream.registerConverter(new ContentMapConverter(mapper), 1);
+		xstream.registerConverter(new VirtualPageConverter(), 1);
 		
 		xstream.setMarshallingStrategy(new NullSafeXPathMarshallingStrategy());
 	}
