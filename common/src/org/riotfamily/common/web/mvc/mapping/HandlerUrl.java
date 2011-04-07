@@ -26,9 +26,9 @@ public class HandlerUrl implements Comparable<HandlerUrl> {
 	private static Pattern placeholders = Pattern.compile(
 			"(?:(\\*\\*?)|\\{(.+?)(?::.+?)?\\})");
 	
-	private String path;
+	private final String path;
 	
-	private Set<String> variables = Generics.newHashSet();
+	private final Set<String> variables = Generics.newHashSet();
 	
 	private int numberOfPlaceholders;
 	
@@ -57,7 +57,7 @@ public class HandlerUrl implements Comparable<HandlerUrl> {
 			return numberOfPlaceholders == 0;
 		}
 		for (String prop : variables) {
-			if (!pa.isReadableProperty(prop)) {
+			if (!pa.isReadableProperty(prop) || pa.getPropertyValue(prop) == null) {
 				return false;
 			}
 		}
@@ -92,12 +92,18 @@ public class HandlerUrl implements Comparable<HandlerUrl> {
 
 	public int compareTo(HandlerUrl o) {
 		if (this.numberOfPlaceholders < o.numberOfPlaceholders) {
-			return -1;
+			return 1;
 		}
 		if (this.numberOfPlaceholders == o.numberOfPlaceholders) {
 			return 0;
 		}
-		return 1;
+		return -1;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s[placeholders=%s, path=%s]",
+				getClass().getName(), numberOfPlaceholders, path);
 	}
 
 }

@@ -32,6 +32,7 @@ import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.ImageUtils;
 import org.riotfamily.common.web.performance.ResourceStamper;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -113,8 +114,14 @@ public class ButtonService implements ApplicationContextAware {
 	private String getImageUri(String style, String label, HttpServletRequest request) {
 		String encodedLabel = FormatUtils.uriEscape(label);
 		String locale = RequestContextUtils.getLocale(request).toString();
-		return String.format("%s%s/imagebtn/%s.png?label=%s&locale=%s", 
+		String uri = String.format("%s%s/imagebtn/%s.png?label=%s&locale=%s", 
 				request.getContextPath(), riotUtilsUriPrefix, style, encodedLabel, locale);
+		
+		// Fixes IE6/7 security popup as described here http://support.microsoft.com/kb/925014
+		if (request.isSecure()) {
+			uri = ServletUtils.getAbsoluteUrlPrefix(request).append(uri).toString();
+		}
+		return uri;
 	}
 	
 	

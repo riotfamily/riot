@@ -81,15 +81,15 @@ public final class CacheTagUtils {
 	}
 	
 	public static void invalidate(CacheService cacheService, Class<?> clazz) {
-		if (cacheService != null) {
-		    cacheService.invalidateTaggedItems(getTag(clazz));
-		}
+		invalidate(cacheService, clazz, null);
 	}
 	
 	public static void invalidate(CacheService cacheService, Class<?> clazz, Serializable objectId) {
-		if (cacheService != null) {
+		if (cacheService != null && clazz != null) {
 		    cacheService.invalidateTaggedItems(getTag(clazz));
-		    cacheService.invalidateTaggedItems(getTag(clazz, objectId));
+			if (objectId != null) {
+				cacheService.invalidateTaggedItems(getTag(clazz, objectId));
+			}
 		}
 	}
 	

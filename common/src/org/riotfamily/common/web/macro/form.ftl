@@ -114,7 +114,7 @@
 			<#local text = c.getMessage(code) />
 		</#if>
 		<#local attributes = addErrorClass(attributes, field, errorClass) />
-		<label for="${for}"${c.joinAttributes(attributes)}>${text?html}</label>
+		<label for="${for}"${c.joinAttributes(attributes)}>${text}</label>
 	</#compress>
 </#macro>
 
@@ -180,7 +180,7 @@
 <#macro checkbox field id=field errorClass="error" value="true" attributes...>
 	<#compress>
 		<#local attributes = addErrorClass(attributes, field, errorClass) />
-		<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check formMacroHelper.getValue(field)! == value />${c.joinAttributes(attributes)} />
+		<input type="checkbox" name="${field}" id="${id}" value="${value?html}"<@check formMacroHelper.isSelected(field, value) />${c.joinAttributes(attributes)} />
 		<input type="hidden" name="_${field}" value="on"/>
 	</#compress>
 </#macro>
@@ -290,7 +290,7 @@
   --> 
 <#macro option value label=value selected=false attributes...>
 	<#compress>
-		<option value="${value?html}"<#if selected> selected="selected"</#if>${c.joinAttributes(attributes)}>${label?html}</option>
+		<option value="${value?html}"<#if selected> selected="selected"</#if>${c.joinAttributes(attributes)}>${label}</option>
 	</#compress>
 </#macro>
 
