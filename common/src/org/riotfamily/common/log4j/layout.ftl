@@ -108,7 +108,7 @@ table {
 			</#list>
 		</table>
 		
-		<tt class="message">${event.renderedMessage?replace(',',',&#x200B;')?replace('/','&#x200B;/')?replace('\n', '<br/>')?replace('\\s(?=\\s)','&nbsp;','r')}</tt>
+		<tt class="message">${event.renderedMessage!?replace(',',',&#x200B;')?replace('/','&#x200B;/')?replace('\n', '<br/>')?replace('\\s(?=\\s)','&nbsp;','r')}</tt>
 		
 		<#if event.throwableStrRep?has_content>
 			<a href="#s${event_index}" class="toggle">Show Stacktrace</a>
