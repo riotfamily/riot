@@ -12,6 +12,7 @@
  */
 package org.riotfamily.pages.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -62,7 +63,7 @@ public class PageAlias extends ActiveRecordBeanSupport {
 		this.page = page;
 	}
 	
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.MERGE)
 	public Site getSite() {
 		return this.site;
 	}
