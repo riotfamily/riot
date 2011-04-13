@@ -68,7 +68,11 @@ td {
 }
 #footer a.logout {
 	padding-left: 16px;
+	margin-right: 4px;
 	background: url(images/footer/logout.gif) left center no-repeat;
+}
+#footer #changePassword {
+	margin-left: 2px;
 }
 
 .chooser #footer {
