@@ -127,7 +127,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     /**
      * Builds a HQL query string to retrieve the total number of items.
      */
-    protected final String buildCountHql(Object parent, ListParams params) {
+    protected String buildCountHql(Object parent, ListParams params) {
     	StringBuilder hql = new StringBuilder();
     	hql.append("select count(*)");
     	appendFromClause(hql, params);
@@ -139,7 +139,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     /**
      * Builds a HQL query string to retrieve a list of items.
      */
-    protected final String buildHql(Object parent, ListParams params) {
+    protected String buildHql(Object parent, ListParams params) {
     	StringBuilder hql = new StringBuilder();
     	hql.append("select ");
     	hql.append(getSelect());
