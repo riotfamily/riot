@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.support.EditModeUtils;
+import org.riotfamily.pages.config.RootPageType;
 import org.riotfamily.pages.config.SystemPageType;
 import org.riotfamily.pages.model.ContentPage;
 import org.riotfamily.pages.model.Page;
@@ -113,7 +114,7 @@ public final class PageResolver {
 			String parentPath = parent.getPath();
 			if (lookupPath.startsWith(parentPath)) {
 				String tail = lookupPath.substring(parent.getPath().length());
-				if (tail.startsWith("/")) {
+				if (tail.startsWith("/") || RootPageType.class.equals(parent.getPageType().getClass())) {
 					SystemPageType parentType = (SystemPageType) parent.getPageType();
 					return parentType.getVirtualChildType().resolve(parent, tail);
 				}

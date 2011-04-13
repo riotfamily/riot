@@ -32,7 +32,7 @@ var RiotTextArea = Class.create({
 			this.el.style.maxHeight = this.maxHeight + 'px';
 			this.el.style.maxWidth = (this.el.offsetWidth - 2) + 'px';
 		}
-		else if (!Prototype.Browser.IE) {
+		else {
 	        var border = parseInt(this.el.getStyle('borderTopWidth')) + parseInt(this.el.getStyle('borderBottomWidth'));
 			var padding = parseInt(this.el.getStyle('paddingTop')) + parseInt(this.el.getStyle('paddingBottom'));
 			this.maxHeight -= (this.maxHeight - border - padding) % parseInt(this.el.getStyle('lineHeight'));

@@ -136,13 +136,15 @@ class CommandContextHandler extends ListServiceHandler
 		TransactionStatus status = beginTransaction();
 		try {
 			Selection selection = new Selection(dao, items);
-			String action = command.getInfo(this).getAction();
-			if (action != null) {
-				for (SelectionItem item : selection) {
-					AccessController.assertIsGranted(action, item.getObject(), screenContext);
+			if (command.isEnabled(this, selection)) {
+				String action = command.getInfo(this).getAction();
+				if (action != null) {
+					for (SelectionItem item : selection) {
+						AccessController.assertIsGranted(action, item.getObject(), screenContext);
+					}
 				}
+				result = command.execute(this, selection);
 			}
-			result = command.execute(this, selection);
 		}
 		catch (Exception e) {
 			rollback(status);
