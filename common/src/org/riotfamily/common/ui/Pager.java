@@ -47,8 +47,6 @@ public class Pager {
 
 	private boolean gapToLastPage;
 
-	private String pageParam;
-
 	private String encodingScheme = "UTF-8";
 	
 	private boolean copyParameters = true;
@@ -79,13 +77,12 @@ public class Pager {
 	public void initialize(HttpServletRequest request, int padding,
 			String pageParam) {
 		
-		initialize(getLinkPrefix(request), padding, pageParam);
+		initialize(getLinkPrefix(request, pageParam), padding, pageParam);
 	}
 	
 	public void initialize(String linkPrefix, int padding,
 			String pageParam) {
 
-		this.pageParam = pageParam;
 		linkPrefix = ServletUtils.addParameter(linkPrefix, pageParam, "");
 		
 		int start = currentPage - padding;
@@ -135,25 +132,22 @@ public class Pager {
 		}
 	}
 
-	private String getLinkPrefix(HttpServletRequest request) {
+	private String getLinkPrefix(HttpServletRequest request, String pageParam) {
 		StringBuffer url = new StringBuffer(
 				urlPathHelper.getOriginatingRequestUri(request));
 		
-		url.append('?');
 		if (copyParameters) {
 			String query = urlPathHelper.getOriginatingQueryString(request);
 			if (query != null) {
 				int i = query.indexOf(pageParam);
 				if (i != -1) {
-					url.append(query.substring(0, i));
+					query = query.substring(0, i == 0 ? 0 : i - 1);
 				}
-				else {
-					url.append(query).append('&');
+				if (query.length() > 0) {
+					url.append("?").append(query);
 				}
 			}
 		}
-		url.append(pageParam);
-		url.append('=');
 		return url.toString();
 	}
 
