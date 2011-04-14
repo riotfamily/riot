@@ -76,6 +76,7 @@ public class PageFormInitializer implements FormInitializer {
 
 	private void addPathComponentField(Form form) {
 		TextField t = new TextField();
+		t.setRequired(true);
 		t.setRegex("([A-Za-z0-9_.,*@{}-]*)");
 		form.addElement(t, "pathComponent");
 	}
