@@ -42,6 +42,8 @@ public class PagePropertiesEditor extends CompositeElement
 	
 	private Object initialValue;
 	
+	private boolean isNew = false;
+	
 	private EditorBinder binder;
 	
 	public PagePropertiesEditor(FormRepository repository, Form form, 
@@ -59,10 +61,14 @@ public class PagePropertiesEditor extends CompositeElement
 		return null;
 	}
 	
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}	
+	
 	// -----------------------------------------------------------------
 	// Implementation of the Editor interface
 	// -----------------------------------------------------------------
-	
+
 	public Object getValue() {
 		return currentForm.getValue();
 	}
@@ -97,7 +103,9 @@ public class PagePropertiesEditor extends CompositeElement
 		removeComponent(currentForm);
 		currentForm = new PropertiesForm(pageType); 
 		addComponent(currentForm);
-		currentForm.setValue(initialValue);
+		if (!isNew) {
+			currentForm.setValue(initialValue);
+		}
 		getFormListener().elementChanged(this);
 	}
 	
