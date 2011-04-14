@@ -69,6 +69,7 @@ public class PageFormInitializer implements FormInitializer {
 		PagePropertiesEditor ppe = new PagePropertiesEditor(repository, form, pageType);
 		
 		if (sb != null) {
+			ppe.setNew(true);
 			sb.addChangeListener(ppe);
 		}
 		form.addElement(ppe, "contentContainer.previewVersion");
