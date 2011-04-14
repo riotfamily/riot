@@ -42,8 +42,6 @@ public class PagePropertiesEditor extends CompositeElement
 	
 	private Object initialValue;
 	
-	private boolean isNew = false;
-	
 	private EditorBinder binder;
 	
 	public PagePropertiesEditor(FormRepository repository, Form form, 
@@ -60,10 +58,6 @@ public class PagePropertiesEditor extends CompositeElement
 	public String getLabel() {
 		return null;
 	}
-	
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
-	}	
 	
 	// -----------------------------------------------------------------
 	// Implementation of the Editor interface
@@ -103,10 +97,8 @@ public class PagePropertiesEditor extends CompositeElement
 		removeComponent(currentForm);
 		currentForm = new PropertiesForm(pageType); 
 		addComponent(currentForm);
-		if (!isNew) {
-			currentForm.setValue(initialValue);
-		}
 		getFormListener().elementChanged(this);
+		currentForm.setValue(initialValue);
 	}
 	
 	private class PropertiesForm extends NestedForm {
