@@ -246,7 +246,7 @@
 <#macro listOptions field options valueProperty="" labelProperty="" messagePrefix="">
 	<#if options?is_hash>
 		<#list options?keys as option>			
-			<#local selected = formMacroHelper.isSelected(field, option) />
+			<#local selected = formMacroHelper.isSelected(field, option, valueProperty) />
 			<#nested option?html, options[option]?html, selected, field + '-' + option_index />
 		</#list>
 	<#else>
@@ -274,7 +274,7 @@
 	    		<#local optionLabel = c.getMessage(messagePrefix + optionLabel) />
 	    	</#if>
 	    	
-	    	<#local selected = formMacroHelper.isSelected(field, optionValue) />
+	    	<#local selected = formMacroHelper.isSelected(field, optionValue, valueProperty) />
 	    	<#nested optionValue?html, optionLabel?html, selected, field + '-' + option_index />
 	    </#list>
 	</#if>

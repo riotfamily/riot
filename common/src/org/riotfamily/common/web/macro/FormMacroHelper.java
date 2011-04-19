@@ -15,6 +15,7 @@ package org.riotfamily.common.web.macro;
 import java.util.Collection;
 import java.util.List;
 
+import org.riotfamily.common.beans.property.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -162,17 +163,29 @@ public class FormMacroHelper {
 	
 	@SuppressWarnings("unchecked")
 	public boolean isSelected(String field, String option) {
+		return isSelected(field, option, null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean isSelected(String field, String option, String valueProperty) {
 		Object value = getValue(field);
 		if (value == null) {
 			return false;
 		}
 		if (value instanceof Collection) {
 			for (Object obj : (Collection) value) {
-				if (obj != null && obj.toString().equals(option)) {
+				if (obj != null && isEqualValue(option, obj, valueProperty)) {
 					return true;
 				}
 			}
 			return false;
+		}
+		return isEqualValue(option, value, valueProperty);
+	}
+	
+	private boolean isEqualValue(String option, Object value, String valueProperty) {
+		if (StringUtils.hasText(valueProperty)) {
+			return PropertyUtils.getPropertyAsString(value, valueProperty).equals(option);
 		}
 		return value.toString().equals(option);
 	}
