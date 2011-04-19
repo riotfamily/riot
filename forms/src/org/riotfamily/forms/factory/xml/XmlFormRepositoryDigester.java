@@ -230,7 +230,10 @@ public class XmlFormRepositoryDigester {
 		if (ContainerElement.class.isAssignableFrom(elementClass)) {
 			Iterator<Element> it = XmlUtils.getChildElements(ele).iterator();
 			while (it.hasNext()) {
-				parseElementDefinition(it.next(), factory);
+				Element childElement = it.next();
+				if (!DomUtils.nodeNameEquals(childElement, "property")) {
+					parseElementDefinition(childElement, factory);
+				}
 			}
 		}
 
