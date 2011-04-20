@@ -26,11 +26,14 @@ package org.riotfamily.crawler;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodRetryHandler;
+import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.FormatUtils;
 
 /**
  * PageLoader implementation that uses the Jakarta Commons HttpClient.
@@ -41,9 +44,22 @@ public class CommonsHttpClientPageLoader implements PageLoader {
 
 	private RiotLog log = RiotLog.get(CommonsHttpClientPageLoader.class);
 
-    private HttpClient client = new HttpClient();
+    private HttpClient client;
 
     private boolean textHtmlOnly = true;
+    
+    public CommonsHttpClientPageLoader() {
+    	HttpConnectionManagerParams params = new HttpConnectionManagerParams();
+		params.setConnectionTimeout((int) FormatUtils.parseMillis("10s"));
+		params.setSoTimeout((int) FormatUtils.parseMillis("5s"));
+		params.setStaleCheckingEnabled(true);
+		params.setDefaultMaxConnectionsPerHost(256);
+		params.setMaxTotalConnections(256);
+		
+		HttpConnectionManager connectionMangager = new MultiThreadedHttpConnectionManager();
+		connectionMangager.setParams(params);
+		client = new HttpClient(connectionMangager);
+    }
 
 	public void setTextHtmlOnly(boolean textHtmlOnly) {
 		this.textHtmlOnly = textHtmlOnly;
@@ -54,9 +70,8 @@ public class CommonsHttpClientPageLoader implements PageLoader {
 		PageData pageData = new PageData(href);
 		log.info("Loading page: " + url);
 		GetMethod method = new GetMethod(url);
-		HttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler();
 		HttpMethodParams params = new HttpMethodParams();
-		params.setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
+		params.setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 		method.setParams(params);
 		method.setFollowRedirects(false);
 
