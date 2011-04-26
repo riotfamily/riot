@@ -246,7 +246,7 @@ riot.components = (function() {
 							desc.className = desc.className.replace(zebraExp, '$1' + zebraClass + '$3');
 						}
 						// Set "every-nth" or "not-every-nth" class
-						var modExp = /(^|\s)(not-)?every-(\d+)(nd|rd|th)(-|\s|$)/;
+						var modExp = /(^|\s|-)(not-)?every-(\d+)(nd|rd|th)(-|\s|$)/;
 						var match = desc.className.match(modExp);
 						if (match) {
 							var nth = match[3];
