@@ -4,6 +4,7 @@ dependencies {
 	provided libs(['servlet_api'])
 	
 	runtime libs(['commons_fileupload']),
+			libs(['commons_io']),
 			project(':jslibs')
 	
 	testCompile project(':common'),
