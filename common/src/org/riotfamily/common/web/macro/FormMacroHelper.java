@@ -18,6 +18,7 @@ import java.util.List;
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.InvalidPropertyException;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -161,12 +162,11 @@ public class FormMacroHelper {
 		return "";
 	}
 	
-	@SuppressWarnings("unchecked")
 	public boolean isSelected(String field, String option) {
 		return isSelected(field, option, null);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean isSelected(String field, String option, String valueProperty) {
 		Object value = getValue(field);
 		if (value == null) {
@@ -185,7 +185,11 @@ public class FormMacroHelper {
 	
 	private boolean isEqualValue(String option, Object value, String valueProperty) {
 		if (StringUtils.hasText(valueProperty)) {
-			return PropertyUtils.getPropertyAsString(value, valueProperty).equals(option);
+			try {
+				return PropertyUtils.getPropertyAsString(value, valueProperty).equals(option);				
+			} catch (InvalidPropertyException e) {
+				//ignore
+			}
 		}
 		return value.toString().equals(option);
 	}
