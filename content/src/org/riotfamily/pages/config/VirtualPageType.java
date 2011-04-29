@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 
-public class VirtualPageType extends AbstractPageType {
+public class VirtualPageType extends AbstractPageType implements VirtualPageParent {
 
 	private VirtualPageType child;
 	
@@ -47,6 +47,10 @@ public class VirtualPageType extends AbstractPageType {
 	
 	public ChildPageResolver getResolver() {
 		return resolver;
+	}
+	
+	public VirtualPageType getVirtualChildType() {
+		return child;
 	}
 
 	@Override
