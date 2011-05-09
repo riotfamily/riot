@@ -1,7 +1,7 @@
 function markBrokenLinks(brokenLinks) {
 	$$('a[href]').each(function(link) {
 		if (brokenLinks.include(link.href)) {
-			var span  = new Element('span').setStyle({position: 'relative', paddingTop: '1px'});
+			var span  = new Element('span').addClassName('broken-link-wrapper').setStyle({position: 'relative', paddingTop: '1px'});
 			var marker = new Element('div').addClassName('broken-link-marker').setStyle({position: 'absolute', left: '0px', visibility: 'hidden'});
 			span.insert(marker);
 			if (link.firstChild) {
