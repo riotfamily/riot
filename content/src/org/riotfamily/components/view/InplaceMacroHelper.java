@@ -107,7 +107,9 @@ public class InplaceMacroHelper {
 	public String renderComponent(Component component) throws Exception {
 		StringWriter sw = new StringWriter();
 		if (component != null) {
+			request.setAttribute("readOnlyComponent", true);
 			componentRenderer.render(component, request, new CapturingResponseWrapper(response, sw));
+			request.removeAttribute("readOnlyComponent");
 		}
 		return sw.toString();
 	}

@@ -63,6 +63,11 @@
 	${inplaceMacroHelper.renderComponents(contentMap, key, min, max, initial, valid, x, y)!}
 </#macro>
 
+<#--- @internal -->
+<#function readOnlyComponent request=request>
+	<#return request.getAttribute("readOnlyComponent")!false /> 
+</#function>
+
 <#---
   - Macro that makes content editable via the Riot toolbar. The text is edited
   - in-line, which means that no further markup is supported, except for
@@ -84,7 +89,7 @@
   -->
 <#macro text key tag="" alwaysUseNested=false textTransform=true hyphenate=false attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
-	<#if editMode>
+	<#if editMode && !readOnlyComponent()>
 		<#local attributes = attributes + {'riot:textTransform': textTransform?string} />
 	</#if>
 	<#if hyphenate>
@@ -114,7 +119,7 @@
   -->
 <#macro richtext key tag="" config="default" alwaysUseNested=false chunk=false hyphenate=false attributes...>
 	<#compress>
-		<#if editMode>
+		<#if editMode && !readOnlyComponent()>
 			<#local attributes = c.unwrapAttributes(attributes) + {"riot:config": config} />
 		</#if>
 		<#local editor = chunk?string("richtext-chunks", "richtext") />
@@ -147,7 +152,7 @@
 			<#local value = transform(value) />
 		</#if>
 		
-		<#if inplaceMacroHelper.isEditable(contentMap)>
+		<#if inplaceMacroHelper.isEditable(contentMap)  && !readOnlyComponent()>
 			<#if tag?has_content>
 				<#local element=tag />
 			<#else>
