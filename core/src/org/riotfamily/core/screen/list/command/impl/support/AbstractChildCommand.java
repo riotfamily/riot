@@ -48,22 +48,4 @@ public abstract class AbstractChildCommand extends AbstractCommand {
 		return new RootSelectionItem();
 	}
 	
-	private static class RootSelectionItem implements SelectionItem {
-
-		public String getObjectId() {
-			return null;
-		}
-
-		public Object getObject() {
-			return null;
-		}
-		
-		public void resetObject() {
-		}
-
-		public String getParentNodeId() {
-			return null;
-		}
-	}
-	
 }

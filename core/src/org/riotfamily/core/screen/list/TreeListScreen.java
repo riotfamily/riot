@@ -251,7 +251,8 @@ public class TreeListScreen extends AbstractRiotScreen implements Controller,
 			}
 		}
 		if (chooserSettings != null && chooserSettings.getTargetScreenId() != null) {
-			key.append("?choose=").append(chooserSettings.getTargetScreenId());
+			key.append("?choose=").append(chooserSettings.getTargetScreenId())
+				.append("&").append(chooserSettings.getTargetClass().getName());
 		}
 		return key.toString();
 	}

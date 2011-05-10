@@ -66,7 +66,7 @@ public class ScreenRepository {
 		for (RiotScreen screen : screenMap.values()) {
 			if (screen instanceof FormScreen) {
 				FormScreen formScreen = (FormScreen) screen;
-				if (formId.equals(formScreen.getFormId())) {
+				if (formScreen.contains(formId)) {
 					return formScreen;
 				}
 			}

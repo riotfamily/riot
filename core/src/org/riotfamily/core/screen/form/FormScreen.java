@@ -14,6 +14,7 @@ package org.riotfamily.core.screen.form;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -63,7 +64,7 @@ public class FormScreen extends AjaxFormController
 
 	private String id;
 	
-	private String formId;
+	private String[] formIds;
 
 	private String icon;
 	
@@ -86,15 +87,48 @@ public class FormScreen extends AjaxFormController
 		this.viewName = viewName;
 	}
 
-	public String getFormId() {
-		if (formId == null) {
+	public String getFormId(HttpServletRequest request, ScreenContext context) {
+		if (formIds == null) {
 			return getId();
 		}
-		return formId;
+		else if (formIds.length == 1) {
+			return formIds[0];
+		}
+		else if (request.getParameter("formId") != null) {
+			String formId = request.getParameter("formId");
+			if (formId.contains(formId)) {
+				return formId;
+			}
+		}
+		else if (context.getObject() != null) {
+			for (String formId : formIds) {
+				Class<?> beanClass = formRepository.getBeanClass(formId);
+				if (beanClass.equals(context.getObject().getClass())) {
+					return formId;
+				}
+			}
+		}
+		return null;
 	}
 
-	public void setFormId(String formId) {
-		this.formId = formId;
+	public void setFormIds(String[] formIds) {
+		this.formIds = formIds;
+	}
+	
+	
+	public String[] getFormIds() {
+		return formIds;
+	}
+	
+	public boolean contains(String formId) {
+		if (formIds == null) {
+			return formId.equals(getId());
+		} 
+		return Arrays.asList(formIds).contains(formId);
+	}
+	
+	public boolean isFormChooser() {
+		return formIds != null && formIds.length > 1;
 	}
 	
 	public void setIcon(String icon) {
@@ -132,9 +166,10 @@ public class FormScreen extends AjaxFormController
 		
 	@Override
 	protected Form createForm(HttpServletRequest request) {
-		Form form = formRepository.createForm(getFormId());
-		form.addButton("save");
 		ScreenContext context = ScreenContext.Binding.get(request);
+		
+		Form form = formRepository.createForm(getFormId(request, context));
+		form.addButton("save");
 		form.setAttribute("screenContext", context);
 		return form;
 	}

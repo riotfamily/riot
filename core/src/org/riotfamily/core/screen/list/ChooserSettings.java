@@ -16,6 +16,7 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.core.screen.ScreenLink;
 
@@ -25,14 +26,21 @@ public class ChooserSettings implements Serializable {
 	
 	private String startScreenId;
 	
+	private Class<?> targetClass;
 	
-	public ChooserSettings(String targetScreenId, String startScreenId) {
+	
+	public ChooserSettings(String targetScreenId, String startScreenId, Class<?> targetClass) {
 		this.targetScreenId = targetScreenId;
 		this.startScreenId = startScreenId;
+		this.targetClass = targetClass;
 	}
 
 	public ChooserSettings(HttpServletRequest request) {
-		this(request.getParameter("choose"), request.getParameter("start"));
+		targetScreenId = request.getParameter("choose");
+		startScreenId =  request.getParameter("start");
+		if (request.getParameter("targetClass") != null) {
+			targetClass = SpringUtils.classForName(request.getParameter("targetClass"));
+		}
 	}
 
 	public ScreenLink appendTo(ScreenLink link) {
@@ -52,6 +60,7 @@ public class ChooserSettings implements Serializable {
 		if (targetScreenId != null) {
 			ServletUtils.appendParameter(sb, "choose", targetScreenId);
 			ServletUtils.appendParameter(sb, "start", startScreenId);
+			ServletUtils.appendParameter(sb, "targetClass", targetClass.getName());
 		}
 	}
 	
@@ -61,6 +70,10 @@ public class ChooserSettings implements Serializable {
 
 	public String getStartScreenId() {
 		return startScreenId;
+	}
+	
+	public Class<?> getTargetClass() {
+		return targetClass;
 	}
 
 }

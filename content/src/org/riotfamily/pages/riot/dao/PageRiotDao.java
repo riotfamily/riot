@@ -78,16 +78,18 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 
 	public String getObjectId(Object entity) {
 		if (entity instanceof VirtualPage) {
-			VirtualPage virtualPage = (VirtualPage) entity;
-			ContentPage parent = (ContentPage) virtualPage.getParent();
-			return String.format("virtual#%s#%s", parent.getId(),  virtualPage.getPathComponent());
+			VirtualPage page = (VirtualPage) entity;
+			ContentPage parent = getVirtualPageParent(page);
+			String path = page.getPath().substring(parent.getPath().length());
+			return String.format("virtual#%s#%s", parent.getId(),  path);
 		}
-		else {			
+		else if (entity instanceof ContentPage) {			
 			ContentPage page = (ContentPage) entity;
 			return page.getId().toString();
 		}
+		return null;
 	}
-		
+	
 	public Object getRootNode(Object parent) {
 		if (parent == null) {
 			parent = Site.loadDefaultSite();
@@ -215,4 +217,10 @@ public class PageRiotDao implements SingleRoot,	Constraints, Swapping,
 	public void pasteCopy(Object entity, Object dest) {
 	}
 
+	private ContentPage getVirtualPageParent(Page page) {
+		if (page instanceof ContentPage) {
+			return (ContentPage) page;
+		}
+		return getVirtualPageParent(page.getParent());
+	}
 }
