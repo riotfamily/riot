@@ -42,6 +42,8 @@ public class ObjectChooser extends AbstractChooser
 	private ListScreen rootList;
 	
 	private ListScreen targetList;
+	
+	private Class<?> targetClass;
 
 	private ApplicationContext applicationContext;
 	
@@ -67,6 +69,11 @@ public class ObjectChooser extends AbstractChooser
 
 	public void setRootIdAttribute(String rootIdAttribute) {
 		this.rootIdAttribute = rootIdAttribute;
+	}
+	
+	@Override
+	protected void afterBindingSet() {
+		targetClass = getEditorBinding().getPropertyType();
 	}
 
 	@Override
@@ -101,7 +108,7 @@ public class ObjectChooser extends AbstractChooser
 	
 	@Override
 	protected String getChooserUrl() {
-		ChooserSettings settings = new ChooserSettings(targetId, rootId);
+		ChooserSettings settings = new ChooserSettings(targetId, rootId, targetClass);
 		String url = HandlerUrlUtils.getUrlResolver(applicationContext)
 				.getUrlForHandler(rootList.getId(),
 				new DefaultScreenContext(null, null, null, getRootObjectId(), false));
