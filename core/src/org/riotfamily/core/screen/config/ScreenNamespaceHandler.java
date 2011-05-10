@@ -37,6 +37,7 @@ public class ScreenNamespaceHandler extends GenericNamespaceHandlerSupport {
 		
 		register("form", FormScreen.class)
 				.addTranslation("id", "beanName")
+				.addTranslation("form-id", "formIds")
 				.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR)
 				.setDecorator(new ChildDecorator()
 				.register("screenlets", new ListDecorator())
