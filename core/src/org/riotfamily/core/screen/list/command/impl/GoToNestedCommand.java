@@ -13,15 +13,18 @@
 package org.riotfamily.core.screen.list.command.impl;
 
 import java.util.Collection;
+import java.util.Locale;
 
+import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.core.screen.ListScreen;
 import org.riotfamily.core.screen.RiotScreen;
-import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.core.screen.list.command.CommandContext;
 import org.riotfamily.core.screen.list.command.CommandInfo;
 import org.riotfamily.core.screen.list.command.CommandResult;
 import org.riotfamily.core.screen.list.command.impl.support.AbstractSingleItemCommand;
 import org.riotfamily.core.screen.list.command.result.GotoUrlResult;
 import org.springframework.util.Assert;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class GoToNestedCommand extends AbstractSingleItemCommand<Object> {
 
@@ -45,6 +48,10 @@ public class GoToNestedCommand extends AbstractSingleItemCommand<Object> {
 		RiotScreen itemScreen = context.getScreen().getItemScreen();
 		Assert.notNull(itemScreen, "The list must have an itemScreen");
 		
+		if (itemScreen instanceof ListScreen) {
+			return itemScreen;
+		}
+		
 		Collection<RiotScreen> childScreens = itemScreen.getChildScreens();
 		Assert.notEmpty(childScreens, "The itemScreen must have childScreens");
 		
@@ -59,20 +66,36 @@ public class GoToNestedCommand extends AbstractSingleItemCommand<Object> {
 	@Override
 	public CommandInfo getInfo(CommandContext context) {
 		RiotScreen screen = findChildScreen(context);
-		ScreenContext screenContext = context.getScreenContext().createNewItemContext(null);
+		String iconName = screen.getIcon();
+		if (iconName == null) {
+			iconName = getIcon();
+		}
 		return new CommandInfo(
 				getName(),
 				getAction(), 
-				screen.getTitle(screenContext), 
-				getIconUrl(context, screen.getIcon()), 
+				getTitle(screen.getId(), context), 
+				getIconUrl(context, iconName), 
 				false);
 	}
 	
 	@Override
 	protected CommandResult execute(CommandContext context, Object item) {
-		RiotScreen screen = findChildScreen(context);
-		return new GotoUrlResult(context.getScreenContext()
+		if (context.getScreen().getItemScreen() instanceof ListScreen) {
+			return new GotoUrlResult(context.getScreenContext()
+					.createItemContext(item));
+		}
+		else {
+			RiotScreen screen = findChildScreen(context);
+			return new GotoUrlResult(context.getScreenContext()
 				.createItemContext(item).createChildContext(screen));
+		}
+	}
+	
+	private String getTitle(String screenId, CommandContext context) {
+		String code = "screen." + screenId;
+		String defaultTitle = FormatUtils.xmlToTitleCase(screenId);
+		Locale locale = RequestContextUtils.getLocale(context.getRequest());
+		return context.getMessageResolver().getMessage(code, null, defaultTitle, locale);
 	}
 
 	
