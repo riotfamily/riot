@@ -136,29 +136,29 @@ public class PageFacade extends ContentContainerOwnerFacade {
 		return pages;
 	}
 		
-	public List<PageFacade> getChildren() {
-		ArrayList<PageFacade> result = Generics.newArrayList();
+	public List<Page> getChildren() {
+		ArrayList<Page> result = Generics.newArrayList();
 		CacheTagUtils.tagIfSupported(page);
 		VirtualPageType type = page.getSite().getSchema().getVirtualChildType(page);
 		if (type != null) {
 			Collection<Page> children = type.listChildren(page);
 			CacheTagUtils.tagIfSupported(children);
-			result.addAll(createFacades(children)) ;
+			result.addAll(filterPages(children)) ;
 		}
-		result.addAll(createFacades(page.getChildren()));
+		result.addAll(filterPages(page.getChildren()));
 		return result;
 	}
 
-	public List<PageFacade> getSiblings() {
+	public List<Page> getSiblings() {
 		Page parent = page.getParent();
 		if (parent == null) {
-			return Collections.singletonList(this);
+			return Collections.singletonList(page);
 		}
 		return new PageFacade(parent, request, response).getChildren();
 	}
 	
-	public PageFacade getPreviousSibling() {
-		List<PageFacade> siblings = getSiblings();
+	public Page getPreviousSibling() {
+		List<Page> siblings = getSiblings();
 		int i = siblings.indexOf(this);
 		if (i > 0) {
 			return siblings.get(i - 1);
@@ -166,8 +166,8 @@ public class PageFacade extends ContentContainerOwnerFacade {
 		return null;
 	}
 	
-	public PageFacade getNextSibling() {
-		List<PageFacade> siblings = getSiblings();
+	public Page getNextSibling() {
+		List<Page> siblings = getSiblings();
 		int i = siblings.indexOf(this);
 		if (i < siblings.size() - 1) {
 			return siblings.get(i + 1);
@@ -175,11 +175,11 @@ public class PageFacade extends ContentContainerOwnerFacade {
 		return null;
 	}
 	
-	protected List<PageFacade> createFacades(Collection<? extends Page> pages) {
-		ArrayList<PageFacade> result = Generics.newArrayList();
+	protected List<Page> filterPages(Collection<? extends Page> pages) {
+		ArrayList<Page> result = Generics.newArrayList();
 		for (Page page : pages) {
 			if (page.getContentContainer().getLiveVersion() != null || isPreview(page)) {
-				result.add(new PageFacade(page, request, response));
+				result.add(page);
 			}
 		}
 		return result;
