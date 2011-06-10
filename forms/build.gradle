@@ -1,7 +1,7 @@
 dependencies {
 	compile project(':common'), libs(['spring_webmvc', 'json_lib'])
 
-	provided libs(['servlet_api'])
+	compile lib('servlet_api')
 	
 	runtime libs(['commons_fileupload']),
 			libs(['commons_io']),

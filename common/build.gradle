@@ -5,7 +5,7 @@ dependencies {
 			      'commons_fileupload', 'jpa', 'hibernate', 
 			      'freemarker', 'json_lib', 'quartz', 'yuicompressor'])
 	
-	provided libs(['servlet_api', 'javax_mail'])
+	compile libs(['servlet_api', 'javax_mail'])
 	
 	runtime project(':revolt'), libs(['jta', 'hibernate_ehcache', 'ehcache', 'javassist', 'cglib'])
 }

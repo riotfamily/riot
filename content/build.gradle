@@ -2,7 +2,7 @@ dependencies {
 	compile project(':core'), project(':media'),
 			libs(['freemarker', 'spring_webmvc', 'dwr', 'xstream'])
 			
-	provided lib('servlet_api')
+	compile lib('servlet_api')
 	
 	runtime lib('c3p0')
 }

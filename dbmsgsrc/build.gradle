@@ -1,6 +1,5 @@
 dependencies {
 	compile project(':content'), lib('apache_poi')
-	
-	provided lib('servlet_api')
+	compile lib('servlet_api')
 }
 

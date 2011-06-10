@@ -4,7 +4,7 @@ dependencies {
 	compile project(':forms')
 	compile libs(['spring_webmvc', 'freemarker', 'dwr'])
 	
-	provided libs(['servlet_api'])
+	compile lib('servlet_api')
 	
 	runtime project(':common'), project(':revolt')
 	
