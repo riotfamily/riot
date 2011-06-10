@@ -40,9 +40,10 @@ public class FolderController implements CacheableController {
 			HttpServletResponse response) throws Exception {
 		
 		Page page = PageResolver.getPage(request);
-		for (PageFacade child : new PageFacade(page, request, response).getChildren()) {
-			if (child.isRequestable()) {
-				return new ModelAndView(new RedirectView(child.getUrl()));
+		for (Page child : page.getChildren()) {
+			PageFacade facade = new PageFacade(child, request, response);
+			if (facade.isRequestable()) {
+				return new ModelAndView(new RedirectView(facade.getUrl()));
 			}
 		}
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);

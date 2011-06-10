@@ -64,6 +64,9 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 	protected void validate() {
 	}
 	
+	protected void uploadCompleted() {
+	}
+	
 	protected abstract Element createPreviewElement();
 	
 	protected abstract void onUpload(MultipartFile multipartFile) 
@@ -145,6 +148,7 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 						status = null;
 						completed = false;
 						getFormListener().elementChanged(AbstractFileUpload.this);
+						uploadCompleted();
 					}
 					else {
 						log.debug("Progress: " + status.getProgress());

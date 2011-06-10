@@ -22,6 +22,7 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.element.upload.AbstractFileUpload;
+import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.ui.Dimension;
 import org.riotfamily.media.meta.UnknownFormatException;
 import org.riotfamily.media.model.RiotFile;
@@ -91,6 +92,11 @@ public class FileUpload extends AbstractFileUpload {
 		else if (file == null && isRequired()) {
 			ErrorUtils.rejectRequired(this);
 		}
+	}
+	
+	@Override
+	protected void uploadCompleted() {
+		fireChangeEvent(uploadedFile, file);
 	}
 	
 	protected void validateFile(RiotFile file) {
