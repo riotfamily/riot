@@ -56,6 +56,8 @@
 		<constructor-arg ref="fileStore" />
 		<constructor-arg ref="transactionManager" />
 		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily}" />
+		<property name="deleteOrphanedFiles" value="${riot.media.cleanUp.deleteOrphanedFiles=true}" />
+		<property name="deleteUnmanagedFiles" value="${riot.media.cleanUp.deleteUnmanagedFiles=true}" />
 	</bean>
 	
 	<bean class="org.riotfamily.media.model.RiotFile" scope="prototype">
