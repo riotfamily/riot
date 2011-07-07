@@ -97,17 +97,20 @@ public class ChooserCommandHandler extends CommandContextHandler {
 			ScreenContext nextContext = new DefaultScreenContext(nextList, 
 					null, selection.getSingleItem().getObject(), false, screenContext);
 			
-			ChooserSettings settings = new ChooserSettings(chooserTarget.getId(), null);
+			ChooserSettings settings = new ChooserSettings(chooserTarget.getId(), null, state.getChooserSettings().getTargetClass());
 			ScreenLink link = settings.appendTo(nextContext.getLink());
 			return new GotoUrlResult(context.getRequest(), link.getUrl());
 		}
 	}
 	
-	private static class ChooseCommand extends AbstractCommand {
-
+	private class ChooseCommand extends AbstractCommand {
+		
 		@Override
 		public boolean isEnabled(CommandContext context, Selection selection) {
-			return selection.size() == 1;
+			Class<?> targetClass = state.getChooserSettings().getTargetClass();
+			return selection.size() == 1 
+				&& targetClass.isAssignableFrom(selection.getSingleItem().getObject().getClass());
+
 		}
 		
 		@Override
