@@ -47,6 +47,9 @@ public class HibernateCleanUpTask extends HibernateTask {
 	
 	private List<String> fileQueries = Generics.newArrayList();
 
+	private boolean deleteOrphanedFiles = true;
+	
+	private boolean deleteUnmanagedFiles = true;
 	
 	public HibernateCleanUpTask(SessionFactory sessionFactory, FileStore fileStore, 
 			PlatformTransactionManager tx) {
@@ -57,10 +60,31 @@ public class HibernateCleanUpTask extends HibernateTask {
 		init();
 	}
 
+	public void setDeleteOrphanedFiles(boolean deleteOrphanedFiles) {
+		this.deleteOrphanedFiles = deleteOrphanedFiles;
+	}
+	
+	public void setDeleteUnmanagedFiles(boolean deleteUnmanagedFiles) {
+		this.deleteUnmanagedFiles = deleteUnmanagedFiles;
+	}
+	
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void doWithoutResult(final Session session) throws Exception {
+		log.info("Media clean-up started.");
 		
+		if (deleteOrphanedFiles) {
+			deleteOrphanedFiles(session);
+		}
+		
+		if (deleteUnmanagedFiles) {
+			deleteUnmanagedFiles(session);
+		}
+		
+		log.info("Media clean-up finished.");
+	}
+
+	@SuppressWarnings("unchecked")
+	private void deleteOrphanedFiles(final Session session) {
 		log.info("Looking for orphaned files ...");
 
 		List<Long> fileIds = session.createQuery(
@@ -79,7 +103,9 @@ public class HibernateCleanUpTask extends HibernateTask {
 				delete(session, id);
 			}
 		}
-		
+	}
+	
+	private void deleteUnmanagedFiles(final Session session) {
 		log.info("Deleting unmanaged files ...");
 		Iterator<String> files = fileStore.iterator();
 		while (files.hasNext()) {
@@ -89,10 +115,8 @@ public class HibernateCleanUpTask extends HibernateTask {
 				files.remove();
 			}
 		}
-		
-		log.info("Media clean-up finished.");
 	}
-	
+
 	private void delete(final Session session, final Long id) {
 		try {
 			RiotFile file = transactionTemplate.execute(new TransactionCallback<RiotFile>() {
@@ -118,7 +142,6 @@ public class HibernateCleanUpTask extends HibernateTask {
 				.uniqueResult() != null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void init() {
 		Collection<ClassMetadata> allMeta = getSessionFactory().getAllClassMetadata().values();
 		for (ClassMetadata meta : allMeta) { 

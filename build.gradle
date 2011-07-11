@@ -49,8 +49,8 @@ allprojects {
 	group = 'org.riotfamily'
 	version = '9.1.0'
 	repositories {
-		mavenRepo urls: 'http://repository.riotfamily.org/cache'
 		mavenRepo urls: 'http://repository.riotfamily.org/external'
+		mavenRepo urls: 'http://repository.riotfamily.org/cache'
 	}
 	excludes.each {
 		configurations.all*.exclude it
