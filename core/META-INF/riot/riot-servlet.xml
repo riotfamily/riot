@@ -74,6 +74,7 @@
 	
 	<dwr:controller id="dwrController" debug="true">
 		<dwr:config-param name="maxCallCount" value="50"/>
+		<dwr:config-param name="accessLogLevel" value="exception"/>
 		<dwr:config-param name="activeReverseAjaxEnabled" value="true" />
 	</dwr:controller>
 	
