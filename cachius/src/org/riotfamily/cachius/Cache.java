@@ -26,6 +26,14 @@ public class Cache {
 		cleanUpThread.start();
 	}
 
+	public Region getRegion() {
+		return region;
+	}
+	
+	public int getSize() {
+		return size.get();
+	}
+
 	/**
 	 * Returns the CacheItem with the given key or creates a new one, if no
 	 * entry with that key exists.
@@ -78,6 +86,15 @@ public class Cache {
 			}
 		}
 	}
+	
+	/**
+	 * Invalidates all cache entries
+	 */
+	protected void invalidateAll() {
+		for (CacheEntry entry : map.values()) {
+			entry.getItem().invalidate();
+		}
+	}	
 	
 	/**
 	 * Removes items from the cache that haven't been used for a long time. The

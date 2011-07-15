@@ -260,25 +260,24 @@
 					</s:commands>
 				</s:list>
 			</s:group>
+			<s:list id="cachiusStatistics" icon="server_database">
+				<s:dao>
+					<bean class="org.riotfamily.statistics.dao.CachiusStatisticsDao">
+						<property name="cacheService" ref="cacheService" />
+					</bean>
+				</s:dao>
+				<s:columns>
+					<s:column property="name" />
+					<s:column property="value" />
+				</s:columns>
+				<s:commands>
+					<bean class="org.riotfamily.statistics.commands.RefreshListCommand" />
+					<bean class="org.riotfamily.statistics.commands.ResetCachiusStatisticsCommand" />
+					<bean class="org.riotfamily.statistics.commands.InvalidateCachiusCacheCommand" />
+				</s:commands>
+			</s:list>
 		</s:group>
 	</override:add>
-		
-	<!--
-    
-     <list:list id="cachius-statistics" order-by="" row-style-property="style">
-        <list:dao class="org.riotfamily.statistics.dao.CachiusStatisticsDao">
-        	<list:property name="cacheService" ref="cacheService" />
-        </list:dao>
-        <list:columns>
-            <list:column property="name" />
-            <list:column property="value" />
-        </list:columns>
-        <list:command id="refresh" />  
-        <list:command class="org.riotfamily.statistics.commands.ResetCachiusStatisticsCommand" />
-        <list:command class="org.riotfamily.statistics.commands.InvalidateCachiusCacheCommand" />
-    </list:list>
-
-    -->
     
 </beans>
 
