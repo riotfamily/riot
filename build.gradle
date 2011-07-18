@@ -16,7 +16,7 @@ libraries = [
 	ehcache: 'net.sf.ehcache:ehcache-core:1.7.2',
 	freemarker: 'org.freemarker:freemarker:2.3.16',
 	javax_mail: 'javax.mail:mail:1.4.1',
-	quartz: 'org.opensymphony.quartz:quartz:1.6.1',
+	quartz: 'org.opensymphony.quartz:quartz:1.6.6',
 	dom4j: 'dom4j:dom4j:1.6.1',
 	json_lib: 'net.sf.json-lib:json-lib:2.2.3:jdk15',
 	commons_fileupload: 'commons-fileupload:commons-fileupload:1.2.1',
