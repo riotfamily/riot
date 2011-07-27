@@ -1,0 +1,7 @@
+dependencies {
+	compile project(':content'),
+			libs(['commons_httpclient', 'htmlparser', 'quartz'])
+	
+	//runtime project(':content'),
+	//		libs(['commons_httpclient', 'htmlparser', 'quartz'])
+}

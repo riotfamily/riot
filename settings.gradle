@@ -1,1 +1,1 @@
-include 'cachius', 'revolt', 'common', 'forms', 'core', 'media', 'content', 'dbmsgsrc', 'statistics', 'jslibs'
+include 'cachius', 'revolt', 'common', 'forms', 'core', 'media', 'content', 'dbmsgsrc', 'statistics', 'jslibs', 'crawler', 'search', 'linkcheck'

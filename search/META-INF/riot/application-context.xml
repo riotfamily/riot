@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:override="http://www.riotfamily.org/schema/common/override"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+
+	<bean id="riotSearchAnalyzerFactory" class="org.riotfamily.search.analysis.DefaultAnalyzerFactory" />
+
+	<bean id="indexer" class="org.riotfamily.search.index.Indexer">
+		<property name="indexLocation" value="${riot.index.location=/WEB-INF/temp/index}" />
+		<property name="analyzerFactory" ref="riotSearchAnalyzerFactory" />
+		<property name="documentBuilder" ref="htmlIndexer" />
+	</bean>
+	
+	<bean id="htmlIndexer" class="org.riotfamily.search.index.html.HtmlDocumentBuilder">
+		<property name="contentFilter">
+			<bean class="org.htmlparser.filters.CssSelectorNodeFilter">
+				<constructor-arg value="body" />
+			</bean>
+		</property>
+		<property name="titleExtractor">
+			<bean class="org.riotfamily.search.index.html.TitleTagExtractor" />
+		</property>
+	</bean>
+	
+	<override:add ref="crawler" property="pageHandlers">
+		<ref bean="indexer" />
+	</override:add>
+	
+	
+	<!-- The following overrides are only applied when the riot-pages module is present -->
+	
+	<override:if-present ref="sitemapSchemaRepository">
+		<!--
+		 - Service to identify sites by their URL. 
+		 -->
+		<bean id="siteIdentifer" class="org.riotfamily.search.site.SiteIdentifier">
+			<constructor-arg ref="transactionManager" />
+		</bean>
+		
+		<!-- 
+		  - We have to replace the indexer so that we can retrieve the sites from 
+		  - the database before the crawler starts.
+		  -->
+		<override:bean ref="indexer" class="org.riotfamily.search.site.SiteIndexer" merge="true">
+			<constructor-arg ref="siteIdentifer" />
+		</override:bean>
+		
+		<!--
+		  - We inject a LinkFilter that only returns links that refer to one 
+		  - of our sites. 
+		  -->
+		<override:properties ref="crawler">	
+			<property name="linkFilter">
+				<bean class="org.riotfamily.search.site.SiteLinkFilter">
+					<constructor-arg ref="siteIdentifer" />
+				</bean>
+			</property>
+		</override:properties>
+		
+		<!-- 
+		  - We replace the DefaultLanguageExctractor by an implementation that 
+		  - extracts the language from the site's locale setting.  
+		  -->
+		<override:properties ref="htmlIndexer">	
+			<property name="languageExtractor">
+				<bean class="org.riotfamily.search.site.SiteLanguageExtractor">
+					<constructor-arg ref="siteIdentifer" />
+				</bean>
+			</property>
+		</override:properties>
+		
+		<!-- 
+		  - Finally we register a custom FieldExtractor that stores the siteId in
+		  - the index, so that we can filter the search results later on.
+		  -->
+		<override:put ref="htmlIndexer" property="customFieldExtractors">
+			<entry key="siteId">
+				<bean class="org.riotfamily.search.site.SiteIdExtractor">
+					<constructor-arg ref="siteIdentifer" />
+				</bean>
+			</entry>	
+		</override:put>
+
+	</override:if-present>
+
+</beans>
