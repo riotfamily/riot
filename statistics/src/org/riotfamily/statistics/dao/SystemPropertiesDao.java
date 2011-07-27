@@ -17,7 +17,7 @@ import java.util.Map;
 public class SystemPropertiesDao extends AbstractPropertiesDao {
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Map<String, String> getProperties() throws Exception {
 		return (Map) System.getProperties();
 	}

@@ -26,7 +26,7 @@ public class ResourcePropertiesDao extends AbstractPropertiesDao {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Map<String, String> getProperties() throws Exception {
 		return (Map) PropertiesLoaderUtils.loadProperties(resource);
 	}
