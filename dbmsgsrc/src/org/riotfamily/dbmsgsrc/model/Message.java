@@ -15,6 +15,7 @@ package org.riotfamily.dbmsgsrc.model;
 import java.text.MessageFormat;
 import java.util.Locale;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,7 +52,8 @@ public class Message {
 	public Message() {
 	}
 	
-	public Message(Locale locale, String text) {
+	public Message(MessageBundleEntry entry, Locale locale, String text) {
+		this.entry = entry;
 		this.locale = locale;
 		this.text = text;
 	}
@@ -65,7 +67,7 @@ public class Message {
 		this.id = id;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="entry_id", insertable=false, updatable=false)
 	public MessageBundleEntry getEntry() {
 		return entry;

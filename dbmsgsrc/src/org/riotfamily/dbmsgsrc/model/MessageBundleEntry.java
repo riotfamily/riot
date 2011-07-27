@@ -20,13 +20,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.criterion.Restrictions;
@@ -100,7 +100,7 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 	public void setDefaultText(String text) {
 		Message message = getDefaultMessage();
 		if (message == null) {
-			setDefaultMessage(new Message(C_LOCALE, text));
+			setDefaultMessage(new Message(this, C_LOCALE, text));
 		}
 		else {
 			message.setText(text);
@@ -124,7 +124,7 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 
 	@OneToMany(cascade=CascadeType.ALL)
     @JoinColumn(name="entry_id")
-    @MapKey(columns={@Column(name="locale")})
+	@MapKeyColumn(name="locale")
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="messages")
 	public Map<Locale, Message> getMessages() {
 		return messages;
