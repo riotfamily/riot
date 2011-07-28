@@ -8,9 +8,15 @@
 		http://www.riotfamily.org/schema/common/override
         http://www.riotfamily.org/schema/common/override-9.0.xsd">
 
+	<bean id="riotSearchResultHighlighter" class="org.riotfamily.search.ResultHighlighter">
+		<property name="highlightPreTag" value="em" />
+		<property name="highlightPostTag" value="em" />
+	</bean>
+
 	<bean id="riotSearchController" class="org.riotfamily.search.SearchController">
 		<property name="indexDir" value="${riot.index.location=/WEB-INF/temp/index}" />
 		<property name="analyzerFactory" ref="riotSearchAnalyzerFactory" />
+		<property name="resultHighlighter" ref="riotSearchResultHighlighter" />
 	</bean>
 	
 	<override:if-present ref="pageResolver">

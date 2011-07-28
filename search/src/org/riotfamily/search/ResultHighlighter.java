@@ -37,7 +37,9 @@ public class ResultHighlighter {
 	
 	private String separator = " ... ";
 
-	private String highlightTag = "em";
+	private String highlightPreTag = "em";
+
+	private String highlightPostTag = "em";
 	
 	private Formatter formatter;
 	
@@ -66,15 +68,41 @@ public class ResultHighlighter {
 	public void setSeparator(String separator) {
 		this.separator = separator;
 	}
-
+	
+	/**
+	 * Sets a string that is used as html tag to higlight searched terms in the
+	 * description snippet. Default is <code>"em"</code> which wraps searched
+	 * terms within <code>"&lt;em>term&lt;/em>"</code>.
+	 */
+	public void setHighlightTag(String highlightTag) {
+		this.highlightPreTag = highlightTag;
+		this.highlightPostTag = highlightTag;
+	}
+	
+	/**
+	 * Sets a string that is used as html tag to before the searched term in the
+	 * description snippet. Default is <code>"em"</code>. See {@link #setHighlightTag(String)}.
+	 */
+	public void setHighlightPreTag(String highlightPreTag) {
+		this.highlightPreTag = highlightPreTag;
+	}
+	
+	/**
+	 * Sets a string that is used as html tag to after the searched term in the
+	 * description snippet. Default is <code>"em"</code>. See {@link #setHighlightTag(String)}.
+	 */
+	public void setHighlightPostTag(String highlightPostTag) {
+		this.highlightPostTag = highlightPostTag;
+	}
+	
 	public HighlightingContext createContext(
 			IndexSearcher indexSearcher, Query query) 
 			throws IOException {
 		
 		Scorer scorer = new QueryScorer(indexSearcher.rewrite(query));
 		if (formatter == null) {
-			formatter = new SimpleHTMLFormatter("<" + highlightTag + ">", 
-					"</" + highlightTag + ">");
+			formatter = new SimpleHTMLFormatter("<" + highlightPreTag + ">", 
+					"</" + highlightPostTag + ">");
 		}
 		if (fragmenter == null) {
 			fragmenter = new SimpleFragmenter(fragmentSize);

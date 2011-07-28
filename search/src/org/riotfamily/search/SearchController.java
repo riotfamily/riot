@@ -98,6 +98,10 @@ public class SearchController implements Controller, InitializingBean {
 		this.pagerPadding = pagerPadding;
 	}
 
+	public void setResultHighlighter(ResultHighlighter resultHighlighter) {
+		this.resultHighlighter = resultHighlighter;
+	}
+	
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
