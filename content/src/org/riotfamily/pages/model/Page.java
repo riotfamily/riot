@@ -13,6 +13,7 @@
 package org.riotfamily.pages.model;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.riotfamily.components.model.ContentContainerOwner;
 import org.riotfamily.pages.config.PageType;
@@ -36,5 +37,7 @@ public interface Page extends ContentContainerOwner {
 	public String getTitle();
 
 	public PageType getPageType();
+	
+	public Date getLastPublished();
 	
 }

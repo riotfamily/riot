@@ -12,6 +12,8 @@
  */
 package org.riotfamily.components.model;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,6 +30,8 @@ import org.hibernate.annotations.Type;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.web.cache.CascadeCacheInvalidation;
 import org.riotfamily.common.web.cache.TagCacheItems;
+import org.riotfamily.core.security.AccessController;
+import org.riotfamily.core.security.auth.RiotUser;
 
 /**
  * Entity that holds references to multiple Content versions.
@@ -44,6 +48,10 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	private Content liveVersion;
 
 	private Content previewVersion;
+	
+	private Date lastPublished;
+	
+	private String lastPublishedBy;
 
 	
 	protected ContentContainer() {
@@ -95,6 +103,22 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 		this.previewVersion = previewVersion;
 	}
 	
+	public Date getLastPublished() {
+		return lastPublished;
+	}
+	
+	public void setLastPublished(Date lastPublished) {
+		this.lastPublished = lastPublished;
+	}
+	
+	public String getLastPublishedBy() {
+		return lastPublishedBy;
+	}
+	
+	public void setLastPublishedBy(String lastPublishedBy) {
+		this.lastPublishedBy = lastPublishedBy;
+	}
+	
 	public Content getContent(boolean preview) {
 		if (!preview && liveVersion != null) {
 			return liveVersion;
@@ -121,6 +145,11 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 			liveVersion = new Content(preview);
 			liveVersion.save();
 			preview.setDirty(false);
+			lastPublished = new Date();
+			RiotUser currentUser = AccessController.getCurrentUser();
+			if (currentUser != null) {
+				lastPublishedBy = currentUser.getUserId();
+			}
 		}
 	}
 	

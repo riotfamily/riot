@@ -13,6 +13,7 @@
 package org.riotfamily.pages.mapping;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.riotfamily.pages.config.VirtualPageType;
 import org.riotfamily.pages.model.Page;
@@ -29,5 +30,7 @@ public interface ChildPageResolver {
 	public Collection<Page> listChildren(VirtualPageType type, Page parent);
 	
 	public Page getPage(VirtualPageType type, Site site, Object object);
+	
+	public Date getLastPublished(VirtualPageType type, Page parent, Object object);
 
 }

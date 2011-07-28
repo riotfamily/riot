@@ -1,6 +1,7 @@
 package org.riotfamily.pages.mapping;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.riotfamily.common.collection.TypedList;
@@ -45,6 +46,16 @@ public abstract class VirtualPageResolver<T extends ContentContainerOwner>
 		}
 		
 		return pages;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Date getLastPublished(VirtualPageType type, Page parent, Object object) {
+		T entity = (T) object;
+		return getLastPublished(entity);
+	}
+	
+	protected Date getLastPublished(T entity) {
+		return entity.getContentContainer().getLastPublished();
 	}
 	
 	protected abstract T load(Page parent, String pathComponent);
