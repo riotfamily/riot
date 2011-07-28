@@ -197,6 +197,11 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 		}
 		return parent.getChildren();
 	}
+	
+	@Transient
+	public Date getLastPublished() {
+		return getContentContainer().getLastPublished();
+	}
 		
 	@Override
 	public String toString() {

@@ -13,6 +13,7 @@
 package org.riotfamily.pages.model;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.ContentContainerOwner;
@@ -88,6 +89,10 @@ public class VirtualPage implements Page {
 
 	public Collection<? extends Page> getChildren() {
 		return pageType.listChildren(this);
+	}
+	
+	public Date getLastPublished() {
+		return pageType.getResolver().getLastPublished(pageType, parent, object);
 	}
 	
 	@Override
