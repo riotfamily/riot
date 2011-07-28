@@ -26,6 +26,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
+import org.riotfamily.common.web.cache.CascadeCacheInvalidation;
 import org.riotfamily.common.web.cache.TagCacheItems;
 
 /**
@@ -37,6 +38,7 @@ import org.riotfamily.common.web.cache.TagCacheItems;
 @TagCacheItems
 public class ContentContainer extends ActiveRecordBeanSupport {
 
+	@CascadeCacheInvalidation
 	private ContentContainerOwner owner;
 	
 	private Content liveVersion;

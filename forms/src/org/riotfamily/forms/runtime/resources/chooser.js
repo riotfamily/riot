@@ -16,7 +16,7 @@ riot.chooser = (function() {
 		
 		choose: function(ev) {
 			ev.stop();
-			this.dialog = new riot.window.Dialog({url: this.url, modal: true, closeButton: true, minWidth: 2000, minHeight: 2000, chooser: this});
+			this.dialog = new riot.window.Dialog({url: this.url, modal: true, closeButton: true, minWidth: 2000, minHeight: 2000, chooser: this, onClose: this.onDialogClose.bind(this)});
 		},
 		
 		unset: function(ev) {
@@ -31,7 +31,14 @@ riot.chooser = (function() {
 		
 		onUpdate: function() {
 			if (this.dialog) this.dialog.close();			
+		},
+		
+		onDialogClose : function() {
+			if (Prototype.Browser.IE) {
+				window.blur();
+			}
 		}
+		
 	});
 
 	return {

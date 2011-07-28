@@ -58,8 +58,8 @@ function submitEvent(e, onComplete) {
 
 function submitElement(id, clickedButton) {
 	
-	var form = $(clickedButton.form);
-	var url = form.action || window.loction.href;
+	var form = $(clickedButton).up('form');
+	var url = form.action || window.location.href;
 	
 	var elements;
 	if (id != form.id) {
@@ -146,12 +146,15 @@ function performAction(action) {
 }
 
 function focusElement(e) {
-	if (e) {
-		if (e.nodeName.match(/(input|textarea|button)/i)) {
-			e.focus();
-			return true;
+	try {
+		if (e) {
+			if (e.nodeName.match(/(input|textarea|button)/i)) {
+				e.focus();
+				return true;
+			}
+			return e.immediateDescendants().any(focusElement);
 		}
-		return e.immediateDescendants().any(focusElement);
+	} catch (ex) {
 	}
 	return false;
 }

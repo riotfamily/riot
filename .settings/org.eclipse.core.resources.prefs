@@ -1,6 +1,8 @@
-#Fri Aug 20 12:16:30 CEST 2010
+#Mon Apr 04 17:34:12 CEST 2011
 eclipse.preferences.version=1
 encoding//content/src/org/riotfamily/components/runtime/i18n/messages_de.properties=UTF-8
+encoding//jslibs/prototype/src/prototype.js=UTF-8
+encoding//core/src/org/riotfamily/core/runtime/i18n/messages_de.properties=UTF-8
 encoding//media/src/org/riotfamily/media/runtime/i18n/messages.properties=UTF-8
 encoding//media/src/org/riotfamily/media/runtime/i18n/messages_de.properties=UTF-8
 encoding//statistics/src/org/riotfamily/statistics/runtime/i18n/messages.properties=UTF-8

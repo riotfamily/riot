@@ -17,6 +17,7 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.web.support.ServletUtils;
 import org.springframework.web.util.UrlPathHelper;
 
 /**
@@ -46,10 +47,6 @@ public class Pager {
 
 	private boolean gapToLastPage;
 
-	private String pageParam;
-
-	private String linkPrefix;
-	
 	private String encodingScheme = "UTF-8";
 	
 	private boolean copyParameters = true;
@@ -79,10 +76,15 @@ public class Pager {
 
 	public void initialize(HttpServletRequest request, int padding,
 			String pageParam) {
+		
+		initialize(getLinkPrefix(request, pageParam), padding, pageParam);
+	}
+	
+	public void initialize(String linkPrefix, int padding,
+			String pageParam) {
 
-		this.pageParam = pageParam;
-		prepareLinkPrefix(request);
-
+		linkPrefix = ServletUtils.addParameter(linkPrefix, pageParam, "");
+		
 		int start = currentPage - padding;
 		int end = currentPage + padding;
 
@@ -130,26 +132,23 @@ public class Pager {
 		}
 	}
 
-	private void prepareLinkPrefix(HttpServletRequest request) {
+	private String getLinkPrefix(HttpServletRequest request, String pageParam) {
 		StringBuffer url = new StringBuffer(
 				urlPathHelper.getOriginatingRequestUri(request));
 		
-		url.append('?');
 		if (copyParameters) {
 			String query = urlPathHelper.getOriginatingQueryString(request);
 			if (query != null) {
 				int i = query.indexOf(pageParam);
 				if (i != -1) {
-					url.append(query.substring(0, i));
+					query = query.substring(0, i == 0 ? 0 : i - 1);
 				}
-				else {
-					url.append(query).append('&');
+				if (query.length() > 0) {
+					url.append("?").append(query);
 				}
 			}
 		}
-		url.append(pageParam);
-		url.append('=');
-		linkPrefix = url.toString();
+		return url.toString();
 	}
 
 	protected String urlEncode(String s) {

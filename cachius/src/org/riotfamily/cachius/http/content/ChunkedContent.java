@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.CacheContext;
 import org.riotfamily.cachius.http.support.IOUtils;
 
 
@@ -120,8 +121,14 @@ public class ChunkedContent implements Content {
 		public void serve(Reader reader, HttpServletRequest request, 
 				HttpServletResponse response) throws ServletException, IOException {
 			
-			reader.skip(length);
-			fragment.serve(request, response);
+			if (CacheContext.exists()) {
+				IOUtils.copy(reader, response.getWriter(), length);
+			}
+			else {
+				reader.skip(length);
+				fragment.serve(request, response);
+			}
+			
 		}
 		
 	}

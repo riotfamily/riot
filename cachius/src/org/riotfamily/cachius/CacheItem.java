@@ -223,4 +223,9 @@ public class CacheItem implements Serializable {
 		return serveStaleWhileRevalidate;
 	}
 	
+    @Override
+    public String toString() {
+    	return key;
+    }	
+	
 }

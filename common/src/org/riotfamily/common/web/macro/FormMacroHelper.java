@@ -33,7 +33,7 @@ public class FormMacroHelper {
 	private String command;
 	
 	private RequestContext requestContext;
-
+	
 	public FormMacroHelper() {
 	}
 
@@ -143,7 +143,7 @@ public class FormMacroHelper {
 	public Object getValue(String field) {
 		BindStatus status = getFieldStatus(field);
 		if (status != null) {
-			return status.getValue();
+			return status.getActualValue();
 		}
 		return null;
 	}

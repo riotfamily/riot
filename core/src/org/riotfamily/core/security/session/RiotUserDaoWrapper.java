@@ -15,6 +15,7 @@ package org.riotfamily.core.security.session;
 import java.util.Collection;
 
 import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.Searchable;
 import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.core.security.auth.RiotUserDao;
 import org.springframework.dao.DataAccessException;
@@ -25,7 +26,7 @@ import org.springframework.dao.DataAccessException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class RiotUserDaoWrapper implements RiotUserDao {
+public class RiotUserDaoWrapper implements RiotUserDao, Searchable {
 
 	private RiotUserDao wrappedInstance;
 	
@@ -84,6 +85,13 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 		wrappedInstance.delete(entity, parent);
 		RiotUser user = (RiotUser) entity;
 		UserHolder.updateUser(user.getUserId(), user);
+	}
+
+	public String[] getSearchableProperties() {
+		if (wrappedInstance instanceof Searchable) {
+			return ((Searchable) wrappedInstance).getSearchableProperties();
+		}
+		return null;
 	}
 	
 }

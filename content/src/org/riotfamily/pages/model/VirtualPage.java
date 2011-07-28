@@ -55,7 +55,11 @@ public class VirtualPage implements Page {
 	}
 
 	public String getPath() {
-		return parent.getPath() + "/" + pathComponent;
+		String path = parent.getPath();
+		if (!path.endsWith("/")) {
+			path += "/";
+		}
+		return path + pathComponent;
 	}
 
 	public String getPathComponent() {

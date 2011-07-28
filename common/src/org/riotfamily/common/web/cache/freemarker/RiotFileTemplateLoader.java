@@ -40,4 +40,5 @@ public class RiotFileTemplateLoader extends FileTemplateLoader {
 		}
 		return file;
 	}
+
 }

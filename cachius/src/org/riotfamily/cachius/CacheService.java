@@ -27,6 +27,8 @@ public class CacheService {
 	private ItemIndex index = new ItemIndex();
 	
 	private ItemInvalidator invalidator = new DefaultItemInvalidator();
+	
+	private CachiusStatistics stats;
 
 	public CacheService() {
 		this(new SimpleDiskStore());
@@ -38,10 +40,15 @@ public class CacheService {
 	
 	public CacheService(DiskStore diskStore, List<Region> regions) {
 		this.diskStore = diskStore;
+		this.stats = new CachiusStatistics(this);
 		for (Region region : regions) {
 			caches.put(region.getName(), new Cache(region, index));
 		}
 	}
+	
+	public CachiusStatistics getStatistics() {
+		return stats;
+	}	
 
 	public Cache getCache(String region) {
 		if (region == null) {
@@ -83,12 +90,12 @@ public class CacheService {
         else {
         	CacheItem item = entry.getItem();
         	if (item.isUpToDate(handler)) {
-        		//stats.addHit();
+        		stats.addHit();
         		log.debug("Serving cached content: {}", entry.getKey());
         		serveData(handler, entry);
         	}
         	else {
-        		//stats.addMiss();
+        		stats.addMiss();
         		capture(entry, handler);        		        			
         	}
         }
@@ -104,7 +111,7 @@ public class CacheService {
     		blockingCapture(entry, handler);
     	}
     	long t2 = System.currentTimeMillis();
-    	//stats.itemUpdated(item, t2 - t1);
+    	stats.itemUpdated(item, t2 - t1);
     }
 	
 	 private void nonBlockingCapture(CacheEntry entry, CacheHandler handler)

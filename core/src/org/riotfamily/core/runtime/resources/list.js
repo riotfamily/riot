@@ -486,7 +486,8 @@ var ListRow = {
 					this.list.selection = [this.item];
 				}
 				this.list.updateCommandStates();
-				this.list.commandButtons[0].onclick();
+				var b = this.list.commandButtons[0];
+				b.handler(b.command.id); 
 			}
 		},
 		

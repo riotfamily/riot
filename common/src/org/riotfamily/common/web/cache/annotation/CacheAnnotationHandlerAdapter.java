@@ -168,7 +168,8 @@ public class CacheAnnotationHandlerAdapter extends AnnotationMethodHandlerAdapte
 	
 		ignoredTypes.addAll(Arrays.asList(
 				Model.class, ModelMap.class, Map.class, Errors.class,
-				BindingResult.class, OutputStream.class, Writer.class));
+				BindingResult.class, OutputStream.class, Writer.class,
+				HttpServletResponse.class));
 		
 		supportedTypes.addAll(Arrays.asList(
 				Locale.class, Principal.class));

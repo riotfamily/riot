@@ -46,7 +46,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			String suffix = getRequestedSuffix(page, request);
 			if (!page.getSite().isValidSuffix(page, suffix)) {
 				String url = new PageFacade(page, request).getUrl();
-				return new RedirectController(url);
+				return new RedirectController(url, true);
 			}
 		}
 		if (page == null) {

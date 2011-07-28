@@ -62,7 +62,7 @@ public class PagePropertiesEditor extends CompositeElement
 	// -----------------------------------------------------------------
 	// Implementation of the Editor interface
 	// -----------------------------------------------------------------
-	
+
 	public Object getValue() {
 		return currentForm.getValue();
 	}
@@ -97,8 +97,8 @@ public class PagePropertiesEditor extends CompositeElement
 		removeComponent(currentForm);
 		currentForm = new PropertiesForm(pageType); 
 		addComponent(currentForm);
-		currentForm.setValue(initialValue);
 		getFormListener().elementChanged(this);
+		currentForm.setValue(initialValue);
 	}
 	
 	private class PropertiesForm extends NestedForm {

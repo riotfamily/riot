@@ -53,6 +53,7 @@ td {
 }
 #footer {
 	background: #575757 url(images/footer/bg.gif) repeat-x;
+	color: #cacaca; 
 	height: 50px;
 	margin-top: -50px;
 }
@@ -61,12 +62,17 @@ td {
 	background: url(images/footer/logo.gif) right 18px no-repeat;
 	padding: 18px 0 0 30px;
 }
-
-#footer a.logout {
+#footer a {
 	color: #cacaca; 
 	text-decoration: none;
+}
+#footer a.logout {
 	padding-left: 16px;
+	margin-right: 4px;
 	background: url(images/footer/logout.gif) left center no-repeat;
+}
+#footer #changePassword {
+	margin-left: 2px;
 }
 
 .chooser #footer {
