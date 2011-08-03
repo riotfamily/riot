@@ -32,8 +32,11 @@ public class ExecSql implements Refactoring {
 		Script script = new Script();
 		String[] statements = StringUtils.delimitedListToStringArray(sql, ";");
 		for (String s : statements) {
-			script.append(s.trim());
-			script.newStatement();
+			s = s.trim();
+			if (s.length() > 0) {
+				script.append(s);
+				script.newStatement();
+			}
 		}
 		return script;
 	}
