@@ -245,13 +245,24 @@ riot.components = (function() {
 							var zebraClass = (i % 2 == 0) ? 'even' : 'odd'; 
 							desc.className = desc.className.replace(zebraExp, '$1' + zebraClass + '$3');
 						}
-						// Set "every-nth" or "not-every-nth" class
-						var modExp = /(^|\s|-)(not-)?every-(\d+)(nd|rd|th)(-|\s|$)/;
+						// Set "every-nth-remainder-x" or "not-every-nth-remainder-x" class
+						var modExp = /(^|\s|-)(not-)?every-(\d+)(nd|rd|th)-remainder-(\d+)(-|\s|$)/;
 						var match = desc.className.match(modExp);
 						if (match) {
 							var nth = match[3];
-							var every = ((i + 1) % nth == 0) ? 'every' : 'not-every';
-							desc.className = desc.className.replace(modExp, '$1' + every + '-$3$4$5');
+							var remainder = match[5];
+							var every = ((i + 1) % nth == remainder) ? 'every' : 'not-every';
+							desc.className = desc.className.replace(modExp, '$1' + every + '-$3$4-remainder-$5$6');
+						}
+						else {
+							// Set "every-nth" or "not-every-nth" class
+							modExp = /(^|\s|-)(not-)?every-(\d+)(nd|rd|th)(-|\s|$)/;
+							match = desc.className.match(modExp);
+							if (match) {
+								var nth = match[3];
+								var every = ((i + 1) % nth == 0) ? 'every' : 'not-every';
+								desc.className = desc.className.replace(modExp, '$1' + every + '-$3$4$5');
+							}
 						}
 					}
 				});

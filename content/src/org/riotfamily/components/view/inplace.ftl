@@ -256,6 +256,30 @@
 	</#if>
 </#function>
 
+<#---
+  - Returns <code>"every-xxx-remainder-y"</code>, depending on the position of a component 
+  - within a list. For example <code>moduloClass(3,1)</code> returns 
+  - <code>"every-3rd-remainder-1"</code> for the first, fourth, seventh, ... component in the list and an empty
+  - string for all other components.
+  -->
+<#function moduloRemainderClass pos remainder>
+	<#if pos == 2>
+		<#local indicator = "nd" />
+	<#elseif pos == 3>
+		<#local indicator = "rd" />
+	<#else>
+		<#local indicator = "th" />
+	</#if>
+	<#if (position + 1) % pos == remainder>
+		<#return "every-" + pos + indicator + "-remainder-" + remainder />
+	<#elseif editMode>
+		<#return "not-every-" + pos + indicator + "-remainder-" + remainder />
+	<#else>
+		<#return "" />
+	</#if>
+</#function>
+
+
 <#--- 
   - Returns <code>"first"</code> when the component is the first component
   - within a list, an empty string otherwise.
