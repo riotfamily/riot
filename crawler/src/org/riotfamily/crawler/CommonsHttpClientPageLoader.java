@@ -43,14 +43,15 @@ public class CommonsHttpClientPageLoader implements PageLoader {
 		String url = href.getResolvedUri();
 		PageData pageData = new PageData(href);
 		log.info("Loading page: " + url);
-		GetMethod method = new GetMethod(url);
-		HttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler();
-		HttpMethodParams params = new HttpMethodParams();
-		params.setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
-		method.setParams(params);
-		method.setFollowRedirects(false);
-
+		GetMethod method = null;
 		try {
+			method = new GetMethod(url);
+			HttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler();
+			HttpMethodParams params = new HttpMethodParams();
+			params.setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
+			method.setParams(params);
+			method.setFollowRedirects(false);
+
 			int statusCode = client.executeMethod(method);
 			pageData.setStatusCode(statusCode);
 			if (statusCode == HttpStatus.SC_OK) {
@@ -81,7 +82,9 @@ public class CommonsHttpClientPageLoader implements PageLoader {
 		}
 		finally {
 			try {
-				method.releaseConnection();
+				if (method != null) {
+					method.releaseConnection();
+				}
 			}
 			catch (Exception e) {
 			}
