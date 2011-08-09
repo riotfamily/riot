@@ -57,7 +57,7 @@ public class LinkChecker implements PageHandler {
 		else {
 			for (String link : linkExtractor.extractLinks(pageData)) {
 				if (linkFilter.accept(pageData.getUrl(), link)) {
-					Href href = new Href(pageData.getUrl(), link);
+					Href href = new Href(pageData.getUrl(), link, pageData.getHref().getResolvedUri());
 					if (!checkedUrls.contains(href.getResolvedUri())) {
 						hrefsToCheck.add(href);
 					}
