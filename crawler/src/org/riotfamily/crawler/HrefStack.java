@@ -37,16 +37,16 @@ public class HrefStack {
 		return stack.pop();
 	}
 
-	public void add(String baseUri, String uri) {
-		Href href = new Href(baseUri, uri);
+	public void add(String baseUri, String uri, String referrerUrl) {
+		Href href = new Href(baseUri, uri, referrerUrl);
 		if (!knownHrefs.contains(href)) {
 			knownHrefs.add(href);
 			stack.push(href);
 		}
 	}
 	
-	public void addAbsolute(String uri) {
-		Href href = new Href(null, uri);
+	public void addAbsolute(String uri, String referrerUrl) {
+		Href href = new Href(null, uri, referrerUrl);
 		if (!stack.contains(href)) {
 			stack.push(href);
 			knownHrefs.add(href);

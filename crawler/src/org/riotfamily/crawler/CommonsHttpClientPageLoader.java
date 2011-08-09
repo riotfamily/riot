@@ -19,8 +19,10 @@ import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.riotfamily.common.web.support.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * PageLoader implementation that uses the Jakarta Commons HttpClient.
@@ -51,6 +53,9 @@ public class CommonsHttpClientPageLoader implements PageLoader {
 			params.setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
 			method.setParams(params);
 			method.setFollowRedirects(false);
+			if (StringUtils.hasText(href.getReferrerUrl())) {
+				method.addRequestHeader(ServletUtils.REFERER_HEADER, href.getReferrerUrl());
+			}
 
 			int statusCode = client.executeMethod(method);
 			pageData.setStatusCode(statusCode);

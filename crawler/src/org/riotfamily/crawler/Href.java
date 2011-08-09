@@ -31,17 +31,19 @@ public class Href {
 	private static Pattern jsessionIdPattern = 
 			Pattern.compile(";jsessionid=[^?#]*");
 
-	
 	private String baseUri;
 	
 	private String uri;
 	
 	private String resolvedUri;
 	
-	public Href(String baseUri, String uri) {		
+	private String referrerUrl;
+	
+	public Href(String baseUri, String uri, String referrerUrl) {		
 		this.baseUri = baseUri;
 		this.uri = uri;
 		this.resolvedUri = stripSessionId(stripFragment(resolveLink(baseUri, uri)));
+		this.referrerUrl = referrerUrl != null ? stripSessionId(referrerUrl) : null;
 	}
 
 	public String getBaseUri() {
@@ -54,6 +56,10 @@ public class Href {
 	
 	public String getResolvedUri() {
 		return resolvedUri;
+	}
+	
+	public String getReferrerUrl() {
+		return referrerUrl;
 	}
 	
 	public int hashCode() {		
