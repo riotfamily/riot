@@ -727,6 +727,12 @@ riot.components = (function() {
 		}
 	});
 	
+	dwr.engine.setWarningHandler(function(err, ex) {
+	    if (window.console && console.log) {
+	        console.log(err);
+	    }
+	});
+	
 	// Make lists sortable after moveOn() has been invoked. This has to be
 	// done in reverse order to support nested sortable lists.
 	riot.toolbar.buttons.get('move').afterApply = function(enable) {
