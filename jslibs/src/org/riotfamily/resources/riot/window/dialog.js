@@ -186,6 +186,8 @@ riot.window = (function() {
 						if (this.options.autoSize) {
 							this.autoSize();
 						}
+						var doc = this.iframe.contentWindow || this.iframe.contentDocument;
+						doc.dialogName = this.id;
 						this.box.style.visibility = 'visible';
 					}.bind(this));
 					this.content.update(this.iframe);

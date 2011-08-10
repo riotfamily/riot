@@ -11,9 +11,6 @@
 	<@template.block name="main">
 		<#if chooser??>
 			<@template.set bodyClass="chooser" />
-			<script type="text/javascript" language="JavaScript">
-				window.dialogName = window.name;
-			</script>
 		</#if>
 		<@riot.script src="/engine.js" />
 		<@riot.script src="/util.js" />
