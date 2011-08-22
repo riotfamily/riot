@@ -56,7 +56,7 @@ public class CommonsHttpClientPageLoader implements PageLoader {
 			if (StringUtils.hasText(href.getReferrerUrl())) {
 				method.addRequestHeader(ServletUtils.REFERER_HEADER, href.getReferrerUrl());
 			}
-
+			prepareMethod(method);
 			int statusCode = client.executeMethod(method);
 			pageData.setStatusCode(statusCode);
 			if (statusCode == HttpStatus.SC_OK) {
@@ -95,6 +95,9 @@ public class CommonsHttpClientPageLoader implements PageLoader {
 			}
 		}
 		return pageData;
+	}
+	
+	protected void prepareMethod(GetMethod method) {
 	}
 
 	protected boolean accept(GetMethod method) {
