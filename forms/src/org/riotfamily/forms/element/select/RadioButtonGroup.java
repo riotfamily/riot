@@ -15,7 +15,12 @@ package org.riotfamily.forms.element.select;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
+import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.TemplateUtils;
+import org.riotfamily.forms.resource.FormResource;
+import org.riotfamily.forms.resource.ResourceElement;
+import org.riotfamily.forms.resource.Resources;
+import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.ui.Dimension;
 
 /**
@@ -23,7 +28,11 @@ import org.riotfamily.forms.ui.Dimension;
  * the options. Internally a template is used in order to allow the 
  * customization of the layout.
  */
-public class RadioButtonGroup extends AbstractSingleSelectElement {
+public class RadioButtonGroup extends AbstractSingleSelectElement 
+		implements DHTMLElement, ResourceElement {
+	
+	protected static final FormResource RESOURCE = new ScriptResource(
+			"riot/checkbox.js", "RiotCheckboxGroup", Resources.PROTOTYPE);
 
 	private String template;
 	
@@ -34,6 +43,14 @@ public class RadioButtonGroup extends AbstractSingleSelectElement {
 	
 	public void setTemplate(String template) {
 		this.template = template;
+	}
+	
+	public FormResource getResource() {
+		return RESOURCE;
+	}
+	
+	public String getInitScript() {
+		return "new RiotRadioButtonGroup('" + getEventTriggerId() + "');";
 	}
 
 	@Override

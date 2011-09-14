@@ -17,6 +17,20 @@ RiotCheckboxGroup.prototype = {
 	}
 }
 
+var RiotRadioButtonGroup = Class.create(RiotCheckboxGroup, {
+	
+	onclick: function(cb) {
+		this.options.each(function(el) {
+			el.selected = false;
+		});
+		cb.selected = cb.checked;
+		if (this._onchange) {
+			this._onchange(new ChangeEvent(this));
+		}
+	}
+
+});
+
 var RiotImageCheckbox = Class.create({
 	initialize: function(el, src) {
 		el = this.el = $(el).hide();

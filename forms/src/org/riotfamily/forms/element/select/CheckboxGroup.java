@@ -69,7 +69,7 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 	}
 		
 	public String getInitScript() {
-		return "new RiotCheckboxGroup('" + getId() + "');";
+		return "new RiotCheckboxGroup('" + getEventTriggerId() + "');";
 	}
 
 	@Override
