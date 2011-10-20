@@ -192,7 +192,7 @@ public class CacheItem implements Serializable {
 		if (child.error) {
 			error = true;
 		}
-		if (child.expires < expires) {
+		if (child.expires >= 0 && child.expires < expires) {
 			expires = child.expires;
 		}
 	}
