@@ -74,7 +74,7 @@
 		<bean class="org.riotfamily.pages.view.PageToolbarScript" />
 	</override:add>
 
-	<bean class="org.riotfamily.pages.view.PageContextExposer" />
+	<bean id="pageContextExposer" class="org.riotfamily.pages.view.PageContextExposer" />
 	
 	<override:add ref="annotationMethodHandlerAdapter" property="customArgumentResolvers">
 		<bean class="org.riotfamily.pages.annotations.PageArgumentResolver" />
