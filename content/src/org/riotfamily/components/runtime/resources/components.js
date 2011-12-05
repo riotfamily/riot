@@ -815,7 +815,11 @@ riot.components = (function() {
 		
 		showPreviewFrame: function() {
 			previewFrame.setStyle({visibility: 'visible'}); 
-			$$('body > *:not(#riotPreviewFrame)').invoke('hide');
+			$$('body > *:not(#riotPreviewFrame)').each(function(el) {
+				if (el.getStyle('display') != 'none') {
+					el.hide().addClassName('hiddenByRiot');
+				}
+			});
 		},
 		
 		publish: function() {
@@ -835,7 +839,9 @@ riot.components = (function() {
 			$('riotLoadingOverlay').remove();
 			var html = $$('html').first();
 			html.style.overflow = html.originalOverflow;
-			$$('body > *:not(#riotPreviewFrame)').invoke('show');
+			$$('.hiddenByRiot').each(function(el) {
+				el.removeClassName('hiddenByRiot').show();
+			});
 			riot.outline.hide();
 			riot.toolbar.buttons.get('browse').click();
 		},
