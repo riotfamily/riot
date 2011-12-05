@@ -16,6 +16,7 @@
 		<@riot.stylesheet href="style/component-form.css" />
 		<@riot.stylesheet href="style/component-form-custom.css" />
 		<@riot.script src="prototype/prototype.js" />
+		<@riot.script src="riot/window/dialog.js" />
 	</head>
 	<body>
 		${html}
