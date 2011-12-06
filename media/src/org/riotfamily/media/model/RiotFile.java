@@ -84,7 +84,13 @@ public class RiotFile extends ActiveRecordBeanSupport {
 	
 	private transient boolean emptyFileCreated;
 	
+	private transient String bucket;
+	
 	public RiotFile() {
+	}
+	
+	public RiotFile(String bucket) {
+		this.bucket = bucket;
 	}
 	
 	public RiotFile(File file) throws IOException {
@@ -109,7 +115,7 @@ public class RiotFile extends ActiveRecordBeanSupport {
 	
 	public RiotFile(RiotFile riotFile, boolean copyVariants) throws IOException {
 		this.fileName = riotFile.getFileName();
-		this.uri = mediaService.store(new FileInputStream(riotFile.getFile()), fileName);
+		this.uri = mediaService.store(new FileInputStream(riotFile.getFile()), fileName, riotFile.getBucket());
 		this.contentType = riotFile.getContentType();
 		this.size = riotFile.getSize();
 		this.md5 = riotFile.getMd5();
@@ -144,7 +150,7 @@ public class RiotFile extends ActiveRecordBeanSupport {
 		size = multipartFile.getSize();
 		contentType = multipartFile.getContentType();
 		initCreationInfo();
-		uri = mediaService.store(multipartFile.getInputStream(), fileName);
+		uri = mediaService.store(multipartFile.getInputStream(), fileName, bucket);
 		md5 = HashUtils.md5(multipartFile.getInputStream());
 		inspect(getFile());
 	}
@@ -155,7 +161,7 @@ public class RiotFile extends ActiveRecordBeanSupport {
 		size = file.length();
 		contentType = mediaService.getContentType(file);
 		initCreationInfo();
-		uri = mediaService.store(new FileInputStream(file), fileName);
+		uri = mediaService.store(new FileInputStream(file), fileName, bucket);
 		md5 = HashUtils.md5(new FileInputStream(file));
 		inspect(file);
 	}
@@ -178,7 +184,7 @@ public class RiotFile extends ActiveRecordBeanSupport {
 	
 	public File createEmptyFile(String name) throws IOException {
 		fileName = name;
-		uri = mediaService.store(null, name);
+		uri = mediaService.store(null, name, bucket);
 		emptyFileCreated = true;
 		initCreationInfo();
 		return getFile();
@@ -302,6 +308,11 @@ public class RiotFile extends ActiveRecordBeanSupport {
 			return null;
 		}
 		return variants.get(name);
+	}
+	
+	@Transient
+	protected String getBucket() {
+		return bucket;
 	}
 	
 	@Override

@@ -22,7 +22,6 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.element.upload.AbstractFileUpload;
-import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.ui.Dimension;
 import org.riotfamily.media.meta.UnknownFormatException;
 import org.riotfamily.media.model.RiotFile;
@@ -34,6 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
  * A widget to upload files.
  */
 public class FileUpload extends AbstractFileUpload {
+	
+	private String bucket;
 
 	private RiotFile file;
 	
@@ -77,10 +78,13 @@ public class FileUpload extends AbstractFileUpload {
 		return getPreviewFile() != null;
 	}
 	
-	protected RiotFile createRiotFile(MultipartFile multipartFile) 
+	protected RiotFile createRiotFile(MultipartFile multipartFile, String bucket) 
 			throws IOException {
 		
-		return new RiotFile(multipartFile);
+		
+		RiotFile file = new RiotFile(bucket);
+		file.setMultipartFile(multipartFile);
+		return file;
 	}
 	
 	@Override
@@ -105,7 +109,7 @@ public class FileUpload extends AbstractFileUpload {
 	@Override
 	protected void onUpload(MultipartFile multipartFile) throws IOException {
 		try {
-			setNewFile(createRiotFile(multipartFile));
+			setNewFile(createRiotFile(multipartFile, bucket));
 		}
 		catch (UnknownFormatException e) {
 			ErrorUtils.reject(this, "unknownFileFormat");
@@ -122,7 +126,14 @@ public class FileUpload extends AbstractFileUpload {
 		file = null;
 		uploadedFile = null;
 	}
-		
+	
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+	
+	protected String getBucket() {
+		return bucket;
+	}
 
 	public class PreviewElement extends TemplateElement
 			implements ContentElement {

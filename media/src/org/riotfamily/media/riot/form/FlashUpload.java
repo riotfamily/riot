@@ -57,10 +57,12 @@ public class FlashUpload extends FileUpload {
 	private int maxHeight;
 
 	@Override
-	protected RiotFile createRiotFile(MultipartFile multipartFile) 
+	protected RiotFile createRiotFile(MultipartFile multipartFile, String bucket) 
 			throws IOException {
 		
-		return new RiotSwf(multipartFile);
+		RiotSwf file = new RiotSwf(bucket);
+		file.setMultipartFile(multipartFile);
+		return file;
 	}
 	
 	@Override

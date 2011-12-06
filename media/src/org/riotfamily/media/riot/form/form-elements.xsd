@@ -17,6 +17,7 @@
 	<xsd:complexType name="file-upload">
 		<xsd:complexContent>
 			<xsd:extension base="form:simple-editor">
+				<xsd:attribute name="bucket" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

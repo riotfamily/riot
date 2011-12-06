@@ -45,10 +45,12 @@ public class VideoUpload extends FileUpload {
 	
 	
 	@Override
-	protected RiotFile createRiotFile(MultipartFile multipartFile) 
+	protected RiotFile createRiotFile(MultipartFile multipartFile, String bucket) 
 			throws IOException {
 		
-		return new RiotVideo(multipartFile);
+		RiotVideo file = new RiotVideo(bucket);
+		file.setMultipartFile(multipartFile);
+		return file;
 	}
 	
 	@Override

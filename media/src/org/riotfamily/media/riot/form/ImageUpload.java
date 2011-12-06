@@ -161,8 +161,10 @@ public class ImageUpload extends FileUpload {
 	}
 
 	@Override
-	protected RiotFile createRiotFile(MultipartFile multipartFile) throws IOException {
-		return new RiotImage(multipartFile);
+	protected RiotFile createRiotFile(MultipartFile multipartFile, String bucket) throws IOException {
+		RiotImage file = new RiotImage(bucket);
+		file.setMultipartFile(multipartFile);
+		return file;
 	}
 	
 	@Override
@@ -225,7 +227,7 @@ public class ImageUpload extends FileUpload {
 
 		RiotImage original = (RiotImage) getPreviewFile();
 		setNewFile(new CroppedRiotImage(original, cropper, 
-				width, height, x, y, scaledWidth));
+				width, height, x, y, scaledWidth, getBucket()));
 	}
 
 	protected void undoCrop() {

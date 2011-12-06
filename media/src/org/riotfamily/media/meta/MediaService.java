@@ -51,9 +51,9 @@ public class MediaService {
 	public File retrieve(String uri) {
 		return this.fileStore.retrieve(uri);
 	}
-
-	public String store(InputStream in, String fileName) throws IOException {
-		return this.fileStore.store(in, fileName);
+	
+	public String store(InputStream in, String fileName, String bucket) throws IOException {
+		return this.fileStore.store(in, fileName, bucket);
 	}
 	
 	public String getContentType(File file) {

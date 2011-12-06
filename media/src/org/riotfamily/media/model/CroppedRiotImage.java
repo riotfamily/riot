@@ -43,15 +43,16 @@ public class CroppedRiotImage extends RiotImage {
 	}
 
 	public CroppedRiotImage(RiotImage original, ImageCropper cropper,
-			int width, int height, int x, int y, int scaledWidth) throws IOException {
+			int width, int height, int x, int y, int scaledWidth, String bucket) throws IOException {
 		
+		super(bucket);
 		this.original = original;
 		this.x = x;
 		this.y = y;
 		this.scaledWidth = scaledWidth;
 		setCreationDate(new Date());
 		setFileName(original.getFileName());
-		setUri(mediaService.store(null, original.getFileName()));
+		setUri(mediaService.store(null, original.getFileName(), getBucket()));
 		
 		File croppedFile = getFile();
 		cropper.cropImage(original.getFile(), croppedFile, width, height, x, y, 

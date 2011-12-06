@@ -42,6 +42,10 @@ public class RiotImage extends RiotFile {
 	
 	public RiotImage() {
 	}
+	
+	public RiotImage(String bucket) {
+		super(bucket);
+	}
 
 	public RiotImage(File file) throws IOException {
 		super(file);

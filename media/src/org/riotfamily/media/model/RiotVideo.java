@@ -52,6 +52,10 @@ public class RiotVideo extends RiotFile {
 	public RiotVideo() {
 	}
 	
+	public RiotVideo(String bucket) {
+		super(bucket);
+	}
+	
 	public RiotVideo(File file) throws IOException {
 		super(file);
 	}

@@ -42,6 +42,10 @@ public class RiotSwf extends RiotFile {
 	public RiotSwf() {
 	}
 	
+	public RiotSwf(String bucket) {
+		super(bucket);
+	}
+	
 	public RiotSwf(File file) throws IOException {
 		super(file);
 	}

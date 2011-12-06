@@ -177,7 +177,9 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 		throw new RuntimeException("Failed to create a unique directory name.");
 	}
 	
-	public String store(InputStream in, String fileName) throws IOException {
+	public String store(InputStream in, String fileName, String bucket)
+			throws IOException {
+		
 		File dest = new File(getUniqueDir(), FormatUtils.toFilename(fileName));
 		if (in != null) {
 			FileCopyUtils.copy(in, new FileOutputStream(dest));
@@ -186,7 +188,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 		else {
 			dest.createNewFile();
 		}
-		return getUri(dest);
+		return getUri(dest); 
 	}
 	
 	public String getUri(File file) {
