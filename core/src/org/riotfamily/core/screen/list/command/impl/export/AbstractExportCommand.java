@@ -45,7 +45,7 @@ public abstract class AbstractExportCommand extends AbstractCommand {
 			throws IOException {
 		
 		return new FileTransfer(
-				getFileName(context), 
+				getFileName(context, selection), 
 				getMimeType(),
 				getBytes(context, selection));
 	}
@@ -70,7 +70,7 @@ public abstract class AbstractExportCommand extends AbstractCommand {
 		return context.getScreen().getDao().list(context.getParent(), params);
 	}
 
-	protected String getFileName(CommandContext context) {
+	protected String getFileName(CommandContext context, Selection selection) {
 		return FormatUtils.toFilename(
 				context.getScreenContext().getLink().getTitle() 
 				+ "." + getFileExtension());
