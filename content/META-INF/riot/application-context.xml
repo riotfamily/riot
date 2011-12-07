@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.1.xsd">
 
 	
 	<bean id="viewComponentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">

@@ -6,7 +6,7 @@
 		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	
 	<xsd:import namespace="http://www.riotfamily.org/schema/forms/form-config"
-		schemaLocation="http://www.riotfamily.org/schema/forms/form-config-9.0.xsd" />
+		schemaLocation="http://www.riotfamily.org/schema/forms/form-config-9.1.xsd" />
 	
 	<xsd:element name="chooser">
 		<xsd:complexType>

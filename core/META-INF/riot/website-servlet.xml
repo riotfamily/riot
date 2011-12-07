@@ -6,7 +6,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.0.xsd">
+		http://www.riotfamily.org/schema/common/override-9.1.xsd">
 
 	<override:properties ref="freemarkerConfig">
 		<property name="exceptionHandler">

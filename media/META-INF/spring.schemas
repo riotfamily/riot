@@ -1,5 +1,5 @@
 http\://www.riotfamily.org/schema/media/form-elements.xsd=org/riotfamily/media/riot/form/form-elements.xsd
-http\://www.riotfamily.org/schema/media/form-elements-9.0.xsd=org/riotfamily/media/riot/form/form-elements.xsd
+http\://www.riotfamily.org/schema/media/form-elements-9.1.xsd=org/riotfamily/media/riot/form/form-elements.xsd
 
 http\://www.riotfamily.org/schema/media/setup.xsd=org/riotfamily/media/setup/config/setup.xsd
-http\://www.riotfamily.org/schema/media/setup-9.0.xsd=org/riotfamily/media/setup/config/setup.xsd
+http\://www.riotfamily.org/schema/media/setup-9.1.xsd=org/riotfamily/media/setup/config/setup.xsd
