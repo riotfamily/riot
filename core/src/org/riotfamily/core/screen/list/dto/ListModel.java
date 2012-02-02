@@ -47,6 +47,9 @@ public class ListModel {
 	
 	@RemoteProperty
 	private String filterFormHtml;
+	
+	@RemoteProperty
+	private String cssClass;
 
 	public ListModel(List<ListItem> items, int itemsTotal, ListParamsImpl params) {
 		this.items = items;
@@ -115,6 +118,14 @@ public class ListModel {
 	
 	public void setFilterFormHtml(String filterFormHtml) {
 		this.filterFormHtml = filterFormHtml;
+	}
+	
+	public String getCssClass() {
+		return cssClass;
+	}
+	
+	public void setCssClass(String cssClass) {
+		this.cssClass = cssClass;
 	}
 
 }
