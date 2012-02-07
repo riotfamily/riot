@@ -38,7 +38,7 @@ public class ColorPicker extends AbstractTextElement
 	public void renderInternal(PrintWriter writer) {
 		super.renderInternal(writer);
 		TagWriter tag = new TagWriter(writer);
-		tag.startEmpty("button").attribute("id", getId() + "-swatch")
+		tag.start("button").attribute("id", getId() + "-swatch")
 				.attribute("class", "color-swatch").end();
 	}
 	public FormResource getResource() {
