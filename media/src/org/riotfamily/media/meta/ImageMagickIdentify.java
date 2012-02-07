@@ -35,7 +35,7 @@ public class ImageMagickIdentify extends ImageMagick {
 			return (ImageMetaData) JSONObject.toBean(json, ImageMetaData.class);
 		}
 		catch (IOException e) {
-			throw new UnknownFormatException();
+			throw new UnknownFormatException(e.getMessage(), e);
 		}
 	}
 }

@@ -97,8 +97,8 @@ public class ImportMessageEntriesCommand extends DialogCommand {
 					}
 					if (StringUtils.hasText(defaultMessage) || StringUtils.hasText(comment)) {
 						MessageBundleEntry entry = MessageBundleEntry.loadByBundleAndCode(bundle, code);
-						if (entry != null) {							
-							entry.getDefaultMessage().setText(defaultMessage);
+						if (entry != null) {
+							entry.setDefaultText(defaultMessage);
 							entry.setComment(comment);
 							entry.save();					
 						}
