@@ -23,5 +23,13 @@ public class UnknownFormatException extends IOException {
 	public UnknownFormatException(String message) {
 		super(message);
 	}
+	
+	public UnknownFormatException(Throwable cause) {
+        super(cause);
+    }	
+	
+	public UnknownFormatException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

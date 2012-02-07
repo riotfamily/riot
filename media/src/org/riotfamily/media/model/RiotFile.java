@@ -327,7 +327,7 @@ public class RiotFile extends ActiveRecordBeanSupport {
 	public boolean equals(Object obj) {
 		if (uri != null && obj instanceof RiotFile) {
 			RiotFile other = (RiotFile) obj;
-			return uri.equals(other.uri);
+			return uri.equals(other.getUri());
 		}
 		return super.equals(obj);
 	}
