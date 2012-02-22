@@ -49,8 +49,8 @@ allprojects {
 	group = 'org.riotfamily'
 	version = '9.1.0'
 	repositories {
-		mavenRepo urls: 'http://repository.riotfamily.org/external'
-		mavenRepo urls: 'http://repository.riotfamily.org/cache'
+		mavenRepo url: 'http://repository.riotfamily.org/external'
+		mavenRepo url: 'http://repository.riotfamily.org/cache'
 	}
 	excludes.each {
 		configurations.all*.exclude it
@@ -136,9 +136,9 @@ subprojects {
 classes.enabled = false
 jar.enabled = false
 
-eclipseProject.natures << 'org.springframework.ide.eclipse.core.springnature'
-eclipseClasspath {
-	whenConfigured { classpath ->
+eclipse.project.natures << 'org.springframework.ide.eclipse.core.springnature'
+eclipse.classpath.file {
+	whenMerged { classpath ->
 		classpath.entries.each { entry -> 
 			if (entry.kind == 'src') {
 				entry.output = entry.path.replaceAll('(.+?)/.*', '$1/build/eclipse')
@@ -154,8 +154,8 @@ gradle.taskGraph.whenReady {taskGraph ->
 			project.sourceSets.main.java.srcDirs(it.sourceSets*.java.srcDirs.flatten())
 			
 			// Collect all external dependencies from the testRuntime configuration
-			it.configurations.findByName('testRuntime')?.getAllDependencies(ExternalDependency.class).each {
-				project.configurations.compile.addDependency(it)
+			it.configurations.findByName('testRuntime')?.getAllDependencies().withType(ExternalDependency.class).each {
+				project.configurations.compile.getDependencies().add(it)
 			}
 		}
 	}
@@ -171,7 +171,7 @@ gradle.taskGraph.whenReady {taskGraph ->
  */
 task wrapper(type: Wrapper) {
 	jarFile = '.gradlew/gradle-wrapper.jar'
-	gradleVersion = '1.0-milestone-3'
+	gradleVersion = '1.0-milestone-8'
 }
 
 // ---------------------------------------------------------------------------
