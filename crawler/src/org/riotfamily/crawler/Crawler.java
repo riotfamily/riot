@@ -16,7 +16,6 @@ package org.riotfamily.crawler;
 import java.util.List;
 
 import org.htmlparser.util.ParserException;
-import org.riotfamily.components.event.ContentChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,27 +28,27 @@ import org.springframework.context.event.ApplicationEventMulticaster;
  */
 public class Crawler implements InitializingBean, ApplicationListener<ApplicationEvent>, Runnable {
 
-	private Logger log = LoggerFactory.getLogger(Crawler.class);
+	protected Logger log = LoggerFactory.getLogger(getClass());
 
-	private String startPage;
+	protected String startPage;
 
-	private PageLoader pageLoader;
+	protected PageLoader pageLoader;
 
-	private LinkExtractor linkExtractor;
+	protected LinkExtractor linkExtractor;
 	
-	private LinkFilter linkFilter;
+	protected LinkFilter linkFilter;
 
-	private List<PageHandler> pageHandlers;
+	protected List<PageHandler> pageHandlers;
 
-	private long delay;
+	protected long delay;
 	
-	private volatile boolean running;
+	protected volatile boolean running;
 	
-	private volatile int pageCount;
+	protected volatile int pageCount;
 	
-	private int lastPageCount;
+	protected int lastPageCount;
 
-	private HrefStack hrefs = new HrefStack();
+	protected HrefStack hrefs = new HrefStack();
 	
 	/**
 	 * Sets the URL where the crawler should start crawling. The specified
@@ -155,25 +154,6 @@ public class Crawler implements InitializingBean, ApplicationListener<Applicatio
 	}
 
 	public void onApplicationEvent(ApplicationEvent event) {
-		if (event instanceof ContentChangedEvent) {
-			ContentChangedEvent ce = (ContentChangedEvent) event;
-			log.info("Content changed: " + ce.getUrl());
-			if (running) {
-				hrefs.addAbsolute(ce.getUrl(), null);
-			}
-			PageData pageData = pageLoader.loadPage(new Href(null, ce.getUrl(), null));
-	        if (pageData.isOk()) {
-	        	try {
-		        	pageData.parse();
-	        	}
-	        	catch (ParserException e) {
-	        		log.error("Error parsing page", e);
-	        	}
-	        }
-	        for (PageHandler handler : pageHandlers) {
-	        	handler.handlePage(pageData);
-	        }
-		}
 	}
 	
 	public boolean isRunning() {
