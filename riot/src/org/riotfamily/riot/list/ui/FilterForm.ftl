@@ -9,6 +9,6 @@
 	</#list>
 	<div class="buttons">
 		<input type="submit" value="Apply" />
-		<input type="button" onclick="list.reset(); return false" value="Reset" />
+		<input type="button" onclick="window.list.reset(); return false" value="Reset" />
 	</div>
 </form>
