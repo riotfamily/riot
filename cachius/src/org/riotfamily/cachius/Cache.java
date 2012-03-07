@@ -248,8 +248,8 @@ public final class Cache implements Serializable {
 	    	map.remove(entry.getKey());
 	    	size--;
 	   		removeFromIndex(entry.getItem());
-	   		entry.delete();
     	}
+    	entry.delete();
     }
 
     /**
