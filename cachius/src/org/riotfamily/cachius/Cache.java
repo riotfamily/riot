@@ -224,6 +224,7 @@ public final class Cache implements Serializable {
     private void cleanup() {
     	log.info("Cache capacity exceeded. Performing cleanup ...");
     	long timeSinceLastOverflow = System.currentTimeMillis() - lastOverflow;
+    	lastOverflow = System.currentTimeMillis();
     	if (averageOverflowInterval == 0) {
     		averageOverflowInterval = timeSinceLastOverflow;
     	}
