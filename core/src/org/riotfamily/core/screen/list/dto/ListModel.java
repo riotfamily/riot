@@ -47,6 +47,9 @@ public class ListModel {
 	
 	@RemoteProperty
 	private String filterFormHtml;
+	
+	@RemoteProperty
+	private String expandedId;
 
 	public ListModel(List<ListItem> items, int itemsTotal, ListParamsImpl params) {
 		this.items = items;
@@ -117,4 +120,12 @@ public class ListModel {
 		this.filterFormHtml = filterFormHtml;
 	}
 
+	public String getExpandedId() {
+		return expandedId;
+	}
+	
+	public void setExpandedId(String expandedId) {
+		this.expandedId = expandedId;
+	}
+	
 }
