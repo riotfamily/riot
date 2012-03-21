@@ -50,6 +50,11 @@ div#list {
 	border-collapse: collapse;
 	background-color: #fff;
 }
+#list table.selecting tr {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
 
 #list th, 
 #list td {
