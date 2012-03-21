@@ -22,6 +22,8 @@ var RiotList = Class.create({
 			this.clearSelection();
 			this.updateCommandStates();
 		}.bind(this));
+		Event.observe(document, 'keydown', this.handleKeydown.bind(this));
+		Event.observe(document, 'keyup', this.handleKeyup.bind(this));
 
 		if (commandTarget && $(commandTarget)) {
 			this.commandTarget = new Element('div');
@@ -32,7 +34,7 @@ var RiotList = Class.create({
 
 	renderFormCommands: function(item, target) {
 		this.selection = [item];
-		ListService.getFormCommands(this.key, item, 
+		ListService.getFormCommands(this.key, item,
 				this.renderCommands.bind(this, $(target), this.execCommand.bind(this)));
 	},
 
@@ -53,7 +55,6 @@ var RiotList = Class.create({
 	},
 
 	addColumnHeading: function(col) {
-		var label;
 		var className = 'col-' + (this.columns.length + 1) + ' ' + col.cssClass;
 		var label = new Element('span').insert(col.heading || '');
 		var th = new Element('th', {className: className}).insert(label);
@@ -87,7 +88,7 @@ var RiotList = Class.create({
 			if (buttons.length > 0) {
 				el.up('.box').style.display = 'block';
 			}
-			var p = el.ancestors().find(function(el) { return el.getStyle('position') == 'fixed'});
+			var p = el.ancestors().find(function(el) { return el.getStyle('position') == 'fixed'; });
 			if (p && p.offsetTop + p.offsetHeight > document.viewport.getHeight()) {
 				p.style.position = 'absolute';
 			}
@@ -188,7 +189,7 @@ var RiotList = Class.create({
 				ListService.getChildren(this.key, tr.item.objectId, function(items) {
 					tr.removeChildren();
 					tr.addChildren(items);
-					this.updateCommandStates();				
+					this.updateCommandStates();
 				}.bind(this));
 				return;
 			}
@@ -214,12 +215,55 @@ var RiotList = Class.create({
 		return getSelectionIndex(item) != -1;
 	},
 	
+	handleKeydown: function(event) {
+		if (event.keyCode == 16 || event.shiftKey) {
+			this.table.addClassName('selecting');
+		}
+		if ((event.keyCode == 17 || !event.ctrlKey) &&
+				(event.keyCode == 91 || !event.metaKey)) {
+			
+			return;
+		}
+		var key = String.fromCharCode(event.charCode ? event.charCode : event.keyCode).toUpperCase();
+		if (key == 'A') {
+			event.stop();
+			this.selectAll();
+		}
+	},
+	
+	handleKeyup: function(event) {
+		if (event.keyCode == 16 || event.shiftKey) {
+			this.table.removeClassName('selecting');
+		}
+	},
+	
+	selectAll: function() {
+		this.tbody.select('tr').each(list.selectRow, list);
+		list.updateCommandStates();
+	},
+	
 	toggleSelection: function(tr) {
 		if (tr.hasClassName('selected')) {
 			this.unselectRow(tr);
 		}
 		else {
+			this.lastSelection = tr;
 			this.selectRow(tr);
+		}
+	},
+
+	rangeSelection: function(tr) {
+		if (this.lastSelection) {
+			var list = this;
+			var items = this.tbody.select('tr');
+			var indexes = [ items.indexOf(tr), items.indexOf(this.lastSelection) ].sort(function (i1, i2) { return i1 - i2; });
+			indexes[1] += 1;
+			this.selection = [];
+			this.tbody.select('tr.selected').invoke('removeClassName', 'selected');
+			items.slice.apply(items, indexes).each(list.selectRow, list);
+		}
+		else {
+			this.toggleSelection(tr);
 		}
 	},
 	
@@ -228,12 +272,15 @@ var RiotList = Class.create({
 			this.selection.push(tr.item);
 			tr.addClassName('selected');
 			if (tr.hasClassName('highlight')) {
-				tr.addClassName('highlight-selected');	
+				tr.addClassName('highlight-selected');
 			}
 		}
 	},
 	
 	unselectRow: function(tr) {
+		if (tr === this.lastSelection) {
+			this.lastSelection = null;
+		}
 		if (tr.hasClassName('selected')) {
 			this.selection = this.selection.reject(function(i) {
 				return i.objectId == tr.item.objectId;
@@ -244,13 +291,16 @@ var RiotList = Class.create({
 	},
 	
 	clearSelection: function() {
+		if (this.lastSelection) {
+			this.lastSelection = null;
+		}
 		this.selection = [];
 		this.tbody.select('tr.selected').invoke('removeClassName', 'selected');
 	},
 		
 	updateCommandStates: function() {
 		if (this.commandButtons) {
-			ListService.getEnabledCommands(this.key, this.selection, 
+			ListService.getEnabledCommands(this.key, this.selection,
 					this.enableButtons.bind(this));
 		}
 	},
@@ -291,7 +341,7 @@ var RiotList = Class.create({
 		popup: function(list, result) {
 			var win;
 			if (result.arguments) {
-				 win = window.open(result.url, result.windowName || '_blank', result.arguments);
+				win = window.open(result.url, result.windowName || '_blank', result.arguments);
 			}
 			else {
 				win = window.open(result.url, result.windowName || '_blank');
@@ -308,7 +358,7 @@ var RiotList = Class.create({
 					win.focus();
 					win.onblur = function() {
 						this.focusLost = true;
-					}
+					};
 				}
 				catch (e) {
 				}
@@ -348,7 +398,7 @@ var RiotList = Class.create({
 	
 	handleInput: function(formKey) {
 		ListService.handleInput(this.key, formKey, this.selection,
-				this.processCommandResult.bind(this));	
+				this.processCommandResult.bind(this));
 	},
 	
 	setBusy: function() {
@@ -374,10 +424,10 @@ var RiotList = Class.create({
 var ListRow = {
 	create: function(list, parentRow, item, expandedId) {
 		
-	// Create TR element
+		// Create TR element
 		var tr = Object.extend(new Element('tr'), {
-			list: list, 
-			item: item, 
+			list: list,
+			item: item,
 			id: 'item-' + item.objectId,
 			parentRow: parentRow,
 			level: parentRow ? parentRow.level + 1 : 0
@@ -395,8 +445,8 @@ var ListRow = {
 		for (var i = 0; i < item.columns.length; i++) {
 			var td = new Element('td', {className: list.columns[i].className}).insert(item.columns[i]);
 			tr.appendChild(td);
-			if (list.model.tree && i == 0) {
-				td.insert({top: 
+			if (list.model.tree && i === 0) {
+				td.insert({top:
 					new Element('span', {className: 'expand'})
 					.setStyle({marginLeft: (tr.level * 22) + 'px'})
 					.observe('click', tr.toggleChildren.bindAsEventListener(tr))
@@ -405,7 +455,7 @@ var ListRow = {
 		}
 		
 		// Select row if part of current selection
-		var i = list.getSelectionIndex(item); 
+		i = list.getSelectionIndex(item);
 		if (i != -1) {
 			tr.addClassName('selected');
 			list.selection[i] = item;
@@ -414,10 +464,10 @@ var ListRow = {
 		//Prevent text selection in unselected items
 		if (Prototype.Browser.IE) {
 			tr.onmousedown = function() {
-				this.selectedOnMouseDown = this.hasClassName('selected') && !event.ctrlKey; 
+				this.selectedOnMouseDown = this.hasClassName('selected') && !event.ctrlKey;
 			};
 			tr.onselectstart = function() {
-				return this.selectedOnMouseDown; 
+				return this.selectedOnMouseDown;
 			};
 		}
 		
@@ -439,7 +489,7 @@ var ListRow = {
 			list.tbody.appendChild(tr);
 		}
 		
-		// Add children (if present in model) 
+		// Add children (if present in model)
 		if (item.children) {
 			tr.expanded = true;
 			tr.addClassName('expanded');
@@ -457,20 +507,25 @@ var ListRow = {
 		/**
 		 * Click listener that toggles the selection state.
 		 */
-		toggle: function(ev) {
-			if (!ev.ctrlKey && !ev.metaKey) {
+		toggle: function(event) {
+			if (!event.ctrlKey && !event.metaKey && !event.shiftKey) {
 				this.list.clearSelection();
 			}
-			this.list.toggleSelection(this);
+			if (event.shiftKey) {
+				this.list.rangeSelection(this);
+			}
+			else {
+				this.list.toggleSelection(this);
+			}
 			this.list.updateCommandStates();
-			ev.stop();
+			event.stop();
 		},
 		
 		/**
 		 * Click listener to expand/collapse tree items.
 		 */
-		toggleChildren: function(ev) {
-			ev.stop();
+		toggleChildren: function(event) {
+			event.stop();
 			if (this.expandable) {
 				if (this.expanded) {
 					this.collapse();
@@ -486,12 +541,12 @@ var ListRow = {
 		 */
 		execDefaultCommand: function() {
 			if (this.list.commandButtons) {
-				if (this.list.selection.length == 0) {
+				if (this.list.selection.length === 0) {
 					this.list.selection = [this.item];
 				}
 				this.list.updateCommandStates();
 				var b = this.list.commandButtons[0];
-				b.handler(b.command.id); 
+				b.handler(b.command.id);
 			}
 		},
 		
@@ -588,17 +643,17 @@ var ListRow = {
 			}
 		}
 	}
-}
+};
 
 var CommandButton = Class.create({
 	initialize: function(list, command, handler) {
 		this.list = list;
 		this.command = command;
 		this.handler = handler;
-		var style = 'background-image:url(' + command.icon 
-			+ ');_background-image:none;_filter:progid:'
-			+ 'DXImageTransform.Microsoft.AlphaImageLoader(src=\''
-			+ command.icon + '\', sizingMethod=\'crop\')';
+		var style = 'background-image:url(' + command.icon +
+				');_background-image:none;_filter:progid:' +
+				'DXImageTransform.Microsoft.AlphaImageLoader(src=\'' +
+				command.icon + '\', sizingMethod=\'crop\')';
 		
 		this.element = new Element('a', {href: '#'}).addClassName('action')
 			.insert(new Element('span').addClassName('icon-and-label')
@@ -617,7 +672,7 @@ var CommandButton = Class.create({
 		}
 		else {
 			this.element.removeClassName('enabled');
-			this.element.addClassName('disabled');	
+			this.element.addClassName('disabled');
 		}
 	},
 	
@@ -637,8 +692,8 @@ dwr.engine.setTextHtmlHandler(function() {
 
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName) {
-		if (ex.javaClassName == 'org.riotfamily.core.security.policy.PermissionDeniedException'
-				&& ex.permissionRequestUrl) {
+		if (ex.javaClassName == 'org.riotfamily.core.security.policy.PermissionDeniedException' &&
+				ex.permissionRequestUrl) {
 			
 			new riot.window.Dialog({
 				url: riot.contextPath + ex.permissionRequestUrl,
