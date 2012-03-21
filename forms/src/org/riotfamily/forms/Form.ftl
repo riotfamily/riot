@@ -15,7 +15,7 @@
 		<div class="form-hint">${form.hint}</div>
 	</#if>
 	<#if form.hasErrors()>
-		<div class="form-error">${form.errors.generalFormError}</div>
+		<div class="form-error">${form.errors.generalFormError} ${form.errors.renderGlobalErrors()}</div>
 	</#if>
 	<#list elements.elements as element>
 		<#assign composite = element.compositeElement?default(false) && element.label?? />
