@@ -18,6 +18,8 @@ import org.riotfamily.common.util.TagWriter;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
+import org.riotfamily.forms.event.JavaScriptEvent;
+import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.forms.ui.Dimension;
 
@@ -25,7 +27,7 @@ import org.riotfamily.forms.ui.Dimension;
 /**
  * A Checkbox widget.
  */
-public class Checkbox extends AbstractEditorBase implements Editor {
+public class Checkbox extends AbstractEditorBase implements Editor, JavaScriptEventAdapter {
 
 	private boolean checked;
 
@@ -130,5 +132,26 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 			ErrorUtils.reject(this, "required");
 		}
 	}
+
+	public int getEventTypes() {
+		if (hasListeners()) {
+			return JavaScriptEvent.ON_CHANGE;
+		}
+		return JavaScriptEvent.NONE;
+	}
+
+	public void handleJavaScriptEvent(JavaScriptEvent event) {
+		if (event.getType() == JavaScriptEvent.ON_CHANGE) {
+			checked = event.getValue() != null;
+			if (checked) {
+				fireChangeEvent(checkedValue, uncheckedValue);
+			}
+			else {
+				fireChangeEvent(uncheckedValue, checkedValue);
+			}
+		}
+	}
+	
+	
 
 }

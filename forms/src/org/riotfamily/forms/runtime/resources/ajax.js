@@ -44,6 +44,11 @@ function submitEvent(e, onComplete) {
 			}
 		}
 	}
+	else if (source.type == 'checkbox') {
+		if (source.checked) {
+			body += '&source.value=' + encodeURIComponent(source.value); 
+		}
+	}
 	else if (source.value) {
 		body += '&source.value=' + encodeURIComponent(source.value);
 	}
