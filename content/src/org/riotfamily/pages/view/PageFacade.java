@@ -159,7 +159,7 @@ public class PageFacade extends ContentContainerOwnerFacade {
 	
 	public Page getPreviousSibling() {
 		List<Page> siblings = getSiblings();
-		int i = siblings.indexOf(this);
+		int i = siblings.indexOf(page);
 		if (i > 0) {
 			return siblings.get(i - 1);
 		}
@@ -168,7 +168,7 @@ public class PageFacade extends ContentContainerOwnerFacade {
 	
 	public Page getNextSibling() {
 		List<Page> siblings = getSiblings();
-		int i = siblings.indexOf(this);
+		int i = siblings.indexOf(page);
 		if (i < siblings.size() - 1) {
 			return siblings.get(i + 1);
 		}
