@@ -80,7 +80,7 @@
 	<util:list id="cacheRegions">
 		<bean class="org.riotfamily.cachius.Region">
 			<constructor-arg value="default" />
-			<property name="capacity"  value="10000" />
+			<property name="capacity"  value="${cachius.cacheRegion.default.capacity=10000}" />
 		</bean>
 	</util:list>
 	
