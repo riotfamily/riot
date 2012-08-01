@@ -56,6 +56,12 @@ public class CsvExportCommand extends AbstractExportCommand {
 	@Override
 	protected void export(CommandContext context, Collection<?> items, OutputStream out) throws IOException {
 		PrintWriter pw = new PrintWriter(new OutputStreamWriter(out, encoding));
+		// write header row
+		for (String property : properties) {
+			pw.print(property);
+			pw.print(delimiter);
+		}
+		pw.println();
 		for (Object item : items) {
 			BeanWrapperImpl wrapper = new BeanWrapperImpl(item);
 			for (String property : properties) {
