@@ -74,5 +74,6 @@ public class CsvExportCommand extends AbstractExportCommand {
 			}
 			pw.println();
 		}
+		pw.close();
 	}
 }
