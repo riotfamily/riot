@@ -6,7 +6,7 @@
 			<tbody>
 				<tr><td class="label">Name</td><td class="value">${element.video.fileName}</td></tr>
 				<tr><td class="label">Size</td><td class="value">${element.video.width} &times; ${element.video.height} (${element.video.formatedSize})</td></tr>
-				<tr><td class="label">Video</td><td class="value">${element.video.videoCodec!} ${element.video.fps} fps</td></tr>
+				<tr><td class="label">Video</td><td class="value">${element.video.videoCodec!}</td></tr>
 				<#if element.video.audioCodec??>
 					<tr><td class="label">Audio</td><td class="value">${element.video.audioCodec} ${element.video.samplingRate} Hz ${element.video.stereo?string('Stereo','Mono')}</td></tr>
 				</#if>
