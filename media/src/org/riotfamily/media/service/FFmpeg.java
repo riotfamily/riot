@@ -49,7 +49,7 @@ public class FFmpeg implements InitializingBean {
 			"bitrate: (\\d+) kb/s");
 	
 	private static final Pattern VIDEO_PATTERN = Pattern.compile(
-			"Video: (\\w+).*?(\\d+)x(\\d+).*?(\\d+\\.?\\d+?) (fps|tb\\(r\\)|tbr)");
+			"Video: (\\w+).*?(\\d+)x(\\d+).*?(\\d+\\.?\\d?k?) (fps|tb\\(r\\)|tbr)");
 	
 	private static final Pattern AUDIO_PATTERN = Pattern.compile(
 			"Audio: (\\w+).*?(\\d+) Hz, (mono|stereo)");
