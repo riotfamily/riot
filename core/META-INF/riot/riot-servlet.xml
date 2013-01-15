@@ -217,7 +217,7 @@
 		
 	<!-- Security -->
 
-	<bean class="org.riotfamily.core.security.session.SecurityContextInterceptor" />
+	<bean id="securityContextInterceptor" class="org.riotfamily.core.security.session.SecurityContextInterceptor" />
 	
 	<bean id="loginFilterPlugin" class="org.riotfamily.core.security.session.LoginRequestInterceptor">
 		<description>
