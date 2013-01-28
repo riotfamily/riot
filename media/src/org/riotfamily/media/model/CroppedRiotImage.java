@@ -13,6 +13,7 @@
 package org.riotfamily.media.model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -21,6 +22,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.media.processing.ImageCropper;
 
 /**
@@ -59,6 +61,7 @@ public class CroppedRiotImage extends RiotImage {
 				scaledWidth);
 
 		setSize(croppedFile.length());
+		setMd5(HashUtils.md5(new FileInputStream(croppedFile)));
 		inspect(croppedFile);
 	}
 
