@@ -40,7 +40,7 @@ public class FFmpeg implements InitializingBean {
 			"bitrate: (\\d+) kb/s");
 	
 	private static final Pattern VIDEO_PATTERN = Pattern.compile(
-			"Video: (\\w+).*?(\\d+)x(\\d+).*?(\\d+\\.?\\d+?) (fps|tb\\(r\\)|tbr)");
+			"Video: (\\w+).*?(\\d+)x(\\d+)");
 	
 	private static final Pattern AUDIO_PATTERN = Pattern.compile(
 			"Audio: (\\w+).*?(\\d+) Hz, (mono|stereo)");
@@ -108,7 +108,6 @@ public class FFmpeg implements InitializingBean {
 			meta.setVideoCodec(m.group(1));
 			meta.setWidth(Integer.parseInt(m.group(2)));
 			meta.setHeight(Integer.parseInt(m.group(3)));
-			meta.setFps(Float.parseFloat(m.group(4)));
 		}
 		
 		m = AUDIO_PATTERN.matcher(out);

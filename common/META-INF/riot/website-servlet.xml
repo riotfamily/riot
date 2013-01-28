@@ -59,7 +59,7 @@
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
 	</bean>
 	
-	<bean class="org.riotfamily.core.security.session.SecurityContextInterceptor" />
+	<bean id="securityContextInterceptor" class="org.riotfamily.core.security.session.SecurityContextInterceptor" />
 	
 	<bean id="cacheKeyAugmentor" class="org.riotfamily.common.web.cache.NoOpCacheKeyAugmentor" />
 	
