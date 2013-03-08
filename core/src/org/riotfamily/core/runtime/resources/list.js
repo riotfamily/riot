@@ -163,7 +163,11 @@ var RiotList = Class.create({
 	updateRows: function(model) {
 		this.tbody.update();
 		for (var i = 0; i < model.items.length; i++) {
-			ListRow.create(this, null, model.items[i]);
+			var item = model.items[i];
+			if (item.objectId == model.expandedId) {
+				this.selection.push(item);
+			}
+			ListRow.create(this, null, item, model.expandedId);
 		}
 		this.updateCommandStates();
 	},
@@ -418,7 +422,7 @@ var RiotList = Class.create({
 });
 
 var ListRow = {
-	create: function(list, parentRow, item) {
+	create: function(list, parentRow, item, expandedId) {
 		
 		// Create TR element
 		var tr = Object.extend(new Element('tr'), {
@@ -489,7 +493,7 @@ var ListRow = {
 		if (item.children) {
 			tr.expanded = true;
 			tr.addClassName('expanded');
-			tr.addChildren(item.children);
+			tr.addChildren(item.children, expandedId);
 		}
 		
 		// Convert item to lightweight object
@@ -585,13 +589,17 @@ var ListRow = {
 		/**
 		 * Callback method to create childRows.
 		 */
-		addChildren: function(items) {
+		addChildren: function(items, expandedId) {
 			this.removeClassName('expanding');
 			this.childRows = [];
 			this.setExpandable(items.length > 0);
 			this.setExpanded(items.length > 0);
 			for (var i = items.length - 1; i >= 0; i--) {
-				ListRow.create(this.list, this, items[i]);
+				var item = items[i];
+				if (item.objectId == expandedId) {
+					this.list.selection.push(item);
+				}
+				ListRow.create(this.list, this, item, expandedId);
 			}
 		},
 		

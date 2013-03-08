@@ -225,6 +225,10 @@ public class FormScreen extends AjaxFormController
 			form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
 			return showForm(form, request, response);
 		}
+		catch (Exception e) {
+			form.getErrors().reject("error.form.exception", new Object[] {e.getClass().getSimpleName(), e.getMessage()}, "An exception ({0}) occurred while saving. Exception message: {1}");
+			return showForm(form, request, response);
+		}
 	}
 
 	protected ModelAndView handleFormSubmissionInternal(Form form, 
