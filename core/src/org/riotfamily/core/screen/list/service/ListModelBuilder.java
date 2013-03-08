@@ -70,6 +70,7 @@ public class ListModelBuilder extends ListItemLoader {
 		model.setCommandButtons(createButtons());
 		model.setTree(dao instanceof Tree);
 		model.setCssClass(screen.getId());
+		model.setExpandedId(expandedId);
 		//model.setInstantAction(chooser || singleAction);
 		
 		if (state.getFilterForm() != null) {

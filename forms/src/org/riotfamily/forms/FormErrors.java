@@ -86,22 +86,45 @@ public class FormErrors extends AbstractErrors {
 			tag.end();
 		}
 	}
+	
+	public void renderGlobalErrors() {
+		List<String> errors = getErrors(null);
+		if (errors != null) {
+			PrintWriter writer = form.getFormContext().getWriter();
+			DocumentWriter tag = new DocumentWriter(writer);
+			tag.start("ul")
+					.attribute("class", "errors");
+			
+			for (String error : errors) {
+				tag.start("li").body(error).end();
+			}
+			tag.end();
+		}
+	}
 
 	public List<String> getErrors(Element element) {
-		if (element instanceof Editor) {
-			ArrayList<String> messages = Generics.newArrayList();
+		if (element == null) {
+			return getErrorMessages(getGlobalErrors());			
+		}
+		else if (element instanceof Editor) {
+			
 			Editor editor = (Editor) element;
 			List<FieldError> fieldErrors = getFieldErrors(editor.getFieldName());
-			for (FieldError error : fieldErrors) {
-				String message = form.getFormContext().getMessageResolver().getMessage(error);
-				if (!StringUtils.hasLength(message)) {
-					message = StringUtils.arrayToCommaDelimitedString(error.getCodes());
-				}
-				messages.add(message);
-			}
-			return messages;
+			return getErrorMessages(fieldErrors);
 		}
 		return null;
+	}
+	
+	private List<String> getErrorMessages(List<? extends ObjectError> errors) {
+		ArrayList<String> messages = Generics.newArrayList();
+		for (ObjectError error : errors) {
+			String message = form.getFormContext().getMessageResolver().getMessage(error);
+			if (!StringUtils.hasLength(message)) {
+				message = StringUtils.arrayToCommaDelimitedString(error.getCodes());
+			}
+			messages.add(message);
+		}
+		return messages;
 	}
 	
 	public void removeError(ObjectError error) {

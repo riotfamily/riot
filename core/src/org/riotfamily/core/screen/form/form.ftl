@@ -62,10 +62,10 @@
 			function registerKeyHandler(doc) {
 				Event.observe(doc, 'keydown', function(e) {
 				
-					//we have to use code for KEY_CTRL(17) explicitly as it is not defined in Event
-					if (e.keyCode == 17 || !e.ctrlKey)
+					// We have to use code for KEY_CTRL(17) explicitly as it is not defined in Event
+					if ((e.keyCode == 17 || !e.ctrlKey) && (e.keyCode == 91 || !e.metaKey)) {
 						return;
-					
+					}
 					var key = String.fromCharCode(e.charCode ? e.charCode : e.keyCode).toUpperCase();
 					if (key == 'S') {
 						e.stop();					

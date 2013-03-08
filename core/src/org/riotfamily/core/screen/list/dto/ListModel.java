@@ -51,6 +51,9 @@ public class ListModel {
 	@RemoteProperty
 	private String cssClass;
 
+	@RemoteProperty
+	private String expandedId;
+
 	public ListModel(List<ListItem> items, int itemsTotal, ListParamsImpl params) {
 		this.items = items;
 		this.itemsTotal = Math.max(itemsTotal, items.size());
@@ -128,4 +131,12 @@ public class ListModel {
 		this.cssClass = cssClass;
 	}
 
+	public String getExpandedId() {
+		return expandedId;
+	}
+	
+	public void setExpandedId(String expandedId) {
+		this.expandedId = expandedId;
+	}
+	
 }
