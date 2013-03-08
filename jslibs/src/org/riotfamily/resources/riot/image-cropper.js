@@ -266,7 +266,13 @@ Cropper.UI.prototype = {
 		var initialHeight = this.getMaxFromSelector(this.heightSelector, this.min.y, this.max.y);
 		if (initialHeight) this.setHeight(initialHeight);
 
-		this.zoomSlider.setValue(this.imageSize.x);
+		if (this.cropUrl) {
+			this.zoomSlider.setValue(this.imageSize.x);
+		}
+		else {
+			// if cropping is disabled, set zoom to min, to see the full image
+			this.zoomSlider.setValue(this.options.previewWidth);
+		}
 	},
 
 	onMouseWheel: function(event) {
