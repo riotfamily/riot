@@ -295,6 +295,7 @@ riot.components = (function() {
 		
 		removeComponent: function(c) {
 			ComponentEditor.deleteComponent(c.id);
+			this.element.fire('component:deleted');
 			riot.toolbar.enablePreviewButton();
 			this.componentElements = this.componentElements.without(c.element);
 			riot.outline.hide();
