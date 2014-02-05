@@ -3,6 +3,9 @@ new Cropper.UI('${element.id}', '${element.imageUrl?if_exists}', <#if element.cr
 	<#if element.cropUrl?exists>
 	minWidth: ${element.minWidth?c}, maxWidth: ${element.maxWidth?c}, 
 	minHeight: ${element.minHeight?c}, maxHeight: ${element.maxHeight?c},
+	<#else>
+	minWidthLabel: ${element.minWidth?c}, maxWidthLabel: ${element.maxWidth?c}, 
+	minHeightLabel: ${element.minHeight?c}, maxHeightLabel: ${element.maxHeight?c},
 	</#if>
 	previewWidth: ${element.previewWidth?c}, 
 	previewHeight: ${element.previewHeight?c},

@@ -135,12 +135,10 @@ Cropper.UI.prototype = {
 			
 			// Width
 			if (o.widths) {
-				var w = document.createElement('span');
-				w.innerHTML = o.widths[0] + ' px';
-				e.appendChild(w);
+				e.appendChild(this.createMultipleSizesLabel(o.widths));
 			}
 			else {
-				e.appendChild(this.createSizeLabel(o.minWidth, o.maxWidth));
+				e.appendChild(this.createSizeLabel(o.minWidthLabel, o.maxWidthLabel));
 			}
 			
 			// Times
@@ -151,12 +149,10 @@ Cropper.UI.prototype = {
 			
 			// Height
 			if (o.heights) {
-				var h = document.createElement('span');
-				h.innerHTML = o.heights[0] + ' px';
-				e.appendChild(h);
+				e.appendChild(this.createMultipleSizesLabel(o.heights));
 			}
 			else {
-				e.appendChild(this.createSizeLabel(o.minHeight, o.maxHeight));
+				e.appendChild(this.createSizeLabel(o.minHeightLabel, o.maxHeightLabel));
 			}
 		}
 
@@ -220,13 +216,35 @@ Cropper.UI.prototype = {
 				option.innerHTML = s + ' px';
 				sel.appendChild(option);
 			});
-			sel.onchange = this.setSizeFromSelect.bind(this, sel, setter);
+			if (setter) {
+				sel.onchange = this.setSizeFromSelect.bind(this, sel, setter);
+			}
 		}
 		else {
 			sel = document.createElement('span');
 			sel.innerHTML = values[0] + ' px';
 		}
 		return sel;
+	},
+	
+	createMultipleSizesLabel: function(values) {
+		var label = document.createElement('span');
+		if (values.length > 1) {
+			var text;
+			values.each(function(s) {
+				if (text) {
+					text += ' / ' + s + ' px';
+				}
+				else {
+					text = s + ' px';
+				}
+			});
+			label.innerHTML = text;
+		}
+		else {
+			label.innerHTML = values[0] + ' px';
+		}
+		return label;
 	},
 
 	createSizeLabel: function(minValue, maxValue) {
