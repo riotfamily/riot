@@ -129,6 +129,36 @@ Cropper.UI.prototype = {
 			e = this.undoButton = Cropper.appendButton(this.controls, 
 					'undo', o.undoLabel || 'Undo', this.undo.bind(this)).hide();
 		}
+		else {
+			// Create size label				
+			e = Cropper.appendDiv(this.controls, 'sizeSelectors');
+			
+			// Width
+			if (o.widths) {
+				var w = document.createElement('span');
+				w.innerHTML = o.widths[0] + ' px';
+				e.appendChild(w);
+			}
+			else {
+				e.appendChild(this.createSizeLabel(o.minWidth, o.maxWidth));
+			}
+			
+			// Times
+			var x = document.createElement('span');
+			x.className = 'times';
+			x.innerHTML = '&times;';
+			e.appendChild(x);
+			
+			// Height
+			if (o.heights) {
+				var h = document.createElement('span');
+				h.innerHTML = o.heights[0] + ' px';
+				e.appendChild(h);
+			}
+			else {
+				e.appendChild(this.createSizeLabel(o.minHeight, o.maxHeight));
+			}
+		}
 
 		this.elementPos = Cropper.elementPos(this.element);
 		this.mousePos = new Cropper.Pos();
