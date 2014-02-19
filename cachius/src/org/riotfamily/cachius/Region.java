@@ -55,7 +55,7 @@ public class Region {
 	}
 	
 	public void logOverflow() {
-		log.info("Cache capacity exceeded. Performing cleanup ...");
+		log.info("Cache capacity exceeded for region {}. Performing cleanup ...", name);
 		long timeSinceLastOverflow = System.currentTimeMillis() - lastOverflow;
 		if (averageOverflowInterval == 0) {
 			averageOverflowInterval = timeSinceLastOverflow;
