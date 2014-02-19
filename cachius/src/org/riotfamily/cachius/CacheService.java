@@ -40,10 +40,10 @@ public class CacheService {
 	
 	public CacheService(DiskStore diskStore, List<Region> regions) {
 		this.diskStore = diskStore;
-		this.stats = new CachiusStatistics(this);
 		for (Region region : regions) {
 			caches.put(region.getName(), new Cache(region, index));
 		}
+		this.stats = new CachiusStatistics(this, caches.keySet());
 	}
 	
 	public CachiusStatistics getStatistics() {

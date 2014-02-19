@@ -23,11 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.cachius;
 
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class CachiusStatistics {
 
 	private CacheService service;
+	
+	private Set<String> cacheRegionNames;
 
 	private volatile long maxUpdateTime;
 	
@@ -37,8 +41,9 @@ public class CachiusStatistics {
 	
 	private AtomicLong misses = new AtomicLong();
 	
-	protected CachiusStatistics(CacheService service) {
+	protected CachiusStatistics(CacheService service, Set<String> cacheRegionNames) {
 		this.service = service;
+		this.cacheRegionNames = cacheRegionNames;
 	}
 	
 	protected void addHit() {
@@ -82,17 +87,23 @@ public class CachiusStatistics {
 		return misses.longValue();
 	}
 	
-	public int getCapacity() {
-		return service.getCache(null).getRegion().getCapacity();
+	public int getCapacity(String region) {
+		return service.getCache(region).getRegion().getCapacity();
 	}
     
-    public int getSize() {
-    	return service.getCache(null).getSize(); 
+    public int getSize(String region) {
+    	return service.getCache(region).getSize(); 
     }
     
     public void invalidateAllItems() {
-    	service.getCache(null).invalidateAll();
+    	for (String region : cacheRegionNames) {
+    		service.getCache(region).invalidateAll();
+    	}
     }    
+    
+    public Set<String> getCacheRegionNames() {
+		return cacheRegionNames;
+	}
     
     /*public long getAverageOverflowInterval() {
 		return service.getCache(null).getAverageOverflowInterval();

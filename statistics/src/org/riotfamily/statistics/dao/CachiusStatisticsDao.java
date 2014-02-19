@@ -30,28 +30,31 @@ import org.springframework.beans.factory.annotation.Required;
 
 public class CachiusStatisticsDao extends AbstractSimpleStatsDao {
 
-	private CachiusStatistics cachius;
+	private CachiusStatistics cachiusStatistics;
 
 	@Required
 	public void setCacheService(CacheService service) {
-		this.cachius = service.getStatistics();
+		cachiusStatistics = service.getStatistics();
 	}
 	
 	public CachiusStatistics getCachiusStatistics() {
-		return cachius;
+		return cachiusStatistics;
 	}
 	
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
-		stats.add("Capacity", cachius.getCapacity());
-		stats.add("Cached items", cachius.getSize());
+		
+		for (String region : cachiusStatistics.getCacheRegionNames()) {
+			stats.add("Capacity [" + region + "]", cachiusStatistics.getCapacity(region));
+			stats.add("Cached items [" + region + "]", cachiusStatistics.getSize(region));
+		}
 		//stats.addMillis("Average overflow interval", cachius.getAverageOverflowInterval());
 		//stats.add("Max invalidation time [ms]", cachius.getMaxInvalidationTime());
 		
-		stats.add("Hits", cachius.getHits());
-		stats.add("Misses", cachius.getMisses());
+		stats.add("Hits", cachiusStatistics.getHits());
+		stats.add("Misses", cachiusStatistics.getMisses());
 		
-		stats.add("Max update time [ms]", cachius.getMaxUpdateTime());
-		stats.add("Slowest update", cachius.getSlowestUpdate());
+		stats.add("Max update time [ms]", cachiusStatistics.getMaxUpdateTime());
+		stats.add("Slowest update", cachiusStatistics.getSlowestUpdate());
 	}
 }
