@@ -48,6 +48,10 @@ public class Region {
 	public void setEvictionFactor(double evictionFactor) {
 		this.evictionFactor = evictionFactor;
 	}
+	
+	public long getAverageOverflowInterval() {
+		return averageOverflowInterval;
+	}
 
 	public int getItemsToEvict() {
 		logOverflow();

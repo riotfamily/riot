@@ -47,8 +47,8 @@ public class CachiusStatisticsDao extends AbstractSimpleStatsDao {
 		for (String region : cachiusStatistics.getCacheRegionNames()) {
 			stats.add("Capacity [" + region + "]", cachiusStatistics.getCapacity(region));
 			stats.add("Cached items [" + region + "]", cachiusStatistics.getSize(region));
+			stats.addMillis("Average overflow interval [" + region + "]", cachiusStatistics.getAverageOverflowInterval(region));
 		}
-		//stats.addMillis("Average overflow interval", cachius.getAverageOverflowInterval());
 		//stats.add("Max invalidation time [ms]", cachius.getMaxInvalidationTime());
 		
 		stats.add("Hits", cachiusStatistics.getHits());

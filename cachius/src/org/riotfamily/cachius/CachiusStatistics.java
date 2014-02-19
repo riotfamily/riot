@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.cachius;
 
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -95,6 +94,10 @@ public class CachiusStatistics {
     	return service.getCache(region).getSize(); 
     }
     
+    public long getAverageOverflowInterval(String region) {
+		return service.getCache(region).getRegion().getAverageOverflowInterval();
+	}
+    
     public void invalidateAllItems() {
     	for (String region : cacheRegionNames) {
     		service.getCache(region).invalidateAll();
@@ -105,10 +108,8 @@ public class CachiusStatistics {
 		return cacheRegionNames;
 	}
     
-    /*public long getAverageOverflowInterval() {
-		return service.getCache(null).getAverageOverflowInterval();
-	}
-    
+   
+   /* 
     public long getMaxInvalidationTime() {
 		return service.getCache(null).getMaxInvalidationTime();
 	}*/
