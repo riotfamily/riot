@@ -8,7 +8,6 @@ dependencies {
 			project(':jslibs')
 	
 	testCompile project(':common'),
-				'net.sourceforge.htmlunit:htmlunit:2.7',
 				'org.jitr:jitr:1.0.0'
 				
 	testRuntime 'org.mortbay.jetty:jetty:6.1.22',

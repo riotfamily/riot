@@ -12,15 +12,11 @@
  */
 package org.riotfamily.crawler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.HashMap;
 
 import org.htmlparser.Parser;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
-import org.riotfamily.common.io.IOUtils;
 
 /**
  * Class that holds all information about a crawled page.
@@ -55,13 +51,7 @@ public class PageData {
     	return headers.get(name.toLowerCase()); 
     }
     
-	public void setContent(InputStream in, String charset) throws IOException {
-		StringWriter writer = new StringWriter();
-		IOUtils.copy(in, writer, charset);
-		setHtml(writer.toString());
-    }
-
-	private void setHtml(String html) {
+	public void setHtml(String html) {
 		this.html = html;
 	}
 	

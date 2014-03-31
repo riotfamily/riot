@@ -14,14 +14,14 @@ package org.riotfamily.linkcheck;
 
 import java.io.IOException;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.riotfamily.common.util.FormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,35 +30,36 @@ public class HttpStatusChecker {
 	
 	private Logger log = LoggerFactory.getLogger(HttpStatusChecker.class);
 	
-	private HttpClient client = new HttpClient();
+	private CloseableHttpClient client;
 	
 	public HttpStatusChecker() {
-		HttpConnectionManagerParams connectionParams = client.getHttpConnectionManager().getParams();
-		connectionParams.setConnectionTimeout((int) FormatUtils.parseMillis("2s"));
-		connectionParams.setSoTimeout((int) FormatUtils.parseMillis("5s"));
-		connectionParams.setStaleCheckingEnabled(true);
+		RequestConfig config = RequestConfig.custom()
+				.setConnectionRequestTimeout((int) FormatUtils.parseMillis("2s"))
+				.setSocketTimeout((int) FormatUtils.parseMillis("5s"))
+				.setStaleConnectionCheckEnabled(true)
+				.build();
+		
+		client = HttpClients.custom()
+					.setDefaultRequestConfig(config)
+					.build();
 	}
 	
-	private HttpMethod createMethod(String url) {
+	private HttpRequestBase createMethod(String url) {
 		try {
-			return new GetWithoutBodyMethod(url);
+			return new HttpGetWithoutBody(url);
 		}
 		catch (IllegalArgumentException e) {
-			return new GetWithoutBodyMethod(FormatUtils.uriEscape(url));
+			return new HttpGetWithoutBody(FormatUtils.uriEscape(url));
 		}
 	}
 	
 	public boolean isOkay(BrokenLink link) {
 		try {
-			HttpMethod method = createMethod(link.getDestination());
-			HttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler();
-			HttpMethodParams params = new HttpMethodParams();
-			params.setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
-			method.setParams(params);
-			method.setFollowRedirects(true);
+			HttpRequestBase http = createMethod(link.getDestination());
 	
 			try {
-				int statusCode = client.executeMethod(method);
+				HttpResponse httpResponse = client.execute(http); 
+				int statusCode = httpResponse.getStatusLine().getStatusCode();
 				if (log.isDebugEnabled()) {
 					if (log.isDebugEnabled()) {
 						log.debug("Check: " + link + " [" + statusCode + "]");
@@ -69,14 +70,14 @@ public class HttpStatusChecker {
 					return true;
 				}
 				else {		
-					link.setStatusText(method.getStatusText());
+					link.setStatusText(httpResponse.getStatusLine().getReasonPhrase());
 				}						
 			}
 			catch (IOException e) {
 				log.info(e.getMessage());
 			}
 			finally {
-				method.releaseConnection();
+				http.releaseConnection();
 			}
 		}
 		catch (IllegalArgumentException e) {
@@ -86,12 +87,15 @@ public class HttpStatusChecker {
 		return false;
 	}
 	
-	private static class GetWithoutBodyMethod extends HeadMethod {
-		public GetWithoutBodyMethod(String uri) {
+	private static class HttpGetWithoutBody extends HttpHead {
+		
+		public HttpGetWithoutBody(String uri) {
 			super(uri);
 		}
-		public String getName() {
-			return "GET";
+		
+		@Override
+		public String getMethod() {
+			return HttpGet.METHOD_NAME;
 		}
 	}
 	
