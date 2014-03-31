@@ -47,7 +47,7 @@ dependsOnChildren()
 
 allprojects {
 	group = 'org.riotfamily'
-	version = '9.1.0'
+	version = '9.2.0'
 	repositories {
 		mavenRepo url: 'http://repository.riotfamily.org/external'
 		mavenRepo url: 'http://repository.riotfamily.org/cache'
