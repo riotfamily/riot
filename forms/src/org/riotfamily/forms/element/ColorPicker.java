@@ -52,14 +52,17 @@ public class ColorPicker extends AbstractTextElement
 	}
 
 	public String getInitScript() {
-		StringBuffer sb = new StringBuffer("new Control.ColorPicker('")
-				.append(getEventTriggerId()).append("', {IMAGE_BASE: '")
-				.append(getFormContext().getContextPath())
-				.append(getFormContext().getResourcePath())
-				.append("form/colorPicker/").append("', swatch: '")
-				.append(getId() + "-swatch").append("'});");
-
-		return sb.toString();
+		if (isEnabled()) {
+			StringBuffer sb = new StringBuffer("new Control.ColorPicker('")
+			.append(getEventTriggerId()).append("', {IMAGE_BASE: '")
+			.append(getFormContext().getContextPath())
+			.append(getFormContext().getResourcePath())
+			.append("form/colorPicker/").append("', swatch: '")
+			.append(getId() + "-swatch").append("'});");
+			
+			return sb.toString();
+		}
+		return null;
 	}
 
 }
