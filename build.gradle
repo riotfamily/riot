@@ -1,7 +1,7 @@
 libraries = [
 	jpa: 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final',
 	jta: 'javax.transaction:jta:1.1',
-	c3p0: 'c3p0:c3p0:0.9.1.2',
+	c3p0: 'com.mchange:c3p0:0.9.5-pre8',
 	slf4j: 'org.slf4j:slf4j-api:1.6.1',
 	slf4j_log4j: 'org.slf4j:slf4j-log4j12:1.6.1',
 	log4j: 'log4j:log4j:1.2.14',	
@@ -49,6 +49,7 @@ allprojects {
 	group = 'org.riotfamily'
 	version = '9.2.0'
 	repositories {
+		mavenLocal()
 		mavenRepo url: 'http://repository.riotfamily.org/external'
 		mavenRepo url: 'http://repository.riotfamily.org/cache'
 	}
