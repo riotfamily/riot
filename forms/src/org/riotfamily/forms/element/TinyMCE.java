@@ -109,7 +109,19 @@ public class TinyMCE extends AbstractTextElement
 				new JSONFunction(new String[] {"id", "html", "body"},
 				"return html.replace(/<!--(.|\\n)*?-->/g, '')" 
 				+ ".replace(/&lt;!--(.|\\n)*?\\smso-(.|\\n)*?--&gt;/g, '');"));
-		
+		if (hasListeners()) {
+			JSONFunction fireChangeEvent = 
+				new JSONFunction(new String[] {"ed", "e"}, "var source = $('"+getId()+"');"+ 
+						"source.value = ed.getContent();" + 
+						"submitEvent(new ChangeEvent(source));");
+			
+			json.element("setup", 
+				new JSONFunction(new String[] {"ed"}, "ed.onKeyUp.add("+ fireChangeEvent.toString() +");"));
+			
+			json.element("onchange_callback", fireChangeEvent);
+			
+			 
+		}
 		return json.toString();
 	}
 	
