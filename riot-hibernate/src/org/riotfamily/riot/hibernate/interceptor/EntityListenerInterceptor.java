@@ -45,9 +45,9 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Hibernate {@link Interceptor} that scans the ApplicationContext for beans
- * implementing the {@link EntityListener} interface and invokes the appropriate 
+ * implementing the {@link EntityListener} interface and invokes the appropriate
  * callbacks.
- * 
+ *
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
@@ -55,16 +55,16 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		implements ApplicationContextAware {
 
 	private ApplicationContext context;
-	
+
 	private String sessionFactoryName;
-	
+
 	private SessionFactory sessionFactory;
-	
+
 	private Map<Class<?>, List<EntityListener<Object>>> listeners;
-	
+
 	private ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
-	
-	
+
+
 	public void setSessionFactoryName(String sessionFactoryName) {
 		this.sessionFactoryName = sessionFactoryName;
 	}
@@ -72,14 +72,14 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	public void setApplicationContext(ApplicationContext context) {
 		this.context = context;
 	}
-	
+
 	/**
 	 * Returns the generic type argument of the given EntityListener.
 	 */
 	private Class<?> getEntityClass(EntityListener<?> listener) {
-		return Generics.getTypeArguments(EntityListener.class, listener.getClass()).get(0);		
+		return Generics.getTypeArguments(EntityListener.class, listener.getClass()).get(0);
 	}
-	
+
 	private void registerListener(Class<?> entityClass, EntityListener<Object> listener) {
 		List<EntityListener<Object>> list = listeners.get(entityClass);
 		if (list == null) {
@@ -88,11 +88,11 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		list.add(listener);
 	}
-	
+
 	private boolean listenerExists(Object entity) {
 		return !getListeners(entity).isEmpty();
 	}
-	
+
 	private List<EntityListener<Object>> getListeners(Object entity) {
 		if (listeners == null) {
 			registerListeners();
@@ -113,17 +113,17 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		return result;
 	}
-	
+
 	private void registerListeners() {
-		listeners = Generics.newHashMap();
+		listeners = Generics.newConcurrentHashMap();
 		for (EntityListener<Object> listener : SpringUtils.listBeansOfType(
 				context, EntityListener.class)) {
 
 			registerListener(getEntityClass(listener), listener);
 		}
 	}
-	
-	
+
+
 	private Interceptions getInterceptions() {
 		Interceptions result = interceptions.get();
 		if (result == null) {
@@ -132,7 +132,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		return result;
 	}
-	
+
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
@@ -142,22 +142,22 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id,
 			Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
-		
+
 		if (listenerExists(entity)) {
 			getInterceptions().entityUpdated(entity);
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void onCollectionUpdate(Object collection, Serializable key)
 			throws CallbackException {
-		
+
 		if (collection instanceof PersistentCollection) {
 			PersistentCollection pc = (PersistentCollection) collection;
 			Object entity = pc.getOwner();
@@ -166,11 +166,11 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			}
 		}
 	}
-	
+
 	@Override
 	public void onDelete(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
-		
+
 		try {
 			for (EntityListener<Object> listener : getListeners(entity)) {
 				listener.onDelete(entity);
@@ -180,7 +180,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			throw new CallbackException(e);
 		}
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public void postFlush(Iterator entities) {
@@ -193,14 +193,14 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 					List<EntityListener<Object>> listeners = getListeners(mergedEntity);
 					for (EntityListener<Object> listener : listeners) {
 						listener.onSave(mergedEntity);
-					}	
+					}
 				}
 				for (Object entity : i.getUpdatedEntities()) {
 					Object mergedEntity = session.merge(entity);
 					List<EntityListener<Object>> listeners = getListeners(mergedEntity);
 					for (EntityListener<Object> listener : listeners) {
 						listener.onUpdate(mergedEntity);
-					}	
+					}
 				}
 				session.flush();
 				session.close();
@@ -209,11 +209,11 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 				throw new CallbackException(e);
 			}
 			finally {
-				interceptions.set(null);			
+				interceptions.set(null);
 			}
 		}
 	}
-	
+
 	/**
 	 * Lazily retrieves the SessionFactory from the ApplicationContext. If a
 	 * sessionFactoryName {@link #setSessionFactoryName(String) is set}, the
@@ -223,12 +223,12 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	 * <p>
 	 * Note: The SessionFactory can't be injected directly as this would result
 	 * in an unresolvable cyclic dependency.
-	 * </p>  
+	 * </p>
 	 */
 	private SessionFactory getSessionFactory() {
 		if (sessionFactory == null) {
 			if (sessionFactoryName != null) {
-				sessionFactory = SpringUtils.getBean(context, 
+				sessionFactory = SpringUtils.getBean(context,
 						sessionFactoryName, SessionFactory.class);
 			}
 			else {
@@ -237,57 +237,57 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		return sessionFactory;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private Session createTemporarySession() {
 		SessionFactory sf = getSessionFactory();
 		Connection connection = sf.getCurrentSession().connection();
 		return sf.openSession(connection, NoOpInterceptor.INSTANCE);
 	}
-	
-	
+
+
 	/**
 	 * Interceptor that does nothing. This implementation is used with the
 	 * temporary session created in {@link #postFlush(Iterator)} to prevent
-	 * endless recursions. 
+	 * endless recursions.
 	 */
 	private static class NoOpInterceptor extends EmptyInterceptor {
 		static NoOpInterceptor INSTANCE = new NoOpInterceptor();
 	}
-	
+
 	private static class Interceptions {
-		
+
 		private Set<Object> savedEntites;
-		
+
 		private Set<Object> updatedEntites;
-		
+
 		public void entitySaved(Object entity) {
 			if (savedEntites == null) {
 				savedEntites = Generics.newHashSet();
 			}
 			savedEntites.add(entity);
 		}
-		
+
 		public void entityUpdated(Object entity) {
 			if (updatedEntites == null) {
 				updatedEntites = Generics.newHashSet();
 			}
 			updatedEntites.add(entity);
 		}
-		
+
 		public Set<Object> getSavedEntities() {
 			if (savedEntites == null) {
 				return Collections.emptySet();
 			}
 			return savedEntites;
 		}
-		
+
 		public Set<Object> getUpdatedEntities() {
 			if (updatedEntites == null) {
 				return Collections.emptySet();
 			}
 			return updatedEntites;
 		}
-		
+
 	}
 }
