@@ -49,7 +49,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	
 	private Collection<EntityListener> listeners;
 	
-	private Map<Class<?>, List<EntityListener>> listenerMap = Generics.newHashMap();
+	private Map<Class<?>, List<EntityListener>> listenerMap = Generics.newConcurrentHashMap();
 	
 	private static ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
 
