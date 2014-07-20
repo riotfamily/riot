@@ -154,7 +154,7 @@ public class YUIJavaScriptCompressor implements Compressor {
 				try {
 					compressInternal(in, out, errorReporter);
 				}
-				catch (EvaluatorException e) {
+				catch (RuntimeException e) {
 					log.warn("JavaScript compression failed, serving uncompressed script.");
 					out.write(buffer.toString());
 				}
@@ -179,6 +179,7 @@ public class YUIJavaScriptCompressor implements Compressor {
 			ErrorReporter errorReporter) 
 			throws EvaluatorException, IOException {
 		
+		// TODO : integrate yuglify :  https://yuilibrary.com/projects/yuicompressor/ticket/2528157
 		JavaScriptCompressor compressor = new JavaScriptCompressor(in, errorReporter);
 		compressor.compress(out, linebreak, munge, warn, 
 				preserveAllSemiColons, !mergeStringLiterals);
