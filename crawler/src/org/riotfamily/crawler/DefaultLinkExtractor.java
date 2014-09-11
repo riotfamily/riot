@@ -43,7 +43,7 @@ public class DefaultLinkExtractor implements LinkExtractor {
 		SimpleNodeIterator it = linkNodes.elements();
 		while (it.hasMoreNodes()) {
 			Tag tag = (Tag) it.nextNode();
-			String href = tag.getAttribute("href");
+			String href = new String(tag.getAttribute("href"));
 			href = href.trim().replaceAll("&amp;", "&");
 			links.add(href);
 		}

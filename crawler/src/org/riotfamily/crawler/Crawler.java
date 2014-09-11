@@ -209,7 +209,7 @@ public class Crawler implements InitializingBean, ApplicationListener<Applicatio
 				}
 	        }
 	    }
-	    
+	    hrefs.clear();
 	    lastPageCount = pageCount;
 	    log.info(pageCount + " pages crawled in " +
 	    		(System.currentTimeMillis() - startTime) + " ms");
