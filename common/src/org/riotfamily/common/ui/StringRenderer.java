@@ -12,17 +12,20 @@
  */
 package org.riotfamily.common.ui;
 
+import org.riotfamily.common.beans.property.DefaultPropertyEditorRegistry;
+import org.springframework.web.util.HtmlUtils;
+
 import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
 import java.beans.PropertyEditorSupport;
 import java.io.PrintWriter;
-
-import org.springframework.web.util.HtmlUtils;
 
 public class StringRenderer implements ObjectRenderer {
 
 	private static PropertyEditor DEFAULT_EDITOR = new StringPropertyEditor();
-	
+
+	private static DefaultPropertyEditorRegistry registry =
+			new DefaultPropertyEditorRegistry();
+
 	private PropertyEditor propertyEditor;
 	
 	/**
@@ -45,7 +48,7 @@ public class StringRenderer implements ObjectRenderer {
 		PropertyEditor editor = this.propertyEditor;
 		if (editor == null) {
 			Class<?> type = obj.getClass();
-			editor = PropertyEditorManager.findEditor(type);
+			editor = registry.getDefaultEditor(type);
 			if (editor == null) {
 				editor = DEFAULT_EDITOR;
 			}
