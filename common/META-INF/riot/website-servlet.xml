@@ -105,10 +105,8 @@
 		</description>		
 		<property name="addContextPathToUrls" value="true" />
 		<property name="stamper" ref="resourceStamper" />
-		<property name="compressor">
-			<bean class="org.riotfamily.common.web.performance.YUICssCompressor">
-				<property name="enabled" value="${riot.resources.compress=true}" />
-			</bean>			
+		<property name="compressor" ref="cssCompressor">
+						
 		</property>
 	</bean>
 	
@@ -116,11 +114,7 @@
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
-		<constructor-arg>
-			<bean class="org.riotfamily.common.web.performance.YUICssCompressor">
-				<property name="enabled" value="${riot.resources.compress=true}" />
-			</bean>			
-		</constructor-arg>
+		<constructor-arg ref="cssCompressor" />
 		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	

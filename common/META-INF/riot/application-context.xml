@@ -96,6 +96,10 @@
     
     <bean id="resourceStamper" class="org.riotfamily.common.web.performance.ResourceStamper" />
     
+    <bean id="cssCompressor" class="org.riotfamily.common.web.performance.YUICssCompressor">
+		<property name="enabled" value="${riot.resources.compress=true}" />
+	</bean>
+  
     <bean id="javaScriptCompressor" class="org.riotfamily.common.web.performance.YUIJavaScriptCompressor">
     	<property name="enabled" value="${riot.resources.compress=true}" />
     	<property name="linebreak" value="1000" />
