@@ -18,9 +18,9 @@ package org.riotfamily.common.web.performance;
  */
 public class MinifyScriptController extends AbstractMinifyController {
 
-	private YUIJavaScriptCompressor compressor;
+	private Compressor compressor;
 
-	public MinifyScriptController(YUIJavaScriptCompressor compressor) {
+	public MinifyScriptController(Compressor compressor) {
 		this.compressor = compressor;
 	}
 	
