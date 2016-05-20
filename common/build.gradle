@@ -1,12 +1,26 @@
 dependencies {
-	compile project(':cachius'), 
-			libs(['slf4j', 'log4j', 'dom4j',
-			      'spring_orm', 'spring_webmvc', 'spring_context_support',
-			      'commons_fileupload', 'jpa', 'hibernate', 
-			      'freemarker', 'json_lib', 'quartz', 'yuicompressor'])
-	
-	compile libs(['servlet_api', 'javax_mail'])
-	
-	runtime project(':revolt'), lib('c3p0'), libs(['jta', 'hibernate_ehcache', 'ehcache', 'javassist', 'cglib'])
-}
+	compile project(':cachius')
+	compile libraries.slf4j
+	compile libraries.log4j
+	compile libraries.dom4j
+	compile libraries.spring_orm
+	compile libraries.spring_webmvc
+	compile libraries.spring_context_support
+	compile libraries.commons_fileupload
+	compile libraries.jpa
+	compile libraries.hibernate
+	compile libraries.freemarker
+	compile libraries.json_lib
+	compile libraries.quartz
+	compile libraries.yuicompressor
+	compile libraries.servlet_api
+	compile libraries.javax_mail
 
+	runtime project(':revolt')
+	compile libraries.c3p0
+	compile libraries.jta
+	compile libraries.hibernate_ehcache
+	compile libraries.ehcache
+	compile libraries.javassist
+	compile libraries.cglib
+}

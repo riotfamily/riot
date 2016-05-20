@@ -1,3 +1,4 @@
 dependencies {
-	compile project(':core'), project(':crawler')
+	compile project(':core')
+	compile project(':crawler')
 }

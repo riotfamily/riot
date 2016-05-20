@@ -1,5 +1,4 @@
 dependencies {
-	compile lib('slf4j')
-	compile lib('servlet_api')
+	compile libraries.slf4j
+	compile libraries.servlet_api
 }
-

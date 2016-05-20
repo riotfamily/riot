@@ -1,117 +1,88 @@
-libraries = [
-	jpa: 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final',
-	jta: 'javax.transaction:jta:1.1',
-	c3p0: 'com.mchange:c3p0:0.9.5-pre8',
-	slf4j: 'org.slf4j:slf4j-api:1.6.1',
-	slf4j_log4j: 'org.slf4j:slf4j-log4j12:1.6.1',
-	log4j: 'log4j:log4j:1.2.14',	
-	jcl_over_slf4j: 'org.slf4j:jcl-over-slf4j:1.6.1',
-	junit: 'junit:junit:4.8.1',
-	jetty: 'org.mortbay.jetty:jetty:6.1.22',
-	servlet_api: 'javax.servlet:servlet-api:2.5',
-	hibernate: 'org.hibernate:hibernate-core:3.6.0.Final',
-	hibernate_ehcache: 'org.hibernate:hibernate-ehcache:3.6.0.Final',
-	javassist: 'javassist:javassist:3.8.0.GA',
-	cglib: 'cglib:cglib-nodep:2.2',
-	ehcache: 'net.sf.ehcache:ehcache-core:1.7.2',
-	freemarker: 'org.freemarker:freemarker:2.3.18',
-	javax_mail: 'javax.mail:mail:1.4.1',
-	quartz: 'org.opensymphony.quartz:quartz:1.6.6',
-	dom4j: 'dom4j:dom4j:1.6.1',
-	json_lib: 'net.sf.json-lib:json-lib:2.2.3:jdk15',
-	commons_fileupload: 'commons-fileupload:commons-fileupload:1.2.1',
-	commons_io: 'commons-io:commons-io:1.4',
-	httpclient: 'org.apache.httpcomponents:httpclient:4.3.3',
-	xstream: 'com.thoughtworks.xstream:xstream:1.3.1',
-	dwr: 'org.directwebremoting:dwr:3.0.0.161.dev',
-	yuicompressor: 'com.yahoo.platform.yui:yuicompressor:2.4.2',
-	htmlparser: 'org.htmlparser:htmlparser:1.6',
-	hsqldb: 'org.hsqldb:hsqldb:1.8.0.10',
-	apache_poi: 'org.apache.poi:poi:3.5-FINAL'
-] + modules('lucene', 'org.apache.lucene:lucene-$name:2.4.1', 
-		  'core', 'highlighter', 'analyzers', 'snowball') + 
-	modules('spring', 'org.springframework:spring-$name:3.0.5.RELEASE',
-		  'core', 'expression', 'beans', 'aop', 'context', 'context-support',
-		  'tx', 'jdbc', 'orm', 'oxm', 'web', 'webmvc', 'test');
-
-excludes = [
-	[group: 'javax.jms'],
-	[group: 'com.sun.jmx'],
-	[group: 'com.sun.jdmk'],
-	[group: 'org.mortbay.jetty', module: 'servlet-api']
-]
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
-dependsOnChildren()
+
+// Load dependencies
+apply from: 'dependencies.gradle'
+
 
 allprojects {
 	group = 'org.riotfamily'
-	version = '9.2.0'
+	version = '9.3.0'
+
 	repositories {
 		mavenLocal()
-		mavenRepo url: 'http://repository.riotfamily.org/external'
-		mavenRepo url: 'http://repository.riotfamily.org/cache'
+		maven {
+        	url "http://repository.riotfamily.org/external"
+ 	    }
+		maven {
+      	  url "http://repository.riotfamily.org/cache"
+	    }
 	}
-	excludes.each {
-		configurations.all*.exclude it
-	}
-	
+
 	task release
 }
 
 subprojects {
-	
+
 	apply plugin: 'java'
 	apply plugin: 'maven'
-	
+
 	release.dependsOn(uploadArchives)
-	
-	sourceCompatibility = 1.5
-	targetCompatibility = 1.5
-	
+
+	sourceCompatibility = 1.6
+	targetCompatibility = 1.6
+
 	configurations.compile.transitive = true
 	configurations.testCompile.transitive = true
-			
+
 	sourceSets {
 		main {
-			// No separate 'resources' dir - we keep everything under src 
+			// No separate 'resources' dir - we keep everything under src
 			resources.srcDirs = java.srcDirs = ['src']
 		}
 		test {
-			// If the module contains web-tests, there is an extra 'src' 
-			// and a 'webapp' dir under /test. Otherwise the sources are 
+			// If the module contains web-tests, there is an extra 'src'
+			// and a 'webapp' dir under /test. Otherwise the sources are
 			// located directly under /test.
 			resources.srcDirs = java.srcDirs = [file('test/src').exists() ? 'test/src' : 'test']
 		}
 	}
 	
 	// Add META-INF directory
-    metaInf << fileTree('META-INF')
-
-    // Add project-name and version to the manifest 
-    manifest.mainAttributes(
-    		'Implementation-Title': project.name, 
-			'Implementation-Version': project.version,
-			'Implementation-Vendor': 'riotfamily.org'
-	)
-
+	jar {
+		// Add project-name and version to the manifest
+		manifest {
+			attributes 'Implementation-Title': project.name,
+					   'Implementation-Version': project.version,
+					   'Implementation-Vendor': 'riotfamily.org'
+		}
+		
+		metaInf {
+			from fileTree('META-INF')
+		}
+	}
+	
 	// Create source artifacts for Java projects
+
 	if (isJavaProject(project)) {
 		dependencies {
-			testCompile libs(['junit', 'spring_test'])
+			testCompile libraries.junit
+			testCompile libraries.spring_test
 		}
 		task sourceJar(type: Jar) {
-			from sourceSets.main.allSource 
+			from sourceSets.main.allSource
 			classifier = 'sources'
 		}
+		/*
 		artifacts {
 			archives sourceJar {
 				type = 'sources'
 			}
 		}
+		*/
 	}
-	
+
+
 	if (rootProject.hasProperty('artifactory.publish.username') && rootProject.hasProperty('artifactory.publish.password')) {
         uploadArchives {
 			repositories {
@@ -129,18 +100,19 @@ subprojects {
 	}
 }
 
-// The root project uses the Java plugin (allthough it's actually a meta 
+// The root project uses the Java plugin (allthough it's actually a meta
 // project) in order to generate a merged .classpath file for Eclipse.
-// We disable the 'jar' and 'classes' targets so that no 'build' folder 
+// We disable the 'jar' and 'classes' targets so that no 'build' folder
 // gets created.
 
 classes.enabled = false
 jar.enabled = false
 
 eclipse.project.natures << 'org.springframework.ide.eclipse.core.springnature'
+
 eclipse.classpath.file {
 	whenMerged { classpath ->
-		classpath.entries.each { entry -> 
+		classpath.entries.each { entry ->
 			if (entry.kind == 'src') {
 				entry.output = entry.path.replaceAll('(.+?)/.*', '$1/build/eclipse')
 			}
@@ -152,8 +124,11 @@ gradle.taskGraph.whenReady {taskGraph ->
 	if (taskGraph.hasTask(':eclipseClasspath')) {
 		subprojects.each {
 			// Collect source folders
-			project.sourceSets.main.java.srcDirs(it.sourceSets*.java.srcDirs.flatten())
-			
+			it.sourceSets*.java.srcDirs.flatten().each { entry ->
+				project.sourceSets.main.java.srcDirs(entry)
+
+			}
+
 			// Collect all external dependencies from the testRuntime configuration
 			it.configurations.findByName('testRuntime')?.getAllDependencies().withType(ExternalDependency.class).each {
 				project.configurations.compile.getDependencies().add(it)
@@ -167,12 +142,13 @@ gradle.taskGraph.whenReady {taskGraph ->
 	}
 }
 
+
 /**
  * Creates the gradlew wrapper scripts
  */
 task wrapper(type: Wrapper) {
 	jarFile = '.gradlew/gradle-wrapper.jar'
-	gradleVersion = '1.0-milestone-8'
+	gradleVersion = '2.13'
 }
 
 // ---------------------------------------------------------------------------
@@ -181,23 +157,4 @@ task wrapper(type: Wrapper) {
 
 def isJavaProject(Project project) {
 	project?.name != 'jslibs'
-}
-
-def modules(String key, String pattern, String... names) {
-	libs = [:]
-	template = new groovy.text.GStringTemplateEngine().createTemplate(pattern)
-	names.each{ name ->
-		libs[key + '_' + name.replace('-', '_')] = template.make([name: name]).toString()
-	}
-	libs
-}
-
-def lib(String name) {
-	dep = libraries[name]
-	assert dep != null, "No such library: ${name}"
-	dep
-}
-
-def libs(Collection names) {
-	names.collect{ lib(it.toString()) }
 }
