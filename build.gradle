@@ -71,17 +71,15 @@ subprojects {
 			testCompile libraries.junit
 			testCompile libraries.spring_test
 		}
+		
 		task sourceJar(type: Jar) {
 			from sourceSets.main.allSource
 			classifier = 'sources'
 		}
-		/*
 		artifacts {
-			archives sourceJar {
-				type = 'sources'
-			}
+			archives sourceJar
 		}
-		*/
+		
 	}
 
 
@@ -144,6 +142,9 @@ gradle.taskGraph.whenReady {taskGraph ->
 	}
 }
 
+task deployArchives {
+    dependsOn { subprojects.uploadArchives }
+}
 
 /**
  * Creates the gradlew wrapper scripts
