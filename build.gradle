@@ -1,6 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+sourceCompatibility = 1.6
+
 // Load dependencies
 apply from: 'dependencies.gradle'
 
