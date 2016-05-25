@@ -22,7 +22,7 @@ ext {
       json_lib: 'net.sf.json-lib:json-lib:2.2.3:jdk15',
       commons_fileupload: 'commons-fileupload:commons-fileupload:1.2.2',
       commons_io: 'commons-io:commons-io:1.4',
-      httpclient: 'org.apache.httpcomponents:httpclient:4.3.6',
+      httpclient: 'org.apache.httpcomponents:httpclient:4.5.2',
       xstream: 'com.thoughtworks.xstream:xstream:1.4.8',
       dwr: 'org.directwebremoting:dwr:3.0.1-RELEASE',
       yuicompressor: 'com.yahoo.platform.yui:yuicompressor:2.4.8',
