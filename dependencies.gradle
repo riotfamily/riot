@@ -9,7 +9,7 @@ ext {
       log4j: 'log4j:log4j:1.2.17',
       junit: 'junit:junit:4.12',
       jetty: 'org.mortbay.jetty:jetty:6.1.26',
-      servlet_api: 'javax.servlet:servlet-api:2.5',
+      servlet_api: 'javax.servlet:javax.servlet-api:3.0.1',
       hibernate: 'org.hibernate:hibernate-core:3.6.10.Final',
       hibernate_ehcache: 'org.hibernate:hibernate-ehcache:3.6.10.Final',
       javassist: 'org.javassist:javassist:3.20.0-GA',

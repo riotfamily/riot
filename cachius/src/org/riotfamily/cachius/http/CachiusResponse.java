@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
@@ -146,6 +147,18 @@ public class CachiusResponse implements HttpServletResponse {
     public void setHeader(String name, String value) {
     	data.getHeaders().set(name, value);
     }
+    
+    public String getHeader(String name) {
+    	return data.getHeaders().getStringValue(name);
+    }
+    
+	public Collection<String> getHeaders(String name) {
+		return data.getHeaders().getStringValues(name);
+	}
+
+	public Collection<String> getHeaderNames() {
+		return data.getHeaders().getNames();
+	}
 
     public void addCookie(Cookie cookie) {
     	if (sessionIdEncoder.isSessionIdCookie(cookie)) {
