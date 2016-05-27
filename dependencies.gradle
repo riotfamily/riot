@@ -26,7 +26,7 @@ ext {
       xstream: 'com.thoughtworks.xstream:xstream:1.4.8',
       dwr: 'org.directwebremoting:dwr:3.0.1-RELEASE',
       yuicompressor: 'com.yahoo.platform.yui:yuicompressor:2.4.8',
-      htmlparser: 'org.htmlparser:htmlparser:1.6',
+      htmlparser: 'org.htmlparser:htmlparser:2.1',
       hsqldb: 'org.hsqldb:hsqldb:1.8.0.10',
       apache_poi: 'org.apache.poi:poi:3.14',
       spring_core : 'org.springframework:spring-core:3.2.17.RELEASE',
