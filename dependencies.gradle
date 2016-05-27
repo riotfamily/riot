@@ -19,7 +19,7 @@ ext {
       javax_mail: 'javax.mail:mail:1.4.7',
       quartz: 'org.opensymphony.quartz:quartz:1.6.6',
       dom4j: 'dom4j:dom4j:1.6.1',
-      json_lib: 'net.sf.json-lib:json-lib:2.2.3:jdk15',
+      json_lib: 'net.sf.json-lib:json-lib:2.4:jdk15',
       commons_fileupload: 'commons-fileupload:commons-fileupload:1.2.2',
       commons_io: 'commons-io:commons-io:1.4',
       httpclient: 'org.apache.httpcomponents:httpclient:4.5.2',
