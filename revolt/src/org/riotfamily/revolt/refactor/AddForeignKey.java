@@ -16,7 +16,7 @@ import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.ForeignKey;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -44,7 +44,7 @@ public class AddForeignKey implements Refactoring {
 		this.foreignKey = foreignKey;
 	}
 
-	public Script getScript(Dialect dialect, SimpleJdbcTemplate template) {
+	public Script getScript(Dialect dialect, JdbcTemplate template) {
 		return dialect.addForeignKey(table, foreignKey);
 	}
 

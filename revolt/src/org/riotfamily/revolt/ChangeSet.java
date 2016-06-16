@@ -14,7 +14,7 @@ package org.riotfamily.revolt;
 
 import java.util.List;
 
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -56,7 +56,7 @@ public class ChangeSet implements Refactoring {
 		this.sequenceNumber = sequenceNumber;
 	}
 
-	public Script getScript(Dialect dialect, SimpleJdbcTemplate template) {
+	public Script getScript(Dialect dialect, JdbcTemplate template) {
 		try {
 			Script script = new Script();
 			for (Refactoring refactoring : refactorings) {

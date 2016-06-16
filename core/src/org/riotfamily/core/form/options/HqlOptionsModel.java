@@ -17,14 +17,15 @@ import java.util.Collection;
 import org.hibernate.SessionFactory;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.options.OptionsModel;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-public class HqlOptionsModel extends HibernateDaoSupport implements OptionsModel {
+public class HqlOptionsModel implements OptionsModel {
 
+	private SessionFactory sessionFactory;
+	
 	private String hql;
 	
 	public HqlOptionsModel(SessionFactory sessionFactory) {
-		setSessionFactory(sessionFactory);
+		this.sessionFactory = sessionFactory;
 	}
 	
 	public void setHql(String hql) {
@@ -32,7 +33,7 @@ public class HqlOptionsModel extends HibernateDaoSupport implements OptionsModel
 	}
 
 	public Collection<?> getOptionValues(Element element) {
-		return getSession().createQuery(hql).list();
+		return sessionFactory.getCurrentSession().createQuery(hql).list();
 	}
 
 }

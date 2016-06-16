@@ -20,13 +20,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.criterion.Restrictions;
@@ -124,7 +124,7 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 
 	@OneToMany(cascade=CascadeType.ALL)
     @JoinColumn(name="entry_id")
-	@MapKey(columns={@Column(name="locale")})
+	@MapKeyColumn(name="locale")
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="messages")
 	public Map<Locale, Message> getMessages() {
 		return messages;
@@ -171,13 +171,8 @@ public class MessageBundleEntry extends ActiveRecordBeanSupport {
 	// ------------------------------------------------------------------------
 
 	public static MessageBundleEntry loadByBundleAndCode(String bundle, String code) {
-		return (MessageBundleEntry) getSession().createCriteria(MessageBundleEntry.class)
-			.setCacheable(true)
-			.setCacheRegion("messages")
-			.add(Restrictions.naturalId()
-				.set("bundle", bundle)
-				.set("code", code))
-				.uniqueResult();
+		return (MessageBundleEntry) getSession().byNaturalId(MessageBundleEntry.class).using("bundle", bundle)
+				.using("code", code).load();
 	}
 	
 	public static MessageBundleEntry load(Long id) {

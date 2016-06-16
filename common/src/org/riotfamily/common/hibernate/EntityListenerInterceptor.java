@@ -25,13 +25,13 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.collection.PersistentCollection;
+import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.type.Type;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Hibernate {@link Interceptor} that scans the ApplicationContext for beans
@@ -53,12 +53,9 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	
 	private static ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
 
-	private ThreadBoundHibernateTemplate template;
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-		template = new ThreadBoundHibernateTemplate(sessionFactory);
-		template.setAlwaysUseNewSession(true);
 	}
 
 	public void setApplicationContext(ApplicationContext context) {
@@ -151,29 +148,23 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	}
 		
 	@Override
-	@SuppressWarnings("unchecked")
+	@Transactional
 	public void postFlush(Iterator entities) {
 		final Interceptions i = getInterceptions();
 		if (!i.isEmpty()) {
 			interceptions.set(i.nested());
 			try {
-				template.execute(new HibernateCallbackWithoutResult() {
-					@Override
-					public void doWithoutResult(Session session) throws Exception {
-						for (Object entity : i.getSavedEntities()) {
-							for (EntityListener listener : getListeners(entity)) {
-								listener.onSave(entity, session);
-							}	
-						}
-						for (Update update : i.getUpdates()) {
-							Object newState = update.getEntity();
-							for (EntityListener listener : getListeners(newState)) {
-								listener.onUpdate(newState, update.getOldState(), session);
-							}	
-						}
-						session.flush();
-					}
-				});
+				for (Object entity : i.getSavedEntities()) {
+					for (EntityListener listener : getListeners(entity)) {
+						listener.onSave(entity, sessionFactory.getCurrentSession());
+					}	
+				}
+				for (Update update : i.getUpdates()) {
+					Object newState = update.getEntity();
+					for (EntityListener listener : getListeners(newState)) {
+						listener.onUpdate(newState, update.getOldState(), sessionFactory.getCurrentSession());
+					}	
+				}
 				sessionFactory.getCurrentSession().flush();
 			}
 			catch (Exception e) {
@@ -188,15 +179,6 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	@Override
 	public void afterTransactionCompletion(Transaction tx) {
 		interceptions.remove();
-	}
-			
-	/**
-	 * Interceptor that does nothing. This implementation is used with the
-	 * temporary session created in {@link #postFlush(Iterator)} to prevent
-	 * endless recursions. 
-	 */
-	private static class NoOpInterceptor extends EmptyInterceptor {
-		static NoOpInterceptor INSTANCE = new NoOpInterceptor();
 	}
 	
 	private static class Interceptions {
@@ -214,7 +196,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		
 		public Interceptions(SessionFactory sessionFactory, Set<Object> ignore) {
-			oldStateSession = SessionFactoryUtils.getNewSession(sessionFactory, NoOpInterceptor.INSTANCE);
+			oldStateSession = sessionFactory.withOptions().noInterceptor().openSession();
 			this.ignore = ignore;
 		}
 		

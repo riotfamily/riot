@@ -484,5 +484,12 @@ public class TypedQuery<T> implements Query {
 		query.setLockOptions(lockOptions);
 		return this;
 	}
+
+	@Override
+	public LockOptions getLockOptions() {
+		return query.getLockOptions();
+	}
+
+	
 	
 }

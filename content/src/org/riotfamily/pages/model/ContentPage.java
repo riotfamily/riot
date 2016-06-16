@@ -341,13 +341,13 @@ public class ContentPage extends ContentEntity implements Page, Lifecycle {
 	
 	public static ContentPage loadBySiteAndPath(Site site, String path) {
 		return query(ContentPage.class, 
-				"from {} where site = ? and path = ?", site, path)
+				"from {} where site = ?1 and path = ?2", site, path)
 				.cache().load();
 	}
 	
 	public static ContentPage loadByTypeAndSite(String pageType, Site site) {
 		return query(ContentPage.class, 
-				"from {} where pageType = ? and site = ?", pageType, site)
+				"from {} where pageType = ?1 and site = ?2", pageType, site)
 				.cache().load();
 	}
 

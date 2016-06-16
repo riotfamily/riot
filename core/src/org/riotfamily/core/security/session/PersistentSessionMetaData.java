@@ -116,7 +116,7 @@ public class PersistentSessionMetaData extends ActiveRecord
 	
 	public static PersistentSessionMetaData loadByUser(RiotUser user) {
 		return query(PersistentSessionMetaData.class,
-				"from {} where userId = ?", user.getUserId())
+				"from {} where userId = ?1", user.getUserId())
 				.load();
 	}
 	
