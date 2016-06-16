@@ -28,7 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -93,7 +93,7 @@ public class RevoltDataSourceFactoryBean implements FactoryBean<DataSource>,
 	public void afterPropertiesSet() throws Exception {
 		if (!evolutions.isEmpty()) {
 			Dialect dialect = new DialectResolver().getDialect(dataSource);
-			SimpleJdbcTemplate template = new SimpleJdbcTemplate(dataSource);
+			JdbcTemplate template = new JdbcTemplate(dataSource);
 			LogTable logTable = new LogTable(template, dialect);
 			if (!logTable.exists()) {
 				log.info("Revolt log-table does not exist.");

@@ -12,7 +12,7 @@
  */
 package org.riotfamily.revolt;
 
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 
 
@@ -22,6 +22,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  */
 public interface Refactoring {
 
-	public Script getScript(Dialect dialect, SimpleJdbcTemplate template) throws Exception;
+	public Script getScript(Dialect dialect, JdbcTemplate template) throws Exception;
 
 }
