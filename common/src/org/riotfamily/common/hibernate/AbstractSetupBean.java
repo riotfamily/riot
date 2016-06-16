@@ -23,6 +23,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 public abstract class AbstractSetupBean implements ApplicationContextAware, InitializingBean {
@@ -66,21 +67,17 @@ public abstract class AbstractSetupBean implements ApplicationContextAware, Init
 		}
 	}
 	
+	@Transactional
 	private void performSetup() throws Exception {
-		new ThreadBoundHibernateTemplate(sessionFactory).execute(new HibernateCallbackWithoutResult() {
-			@Override
-			public void doWithoutResult(Session session) throws Exception {
-				TransactionStatus status = tx.getTransaction(txdef);
-				try {
-					setup(session);
-				}
-				catch (Exception e) {
-					tx.rollback(status);
-					throw e;
-				}
-				tx.commit(status);
-			}
-		});
+		TransactionStatus status = tx.getTransaction(txdef);
+		try {
+			setup(sessionFactory.getCurrentSession());
+		}
+		catch (Exception e) {
+			tx.rollback(status);
+			throw e;
+		}
+		tx.commit(status);
 	}
 	
 	protected abstract void setup(Session session) throws Exception;

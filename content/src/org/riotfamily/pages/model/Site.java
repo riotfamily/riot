@@ -17,9 +17,12 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -27,7 +30,6 @@ import javax.persistence.Transient;
 import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
@@ -173,7 +175,9 @@ public class Site extends ActiveRecordBeanSupport {
 		this.position = position;
 	}
 	
-	@CollectionOfElements
+	@ElementCollection
+	@CollectionTable(name="riot_sites_aliases", joinColumns = {@JoinColumn(name="riot_sites_id")})
+	@Column(name="element")
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<String> getAliases() {
 		return this.aliases;

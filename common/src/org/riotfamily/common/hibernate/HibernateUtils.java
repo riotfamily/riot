@@ -14,12 +14,12 @@ package org.riotfamily.common.hibernate;
 
 import java.io.Serializable;
 
-import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.beans.property.PropertyUtils;
 import org.springframework.beans.PropertyAccessorUtils;
@@ -53,7 +53,7 @@ public final class HibernateUtils {
 	public static Serializable getId(SessionFactory sessionFactory, Object bean) {
 		Class<?> clazz = Hibernate.getClass(bean);
 		ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
-		return metadata.getIdentifier(bean, EntityMode.POJO);
+		return metadata.getIdentifier(bean, (SessionImplementor) sessionFactory.getCurrentSession());
 	}
 	
 	public static Serializable getIdAndSaveIfNecessary(SessionFactory sessionFactory, Object bean) {

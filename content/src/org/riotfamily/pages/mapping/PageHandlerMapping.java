@@ -23,7 +23,7 @@ import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.view.PageFacade;
-import org.springframework.orm.hibernate3.HibernateSystemException;
+import org.springframework.orm.hibernate4.HibernateSystemException;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.util.WebUtils;
 

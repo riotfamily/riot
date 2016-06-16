@@ -12,18 +12,17 @@
  */
 package org.riotfamily.common.scheduling;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.riotfamily.common.hibernate.HibernateCallbackWithoutResult;
-import org.riotfamily.common.hibernate.ThreadBoundHibernateTemplate;
 import org.springframework.core.Ordered;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Scheduled task that executes code within a Hibernate session.
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public abstract class HibernateTask extends HibernateCallbackWithoutResult 
-		implements ScheduledTask, Ordered {
+public abstract class HibernateTask implements ScheduledTask, Ordered {
 
 	private String[] triggerNames;
 	
@@ -31,11 +30,8 @@ public abstract class HibernateTask extends HibernateCallbackWithoutResult
 	
 	private SessionFactory sessionFactory;
 	
-	private ThreadBoundHibernateTemplate hibernateTemplate;
-	
 	public HibernateTask(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-		this.hibernateTemplate = new ThreadBoundHibernateTemplate(sessionFactory);
 	}
 	
 	protected SessionFactory getSessionFactory() {
@@ -58,8 +54,11 @@ public abstract class HibernateTask extends HibernateCallbackWithoutResult
 		this.order = order;
 	}
 
-	public void execute() throws Exception {
-		hibernateTemplate.execute(this);
+	@Transactional
+	public void execute() throws Exception {		
+		doWithoutResult(sessionFactory.getCurrentSession());
 	}
-		
+
+	protected abstract void doWithoutResult(Session session) throws Exception;
+	
 }

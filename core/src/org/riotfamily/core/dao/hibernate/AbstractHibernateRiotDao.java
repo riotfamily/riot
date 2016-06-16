@@ -15,19 +15,29 @@ package org.riotfamily.core.dao.hibernate;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.hibernate.HibernateUtils;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.core.dao.Sortable;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.dao.support.DaoSupport;
 
-public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport 
-		implements RiotDao, Sortable {
+public abstract class AbstractHibernateRiotDao extends DaoSupport implements RiotDao, Sortable {
 
+	private SessionFactory sessionFactory;
+	
 	public AbstractHibernateRiotDao(SessionFactory sessionFactory) {
-		setSessionFactory(sessionFactory);
+		this.sessionFactory = sessionFactory;
+	}
+	
+	protected SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	
+	protected Session getSession() {
+		return sessionFactory.getCurrentSession();
 	}
 	
 	public String getObjectId(Object entity) {
@@ -65,6 +75,13 @@ public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport
 	
 	public void delete(Object entity, Object parent) throws DataAccessException {
 		getSession().delete(entity);
+	}
+	
+	@Override
+	protected void checkDaoConfig() throws IllegalArgumentException {
+		if (this.sessionFactory == null) {
+			throw new IllegalArgumentException("'sessionFactory' is required");
+		}
 	}
 	
 }

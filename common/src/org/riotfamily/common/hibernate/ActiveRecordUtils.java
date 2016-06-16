@@ -17,6 +17,7 @@ import java.io.Serializable;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.metadata.ClassMetadata;
 
 public final class ActiveRecordUtils {
@@ -36,7 +37,7 @@ public final class ActiveRecordUtils {
 			return "N/A";
 		}
 		return sessionFactory.getClassMetadata(getClass(record))
-				.getIdentifier(record, EntityMode.POJO);
+				.getIdentifier(record, (SessionImplementor) sessionFactory.getCurrentSession());
 	}
 	
 	/**

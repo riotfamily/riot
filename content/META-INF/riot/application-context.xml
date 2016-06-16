@@ -52,9 +52,9 @@
 		</description>
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+	 
 	<override:add ref="sessionFactory" property="filterDefinitions">
-		<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
+		<bean class="org.riotfamily.common.hibernate.FilterDefinitionFactoryBean">
 			<property name="filterName" value="contentIndex" />
 			<property name="defaultFilterCondition" value="live = :live" />
 			<property name="parameterTypes">
@@ -63,7 +63,7 @@
 				</props>
 			</property>
 		</bean>
-		<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
+		<bean class="org.riotfamily.common.hibernate.FilterDefinitionFactoryBean">
 			<property name="filterName" value="publishedContent" />
 			<property name="defaultFilterCondition" value="0 = (select count(*) from riot_content_containers c where c.id = contentcontainer_id and c.live_version is null)" />
 		</bean> 

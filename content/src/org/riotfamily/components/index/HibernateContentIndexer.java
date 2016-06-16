@@ -12,19 +12,18 @@
  */
 package org.riotfamily.components.index;
 
-import static org.hibernate.EntityMode.POJO;
-
 import java.util.Map;
 
 import org.hibernate.Hibernate;
+import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Filter;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -37,24 +36,29 @@ import org.springframework.util.StringUtils;
  * </p>
  * @see ContentIndex
  */
-public class HibernateContentIndexer extends HibernateDaoSupport 
-		implements ContentIndexer {
+public class HibernateContentIndexer implements ContentIndexer {
 
 	private Logger log = LoggerFactory.getLogger(HibernateContentIndexer.class);
+
+	private SessionFactory sessionFactory;
+	
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 	
 	private Map<String, ClassMetadata> metaDataMap = Generics.newHashMap();
 	
 	public void contentCreated(Content content) {
 		Object index = createIndex(content);
 		if (index != null) {
-			getSession().save(index);
+			sessionFactory.getCurrentSession().save(index);
 		}
 	}
 
 	public void contentDeleted(Content content) {
 		Object index = loadIndexByContent(content);
 		if (index != null) {
-			getSession().delete(index);
+			sessionFactory.getCurrentSession().delete(index);
 		}
 	}
 
@@ -71,9 +75,9 @@ public class HibernateContentIndexer extends HibernateDaoSupport
 				String ownerClassName = Hibernate.getClass(owner).getName();
 				ClassMetadata meta = getIndexClassMetadata(ownerClassName);
 				if (meta != null) {
-					ContentIndex index = (ContentIndex) meta.instantiate(content.getId(), POJO);
+					ContentIndex index = (ContentIndex) meta.instantiate(content.getId(), (SessionImplementor) sessionFactory.getCurrentSession());
 					String ownerProperty = StringUtils.uncapitalize(StringUtils.unqualify(ownerClassName));
-					meta.setPropertyValue(index, ownerProperty, owner, POJO);
+					meta.setPropertyValue(index, ownerProperty, owner);
 					index.setContent(content);					
 					return index;
 				}
@@ -87,9 +91,9 @@ public class HibernateContentIndexer extends HibernateDaoSupport
 			return metaDataMap.get(ownerClassName);
 		}
 		String indexClassName = ownerClassName  + "ContentIndex";
-		ClassMetadata meta = getSessionFactory().getClassMetadata(indexClassName);
+		ClassMetadata meta = sessionFactory.getClassMetadata(indexClassName);
 		if (meta != null) {
-			Class<?> indexClass = meta.getMappedClass(POJO);
+			Class<?> indexClass = meta.getMappedClass();
 			if (ContentIndex.class.isAssignableFrom(indexClass)) {
 				Filter filter = indexClass.getAnnotation(Filter.class);
 				Assert.isTrue(filter != null && filter.name().equals("contentIndex"),
@@ -114,7 +118,7 @@ public class HibernateContentIndexer extends HibernateDaoSupport
 				String ownerClassName = Hibernate.getClass(owner).getName();
 				ClassMetadata meta = getIndexClassMetadata(ownerClassName);
 				if (meta != null) {
-					return getSession().get(meta.getEntityName(), content.getId());
+					return sessionFactory.getCurrentSession().get(meta.getEntityName(), content.getId());
 				}
 			}
 		}

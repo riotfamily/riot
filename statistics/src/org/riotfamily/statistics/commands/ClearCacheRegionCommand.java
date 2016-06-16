@@ -14,11 +14,11 @@ package org.riotfamily.statistics.commands;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.cache.entry.CacheEntry;
+import org.hibernate.cache.spi.entry.CacheEntry;
 import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.screen.list.command.CommandContext;
