@@ -176,7 +176,7 @@ public class ContentContainer extends ActiveRecordBeanSupport {
 	
 	public static ContentContainer loadByContent(Content content) {
 		return query(ContentContainer.class,
-				"from {} where previewVersion = ? or liveVersion = ?", 
+				"from {} where previewVersion = ?1 or liveVersion = ?2", 
 				content, content).load();
 	}
 

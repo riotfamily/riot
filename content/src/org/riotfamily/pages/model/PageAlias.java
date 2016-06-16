@@ -91,13 +91,13 @@ public class PageAlias extends ActiveRecordBeanSupport {
 	
 	public static PageAlias loadBySiteAndPath(Site site, String path) {
 		return query(PageAlias.class,
-				"from {} where site = ? and path = ?", site, path)
+				"from {} where site = ?1 and path = ?2", site, path)
 				.cache().load();
 	}
 
 	private static void deleteBySiteAndPath(Site site, String path) {
 		query(PageAlias.class, 
-				"delete from {} where site = ? and path = ?", site, path)
+				"delete from {} where site = ?1 and path = ?2", site, path)
 				.executeUpdate();
 	}
 	
@@ -111,7 +111,7 @@ public class PageAlias extends ActiveRecordBeanSupport {
 	}
 	
 	public static void resetByPage(ContentPage page) {
-		query(PageAlias.class, "update {} set page = null where page = ?", page)
+		query(PageAlias.class, "update {} set page = null where page = ?1", page)
 				.executeUpdate();
 	}
 	

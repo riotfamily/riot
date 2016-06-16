@@ -313,7 +313,7 @@ public class Site extends ActiveRecordBeanSupport {
 	}
 	
 	public static Site loadByLocale(Locale locale) {
-		return query(Site.class, "from {} where locale = ?", locale).load();
+		return query(Site.class, "from {} where locale = ?1", locale).load();
 	}
 	
 	public static List<Site> findAll() {
@@ -321,7 +321,7 @@ public class Site extends ActiveRecordBeanSupport {
 	}
 	
 	public static List<Site> findBySchema(SitemapSchema schema) {
-		return query(Site.class, "from {} where schemaName = ?", schema.getName()).find();
+		return query(Site.class, "from {} where schemaName = ?1", schema.getName()).find();
 	}
 	
 	public static Site loadByHostName(String hostName) {
