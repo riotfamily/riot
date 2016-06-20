@@ -23,7 +23,6 @@
 			Configurer that fills in placeholders from application.properties
 		</description>
 		<property name="ignoreResourceNotFound" value="true" />
-		<property name="contextOverride" value="true" />
 	</bean>
 	
 	<bean id="fileTypeMap" class="org.riotfamily.common.io.MimetypesFileTypeMapFactoryBean">
@@ -81,7 +80,7 @@
 	
 	<!--  Scheduling -->
 	
-	<bean id="startupTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	<bean id="startupTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<description>
 			Quartz trigger that fires at startup.
 		</description>
@@ -90,7 +89,7 @@
 		<property name="startDelay" value="0" />
 	</bean>
 	
-	<bean id="minutelyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="minutelyTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<description>
 			Quartz trigger that fires every minute.
 		</description>
@@ -98,7 +97,7 @@
 		<property name="cronExpression" value="0 * * * * ?" />
 	</bean>
 	
-	<bean id="dailyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="dailyTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<description>
 			Quartz trigger that fires once a day at 3:00 AM.
 		</description>
@@ -106,7 +105,7 @@
 		<property name="cronExpression" value="0 0 3 * * ?" />
 	</bean>
 	
-	<bean id="hourlyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="hourlyTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<description>
 			Quartz trigger that fires every hour.
 		</description>

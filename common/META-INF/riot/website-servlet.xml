@@ -28,7 +28,6 @@
 			Configurer that fills in placeholders from application.properties
 		</description>
 		<property name="ignoreResourceNotFound" value="true" />
-		<property name="contextOverride" value="true" />
 	</bean>
 	
 	<bean class="org.riotfamily.common.web.filter.PluginFilterInitializer">

@@ -24,7 +24,7 @@ import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.Table;
 import org.riotfamily.revolt.refactor.InsertData;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -63,7 +63,7 @@ public class LogTable {
 		}
 		return template.query("select change_set_id from " 
 				+ TABLE_NAME + " where module = ? order by seq_nr asc", 
-				new ParameterizedRowMapper<String>() {
+				new  SingleColumnRowMapper<String>() {
 					public String mapRow(ResultSet rs, int rowNumber) throws SQLException {
 						return rs.getString(1);
 					}

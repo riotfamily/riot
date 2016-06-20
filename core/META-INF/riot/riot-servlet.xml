@@ -33,7 +33,6 @@
 	
 	<bean id="configurer" class="org.riotfamily.common.beans.config.ProfileConfigurer">
 		<property name="ignoreResourceNotFound" value="true" />
-		<property name="contextOverride" value="true" />
 	</bean>
 	
 	<bean class="org.riotfamily.common.web.mvc.servlet.ReloadableDispatcherServletConfig">
