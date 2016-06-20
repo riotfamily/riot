@@ -17,12 +17,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.quartz.Job;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.StatefulJob;
 import org.quartz.Trigger;
+import org.quartz.impl.triggers.AbstractTrigger;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 import org.riotfamily.common.util.Generics;
@@ -32,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.quartz.JobDetailBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
@@ -66,8 +67,9 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 				triggerNames.add(name);
 			}
 		}
-		for (Trigger trigger : SpringUtils.listBeansOfType(ctx, Trigger.class)) {
-			if (triggerNames.contains(trigger.getName())) {
+		for (Trigger trigger : SpringUtils.listBeansOfTypeIncludingAncestors(ctx, Trigger.class)) {
+			AbstractTrigger abstractTrigger = (AbstractTrigger) trigger;
+			if (triggerNames.contains(abstractTrigger.getName())) {
 				triggers.add(trigger);
 			}
 		}
@@ -93,10 +95,9 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 	protected void registerJobsAndTriggers() {
 		for (Trigger trigger : triggers) {
 			try {
-				JobDetailBean job = new JobDetailBean();
-				job.setName(trigger.getName());
-				job.setJobClass(ScheduledTaskQueueJob.class);
-				getScheduler().scheduleJob(job, trigger);
+				AbstractTrigger abstractTrigger = (AbstractTrigger) trigger;
+				JobBuilder job = JobBuilder.newJob(ScheduledTaskQueueJob.class).withIdentity(abstractTrigger.getName());
+				getScheduler().scheduleJob(job.build(), trigger);
 			} 
 			catch (SchedulerException e) {
 				log.error("Error adding Trigger", e);
@@ -122,14 +123,15 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean
 			}
 		}
 		
-		public Job newJob(TriggerFiredBundle tfb) throws SchedulerException {
-			String triggerName = tfb.getTrigger().getName();
+		@Override
+		public Job newJob(TriggerFiredBundle bundle, Scheduler scheduler) throws SchedulerException {
+			String triggerName = ((AbstractTrigger) bundle.getTrigger()).getName();
 			return jobs.get(triggerName);
 		}
 		
 	}
 	
-	public static class ScheduledTaskQueueJob implements StatefulJob {
+	public static class ScheduledTaskQueueJob implements Job {
 		
 		private Logger log = LoggerFactory.getLogger(ScheduledTaskQueueJob.class);
 		
