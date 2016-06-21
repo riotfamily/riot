@@ -96,7 +96,7 @@ public class FormScreen extends AjaxFormController
 		}
 		else if (request.getParameter("formId") != null) {
 			String formId = request.getParameter("formId");
-			if (formId.contains(formId)) {
+			if (Arrays.asList(formIds).contains(formId)) {
 				return formId;
 			}
 		}

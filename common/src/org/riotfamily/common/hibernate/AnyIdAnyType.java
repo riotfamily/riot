@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Transient;
 
@@ -35,6 +36,7 @@ import org.hibernate.MappingException;
 import org.hibernate.TransientObjectException;
 import org.hibernate.engine.internal.ForeignKeys;
 import org.hibernate.engine.spi.CascadeStyle;
+import org.hibernate.engine.spi.CascadeStyles;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -303,7 +305,7 @@ public class AnyIdAnyType extends AbstractType implements
 		}
 	}
 	public CascadeStyle getCascadeStyle(int i) {
-		return CascadeStyle.NONE;
+		return CascadeStyles.NONE;
 	}
 
 	public FetchMode getFetchMode(int i) {
@@ -400,11 +402,6 @@ public class AnyIdAnyType extends AbstractType implements
 		return null;
 	}
 
-	public String getOnCondition(String alias, SessionFactoryImplementor factory, Map enabledFilters)
-	throws MappingException {
-		throw new UnsupportedOperationException();
-	}
-	
 	public boolean isReferenceToPrimaryKey() {
 		return true;
 	}
@@ -478,5 +475,19 @@ public class AnyIdAnyType extends AbstractType implements
       }
       return names;
    }
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public String getOnCondition(String alias, SessionFactoryImplementor factory, Map enabledFilters,
+			Set<String> treatAsDeclarations) {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public String getOnCondition(String alias, SessionFactoryImplementor factory, Map enabledFilters)
+			throws MappingException {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
 		
 }

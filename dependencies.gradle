@@ -1,6 +1,6 @@
 ext {
   libraries = [
-      jpa: 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
+      jpa: 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final',
       jta: 'javax.transaction:jta:1.1',
       c3p0: 'com.mchange:c3p0:0.9.5.2',
       slf4j: 'org.slf4j:slf4j-api:1.7.21',
@@ -10,8 +10,8 @@ ext {
       junit: 'junit:junit:4.12',
       jetty: 'org.mortbay.jetty:jetty:6.1.26',
       servlet_api: 'javax.servlet:javax.servlet-api:3.0.1',
-      hibernate: 'org.hibernate:hibernate-core:4.2.21.Final',
-      hibernate_ehcache: 'org.hibernate:hibernate-ehcache:4.2.11.Final',
+      hibernate: 'org.hibernate:hibernate-core:4.3.11.Final',
+      hibernate_ehcache: 'org.hibernate:hibernate-ehcache:4.3.11.Final',
       javassist: 'org.javassist:javassist:3.20.0-GA',
       cglib: 'cglib:cglib-nodep:2.2.2',
       ehcache: 'net.sf.ehcache:ehcache-core:2.4.3',

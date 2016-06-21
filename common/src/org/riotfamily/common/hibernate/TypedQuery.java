@@ -109,6 +109,7 @@ public class TypedQuery<T> implements Query {
 	// Plain delegate methods
 	// -----------------------------------------------------------------------
 	
+	@Override
 	public int executeUpdate() throws HibernateException {
 		return query.executeUpdate();
 	}
@@ -490,6 +491,58 @@ public class TypedQuery<T> implements Query {
 		return query.getLockOptions();
 	}
 
+	@Override
+	public FlushMode getFlushMode() {
+		return query.getFlushMode();
+	}
+
+	@Override
+	public CacheMode getCacheMode() {
+		return query.getCacheMode();
+	}
+
+	@Override
+	public boolean isCacheable() {
+		return query.isCacheable();
+	}
+
+	@Override
+	public String getCacheRegion() {
+		return query.getCacheRegion();
+	}
+
+	@Override
+	public Integer getTimeout() {
+		return query.getTimeout();
+	}
+
+	@Override
+	public Integer getFetchSize() {
+		return query.getFetchSize();
+	}
+
+	@Override
+	public Integer getMaxResults() {
+		return query.getMaxResults();
+	}
+
+	@Override
+	public Integer getFirstResult() {
+		return query.getFirstResult();
+	}
+
+	@Override
+	public String getComment() {
+		return query.getComment();
+	}
+
+	@Override
+	public TypedQuery<T> addQueryHint(String hint) {
+		query.addQueryHint(hint);
+		return this;
+	}
+
+	
 	
 	
 }
