@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-4.3.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.1.xsd">
+		http://www.riotfamily.org/schema/common/override-9.3.xsd">
 
 	<!-- JDBC DataSource pooled by C3P0 -->
 	<bean id="c3p0" class="com.mchange.v2.c3p0.ComboPooledDataSource">

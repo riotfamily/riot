@@ -11,9 +11,9 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		http://www.riotfamily.org/schema/core/screen
-		http://www.riotfamily.org/schema/core/screen-9.1.xsd
+		http://www.riotfamily.org/schema/core/screen-9.3.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.1.xsd">
+		http://www.riotfamily.org/schema/common/override-9.3.xsd">
 
 	<bean id="requestTimestampRenderer" class="org.riotfamily.common.ui.DateRenderer">
 		<property name="pattern" value="dd.MM.yy HH:mm:ss" />

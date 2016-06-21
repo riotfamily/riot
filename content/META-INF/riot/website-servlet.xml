@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-4.3.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.1.xsd">
+		http://www.riotfamily.org/schema/common/override-9.3.xsd">
 
 	<override:put ref="freemarkerConfig" property="macroLibraries">
 		<entry key="inplace" value="classpath:org/riotfamily/components/view/inplace.ftl" />

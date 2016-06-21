@@ -11,9 +11,9 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd
 		http://www.riotfamily.org/schema/core/screen
-		http://www.riotfamily.org/schema/core/screen-9.1.xsd
+		http://www.riotfamily.org/schema/core/screen-9.3.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.1.xsd
+		http://www.riotfamily.org/schema/common/override-9.3.xsd
 		http://www.directwebremoting.org/schema/spring-dwr
     	http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
 	
