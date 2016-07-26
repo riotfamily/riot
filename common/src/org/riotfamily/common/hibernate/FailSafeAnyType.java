@@ -27,6 +27,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.cache.spi.CacheKey;
@@ -35,6 +36,8 @@ import org.hibernate.engine.jdbc.spi.JdbcConnectionAccess;
 import org.hibernate.engine.query.spi.sql.NativeSQLQuerySpecification;
 import org.hibernate.engine.spi.EntityKey;
 import org.hibernate.engine.spi.LoadQueryInfluencers;
+import org.hibernate.engine.spi.NamedQueryDefinition;
+import org.hibernate.engine.spi.NamedSQLQueryDefinition;
 import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.QueryParameters;
 import org.hibernate.engine.spi.SessionEventListenerManager;
@@ -371,6 +374,16 @@ public class FailSafeAnyType extends AnyType {
 		@Override
 		public SessionEventListenerManager getEventListenerManager() {
 			return session.getEventListenerManager();
+		}
+
+		@Override
+		public Query createQuery(NamedQueryDefinition namedQueryDefinition) {
+			return session.createQuery(namedQueryDefinition);
+		}
+
+		@Override
+		public SQLQuery createSQLQuery(NamedSQLQueryDefinition namedQueryDefinition) {
+			return session.createSQLQuery(namedQueryDefinition);
 		}
 		
 	}
