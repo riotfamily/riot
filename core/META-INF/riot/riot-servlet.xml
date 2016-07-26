@@ -358,17 +358,20 @@
 	</bean>
 	
 	<util:map id="defaultTinyMCEConfig">
-		<entry key="gecko_spellcheck">
-			<value type="java.lang.Boolean">true</value>
-		</entry>
-		<entry key="inline_styles">
+		<entry key="menubar">
 			<value type="java.lang.Boolean">false</value>
-		</entry>				
-		<entry key="valid_elements" value="+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class&lt;mailto]" />
-		<entry key="theme_advanced_container_buttons1" value="bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap" />
+		</entry>
+		<entry key="statusbar">
+			<value type="java.lang.Boolean">false</value>
+		</entry>
+		<entry key="toolbar" value="undo redo | bold italic superscript | bullist numlist | outdent indent hr | link unlink anchor | charmap code" />
+		<entry key="valid_elements" value="+a[href|target|name],strong,em,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class&lt;mailto]" />
 		<entry key="forced_root_block" value="p" />
 		<entry key="entity_encoding" value="raw" />
-		<entry key="plugins" value="safari" />
+		<entry key="browser_spellcheck">
+			<value type="java.lang.Boolean">true</value>
+		</entry>
+		<entry key="plugins" value="link,hr,anchor,charmap,code" />
 	</util:map>
 	
 	<util:map id="tinyMCEProfiles">

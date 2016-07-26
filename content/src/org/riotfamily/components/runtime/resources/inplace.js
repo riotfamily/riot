@@ -316,7 +316,7 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	show: function($super) {
 		tinyMCE_GZ = {loaded: true};
 		var $this = this;
-		riot.Resources.loadScript('tinymce/tiny_mce_src.js', 'tinymce');
+		riot.Resources.loadScript('tinymce/tinymce.min.js', 'tinymce');
 		riot.Resources.waitFor('tinymce.WindowManager', function() {
 			$super();
 			$this.initEditor();
@@ -333,9 +333,9 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 			riot.TinyMCEProfiles[this.options.config || 'default'],
 			riot.fixedTinyMCESettings);
 		
-		tinymce.dom.Event._pageInit();
+		//tinymce.dom.Event._pageInit();
 		tinyMCE.init(Object.extend({
-			elements: this.textarea.identify(),
+			selector: 'textarea#' + this.textarea.identify(),
 			auto_focus: this.textarea.id,
 			init_instance_callback: this.setInstance.bind(this)
 		}, settings));
@@ -493,15 +493,19 @@ riot.stylesheetMaker = {
 	}
 }
 
-riot.setupTinyMCEContent = function(editorId, body, doc) {
-	var inst = tinymce.EditorManager.editors[editorId];
+riot.setupTinyMCEContent = function(editor) {
+	
+	var inst = editor;
+	var body = editor.getBody();
+	var doc = editor.getDoc();
 	
 	var e = riot.activeEditor.element;
 	var clone = $(e.cloneNode(false));
 	e.insert({before: clone.hide()});
 	
+	
 	var classNames = null;
-	var styles = inst.settings.theme_advanced_styles;
+	var styles = inst.settings.block_formats;
 	if (styles) {
 		classNames = styles.split(';').collect(function(pair) {return pair.split('=')[1]});
 	}
@@ -537,20 +541,15 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 }
 
 riot.fixedTinyMCESettings = {
-	mode: 'exact',
 	width: '100%',
 	language: riot.language,
-	skin: 'riot',
-	theme: 'advanced',
 	add_unload_trigger: false,
-	strict_loading_mode: true,
-	use_native_selects: true,
-	setupcontent_callback: riot.setupTinyMCEContent,
 	relative_urls: false,
-	theme_advanced_layout_manager: 'RowLayout',
-	theme_advanced_containers_default_align: 'left',
-	theme_advanced_container_mceeditor: 'mceeditor',
-	theme_advanced_containers: 'buttons1,mceeditor'
+	setup : function(editor) {
+		editor.on('BeforeSetContent', function(e) {
+			riot.setupTinyMCEContent(e.target)
+        });
+	}
 }
 
 riot.TinyMCEProfiles = {};
