@@ -143,9 +143,14 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 			return propertyPath + '.' + property;
 		}
 		
+		@Override
+		public void clearPropertyValue(String property) {
+			getDelegate().clearPropertyValue(property);
+		}
+		
 		private void clear() {
 			for (String property : getBoundProperties()) {
-				setPropertyValue(property, null);
+				clearPropertyValue(property);
 			}
 		}
 		

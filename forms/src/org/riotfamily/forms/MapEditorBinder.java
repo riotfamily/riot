@@ -95,5 +95,11 @@ public class MapEditorBinder extends AbstractEditorBinder {
 	public void setPropertyValue(String propertyName, Object value) {
 		map.put(propertyName, value);
 	}
+	
+	@Override
+	public void clearPropertyValue(String propertyName) {
+		map.remove(propertyName);
+		
+	}
 
 }

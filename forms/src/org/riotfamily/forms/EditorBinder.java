@@ -40,6 +40,8 @@ public interface EditorBinder extends PropertyEditorRegistry {
 	public Object getPropertyValue(String property);
 
 	public void setPropertyValue(String property, Object value);
+	
+	public void clearPropertyValue(String property);
 
 	public Class<?> getPropertyType(String property);
 	
