@@ -25,20 +25,24 @@ var initListEditor = function(id) {
     };
     
     $$(tr+'>td.up div').invoke('observe', 'click', function() {
+    	if (window.beforeListMove) beforeListMove();
         this.removeClassName('hover');
         var li = this.up('li');
         var prev = li.previous('li');
         if (prev) prev.insert({before: li.remove()});
         updateClassNames();
         if (li.viewportOffset()[1] < 0) li.scrollTo();
+        if (window.afterListMove) afterListMove();
     });
     $$(tr+'>td.down div').invoke('observe', 'click', function() {
+    	if (window.beforeListMove) beforeListMove();
         this.removeClassName('hover');
         var li = this.up('li');
         var next = li.next('li');
         if (next) next.insert({after: li.remove()});
         updateClassNames();
         if (li.viewportOffset()[1] > document.viewport.getHeight()) li.scrollTo();
+        if (window.afterListMove) afterListMove();
     });
     updateClassNames();
 };

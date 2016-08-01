@@ -123,6 +123,16 @@ public class TinyMCE extends AbstractTextElement
 		if (initScript == null) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("tinyMCE.init(").append(getJsonConfig()).append(");");
+			
+			sb.append("if (!window.beforeListMove) window.beforeListMove = function() { "
+					+ "window.movedTinyMCE = []; "
+					+"for (var i = 0; i < window.tinyMCE.editors.length; i++) { window.movedTinyMCE.push(window.tinyMCE.editors[i].id); }"
+					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.execCommand('mceRemoveEditor',true, window.movedTinyMCE[i]); } "
+					+ "}; ");
+			
+			sb.append("if (!window.afterListMove) window.afterListMove = function() { "
+					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.execCommand('mceAddEditor',true, window.movedTinyMCE[i]); } "
+					+ "}; ");
 			initScript = sb.toString();
 		}
 		return initScript;
