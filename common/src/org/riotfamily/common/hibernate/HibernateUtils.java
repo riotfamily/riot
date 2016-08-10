@@ -13,6 +13,8 @@
 package org.riotfamily.common.hibernate;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -21,7 +23,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.EntityType;
+import org.hibernate.type.Type;
 import org.riotfamily.common.beans.property.PropertyUtils;
+import org.riotfamily.common.util.Generics;
 import org.springframework.beans.PropertyAccessorUtils;
 
 public final class HibernateUtils {
@@ -103,5 +108,65 @@ public final class HibernateUtils {
 		if (value != null && queryContainsParameter(query, name)) {
 			query.setParameter(name, value);
 		}
+	}
+	
+	public static boolean isReferenced(SessionFactory sessionFactory, Object bean) {
+		Map<String, Class<?>> referencingClasses = Generics.newHashMap();
+		Class<?> clazz = Hibernate.getClass(bean);
+		while (!Object.class.equals(clazz)) {
+			referencingClasses.putAll(getReferencingClasses(sessionFactory, clazz));
+			clazz = clazz.getSuperclass();
+		}
+		for (Map.Entry<String, Class<?>> reference : referencingClasses.entrySet()) {
+			String entityName = sessionFactory.getClassMetadata(reference.getValue()).getEntityName();
+			String hql = String.format("select count(*) from %s where %s = :bean", entityName, reference.getKey());
+			Query query = sessionFactory.getCurrentSession().createQuery(hql).setParameter("bean", bean);
+			long count = ((Number) query.uniqueResult()).longValue();
+			if (count > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static Set<Object> getReferences(SessionFactory sessionFactory, Object bean) {
+		Map<String, Class<?>> referencingClasses = Generics.newHashMap();
+		Class<?> clazz = Hibernate.getClass(bean);
+		while (!Object.class.equals(clazz)) {
+			referencingClasses.putAll(getReferencingClasses(sessionFactory, clazz));
+			clazz = clazz.getSuperclass();
+		}
+		if (!referencingClasses.isEmpty()) {
+			Set<Object> references = Generics.newHashSet();
+			for (Map.Entry<String, Class<?>> reference: referencingClasses.entrySet()) {
+				String entityName = sessionFactory.getClassMetadata(reference.getValue()).getEntityName();
+				String hql = String.format("from %s where %s = :bean", entityName, reference.getKey());
+				Query query = sessionFactory.getCurrentSession().createQuery(hql).setParameter("bean", bean);
+				for (Object obj : query.list()) {
+					references.add(obj);
+				}
+			}
+			return references;
+		}
+		return null;
+	}
+	
+	public static Map<String, Class<?>> getReferencingClasses(SessionFactory sessionFactory, Class<?> clazz) {
+		Map<String, Class<?>> referencingClasses = Generics.newHashMap();
+		for (Map.Entry<String, ClassMetadata> entry: sessionFactory.getAllClassMetadata().entrySet())
+		{
+		    Class<?> mappedClass = entry.getValue().getMappedClass();
+		    for (String propertyName: entry.getValue().getPropertyNames())
+		    {
+		        Type t = entry.getValue().getPropertyType(propertyName);
+		        if (t instanceof EntityType) {
+		            EntityType entityType=(EntityType) t;
+		            if (entityType.getAssociatedEntityName().equals(clazz.getName())) {
+		            	referencingClasses.put(propertyName, mappedClass);
+		            }
+		        }
+		    }
+		}
+		return referencingClasses;
 	}
 }
