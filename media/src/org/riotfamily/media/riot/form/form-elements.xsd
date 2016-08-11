@@ -18,6 +18,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="form:simple-editor">
 				<xsd:attribute name="bucket" type="xsd:string" />
+				<xsd:attribute name="always-validate-file" type="xsd:boolean" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

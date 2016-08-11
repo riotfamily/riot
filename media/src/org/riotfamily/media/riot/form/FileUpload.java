@@ -40,6 +40,8 @@ public class FileUpload extends AbstractFileUpload {
 	
 	private RiotFile uploadedFile;
 	
+	private boolean alwaysValidateFile;
+	
 	@Override
 	protected Element createPreviewElement() {
 		return new PreviewElement();
@@ -93,8 +95,13 @@ public class FileUpload extends AbstractFileUpload {
 		if (uploadedFile != null) {
 			validateFile(uploadedFile);
 		}
-		else if (file == null && isRequired()) {
-			ErrorUtils.rejectRequired(this);
+		else {
+			if (file == null && isRequired()) {
+				ErrorUtils.rejectRequired(this);
+			}
+			else if (file != null && alwaysValidateFile) {
+				validateFile(file);
+			}
 		}
 	}
 	
@@ -133,6 +140,10 @@ public class FileUpload extends AbstractFileUpload {
 	
 	protected String getBucket() {
 		return bucket;
+	}
+	
+	public void setAlwaysValidateFile(boolean alwaysValidateFile) {
+		this.alwaysValidateFile = alwaysValidateFile;
 	}
 
 	public class PreviewElement extends TemplateElement
