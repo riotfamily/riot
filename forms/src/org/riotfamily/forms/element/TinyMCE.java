@@ -85,7 +85,7 @@ public class TinyMCE extends AbstractTextElement
 		if (config != null) {
 			json.putAll(config);
 		}
-		json.element("selector", "textarea#" + getId());
+		json.element("selector", "#" + getId());
 		json.element("language", getFormContext().getLocale().getLanguage().toLowerCase());
 		json.element("relative_urls", Boolean.FALSE);
 
@@ -132,6 +132,10 @@ public class TinyMCE extends AbstractTextElement
 			
 			sb.append("if (!window.afterListMove) window.afterListMove = function() { "
 					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.execCommand('mceAddEditor',true, window.movedTinyMCE[i]); } "
+					+ "}; ");
+			
+			sb.append("if (!window.onRemoveElement) window.onRemoveElement = function(e) { "
+					+"if (window.tinymce) { e.select('textarea.richtext').each(function(item) { var ed = window.tinymce.get(item.id).remove(); }); } "
 					+ "}; ");
 			initScript = sb.toString();
 		}

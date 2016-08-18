@@ -108,6 +108,9 @@ function processAjaxResponse(transport) {
 
 function performAction(action) {
 	if (action.command == 'remove') {
+		if (window.onRemoveElement) {
+			onRemoveElement($(action.element));
+		}
 		new Effect.Remove(action.element);
 	}
 	else if (action.command == 'insert') {
@@ -117,6 +120,9 @@ function performAction(action) {
 		}
 	}
 	else if (action.command == 'replace') {
+		if (window.onRemoveElement) {
+			onRemoveElement($(action.element));
+		}
 		$(action.element).replace(action.value);
 		if (window.onInsertElement) {
 			onInsertElement($(action.element));
