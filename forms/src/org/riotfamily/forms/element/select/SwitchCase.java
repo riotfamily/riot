@@ -140,7 +140,7 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 		
 		@Override
 		protected String getPropertyPath(Editor editor, String property) {
-			return propertyPath + '.' + property;
+			return super.getPropertyPath(editor, propertyPath + '.' + property);
 		}
 		
 		@Override
