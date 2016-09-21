@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public class HibernateCleanUpTask extends HibernateTask {
@@ -57,6 +57,7 @@ public class HibernateCleanUpTask extends HibernateTask {
 		super(sessionFactory);
 		this.fileStore = fileStore;
 		this.transactionTemplate = new TransactionTemplate(tx);
+		this.transactionTemplate.setPropagationBehavior(org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		init();
 	}
 
@@ -119,18 +120,20 @@ public class HibernateCleanUpTask extends HibernateTask {
 
 	private void delete(final Session session, final Long id) {
 		try {
-			RiotFile file = transactionTemplate.execute(new TransactionCallback<RiotFile>() {
-				public RiotFile doInTransaction(TransactionStatus status) {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
 					log.debug("Deleting orphaned file: " + id);
+					Session session = getSessionFactory().getCurrentSession();
 					RiotFile file = (RiotFile) session.load(RiotFile.class, id);
 					session.delete(file);
-					return file;
 				}
 			});
-			session.evict(file);
 		}
 		catch (HibernateException e) {
 			log.error("Failed to delete RiotFile " + id, e);
+		}
+		catch (org.springframework.dao.DataIntegrityViolationException ex) {
+			log.error("Failed to delete RiotFile " + id, ex);
 		}
 	}
 	
