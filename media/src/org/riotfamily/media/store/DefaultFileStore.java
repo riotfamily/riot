@@ -107,7 +107,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 			
 			storagePath = servletContext.getRealPath(storagePath);
 		}
-		
+		log.info("Storagepath: " + storagePath);
 		baseDir = createDir(new File(storagePath));	
 		log.info("Files will be stored in " 
 				+ baseDir.getCanonicalPath());
