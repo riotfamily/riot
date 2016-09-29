@@ -69,4 +69,23 @@
 	
 	<xsd:element name="video-upload" type="file-upload" />
 	
+	<xsd:element name="svg-upload">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="file-upload">
+					<xsd:attribute name="preview-width" type="xsd:positiveInteger" />
+					<xsd:attribute name="preview-height" type="xsd:positiveInteger" />
+					<xsd:attribute name="width" type="xsd:positiveInteger" />
+					<xsd:attribute name="height" type="xsd:positiveInteger" />
+					<xsd:attribute name="widths" type="commaDelimitedIntegers" />
+					<xsd:attribute name="heights" type="commaDelimitedIntegers" />
+					<xsd:attribute name="min-width" type="xsd:positiveInteger" />
+					<xsd:attribute name="min-height" type="xsd:positiveInteger" />
+					<xsd:attribute name="max-width" type="xsd:positiveInteger" />
+					<xsd:attribute name="max-height" type="xsd:positiveInteger" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
 </xsd:schema>

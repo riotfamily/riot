@@ -64,6 +64,10 @@ public class MediaService {
 		return imageMagick.identify(file);
 	}
 	
+	public ImageMetaData identifySvg(File file) throws UnknownFormatException {
+		return imageMagick.identifyWithoutType(file);
+	}
+	
 	public VideoMetaData identifyVideo(File file) throws IOException {
 		return ffmpeg.identify(file);
 	}

@@ -20,6 +20,8 @@
 				value="org.riotfamily.media.riot.form.FlashUpload" />
 		<entry key="{http://www.riotfamily.org/schema/media/form-elements}video-upload"
 				value="org.riotfamily.media.riot.form.VideoUpload" />
+		<entry key="{http://www.riotfamily.org/schema/media/form-elements}svg-upload"
+				value="org.riotfamily.media.riot.form.SvgUpload" />
 	</override:put>
 		
 	<override:add ref="resourceMappings" append="true">			

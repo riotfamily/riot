@@ -23,6 +23,9 @@ public class ImageMagickIdentify extends ImageMagick {
 
 	private static final String JSON_FORMAT = "{format: '%m', width: %w, "
 			+ "height: %h, type: '%r'}";
+	
+	private static final String JSON_FORMAT_WITHOUT_TYPE = "{format: '%m', width: %w, "
+			+ "height: %h }";
 
 	public ImageMagickIdentify() {
 		super("identify");
@@ -31,6 +34,17 @@ public class ImageMagickIdentify extends ImageMagick {
 	public ImageMetaData identify(File file) throws UnknownFormatException {
 		try {
 			String meta = invoke("-ping", "-format", JSON_FORMAT, file.getAbsolutePath());
+			JSONObject json = JSONObject.fromObject(meta);
+			return (ImageMetaData) JSONObject.toBean(json, ImageMetaData.class);
+		}
+		catch (IOException e) {
+			throw new UnknownFormatException(e.getMessage(), e);
+		}
+	}
+	
+	public ImageMetaData identifyWithoutType(File file) throws UnknownFormatException {
+		try {
+			String meta = invoke("-ping", "-format", JSON_FORMAT_WITHOUT_TYPE, file.getAbsolutePath());
 			JSONObject json = JSONObject.fromObject(meta);
 			return (ImageMetaData) JSONObject.toBean(json, ImageMetaData.class);
 		}
