@@ -12,6 +12,7 @@
  */
 package org.riotfamily.media.cleanup;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.hibernate.type.ComponentType;
 import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
 import org.riotfamily.common.scheduling.HibernateTask;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.store.FileStore;
@@ -51,6 +53,8 @@ public class HibernateCleanUpTask extends HibernateTask {
 	
 	private boolean deleteUnmanagedFiles = true;
 	
+	private long minAge = -1;
+	
 	public HibernateCleanUpTask(SessionFactory sessionFactory, FileStore fileStore, 
 			PlatformTransactionManager tx) {
 		
@@ -59,6 +63,10 @@ public class HibernateCleanUpTask extends HibernateTask {
 		this.transactionTemplate = new TransactionTemplate(tx);
 		this.transactionTemplate.setPropagationBehavior(org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		init();
+	}
+	
+	public void setMinAge(String minAge) {
+		this.minAge = FormatUtils.parseMillis(minAge);
 	}
 
 	public void setDeleteOrphanedFiles(boolean deleteOrphanedFiles) {
@@ -107,13 +115,21 @@ public class HibernateCleanUpTask extends HibernateTask {
 	}
 	
 	private void deleteUnmanagedFiles(final Session session) {
-		log.info("Deleting unmanaged files ...");
+		log.info("Deleting unmanaged files minAge(hh:mm:ss): {} ...",  FormatUtils.formatMillis(minAge));
 		Iterator<String> files = fileStore.iterator();
 		while (files.hasNext()) {
 			String uri = files.next();
 			if (!fileExists(session, uri)) {
 				log.debug("Deleting unmanaged file: " + uri);
-				files.remove();
+				File f = fileStore.retrieve(uri);
+				long age = System.currentTimeMillis() - f.lastModified();
+				if (age > minAge) {
+					log.debug("Deleting unmanaged file: {}, age: {}", uri, FormatUtils.formatMillis(age));
+					files.remove();
+				}
+				else {
+					log.debug("Keeping unmanaged file: {}, age: {}", uri, FormatUtils.formatMillis(age));
+				}
 			}
 		}
 	}
