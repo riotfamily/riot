@@ -13,6 +13,7 @@
 package org.riotfamily.common.hibernate;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -117,21 +118,21 @@ public final class HibernateUtils {
 		References references = new References();
 		Class<?> clazz = Hibernate.getClass(bean);
 		while (!Object.class.equals(clazz)) {
-			references.putAll(getReferencingClasses(sessionFactory, clazz));
+			references.addAll(getReferencingClasses(sessionFactory, clazz));
 			clazz = clazz.getSuperclass();
 		}
-		for (Map.Entry<String, Class<?>> reference : references.getEntityReferences().entrySet()) {
-			String entityName = sessionFactory.getClassMetadata(reference.getValue()).getEntityName();
-			String hql = String.format("select count(*) from %s where %s = :bean", entityName, reference.getKey());
+		for (ClassReference reference : references.getEntityReferences()) {
+			String entityName = sessionFactory.getClassMetadata(reference.getMappedClass()).getEntityName();
+			String hql = String.format("select count(*) from %s where %s = :bean", entityName, reference.getPropertyName());
 			Query query = sessionFactory.getCurrentSession().createQuery(hql).setParameter("bean", bean);
 			long count = ((Number) query.uniqueResult()).longValue();
 			if (count > 0) {
 				return true;
 			}
 		}
-		for (Map.Entry<String, Class<?>> reference : references.getCollectionReferences().entrySet()) {
-			String entityName = sessionFactory.getClassMetadata(reference.getValue()).getEntityName();
-			String hql = String.format("select count(*) from %s where :bean in elements(%s)", entityName, reference.getKey());
+		for (ClassReference reference : references.getCollectionReferences()) {
+			String entityName = sessionFactory.getClassMetadata(reference.getMappedClass()).getEntityName();
+			String hql = String.format("select count(*) from %s where :bean in elements(%s)", entityName, reference.getPropertyName());
 			Query query = sessionFactory.getCurrentSession().createQuery(hql).setParameter("bean", bean);
 			long count = ((Number) query.uniqueResult()).longValue();
 			if (count > 0) {
@@ -146,22 +147,22 @@ public final class HibernateUtils {
 		References references = new References();
 		Class<?> clazz = Hibernate.getClass(bean);
 		while (!Object.class.equals(clazz)) {
-			references.putAll(getReferencingClasses(sessionFactory, clazz));
+			references.addAll(getReferencingClasses(sessionFactory, clazz));
 			clazz = clazz.getSuperclass();
 		}
 		if (!references.isEmpty()) {
 			Set<Object> referringObjects = Generics.newHashSet();
-			for (Map.Entry<String, Class<?>> reference: references.getEntityReferences().entrySet()) {
-				String entityName = sessionFactory.getClassMetadata(reference.getValue()).getEntityName();
-				String hql = String.format("from %s where %s = :bean", entityName, reference.getKey());
+			for (ClassReference reference: references.getEntityReferences()) {
+				String entityName = sessionFactory.getClassMetadata(reference.getMappedClass()).getEntityName();
+				String hql = String.format("from %s where %s = :bean", entityName, reference.getPropertyName());
 				Query query = sessionFactory.getCurrentSession().createQuery(hql).setParameter("bean", bean);
 				for (Object obj : query.list()) {
 					referringObjects.add(obj);
 				}
 			}
-			for (Map.Entry<String, Class<?>> reference : references.getCollectionReferences().entrySet()) {
-				String entityName = sessionFactory.getClassMetadata(reference.getValue()).getEntityName();
-				String hql = String.format("select count(*) from %s where :bean in elements(%s)", entityName, reference.getKey());
+			for (ClassReference reference : references.getCollectionReferences()) {
+				String entityName = sessionFactory.getClassMetadata(reference.getMappedClass()).getEntityName();
+				String hql = String.format("select count(*) from %s where :bean in elements(%s)", entityName, reference.getPropertyName());
 				Query query = sessionFactory.getCurrentSession().createQuery(hql).setParameter("bean", bean);
 				for (Object obj : query.list()) {
 					referringObjects.add(obj);
@@ -174,11 +175,9 @@ public final class HibernateUtils {
 	
 	public static References getReferencingClasses(SessionFactory sessionFactory, Class<?> clazz) {
 		References references = new References(); 
-		for (Map.Entry<String, ClassMetadata> entry: sessionFactory.getAllClassMetadata().entrySet())
-		{
+		for (Map.Entry<String, ClassMetadata> entry: sessionFactory.getAllClassMetadata().entrySet()) {
 		    Class<?> mappedClass = entry.getValue().getMappedClass();
-		    for (String propertyName: entry.getValue().getPropertyNames())
-		    {
+	    	for (String propertyName: entry.getValue().getPropertyNames()) {
 		        Type t = entry.getValue().getPropertyType(propertyName);
 		        if (t instanceof EntityType) {
 		            EntityType entityType=(EntityType) t;
@@ -201,33 +200,55 @@ public final class HibernateUtils {
 	
 	private static class References {
 		
-		private Map<String, Class<?>> entityReferences = Generics.newHashMap();
+		private List<ClassReference> entityReferences = Generics.newArrayList();
 		
-		private Map<String, Class<?>> collectionReferences = Generics.newHashMap();
+		private List<ClassReference> collectionReferences = Generics.newArrayList();
 		
 		public void addEntityReference(String propertyName, Class<?> mappedClass) {
-			entityReferences.put(propertyName, mappedClass);
+			entityReferences.add(new ClassReference(mappedClass, propertyName));
 		}
 		
 		public void addCollectionReference(String propertyName, Class<?> mappedClass) {
-			collectionReferences.put(propertyName, mappedClass);
+			collectionReferences.add(new ClassReference(mappedClass, propertyName));
 		}
 		
-		public void putAll(References other) {
-			entityReferences.putAll(other.getEntityReferences());
-			collectionReferences.putAll(other.getCollectionReferences());
+		public void addAll(References other) {
+			entityReferences.addAll(other.getEntityReferences());
+			collectionReferences.addAll(other.getCollectionReferences());
 		}
 		
-		public Map<String, Class<?>> getEntityReferences() {
+		public List<ClassReference> getEntityReferences() {
 			return entityReferences;
 		}
 		
-		public Map<String, Class<?>> getCollectionReferences() {
+		public List<ClassReference> getCollectionReferences() {
 			return collectionReferences;
 		}
 		
 		public boolean isEmpty() {
 			return entityReferences.isEmpty() && collectionReferences.isEmpty();
 		}
+	}
+	
+	private static class ClassReference {
+		
+		private Class<?> mappedClass;
+		
+		private String propertyName;
+		
+		public ClassReference(Class<?> mappedClass, String propertyName) {
+			this.mappedClass = mappedClass;
+			this.propertyName = propertyName;
+		}
+		
+		public Class<?> getMappedClass() {
+			return mappedClass;
+		}
+		
+		public String getPropertyName() {
+			return propertyName;
+		}
+		
+		
 	}
 }
