@@ -126,12 +126,12 @@ public class TinyMCE extends AbstractTextElement
 			
 			sb.append("if (!window.beforeListMove) window.beforeListMove = function() { "
 					+ "window.movedTinyMCE = []; "
-					+"for (var i = 0; i < window.tinyMCE.editors.length; i++) { window.movedTinyMCE.push(window.tinyMCE.editors[i].id); }"
-					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.execCommand('mceRemoveEditor',true, window.movedTinyMCE[i]); } "
+					+"for (var i = 0; i < window.tinyMCE.editors.length; i++) { window.movedTinyMCE.push(window.tinyMCE.editors[i].settings) } "
+					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.remove(window.tinyMCE.EditorManager.get(window.movedTinyMCE[i].id)); } "
 					+ "}; ");
 			
 			sb.append("if (!window.afterListMove) window.afterListMove = function() { "
-					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.execCommand('mceAddEditor',true, window.movedTinyMCE[i]); } "
+					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.init(window.movedTinyMCE[i]); } "
 					+ "}; ");
 			
 			sb.append("if (!window.onRemoveElement) window.onRemoveElement = function(e) { "
