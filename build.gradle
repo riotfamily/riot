@@ -1,7 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.8
 
 // Load dependencies
 apply from: 'dependencies.gradle'
@@ -9,9 +10,11 @@ apply from: 'dependencies.gradle'
 
 allprojects {
 	group = 'org.riotfamily'
-	version = '9.3.0'
+	version = '10.0.0'
 
 	repositories {
+		mavenCentral()
+		jcenter()
 		mavenLocal()
 		maven {
         	url "http://repository.riotfamily.org/external"
@@ -31,8 +34,8 @@ subprojects {
 
 	release.dependsOn(uploadArchives)
 
-	sourceCompatibility = 1.6
-	targetCompatibility = 1.6
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
 
 	configurations.compile.transitive = true
 	configurations.testCompile.transitive = true
@@ -151,7 +154,7 @@ task deployArchives {
  */
 task wrapper(type: Wrapper) {
 	jarFile = '.gradlew/gradle-wrapper.jar'
-	gradleVersion = '2.13'
+	gradleVersion = '4.4'
 }
 
 // ---------------------------------------------------------------------------

@@ -46,6 +46,8 @@ public class ReloadableDispatcherServlet extends InterceptingDispatcherServlet
 
 	private boolean reloadable = true;
 
+	private boolean publishContext = true;
+
 	private BeanConfigurationWatcher watcher = new BeanConfigurationWatcher(this);
 
 	@Override
@@ -66,8 +68,9 @@ public class ReloadableDispatcherServlet extends InterceptingDispatcherServlet
 			ReloadableDispatcherServletConfig config =
 					BeanFactoryUtils.beanOfType(context,
 			ReloadableDispatcherServletConfig.class);
-
+			setPublishContext(true);
 			setReloadable(config.isReloadable());
+
 		}
 		catch (NoSuchBeanDefinitionException e) {
 		}
