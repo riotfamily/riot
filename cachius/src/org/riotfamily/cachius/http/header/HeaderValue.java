@@ -19,5 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface HeaderValue extends Serializable {
 
 	public String resolve(HttpServletRequest request);
-
+	
+	public String getValue();
+	
 }

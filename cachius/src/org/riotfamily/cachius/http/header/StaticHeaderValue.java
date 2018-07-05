@@ -21,6 +21,10 @@ public class StaticHeaderValue implements HeaderValue {
 	public StaticHeaderValue(String value) {
 		this.value = value;
 	}
+	
+	public String getValue() {
+		return value;
+	}
 
 	public String resolve(HttpServletRequest request) {
 		return value;

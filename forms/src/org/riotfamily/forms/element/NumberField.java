@@ -154,6 +154,7 @@ public class NumberField extends TextField implements DHTMLElement,
 	}
 	       
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void afterFormContextSet() {
 		Class<?> type = getEditorBinding().getPropertyType();
 		if (type == null || Object.class.equals(type)) {
@@ -175,8 +176,9 @@ public class NumberField extends TextField implements DHTMLElement,
 		}
 		
 		if (Number.class.isAssignableFrom(type)) {
+			Class<Number> numberType = (Class<Number>) type; 
 			NumberFormat nf = getNumberFormat();
-			setPropertyEditor(new CustomNumberEditor(type, nf, true));
+			setPropertyEditor(new CustomNumberEditor(numberType, nf, true));
 		}
 	}
 

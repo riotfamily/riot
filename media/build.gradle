@@ -1,4 +1,5 @@
 dependencies {
-	compile project(':core'), libs(['json_lib'])
-	compile lib('servlet_api')
+	compile project(':core')
+	compile libraries.json_lib
+	compile libraries.servlet_api
 }

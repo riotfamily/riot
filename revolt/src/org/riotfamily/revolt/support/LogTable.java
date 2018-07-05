@@ -23,8 +23,8 @@ import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.Table;
 import org.riotfamily.revolt.refactor.InsertData;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -34,7 +34,7 @@ public class LogTable {
 
 	private static final String TABLE_NAME = "revolt_change_log";
 	
-	private SimpleJdbcTemplate template;
+	private JdbcTemplate template;
 	
 	private Dialect dialect;
 	
@@ -42,7 +42,7 @@ public class LogTable {
 	
 	private boolean exists;
 	
-	public LogTable(SimpleJdbcTemplate template, Dialect dialect) {
+	public LogTable(JdbcTemplate template, Dialect dialect) {
 		this.template = template;
 		this.dialect = dialect;
 		
@@ -50,7 +50,7 @@ public class LogTable {
 		table.addColumn(new Column("change_set_id", TypeMap.VARCHAR, 255));
 		table.addColumn(new Column("module", TypeMap.VARCHAR, 255));
 		table.addColumn(new Column("seq_nr", TypeMap.INTEGER));
-		exists = DatabaseUtils.tableExists(template.getJdbcOperations(), table);
+		exists = DatabaseUtils.tableExists(template, table);
 	}
 	
 	public boolean exists() {
@@ -63,7 +63,7 @@ public class LogTable {
 		}
 		return template.query("select change_set_id from " 
 				+ TABLE_NAME + " where module = ? order by seq_nr asc", 
-				new ParameterizedRowMapper<String>() {
+				new  SingleColumnRowMapper<String>() {
 					public String mapRow(ResultSet rs, int rowNumber) throws SQLException {
 						return rs.getString(1);
 					}
@@ -73,7 +73,7 @@ public class LogTable {
 
 	public Script getCreateTableScript() {
 		Script script = dialect.createTable(table);
-		if (DatabaseUtils.anyTablesExist(template.getJdbcOperations())) {
+		if (DatabaseUtils.anyTablesExist(template)) {
 			script.forceManualExecution();
 		}
 		return script;

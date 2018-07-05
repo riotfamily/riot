@@ -12,13 +12,20 @@
  */
 package org.riotfamily.common.hibernate;
 
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.Transient;
 
 import org.dom4j.Node;
 import org.hibernate.EntityMode;
@@ -27,11 +34,13 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.TransientObjectException;
-import org.hibernate.engine.CascadeStyle;
-import org.hibernate.engine.ForeignKeys;
-import org.hibernate.engine.Mapping;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.internal.ForeignKeys;
+import org.hibernate.engine.spi.CascadeStyle;
+import org.hibernate.engine.spi.CascadeStyles;
+import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.metamodel.relational.Size;
 import org.hibernate.persister.entity.Joinable;
 import org.hibernate.proxy.HibernateProxyHelper;
 import org.hibernate.type.AbstractType;
@@ -41,9 +50,12 @@ import org.hibernate.type.ForeignKeyDirection;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringRepresentableType;
 import org.hibernate.type.Type;
+import org.springframework.beans.BeanUtils;
 
 public class AnyIdAnyType extends AbstractType implements
 		CompositeType, AssociationType {
+
+	private static final long serialVersionUID = 1L;
 
 	private static final int[] SQL_TYPES = new int[] {
 		StandardBasicTypes.STRING.sqlType(),
@@ -208,7 +220,7 @@ public class AnyIdAnyType extends AbstractType implements
 		}
 	}
 
-	public Class getReturnedClass() {
+	public Class<?> getReturnedClass() {
 		return Object.class;
 	}
 
@@ -222,11 +234,10 @@ public class AnyIdAnyType extends AbstractType implements
 
 	public String toLoggableString(Object value, SessionFactoryImplementor factory) 
 	throws HibernateException {
-		//TODO: terrible implementation!
+		//TODO: terrible implementation!		
 		return value==null ?
 				"null" :
-				Hibernate.entity( HibernateProxyHelper.getClassWithoutInitializingProxy(value) )
-						.toLoggableString(value, factory);
+					factory.getTypeHelper().entity(HibernateProxyHelper.getClassWithoutInitializingProxy(value)).toLoggableString(value, factory);
 	}
 
 	public Object fromXMLNode(Node xml, Mapping factory) throws HibernateException {
@@ -294,7 +305,7 @@ public class AnyIdAnyType extends AbstractType implements
 		}
 	}
 	public CascadeStyle getCascadeStyle(int i) {
-		return CascadeStyle.NONE;
+		return CascadeStyles.NONE;
 	}
 
 	public FetchMode getFetchMode(int i) {
@@ -391,11 +402,6 @@ public class AnyIdAnyType extends AbstractType implements
 		return null;
 	}
 
-	public String getOnCondition(String alias, SessionFactoryImplementor factory, Map enabledFilters)
-	throws MappingException {
-		throw new UnsupportedOperationException();
-	}
-	
 	public boolean isReferenceToPrimaryKey() {
 		return true;
 	}
@@ -432,4 +438,56 @@ public class AnyIdAnyType extends AbstractType implements
 		return false;
 	}
 
+	@Override
+	public Size[] dictatedSizes(Mapping mapping) throws MappingException {
+		throw new UnsupportedOperationException("Not implemented yet!");
+	}
+
+	@Override
+	public Size[] defaultSizes(Mapping mapping) throws MappingException {
+		throw new UnsupportedOperationException("Not implemented yet!");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object deepCopy(Object value, SessionFactoryImplementor factory) throws HibernateException {
+		Hibernate.initialize(value);
+		Object copy = BeanUtils.instantiate(Hibernate.getClass(value));
+        List<String> ignoreProperties = getNonSimpleOrTransientPropertyNames(Hibernate.getClass(value));
+        BeanUtils.copyProperties(value, copy, ignoreProperties.toArray(new String[]{}));
+        return copy;
+	}
+	
+	private List<String> getNonSimpleOrTransientPropertyNames(Class<?> fromClass) {
+      List<String> names = new ArrayList<String>();
+      // lookup non simple properties
+      for(Field field : fromClass.getDeclaredFields()) {
+         if(!BeanUtils.isSimpleProperty(field.getType())) {
+            names.add(field.getName());
+         } 	         
+      }
+      // lookup accessors annotated transient   
+      for (PropertyDescriptor pd : BeanUtils.getPropertyDescriptors(fromClass)) {
+    	  Method readMethod = pd.getReadMethod();
+    	  if (readMethod != null && readMethod.getAnnotation(Transient.class) != null) {
+    		  names.add(pd.getName());
+    	  }
+      }
+      return names;
+   }
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public String getOnCondition(String alias, SessionFactoryImplementor factory, Map enabledFilters,
+			Set<String> treatAsDeclarations) {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public String getOnCondition(String alias, SessionFactoryImplementor factory, Map enabledFilters)
+			throws MappingException {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+		
 }

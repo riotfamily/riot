@@ -6,3 +6,13 @@ Sortable.create('${items.id}', {
 		itemOrder.value = Sortable.sequence(element).join(',') + ',';
 	}
 });
+Draggables.addObserver({
+	onStart: function(eventName, draggable, event) {
+		if (window.beforeListMove) beforeListMove();
+	},
+	onDrag: function(eventName, draggable, event) {
+	},
+	onEnd: function(eventName, draggable, event) {
+		if (window.afterListMove) afterListMove();
+	}
+});

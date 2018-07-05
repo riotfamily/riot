@@ -20,7 +20,7 @@ import org.riotfamily.revolt.definition.Table;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.LogTable;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -77,24 +77,24 @@ public class EvolutionHistory implements BeanNameAware {
 	/**
 	 * Initializes the history from the given log-table.
 	 */
-	public void init(LogTable logTable, SimpleJdbcTemplate template) {
+	public void init(LogTable logTable, JdbcTemplate template) {
 		this.logTable = logTable;
 		appliedIds = new ArrayList<String>();
 		appliedIds.addAll(logTable.getAppliedChangeSetIds(moduleName));
 	}
 
-	private boolean isModuleAlreadyInstalled(SimpleJdbcTemplate template) {
+	private boolean isModuleAlreadyInstalled(JdbcTemplate template) {
 		if (!appliedIds.isEmpty()) {
 			// Some changes have already been applied
 			return true; 
 		}
-		return checkTableName == null || DatabaseUtils.tableExists(template.getJdbcOperations(), new Table(checkTableName));
+		return checkTableName == null || DatabaseUtils.tableExists(template, new Table(checkTableName));
 	}
 	
 	/**
 	 * Returns a script that needs to be executed in order update the schema.
 	 */
-	public Script getScript(Dialect dialect, SimpleJdbcTemplate template) {
+	public Script getScript(Dialect dialect, JdbcTemplate template) {
 		if (isModuleAlreadyInstalled(template)) {
 			return getMigrationScript(dialect, template);
 		}
@@ -103,7 +103,7 @@ public class EvolutionHistory implements BeanNameAware {
 		}
 	}
 	
-	private Script getInitScript(SimpleJdbcTemplate template) {
+	private Script getInitScript(JdbcTemplate template) {
 		Script script = new Script();
 		for (ChangeSet changeSet : changeSets) {
 			script.append(markAsApplied(changeSet, template));
@@ -111,7 +111,7 @@ public class EvolutionHistory implements BeanNameAware {
 		return script;
 	}
 	
-	private Script getMigrationScript(Dialect dialect, SimpleJdbcTemplate template) {
+	private Script getMigrationScript(Dialect dialect, JdbcTemplate template) {
 		Script script = new Script();
 		for (ChangeSet changeSet : changeSets) {
 			if (!isApplied(changeSet)) {
@@ -133,7 +133,7 @@ public class EvolutionHistory implements BeanNameAware {
 	 * Returns a script that can be used to add an entry to the log-table that
 	 * marks the given ChangeSet as applied. 
 	 */
-	private Script markAsApplied(ChangeSet changeSet, SimpleJdbcTemplate template) {
+	private Script markAsApplied(ChangeSet changeSet, JdbcTemplate template) {
 		appliedIds.add(changeSet.getId());
 		return logTable.getInsertScript(changeSet);
 	}

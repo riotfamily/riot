@@ -35,7 +35,7 @@ import org.riotfamily.common.beans.injection.ConfigurableBean;
  * according to the following pattern:
  * <pre>
  * public static List<Foo> findByName(String name) {
- *     return query(Foo.class, "from {} where name = ?", name).find();
+ *     return query(Foo.class, "from {} where name = ?1", name).find();
  * }
  * </pre> 
  * @author Alf Werder [alf dot werder at artundweise dot de]
@@ -133,7 +133,7 @@ public abstract class ActiveRecord extends ConfigurableBean {
 	 * <b>Example:</b>
 	 * <pre>
 	 * public static Foo loadByName(String name) {
-	 *   return query(Foo.class, "from {} where name = ?", name).load();
+	 *   return query(Foo.class, "from {} where name = ?1", name).load();
 	 * }
 	 * </pre>
 	 * @param type The entity class
@@ -144,9 +144,9 @@ public abstract class ActiveRecord extends ConfigurableBean {
 		String entityName = sessionFactory.getClassMetadata(type).getEntityName();
 		Query query = getSession().createQuery(hql.replace("{}", entityName));
 		if (params != null) {
-			int index = 0;
+			int index = 1;
 			for (Object param : params) {
-				query.setParameter(index++, param);
+				query.setParameter(String.valueOf(index++), param);
 			}
 		}
 		return new TypedQuery<T>(query, type);

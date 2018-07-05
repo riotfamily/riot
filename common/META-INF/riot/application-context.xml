@@ -5,11 +5,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/util/spring-util-4.3.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.1.xsd">
+		http://www.riotfamily.org/schema/common/override-9.3.xsd">
 
 	<!-- JDBC DataSource pooled by C3P0 -->
 	<bean id="c3p0" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -65,7 +65,7 @@
 	</util:list>
 
 	<!-- The Transaction Manager -->
-	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
@@ -96,6 +96,10 @@
     
     <bean id="resourceStamper" class="org.riotfamily.common.web.performance.ResourceStamper" />
     
+    <bean id="cssCompressor" class="org.riotfamily.common.web.performance.YUICssCompressor">
+		<property name="enabled" value="${riot.resources.compress=true}" />
+	</bean>
+  
     <bean id="javaScriptCompressor" class="org.riotfamily.common.web.performance.YUIJavaScriptCompressor">
     	<property name="enabled" value="${riot.resources.compress=true}" />
     	<property name="linebreak" value="1000" />

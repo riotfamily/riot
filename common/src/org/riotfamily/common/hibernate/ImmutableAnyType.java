@@ -22,23 +22,24 @@ import java.util.Map;
 
 import org.dom4j.Node;
 import org.hibernate.EntityMode;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
-import org.hibernate.engine.Mapping;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.util.compare.EqualsHelper;
+import org.hibernate.metamodel.relational.Size;
 import org.hibernate.type.AbstractType;
+import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
-import org.hibernate.util.EqualsHelper;
 
 public class ImmutableAnyType extends AbstractType {
 
 	public static final Type INSTANCE = new ImmutableAnyType();
 	
 	private static final int[] SQL_TYPES = new int[] {
-		Hibernate.STRING.sqlType(),
-		Hibernate.STRING.sqlType()
+		StringType.INSTANCE.sqlType(),
+		StringType.INSTANCE.sqlType()
 	};
 	
 	private static final boolean[] BOTH = new boolean[] {true, true};
@@ -80,12 +81,12 @@ public class ImmutableAnyType extends AbstractType {
 			SessionImplementor session, Object owner)
 			throws HibernateException, SQLException {
 		
-		String type = (String) Hibernate.STRING.nullSafeGet(rs, names[0]);
+		String type = (String) StringType.INSTANCE.nullSafeGet(rs, names[0], session);
 		if (type == null) {
 			return null;
 		}
 
-		String value = (String) Hibernate.STRING.nullSafeGet(rs, names[1]);
+		String value = (String) StringType.INSTANCE.nullSafeGet(rs, names[1], session);
 		if (value == null) {
 			return null;
 		}
@@ -142,8 +143,8 @@ public class ImmutableAnyType extends AbstractType {
 			SessionImplementor session) throws HibernateException, SQLException {
 		
 		if (value == null) {
-			st.setNull(index, Hibernate.STRING.sqlType());
-			st.setNull(index + 1, Hibernate.STRING.sqlType());
+			st.setNull(index, StringType.INSTANCE.sqlType());
+			st.setNull(index + 1, StringType.INSTANCE.sqlType());
 		}
 		else {
 			st.setString(index, value.getClass().getName());
@@ -167,7 +168,6 @@ public class ImmutableAnyType extends AbstractType {
 		return value;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Object replace(Object original, Object target,
 			SessionImplementor session, Object owner, Map copyCache)
 			throws HibernateException {
@@ -192,6 +192,21 @@ public class ImmutableAnyType extends AbstractType {
 			SessionFactoryImplementor factory) throws HibernateException {
 	
 		throw new HibernateException("XML is not supported by this type");
+	}
+
+	@Override
+	public Size[] dictatedSizes(Mapping mapping) throws MappingException {
+		throw new UnsupportedOperationException("Not implemented yet!");
+	}
+
+	@Override
+	public Size[] defaultSizes(Mapping mapping) throws MappingException {
+		throw new UnsupportedOperationException("Not implemented yet!");
+	}
+
+	@Override
+	public Object deepCopy(Object value, SessionFactoryImplementor factory) throws HibernateException {
+		throw new UnsupportedOperationException("Not implemented yet!");
 	}
 
 }

@@ -1,4 +1,6 @@
 dependencies {
-	compile project(':common'),
-			libs(['commons_httpclient', 'htmlparser', 'quartz'])
+	compile project(':common')
+	compile libraries.httpclient
+	compile libraries.htmlparser
+	compile libraries.quartz
 }

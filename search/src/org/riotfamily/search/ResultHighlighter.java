@@ -23,6 +23,7 @@ import org.apache.lucene.search.highlight.Encoder;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.Scorer;
 import org.apache.lucene.search.highlight.SimpleFragmenter;
@@ -129,6 +130,8 @@ public class ResultHighlighter {
 			try {
 				fragments = highlighter.getBestFragments(ts,
 						content, maxFragments, separator);
+			}
+			catch (InvalidTokenOffsetsException e) {
 			}
 			catch (IOException e) {
 			}

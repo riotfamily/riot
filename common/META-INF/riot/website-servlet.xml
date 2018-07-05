@@ -4,9 +4,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/util/spring-util-4.3.xsd
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
 	<description>
 		Website servlet (Riot Website)
@@ -28,7 +28,6 @@
 			Configurer that fills in placeholders from application.properties
 		</description>
 		<property name="ignoreResourceNotFound" value="true" />
-		<property name="contextOverride" value="true" />
 	</bean>
 	
 	<bean class="org.riotfamily.common.web.filter.PluginFilterInitializer">
@@ -105,10 +104,8 @@
 		</description>		
 		<property name="addContextPathToUrls" value="true" />
 		<property name="stamper" ref="resourceStamper" />
-		<property name="compressor">
-			<bean class="org.riotfamily.common.web.performance.YUICssCompressor">
-				<property name="enabled" value="${riot.resources.compress=true}" />
-			</bean>			
+		<property name="compressor" ref="cssCompressor">
+						
 		</property>
 	</bean>
 	
@@ -116,11 +113,7 @@
 		<description>
 			Controller to compress (minify) CSS files.
 		</description>
-		<constructor-arg>
-			<bean class="org.riotfamily.common.web.performance.YUICssCompressor">
-				<property name="enabled" value="${riot.resources.compress=true}" />
-			</bean>			
-		</constructor-arg>
+		<constructor-arg ref="cssCompressor" />
 		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.riotfamily.common.ui.ObjectRenderer;
 import org.riotfamily.common.util.FormatUtils;
@@ -144,8 +145,12 @@ public class XmlFormRepositoryDigester {
 			}
 		}
 
+		Map<ContainerElementFactory, Integer> appliedForms = Generics.newHashMap();
 		for (Import imp : imports) {
-			imp.apply();
+			int offset = appliedForms.containsKey(imp.parent) ? appliedForms.get(imp.parent) : 0;
+			imp.insertAt += offset;
+			offset += imp.apply();
+			appliedForms.put(imp.parent, offset);
 		}
 	}
 
@@ -474,11 +479,12 @@ public class XmlFormRepositoryDigester {
 			insertAt = parent.getChildFactories().size();
 		}
 
-		public void apply() {
+		public int apply() {
 			FormFactory formFactory = formRepository.getFormFactory(importedFormId);
-			parent.getChildFactories().addAll(insertAt,
-					formFactory.getChildFactories());
+			List<ElementFactory> childFactories = formFactory.getChildFactories();
+			parent.getChildFactories().addAll(insertAt, childFactories);
 			formRepository.registerImport(formId, formFactory);
+			return childFactories.size();
 		}
 
 	}

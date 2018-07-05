@@ -17,9 +17,12 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -27,7 +30,6 @@ import javax.persistence.Transient;
 import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.hibernate.ActiveRecordBeanSupport;
 import org.riotfamily.common.web.support.ServletUtils;
 import org.riotfamily.components.model.Content;
@@ -173,7 +175,9 @@ public class Site extends ActiveRecordBeanSupport {
 		this.position = position;
 	}
 	
-	@CollectionOfElements
+	@ElementCollection
+	@CollectionTable(name="riot_sites_aliases", joinColumns = {@JoinColumn(name="riot_sites_id")})
+	@Column(name="element")
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<String> getAliases() {
 		return this.aliases;
@@ -309,7 +313,7 @@ public class Site extends ActiveRecordBeanSupport {
 	}
 	
 	public static Site loadByLocale(Locale locale) {
-		return query(Site.class, "from {} where locale = ?", locale).load();
+		return query(Site.class, "from {} where locale = ?1", locale).load();
 	}
 	
 	public static List<Site> findAll() {
@@ -317,7 +321,7 @@ public class Site extends ActiveRecordBeanSupport {
 	}
 	
 	public static List<Site> findBySchema(SitemapSchema schema) {
-		return query(Site.class, "from {} where schemaName = ?", schema.getName()).find();
+		return query(Site.class, "from {} where schemaName = ?1", schema.getName()).find();
 	}
 	
 	public static Site loadByHostName(String hostName) {

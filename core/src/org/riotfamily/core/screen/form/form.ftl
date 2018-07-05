@@ -26,6 +26,7 @@
 	
 		<script type="text/javascript" language="JavaScript">
 			var form = $$('form')[0];
+			var saved = false;
 
 			riot.Resources.waitFor('focusElement', function() {
 				focusElement(<#if focus??>$('${focus}')<#else>form</#if>);
@@ -51,7 +52,10 @@
 						name: 'focus', 
 						value: document.activeElement}));
 				}
-				form.down('input.button-save').click();
+				if (!saved) {
+					saved = true;
+					form.down('input.button-save').click();
+				}
 			}
 			
 			<#--

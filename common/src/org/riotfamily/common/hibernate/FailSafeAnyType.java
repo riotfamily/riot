@@ -21,28 +21,30 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.CacheMode;
-import org.hibernate.EntityMode;
+import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.Transaction;
-import org.hibernate.collection.PersistentCollection;
-import org.hibernate.engine.EntityKey;
-import org.hibernate.engine.LoadQueryInfluencers;
-import org.hibernate.engine.NonFlushedChanges;
-import org.hibernate.engine.PersistenceContext;
-import org.hibernate.engine.QueryParameters;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.engine.query.sql.NativeSQLQuerySpecification;
-import org.hibernate.event.EventListeners;
-import org.hibernate.impl.CriteriaImpl;
-import org.hibernate.jdbc.Batcher;
-import org.hibernate.jdbc.JDBCContext;
+import org.hibernate.cache.spi.CacheKey;
+import org.hibernate.collection.spi.PersistentCollection;
+import org.hibernate.engine.jdbc.spi.JdbcConnectionAccess;
+import org.hibernate.engine.query.spi.sql.NativeSQLQuerySpecification;
+import org.hibernate.engine.spi.EntityKey;
+import org.hibernate.engine.spi.LoadQueryInfluencers;
+import org.hibernate.engine.spi.NamedQueryDefinition;
+import org.hibernate.engine.spi.NamedSQLQueryDefinition;
+import org.hibernate.engine.spi.PersistenceContext;
+import org.hibernate.engine.spi.QueryParameters;
+import org.hibernate.engine.spi.SessionEventListenerManager;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.transaction.spi.TransactionCoordinator;
+import org.hibernate.internal.CriteriaImpl;
 import org.hibernate.loader.custom.CustomQuery;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.type.AnyType;
@@ -122,15 +124,6 @@ public class FailSafeAnyType extends AnyType {
 			session.afterScrollOperation();
 		}
 
-		public void afterTransactionCompletion(boolean successful,
-				Transaction tx) {
-			session.afterTransactionCompletion(successful, tx);
-		}
-
-		public void beforeTransactionCompletion(Transaction tx) {
-			session.beforeTransactionCompletion(tx);
-		}
-
 		public String bestGuessEntityName(Object object) {
 			return session.bestGuessEntityName(object);
 		}
@@ -154,10 +147,6 @@ public class FailSafeAnyType extends AnyType {
 			session.flush();
 		}
 
-		public Batcher getBatcher() {
-			return session.getBatcher();
-		}
-
 		public CacheMode getCacheMode() {
 			return session.getCacheMode();
 		}
@@ -171,11 +160,7 @@ public class FailSafeAnyType extends AnyType {
 		}
 
 		public Map<?, ?> getEnabledFilters() {
-			return session.getEnabledFilters();
-		}
-
-		public EntityMode getEntityMode() {
-			return session.getEntityMode();
+			return session.getLoadQueryInfluencers().getEnabledFilters();
 		}
 
 		public EntityPersister getEntityPersister(String entityName,
@@ -193,15 +178,15 @@ public class FailSafeAnyType extends AnyType {
 		}
 
 		public String getFetchProfile() {
-			return session.getFetchProfile();
+			return session.getLoadQueryInfluencers().getInternalFetchProfile();
 		}
 
 		public Type getFilterParameterType(String filterParameterName) {
-			return session.getFilterParameterType(filterParameterName);
+			return session.getLoadQueryInfluencers().getFilterParameterType(filterParameterName);
 		}
 
 		public Object getFilterParameterValue(String filterParameterName) {
-			return session.getFilterParameterValue(filterParameterName);
+			return session.getLoadQueryInfluencers().getFilterParameterValue(filterParameterName);
 		}
 
 		public FlushMode getFlushMode() {
@@ -210,14 +195,6 @@ public class FailSafeAnyType extends AnyType {
 
 		public Interceptor getInterceptor() {
 			return session.getInterceptor();
-		}
-
-		public JDBCContext getJDBCContext() {
-			return session.getJDBCContext();
-		}
-
-		public EventListeners getListeners() {
-			return session.getListeners();
 		}
 
 		public Query getNamedQuery(String name) {
@@ -285,10 +262,6 @@ public class FailSafeAnyType extends AnyType {
 			return session.iterateFilter(collection, filter, queryParameters);
 		}
 
-		public List<?> list(CriteriaImpl criteria) {
-			return session.list(criteria);
-		}
-
 		public List<?> list(NativeSQLQuerySpecification spec,
 				QueryParameters queryParameters) throws HibernateException {
 			return session.list(spec, queryParameters);
@@ -309,11 +282,13 @@ public class FailSafeAnyType extends AnyType {
 			return session.listFilter(collection, filter, queryParameters);
 		}
 
+		/*
 		public ScrollableResults scroll(CriteriaImpl criteria,
 				ScrollMode scrollMode) {
 			return session.scroll(criteria, scrollMode);
 		}
-
+		 */
+		
 		public ScrollableResults scroll(NativeSQLQuerySpecification spec,
 				QueryParameters queryParameters) throws HibernateException {
 			return session.scroll(spec, queryParameters);
@@ -345,16 +320,70 @@ public class FailSafeAnyType extends AnyType {
 			session.setFlushMode(fm);
 		}
 
-		public NonFlushedChanges getNonFlushedChanges() throws HibernateException {
-			return session.getNonFlushedChanges();
-		}
-
-		public void applyNonFlushedChanges(NonFlushedChanges nonFlushedChanges) throws HibernateException {
-			session.applyNonFlushedChanges(nonFlushedChanges);
-		}
-
 		public LoadQueryInfluencers getLoadQueryInfluencers() {
 			return session.getLoadQueryInfluencers();
+		}
+
+		@Override
+		public <T> T execute(Callback<T> callback) {
+			return session.execute(callback);
+		}
+
+		@Override
+		public String getTenantIdentifier() {
+			return session.getTenantIdentifier();
+		}
+
+		@Override
+		public JdbcConnectionAccess getJdbcConnectionAccess() {
+			return session.getJdbcConnectionAccess();
+		}
+
+		@Override
+		public EntityKey generateEntityKey(Serializable id,
+				EntityPersister persister) {
+			return session.generateEntityKey(id, persister);
+		}
+
+		@Override
+		public CacheKey generateCacheKey(Serializable id, Type type,
+				String entityOrRoleName) {
+			return session.generateCacheKey(id, type, entityOrRoleName);
+		}
+
+		@Override
+		public void disableTransactionAutoJoin() {
+			session.disableTransactionAutoJoin();
+		}
+
+		@Override
+		public ScrollableResults scroll(Criteria criteria, ScrollMode scrollMode) {
+			return session.scroll(criteria, scrollMode);
+		}
+
+		@Override
+		public List<?> list(Criteria criteria) {
+			return session.list(criteria);
+		}
+
+		@Override
+		public TransactionCoordinator getTransactionCoordinator() {
+			return session.getTransactionCoordinator();
+		}
+
+		@Override
+		public SessionEventListenerManager getEventListenerManager() {
+			return session.getEventListenerManager();
+		}
+
+		@Override
+		public Query createQuery(NamedQueryDefinition namedQueryDefinition) {
+			return session.createQuery(namedQueryDefinition);
+		}
+
+		@Override
+		public SQLQuery createSQLQuery(NamedSQLQueryDefinition namedQueryDefinition) {
+			return session.createSQLQuery(namedQueryDefinition);
 		}
 		
 	}

@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MinifyCssController extends AbstractMinifyController {
 
-	private YUICssCompressor compressor = new YUICssCompressor();
+	private Compressor compressor;
 	
-	public MinifyCssController(YUICssCompressor compressor) {
+	public MinifyCssController(Compressor compressor) {
 		this.compressor = compressor;
 	}
 	

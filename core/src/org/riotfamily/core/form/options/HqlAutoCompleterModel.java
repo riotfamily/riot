@@ -21,15 +21,15 @@ import org.hibernate.SessionFactory;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
 import org.riotfamily.forms.element.suggest.AutocompleterModel;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-public class HqlAutoCompleterModel extends HibernateDaoSupport 
-		implements AutocompleterModel {
+public class HqlAutoCompleterModel implements AutocompleterModel {
 
+	private SessionFactory sessionFactory;
+	
 	private String hql;
 	
 	public HqlAutoCompleterModel(SessionFactory sessionFactory) {
-		setSessionFactory(sessionFactory);
+		this.sessionFactory = sessionFactory;
 	}
 	
 	public void setHql(String hql) {
@@ -40,7 +40,7 @@ public class HqlAutoCompleterModel extends HibernateDaoSupport
 	public Collection<String> getSuggestions(String search,
 			AutocompleteTextField element, HttpServletRequest request) {
 		
-		Query query = getSession().createQuery(hql);
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
 		query.setParameter("search", "%" + search  + "%");
 		if (hql.indexOf(":parent") != -1) {
 			query.setParameter("parent", ScreenContext.Binding.get(request).getParent());	

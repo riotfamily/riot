@@ -2,11 +2,13 @@ dependencies {
 	compile project(':common')
 	compile project(':cachius')
 	compile project(':forms')
-	compile libs(['spring_webmvc', 'freemarker', 'dwr'])
-	
-	compile lib('servlet_api')
-	
-	runtime project(':common'), project(':revolt')
-	
-	testRuntime libs(['hsqldb'])
+	compile libraries.spring_webmvc
+	compile libraries.freemarker
+	compile libraries.dwr
+	compile libraries.servlet_api
+
+	runtime project(':common')
+	project(':revolt')
+
+	testRuntime libraries.hsqldb
 }

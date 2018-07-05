@@ -70,6 +70,8 @@ public class ImageUpload extends FileUpload {
 	private int previewWidth = 263;
 	
 	private int previewHeight = 100;
+	
+	private int scale = 1;
 
 	private String validFormats = "GIF,JPEG,PNG";
 	
@@ -150,6 +152,10 @@ public class ImageUpload extends FileUpload {
 
 	public void setPreviewHeight(int previewHeight) {
 		this.previewHeight = previewHeight;
+	}
+	
+	public void setScale(int scale) {
+		this.scale = scale;
 	}
 
 	public void setValidFormats(String validFormats) {
@@ -365,6 +371,10 @@ public class ImageUpload extends FileUpload {
 		
 		public int getPreviewHeight() {
 			return previewHeight;
+		}
+		
+		public int getScale() {
+			return scale;
 		}
 
 	}

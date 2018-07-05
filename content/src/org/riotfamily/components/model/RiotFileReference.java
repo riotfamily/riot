@@ -40,7 +40,7 @@ public class RiotFileReference extends ActiveRecordFieldSupport {
 
 	public static void deleteByContent(Content content) {
 		query(RiotFileReference.class,
-				"delete from {} where content = ?", content)
+				"delete from {} where content = ?1", content)
 				.executeUpdate();
 	}
 }

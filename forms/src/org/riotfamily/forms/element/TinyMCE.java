@@ -35,13 +35,8 @@ public class TinyMCE extends AbstractTextElement
 
 	static Map<String, String> defaults = Generics.newHashMap();
 	static {
-		defaults.put("skin", "riot");
-		defaults.put("theme", "advanced");
 		defaults.put("entity_encoding", "raw");
-		defaults.put("valid_elements", "+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote");
-		defaults.put("theme_advanced_containers", "buttons1,mceeditor");
-		defaults.put("theme_advanced_container_buttons1", "formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap");
-		defaults.put("theme_advanced_blockformats", "p,h3,h4");
+		defaults.put("valid_elements", "+a[href|target|name],strong,em,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class&lt;mailto]");
 	}
 	
 	private int rows = 10;
@@ -82,8 +77,7 @@ public class TinyMCE extends AbstractTextElement
 	}
 
 	public FormResource getResource() {
-		return new ScriptResource("tinymce/tiny_mce_src.js", "tinymce.WindowManager",
-				new ScriptResource("tinymce/lazy_load_fix.js", "tinyMCE_GZ"));
+		return new ScriptResource("tinymce/tinymce.min.js", "tinymce.WindowManager");
 	}
 
 	private String getJsonConfig() {
@@ -91,24 +85,33 @@ public class TinyMCE extends AbstractTextElement
 		if (config != null) {
 			json.putAll(config);
 		}
-		json.element("mode", "exact");
-		json.element("elements", getId());
+		json.element("selector", "#" + getId());
 		json.element("language", getFormContext().getLocale().getLanguage().toLowerCase());
-		json.element("add_unload_trigger", false);
-		json.element("submit_patch", false);
-		json.element("strict_loading_mode", true);
 		json.element("relative_urls", Boolean.FALSE);
-		json.element("theme_advanced_layout_manager", "RowLayout");
-		json.element("theme_advanced_containers_default_align", "left");
-		json.element("theme_advanced_container_mceeditor", "mceeditor");
-		json.element("setupcontent_callback", 
-				new JSONFunction(new String[] {"id", "body", "doc"},
-				"if (window.registerKeyHandler) registerKeyHandler(doc);"));
+
+		JSONFunction beforeSetContent = 
+				new JSONFunction(new String[] {"e"}, "if (window.registerKeyHandler) registerKeyHandler(e.target.getDoc());");
 		
-		json.element("save_callback", 
-				new JSONFunction(new String[] {"id", "html", "body"},
-				"return html.replace(/<!--(.|\\n)*?-->/g, '')" 
-				+ ".replace(/&lt;!--(.|\\n)*?\\smso-(.|\\n)*?--&gt;/g, '');"));
+		JSONFunction saveCallback = 
+				new JSONFunction(new String[] {"e"}, "var ed = e.target;" + 
+					"e.content = e.content.replace(/<!--(.|\\n)*?-->/g, '').replace(/&lt;!--(.|\\n)*?\\smso-(.|\\n)*?--&gt;/g, '');");
+		
+		StringBuilder setup = new StringBuilder();
+		setup.append("ed.on('BeforeSetContent',").append(beforeSetContent.toString()).append(");");
+		setup.append("ed.on('SaveContent', ").append(saveCallback.toString()).append(");");
+		if (hasListeners()) {
+			
+			JSONFunction fireChangeEvent = 
+					new JSONFunction(new String[] {"e"}, "var source = $('"+getId()+"');"+
+							"var ed = e.target;" +
+							"source.value = ed.getContent();" + 
+							"submitEvent(new ChangeEvent(source));");
+			
+			setup.append("ed.on('change', ").append(fireChangeEvent.toString()).append(");");
+		}
+		
+		json.element("setup", 
+				new JSONFunction(new String[] {"ed"}, setup.toString()));
 		
 		return json.toString();
 	}
@@ -119,8 +122,21 @@ public class TinyMCE extends AbstractTextElement
 		}
 		if (initScript == null) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("tinymce.dom.Event._pageInit();");
 			sb.append("tinyMCE.init(").append(getJsonConfig()).append(");");
+			
+			sb.append("if (!window.beforeListMove) window.beforeListMove = function() { "
+					+ "window.movedTinyMCE = []; "
+					+"for (var i = 0; i < window.tinyMCE.editors.length; i++) { window.movedTinyMCE.push(window.tinyMCE.editors[i].settings) } "
+					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.remove(window.tinyMCE.EditorManager.get(window.movedTinyMCE[i].id)); } "
+					+ "}; ");
+			
+			sb.append("if (!window.afterListMove) window.afterListMove = function() { "
+					+"for (var i = 0; i < window.movedTinyMCE.length; i++) { window.tinyMCE.EditorManager.init(window.movedTinyMCE[i]); } "
+					+ "}; ");
+			
+			sb.append("if (!window.onRemoveElement) window.onRemoveElement = function(e) { "
+					+"if (window.tinymce) { e.select('textarea.richtext').each(function(item) { var ed = window.tinymce.get(item.id).remove(); }); } "
+					+ "}; ");
 			initScript = sb.toString();
 		}
 		return initScript;

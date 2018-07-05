@@ -69,7 +69,7 @@ public class Crawler implements InitializingBean, ApplicationListener<Applicatio
 
 	/**
 	 * Sets the PageLoader that is used to retrieve the data. By default a
-	 * {@link CommonsHttpClientPageLoader} is used.
+	 * {@link HttpClientPageLoader} is used.
 	 */
 	public void setPageLoader(PageLoader pageLoader) {
 		this.pageLoader = pageLoader;
@@ -107,7 +107,7 @@ public class Crawler implements InitializingBean, ApplicationListener<Applicatio
 			log.warn("A startPage must be set in order to index the site.");
 		}
 		if (pageLoader == null) {
-			pageLoader = new CommonsHttpClientPageLoader();
+			pageLoader = new HttpClientPageLoader();
 		}
 		if (linkExtractor == null) {
 			linkExtractor = new DefaultLinkExtractor();

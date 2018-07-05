@@ -14,6 +14,7 @@ package org.riotfamily.cachius.http.header;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +44,21 @@ class Header implements Serializable {
 	
 	public void addValue(HeaderValue value) {
 		additionalValues.add(value);
+	}
+	
+	public HeaderValue getValue() {
+		return value;
+	}
+	
+	public Collection<HeaderValue> getValues() {
+		ArrayList<HeaderValue> allValues = new ArrayList<HeaderValue>();
+		if (value != null) {
+			allValues.add(value);
+		}
+		for (HeaderValue value : additionalValues) {
+			allValues.add(value);	
+		}
+		return allValues;
 	}
 	
 	public void send(HttpServletRequest request, HttpServletResponse response) {

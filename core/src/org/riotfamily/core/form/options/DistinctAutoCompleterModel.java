@@ -21,17 +21,17 @@ import org.hibernate.SessionFactory;
 import org.riotfamily.core.screen.ScreenContext;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
 import org.riotfamily.forms.element.suggest.AutocompleterModel;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-public class DistinctAutoCompleterModel extends HibernateDaoSupport 
-		implements AutocompleterModel {
+public class DistinctAutoCompleterModel implements AutocompleterModel {
 
 	private boolean caseSensitive = false;
 	
 	private String parentProperty;
 	
+	private SessionFactory sessionFactory;
+	
 	public DistinctAutoCompleterModel(SessionFactory sessionFactory) {
-		setSessionFactory(sessionFactory);
+		this.sessionFactory = sessionFactory;
 	}
 	
 	public void setCaseSensitive(boolean caseSensitive) {
@@ -66,7 +66,7 @@ public class DistinctAutoCompleterModel extends HibernateDaoSupport
 		}
 		
 		hql.append(" like :search order by ").append(property);
-		Query query = getSession().createQuery(hql.toString())
+		Query query = sessionFactory.getCurrentSession().createQuery(hql.toString())
 				.setParameter("search", "%" + search  + "%");
 		
 		if (parentProperty != null) {

@@ -71,5 +71,10 @@ public class BeanEditorBinder extends AbstractEditorBinder {
 	public void setPropertyValue(String propertyName, Object value) {
 		beanWrapper.setPropertyValue(propertyName, value);
 	}
+	
+	@Override
+	public void clearPropertyValue(String propertyName) {
+		beanWrapper.setPropertyValue(propertyName, null);
+	}
 
 }

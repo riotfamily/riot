@@ -15,6 +15,7 @@ package org.riotfamily.cachius.http.header;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
@@ -72,6 +73,26 @@ public class Headers implements Serializable {
 	
 	private void setString(String name, String value) {
 		getHeader(name).setValue(new StaticHeaderValue(value));
+	}
+	
+	public String getStringValue(String name) {
+		return getHeader(name).getValue().getValue();
+	}
+	
+	public Collection<String> getStringValues(String name) {
+		ArrayList<String> values = new ArrayList<String>();
+		for (HeaderValue value : getHeader(name).getValues()) {
+			values.add(value.getValue());
+		}
+		return values;
+	}
+	
+	public Collection<String> getNames() {
+		ArrayList<String> names = new ArrayList<String>();
+		for (Header header : headers) {
+			names.add(header.getName());
+		}
+		return names;
 	}
 
 	public void clear() {

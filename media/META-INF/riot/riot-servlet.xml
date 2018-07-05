@@ -5,11 +5,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/util/spring-util-4.3.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.1.xsd">
+		http://www.riotfamily.org/schema/common/override-9.3.xsd">
 
 	<override:put ref="customFormElements">
 		<entry key="{http://www.riotfamily.org/schema/media/form-elements}file-upload"
@@ -20,6 +20,8 @@
 				value="org.riotfamily.media.riot.form.FlashUpload" />
 		<entry key="{http://www.riotfamily.org/schema/media/form-elements}video-upload"
 				value="org.riotfamily.media.riot.form.VideoUpload" />
+		<entry key="{http://www.riotfamily.org/schema/media/form-elements}svg-upload"
+				value="org.riotfamily.media.riot.form.SvgUpload" />
 	</override:put>
 		
 	<override:add ref="resourceMappings" append="true">			

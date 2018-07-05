@@ -15,8 +15,8 @@ package org.riotfamily.common.beans.config;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.propertyeditors.PropertiesEditor;
-import org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer;
 
 /**
  * PropertyPlaceholderConfigurer that accepts wildcards to populate properties
@@ -62,8 +62,8 @@ import org.springframework.web.context.support.ServletContextPropertyPlaceholder
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class PropertiesPlaceholderConfigurer extends 
-		ServletContextPropertyPlaceholderConfigurer {
+public class PropertiesPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
+	
 	
 	protected String resolvePlaceholder(String placeholder, Properties props) {	
 		int i = placeholder.indexOf('*');

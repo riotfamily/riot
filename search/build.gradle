@@ -1,4 +1,7 @@
 dependencies {
-	compile project(':crawler'),
-			libs(['lucene_core', 'lucene_highlighter', 'lucene_analyzers', 'lucene_snowball'])
+	compile project(':crawler')
+	compile libraries.lucene_core
+	compile libraries.lucene_highlighter
+	compile libraries.lucene_analyzers
+	compile libraries.lucene_snowball
 }

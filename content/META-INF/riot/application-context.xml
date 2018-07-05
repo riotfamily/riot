@@ -5,11 +5,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/util/spring-util-4.3.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-9.1.xsd">
+		http://www.riotfamily.org/schema/common/override-9.3.xsd">
 
 	
 	<bean id="viewComponentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">
@@ -52,9 +52,9 @@
 		</description>
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+	 
 	<override:add ref="sessionFactory" property="filterDefinitions">
-		<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
+		<bean class="org.riotfamily.common.hibernate.FilterDefinitionFactoryBean">
 			<property name="filterName" value="contentIndex" />
 			<property name="defaultFilterCondition" value="live = :live" />
 			<property name="parameterTypes">
@@ -63,7 +63,7 @@
 				</props>
 			</property>
 		</bean>
-		<bean class="org.springframework.orm.hibernate3.FilterDefinitionFactoryBean">
+		<bean class="org.riotfamily.common.hibernate.FilterDefinitionFactoryBean">
 			<property name="filterName" value="publishedContent" />
 			<property name="defaultFilterCondition" value="0 = (select count(*) from riot_content_containers c where c.id = contentcontainer_id and c.live_version is null)" />
 		</bean> 

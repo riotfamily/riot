@@ -108,6 +108,9 @@ function processAjaxResponse(transport) {
 
 function performAction(action) {
 	if (action.command == 'remove') {
+		if (window.onRemoveElement) {
+			onRemoveElement($(action.element));
+		}
 		new Effect.Remove(action.element);
 	}
 	else if (action.command == 'insert') {
@@ -117,9 +120,14 @@ function performAction(action) {
 		}
 	}
 	else if (action.command == 'replace') {
-		$(action.element).replace(action.value);
-		if (window.onInsertElement) {
-			onInsertElement($(action.element));
+		if ($(action.element)) {
+			if (window.onRemoveElement) {
+				onRemoveElement($(action.element));
+			}
+			$(action.element).replace(action.value);
+			if (window.onInsertElement) {
+				onInsertElement($(action.element));
+			}
 		}
 	}
 	else if (action.command == 'error') {						
@@ -191,12 +199,15 @@ function setEnabled(e, enabled) {
 
 function setVisible(id, visible) {
 	var el = $('container-' + id) || $(id);
-	if (visible) {
-		el.show();
+	if (el) {
+		if (visible) {
+			el.show();
+		}
+		else {
+			el.hide();
+		}
 	}
-	else {
-		el.hide();
-	}
+	
 }
 
 function propagate(e, type, sourceId) {

@@ -29,6 +29,7 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.cache.AbstractCacheableController;
 import org.riotfamily.common.web.cache.controller.Compressible;
 import org.riotfamily.common.web.cache.freemarker.RiotFileTemplateLoader;
+import org.riotfamily.common.web.performance.Compressor;
 import org.riotfamily.common.web.performance.ResourceStamper;
 import org.riotfamily.common.web.performance.YUICssCompressor;
 import org.riotfamily.common.web.support.ServletUtils;
@@ -100,12 +101,12 @@ public class CssTemplateController extends AbstractCacheableController
 	
 	private boolean addContextPathToUrls = false;
 	
-	private YUICssCompressor compressor = new YUICssCompressor();
+	private Compressor compressor = new YUICssCompressor();
 
 	/**
 	 * @param compressor the compressor to set
 	 */
-	public void setCompressor(YUICssCompressor compressor) {
+	public void setCompressor(Compressor compressor) {
 		this.compressor = compressor;
 	}
 	

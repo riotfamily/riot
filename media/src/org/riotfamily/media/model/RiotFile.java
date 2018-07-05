@@ -338,11 +338,11 @@ public class RiotFile extends ActiveRecordBeanSupport {
 	// ----------------------------------------------------------------------
 	
 	public static RiotFile loadByUri(String uri) {
-		return query(RiotFile.class, "from {} where uri = ?", uri).load();
+		return query(RiotFile.class, "from {} where uri = ?1", uri).load();
 	}
 	
 	public static RiotFile loadByMd5(String md5) {
-		return query(RiotFile.class, "from {} where md5 = ?", md5).load();
+		return query(RiotFile.class, "from {} where md5 = ?1", md5).load();
 	}
 	
 }
