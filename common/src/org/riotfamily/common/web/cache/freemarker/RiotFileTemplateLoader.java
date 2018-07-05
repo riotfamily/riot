@@ -20,7 +20,7 @@ import org.riotfamily.cachius.CacheContext;
 import freemarker.cache.FileTemplateLoader;
 
 /**
- * TemplateLoader that invokes {@link CachiusContext#addInvolvedFile(File)}
+ * TemplateLoader that invokes {@link CacheContext#addFile(File)}
  * to track files involved in the generation of cached content.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]

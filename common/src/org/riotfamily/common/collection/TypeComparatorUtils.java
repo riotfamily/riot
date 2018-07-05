@@ -25,6 +25,7 @@ public class TypeComparatorUtils {
 	/**
 	 * <p>
 	 *  Example:
+	 *  </p>
 	 *  <pre>
 	 *  getTypeDifference(Object.class, Integer.class); // returns 2
 	 *  getTypeDifference(Number.class, Integer.class); // returns 1
@@ -33,7 +34,7 @@ public class TypeComparatorUtils {
 	 *  getTypeDifference(Integer.class, Float.class); // returns Integer.MAX_VALUE
 	 *  getTypeDifference(Integer.class, Number.class); // returns Integer.MAX_VALUE
 	 *  </pre>
-	 * </p>
+	 *
 	 */
 	public static int getTypeDifference(Class<?> baseClass, Class<?> subClass) {
 		if (!baseClass.isAssignableFrom(subClass)) {

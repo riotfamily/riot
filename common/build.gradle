@@ -18,8 +18,10 @@ dependencies {
 
 	runtime project(':revolt')
 	compile libraries.c3p0
+
 	compile libraries.jta
 	compile libraries.hibernate_ehcache
+    compile libraries.hibernate_c3po
 	compile libraries.ehcache
 	compile libraries.javassist
 	compile libraries.cglib

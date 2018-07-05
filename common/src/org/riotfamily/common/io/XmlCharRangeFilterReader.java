@@ -31,7 +31,7 @@ public class XmlCharRangeFilterReader extends FilterReader {
 	/**
 	 * Returns whether the given unicode character is valid according to the 
      * XML 1.0 standard.
-     * @see http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char
+     * @see "http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char"
 	 */
 	protected boolean isValidXmlChar(int c) {
 		return (c == 0x9) || (c == 0xA) || (c == 0xD)

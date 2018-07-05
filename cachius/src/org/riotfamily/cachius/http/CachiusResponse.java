@@ -21,6 +21,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -68,6 +70,7 @@ public class CachiusResponse implements HttpServletResponse {
     private ScanWriter scanWriter;
     
     private File file;
+    private Long contentLengthLong;
 
     public CachiusResponse(ResponseData data, DiskStore diskStore, 
     		SessionIdEncoder sessionIdEncoder, boolean compressible,
@@ -119,7 +122,20 @@ public class CachiusResponse implements HttpServletResponse {
 
 	public void setContentLength(int len) {
     }
-    
+
+	/**
+	 * Sets the length of the content body in the response
+	 * In HTTP servlets, this method sets the HTTP Content-Length header.
+	 *
+	 * @param len a long specifying the length of the
+	 *            content being returned to the client; sets the Content-Length header
+	 * @since Servlet 3.1
+	 */
+	@Override
+	public void setContentLengthLong(long len) {
+		contentLengthLong=len;
+	}
+
 	public boolean containsHeader(String name) {
 		return data.getHeaders().contain(name);
 	}
@@ -160,7 +176,52 @@ public class CachiusResponse implements HttpServletResponse {
 		return data.getHeaders().getNames();
 	}
 
-    public void addCookie(Cookie cookie) {
+	/**
+	 * Sets the supplier of trailer headers.
+	 *
+	 * <p>The trailer header field value is defined as a comma-separated list
+	 * (see Section 3.2.2 and Section 4.1.2 of RFC 7230).</p>
+	 *
+	 * <p>The supplier will be called within the scope of whatever thread/call
+	 * causes the response content to be completed. Typically this will
+	 * be any thread calling close() on the output stream or writer.</p>
+	 *
+	 * <p>The trailers that run afoul of the provisions of section 4.1.2 of
+	 * RFC 7230 are ignored.</p>
+	 *
+	 * <p>The RFC requires the name of every key that is to be in the
+	 * supplied Map is included in the comma separated list that is the value
+	 * of the "Trailer" response header.  The application is responsible for
+	 * ensuring this requirement is met.  Failure to do so may lead to
+	 * interoperability failures.</p>
+	 *
+	 * @param supplier the supplier of trailer headers
+	 * @throws IllegalStateException if it is invoked after the response has
+	 *                               has been committed,
+	 *                               or the trailer is not supported in the request, for instance,
+	 *                               the underlying protocol is HTTP 1.0, or the response is not
+	 *                               in chunked encoding in HTTP 1.1.
+	 * @implSpec The default implementation is a no-op.
+	 * @since Servlet 4.0
+	 */
+	@Override
+	public void setTrailerFields(Supplier<Map<String, String>> supplier) {
+
+	}
+
+	/**
+	 * Gets the supplier of trailer headers.
+	 *
+	 * @return <code>Supplier</code> of trailer headers
+	 * @implSpec The default implememtation return null.
+	 * @since Servlet 4.0
+	 */
+	@Override
+	public Supplier<Map<String, String>> getTrailerFields() {
+		return null;
+	}
+
+	public void addCookie(Cookie cookie) {
     	if (sessionIdEncoder.isSessionIdCookie(cookie)) {
     		data.getCookies().add(new SessionIdCookie(cookie));
     	}
@@ -193,7 +254,7 @@ public class CachiusResponse implements HttpServletResponse {
      * {@link ResponseData}. All output is redirected so nothing will be 
      * sent to the client.
      *
-     * @throws IllegalStateExcepion If getOutputStream() has been called before
+     * @throws IllegalStateException If getOutputStream() has been called before
      * @throws IOException
      */
     public PrintWriter getWriter() throws IOException {

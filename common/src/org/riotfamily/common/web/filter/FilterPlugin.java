@@ -32,7 +32,7 @@ public interface FilterPlugin {
 
 	/**
 	 * Filters the request/response. The contract is the same as for
-	 * {@link javax.servlet.FilterFilter#doFilter}.
+	 * {@link javax.servlet.FilterChain#doFilter}.
 	 */
 	public void doFilter(HttpServletRequest request, 
 			HttpServletResponse response, FilterChain filterChain)

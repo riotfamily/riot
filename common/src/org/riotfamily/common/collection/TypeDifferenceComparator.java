@@ -19,6 +19,7 @@ import java.util.Comparator;
  * target class.
  * <p>
  * Example:
+ * </p>
  *  <pre>
  * 	c = new TypeDifferenceComparator(Integer.class);
  * 
@@ -27,7 +28,7 @@ import java.util.Comparator;
  *  c.compare(Collection.class, Number.class); // returns Integer.MAX_VALUE - 1
  *  c.compare(Collection.class, Object.class); // returns Integer.MAX_VALUE - 2
  *  </pre>
- * </p>
+ *
  */
 public class TypeDifferenceComparator implements Comparator<Class<?>> {
 
